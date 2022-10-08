@@ -28,8 +28,8 @@ namespace Rooster {
         KALSA,
         PESTE_NEGRA,
         BRUXO,
-
     };
+#define NUMGALOS 5
 
     typedef struct {
         Vector2i xCenter;

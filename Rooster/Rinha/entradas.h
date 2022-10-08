@@ -5,7 +5,8 @@ namespace Rooster {
 	enum modos {
 
 		UMJOGADORES,
-		DOISJODADOR
+		DOISJODADOR,
+		MENU_PRINCIPAL
 	};
 
 	enum inputs {

@@ -3,11 +3,11 @@
 
 #include <SFML/Network.hpp>
 using namespace sf;
-
+/*
 TcpSocket socket;
 
 
-Packet& inputToPacket(void* input) {
+Packet inputToPacket(void* input) {
 
 	Packet pacote;
 	pacote << input;
@@ -38,5 +38,5 @@ void teste(char* data) {
 	receiveData(pacotinho);
 	data = (char*)pacotinho.getData();
 }
-
+*/
 #endif

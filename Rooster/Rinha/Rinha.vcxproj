@@ -136,6 +136,7 @@
     <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cardapio.h" />
     <ClInclude Include="Elementos.h" />
     <ClInclude Include="entradas.h" />
     <ClInclude Include="fregues.h" />

@@ -31,6 +31,123 @@ namespace Rooster {
     };
 #define NUMGALOS 5
 
+
+    class LifeBar {
+        Vector2i tam = { SCREEN_WIDTH / 3,SCREEN_HEIGHT / 54 };
+        int spaceForTime = SCREEN_WIDTH / 6;
+        int Maxhp;
+        Text playerName;
+
+        ConvexShape fillBar;
+
+        RectangleShape life;
+        RectangleShape fullLife;
+        Texture iron;
+        Font mk11;
+
+        int yposition = SCREEN_HEIGHT / 8;
+       
+    public:
+
+        int hp;
+
+        LifeBar(int maxhp, bool isP1, const char * galoName) {
+            Maxhp = maxhp;
+            int xposition;
+
+            int recLine = SCREEN_WIDTH / 99;
+            fillBar.setPointCount(6);
+            
+            iron.loadFromFile("sprites/texturaFerro.png");
+            fillBar.setTexture(&iron, true);
+            mk11.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
+            playerName.setFont(mk11);
+            playerName.setString(galoName);
+
+            fullLife.setOutlineThickness(SCREEN_WIDTH / 300);
+            fullLife.setOutlineColor(Color::Black);
+            fullLife.setFillColor(Color::Red);
+            fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
+            fillBar.setOutlineColor(Color::Black);
+           
+            if (isP1) {
+                xposition = SCREEN_WIDTH/12;
+                fillBar.setPoint(0, sf::Vector2f(-recLine*2, 0));
+                fillBar.setPoint(1, sf::Vector2f(tam.x + recLine * 6, 0));
+                fillBar.setPoint(2, sf::Vector2f(tam.x + recLine, tam.y + recLine * 3));
+                fillBar.setPoint(3, sf::Vector2f(tam.x / 1.5, tam.y + recLine * 3));
+                fillBar.setPoint(4, sf::Vector2f(tam.x / 2, tam.y + recLine));
+                fillBar.setPoint(5, sf::Vector2f(0, tam.y + recLine));
+
+                
+                fillBar.scale(-1, 1);
+                fillBar.setPosition(xposition - recLine*4.5 + (tam.x + recLine * 5), yposition - recLine / 2);
+                fullLife.setPosition(xposition, yposition);
+                life.setPosition(xposition, yposition);
+                playerName.setPosition(xposition + recLine, yposition + recLine);
+            }
+            else {
+                xposition = SCREEN_WIDTH / 12 + tam.x + spaceForTime;
+                life.scale(-1, 1);
+                fillBar.setPoint(0, sf::Vector2f(-recLine * 2, 0));
+                fillBar.setPoint(1, sf::Vector2f(tam.x + recLine * 6, 0));
+                fillBar.setPoint(2, sf::Vector2f(tam.x + recLine, tam.y + recLine * 3));
+                fillBar.setPoint(3, sf::Vector2f(tam.x / 1.5, tam.y + recLine * 3));
+                fillBar.setPoint(4, sf::Vector2f(tam.x / 2, tam.y + recLine));
+                fillBar.setPoint(5, sf::Vector2f(0, tam.y + recLine));
+
+
+                fillBar.setPosition(xposition - recLine / 2, yposition - recLine / 2);
+                fullLife.setScale(-1, 1);
+                fullLife.setPosition(xposition + tam.x, yposition);
+                life.setPosition(xposition + tam.x, yposition);
+                playerName.setPosition(xposition + tam.x - recLine - playerName.getGlobalBounds().width, yposition + recLine);
+            }
+           
+            Color niceyellow(245, 205, 80);
+            
+            life.setFillColor(niceyellow);
+            life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
+            fullLife.setSize(Vector2f(tam.x , tam.y));
+            
+
+        }
+        RectangleShape getRecLife() {
+            return life;
+        }
+
+        ConvexShape getBar() {
+            return fillBar;
+        }
+        void setMaxHp(int maxhp) {
+            Maxhp = maxhp;
+        }
+        int getMaxhp() {
+            return Maxhp;
+        }
+        int getLifeBarWidth() {
+            return tam.x;
+        }
+        int getLifeBarHeight() {
+            return tam.y;
+        }
+        void draw(RenderWindow *window) {
+
+            window->draw(fillBar);
+            window->draw(fullLife);
+            window->draw(life);
+            window->draw(playerName);
+        }
+       
+        void update(int hp) {
+            life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
+            //Color niceyellow(155 * hp / Maxhp + 90, 205 * hp / Maxhp, 80 * hp / Maxhp);
+
+            //life.setFillColor(niceyellow);
+        }
+    };
+
+
     typedef struct {
         Vector2i xCenter;
         int radius;
@@ -40,6 +157,7 @@ namespace Rooster {
 
     protected:
         HitBox hitbox;
+        int maxHp;
         int hp;
         int id;
         float peso;
@@ -47,26 +165,27 @@ namespace Rooster {
         int def;
         int speed;
         int estado;
+        std::string name;
 
-        Sprite* sprite = new Sprite[9];
+        Sprite* sprite= new Sprite[9];
         RectangleShape r;
-
 
         std::vector<int> elementDrawOrder;
         std::vector<Element*> elementos;
-
-
         bool air;
         float hspeed;
         float vspeed;
         int frames = 0;
         int initFrames = 0;
+        
 
     public:
-
+        LifeBar* bar;
         bool facingRight = false;
         bool attacking = false;
         bool isLightAttack = false;
+
+
         void addElement(sf::Texture& tex, float xTex, float yTex, float wid,
             float hei, float xCenter, float yCenter, float xAttach,
             float yAttach, int idAttach) {
@@ -86,6 +205,7 @@ namespace Rooster {
 
 
         Galo(HitBox _hitbox, int atk, int def, int speed, int _state) {
+
             hitbox = _hitbox;
             this->atk = atk;
             this->def = def;
@@ -115,7 +235,9 @@ namespace Rooster {
         int inline getFrames() {
             return frames;
         }
-
+        void apanhar(int hp) {
+            this->hp -= hp;
+        }
 
         void animJump() {
             if (!air) {
@@ -130,13 +252,13 @@ namespace Rooster {
             if (facingRight) {
                 hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
                 for (int i = 0; i < elementos.size(); i++) {
-                    elementos.at(i)->scl.x = -0.25;
+                    elementos.at(i)->scl.x = -(float)SCREEN_WIDTH / 5120;;
                 }
             }
             else {
                 hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
                 for (int i = 0; i < elementos.size(); i++) {
-                    elementos.at(i)->scl.x = 0.25;
+                    elementos.at(i)->scl.x = (float)SCREEN_WIDTH / 5120;;
                 }
             }
         }
@@ -155,9 +277,9 @@ namespace Rooster {
                 vspeed += peso * G / 100;
             }
 
-            if (r.getPosition().y > 600) {
+            if (r.getPosition().y > (float) SCREEN_HEIGHT / 1.4) {
                 vspeed = 0;
-                r.setPosition(r.getPosition().x, 600);
+                r.setPosition(r.getPosition().x, (float)SCREEN_HEIGHT / 1.4);
                 air = false;
             }
 

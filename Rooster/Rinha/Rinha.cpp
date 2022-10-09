@@ -25,53 +25,12 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #include "Galo.h"
 #include "GaloSniper.h"
 using namespace Rooster;
-
+#include "Briga.h"
 #include "fregues.h"
 #include "cardapio.h"
 
 
 
-void _inline singlePlayer(RenderWindow * window, Event& e, Galo& galo,int &option) {
-
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		galo.setState(Rooster::state::RUNNING);
-		galo.facingRight = true;
-		galo.animRun();
-
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		galo.setState(Rooster::state::RUNNING);
-		galo.facingRight = false;
-		galo.animRun();
-
-	}
-	else
-	{
-		galo.setState(Rooster::state::STOPPED);
-		galo.setHspeed(0);
-
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
-		galo.animJump();
-	}
-
-	galo.update();
-
-	window->clear();
-	RectangleShape fundo(Vector2f(1280, 720));
-	fundo.setPosition(0, 0);
-	fundo.setFillColor(Color(100, 100, 100));
-
-	window->draw(fundo);
-	galo.show(*window);
-	window->display();
-
-}
 
 
 int main() {
@@ -98,27 +57,31 @@ int main() {
 	t.loadFromFile("sprites/galoSniper.png");
 
 
-	Sniper galo = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t);
-	Sniper galo2 = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t);
+
+	
+	Sniper galo = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t,true);
+	Sniper galo2 = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t,false);
+
+	Texture mapa;
+	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	mapa.loadFromFile("sprites/cenario faroeste.png");
+
+	fundo.setPosition(0, 0);
+	fundo.setTexture(&mapa);
 
 	//socket.setBlocking(false);
 
 	while (window->isOpen())
 	{
-		Event e;
-		while (window->pollEvent(e))
-		{
-			if (e.type == Event::Closed)
-			{
-				window->close();
-			}
-		}
+		
 		switch (option)
 		{
 		case UMJOGADORES:
-			singlePlayer(window, e, galo, option);
+			singlePlayer(window,galo,galo2,option,fundo);
+			break;
 		case MENU_PRINCIPAL:
-			menuPrincipal(window,e,option);
+			menuPrincipal(window,option);
+			break;
 		default:
 			break;
 		}

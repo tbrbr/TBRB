@@ -12,14 +12,18 @@ namespace Rooster {
         float Arm2SpinAngFase = 0;
 
     public:
-        Sniper(HitBox _hitbox, int atk, int def, int speed, int _state, Texture& _texture) : Galo(_hitbox, atk, def, speed, _state) {
+        Sniper(HitBox _hitbox, int atk, int def, int speed, int _state, Texture& _texture, bool isp1) : Galo(_hitbox, atk, def, speed, _state) {
             hitbox = _hitbox;
+            this->name = "Sniper";
             this->peso = 2;
             this->air = false;
+            this->maxHp = 100;
+            this->hp = 100;
+            bar = new LifeBar(maxHp, isp1, name.c_str());
             this->hspeed = 0;
             this->vspeed = 0;
             r.setSize(Vector2f(20, 20));
-            r.setPosition(400, 600);
+            r.setPosition(SCREEN_WIDTH/4, (float) SCREEN_HEIGHT/1.4);
 
             addElement(_texture, 26, 517, 479, 461, 250, 712, 0, 0, -1); // Corpo
 
@@ -81,9 +85,9 @@ namespace Rooster {
                 vspeed += peso * G / 100;
             }
 
-            if (r.getPosition().y > 600) {
+            if (r.getPosition().y > (float)SCREEN_HEIGHT / 1.4) {
                 vspeed = 0;
-                r.setPosition(r.getPosition().x, 600);
+                r.setPosition(r.getPosition().x, (float) SCREEN_HEIGHT / 1.4);
                 air = false;
             }
 
@@ -163,6 +167,7 @@ namespace Rooster {
 
             }
 
+            bar->update(hp);
 
             for (int i = 1; i < elementos.size(); i++) {
 

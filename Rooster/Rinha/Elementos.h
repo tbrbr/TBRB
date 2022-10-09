@@ -68,8 +68,8 @@ public:
 
         // Angulo e escala
         angle = 0;
-        scl.x = 0.25;
-        scl.y = 0.25;
+        scl.x = (float)SCREEN_WIDTH/5120;
+        scl.y = (float)SCREEN_WIDTH /5120;
 
         offset.x = 0;
         offset.y = 0;

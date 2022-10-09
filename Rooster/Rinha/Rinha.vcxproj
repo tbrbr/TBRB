@@ -133,9 +133,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Galo.cpp" />
     <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Briga.h" />
     <ClInclude Include="cardapio.h" />
     <ClInclude Include="Elementos.h" />
     <ClInclude Include="entradas.h" />

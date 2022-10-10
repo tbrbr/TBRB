@@ -3,6 +3,7 @@
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -45,10 +46,14 @@
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
 		{
+			galo.LightAttack();
+			galo.isLightAttack = true;
 			galo.apanhar(2);
 			galo2.apanhar(1);
 		}
 
+
+		
 		galo.update();
 		galo2.update();
 	

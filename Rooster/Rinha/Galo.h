@@ -42,19 +42,27 @@ namespace Rooster {
 
         RectangleShape life;
         RectangleShape fullLife;
+        RectangleShape Damage;
         Texture iron;
         Font mk11;
-
+        
+        bool isP1;
         int yposition = SCREEN_HEIGHT / 8;
+        int xposition;
        
     public:
 
         int hp;
 
+        int lastTam;
+        Clock clock;
+        Clock piscada;
+        Time lastTime;
+
         LifeBar(int maxhp, bool isP1, const char * galoName) {
             Maxhp = maxhp;
-            int xposition;
-
+            
+            this->isP1 = isP1;
             int recLine = SCREEN_WIDTH / 99;
             fillBar.setPointCount(6);
             
@@ -66,7 +74,7 @@ namespace Rooster {
 
             fullLife.setOutlineThickness(SCREEN_WIDTH / 300);
             fullLife.setOutlineColor(Color::Black);
-            fullLife.setFillColor(Color::Red);
+            fullLife.setFillColor(Color::Black);
             fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
             fillBar.setOutlineColor(Color::Black);
            
@@ -102,6 +110,7 @@ namespace Rooster {
                 fullLife.setPosition(xposition + tam.x, yposition);
                 life.setPosition(xposition + tam.x, yposition);
                 playerName.setPosition(xposition + tam.x - recLine - playerName.getGlobalBounds().width, yposition + recLine);
+                Damage.setScale(-1, 1);
             }
            
             Color niceyellow(245, 205, 80);
@@ -109,6 +118,8 @@ namespace Rooster {
             life.setFillColor(niceyellow);
             life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
             fullLife.setSize(Vector2f(tam.x , tam.y));
+
+            
             
 
         }
@@ -136,15 +147,58 @@ namespace Rooster {
             window->draw(fillBar);
             window->draw(fullLife);
             window->draw(life);
+            window->draw(Damage);
             window->draw(playerName);
         }
        
         void update(int hp) {
-            life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
-            //Color niceyellow(155 * hp / Maxhp + 90, 205 * hp / Maxhp, 80 * hp / Maxhp);
 
-            //life.setFillColor(niceyellow);
+            int oldTam = life.getGlobalBounds().width;
+            int newTam = (tam.x * hp) / Maxhp;
+
+            life.setSize(Vector2f(newTam, tam.y));
+
+      
+            if (oldTam > newTam) {
+                Damage.setSize(Vector2f(lastTam - newTam, tam.y));
+                Damage.setFillColor(Color::Color(145, 10, 10));
+                if (isP1) {
+                    Damage.setPosition(Vector2f(life.getGlobalBounds().left + newTam, life.getGlobalBounds().top));
+                }
+                else {
+                    Damage.setPosition(Vector2f(life.getGlobalBounds().left, life.getGlobalBounds().top));
+                }
+
+
+                piscada.restart();
+                clock.restart();
+            }
+
+            if (piscada.getElapsedTime().asMilliseconds() <= 30) {
+                int t = piscada.getElapsedTime().asMilliseconds();
+
+                int cor = (255 * sin(t))/(1+t/10);
+
+                Damage.setFillColor(Color::Color((255 , cor, cor)));
+                fullLife.setOutlineColor(Color::Color((255, cor, cor)));
+
+            }
+            else {
+                Damage.setFillColor(Color::Color(145, 10, 10));
+                fullLife.setOutlineColor(Color::Color(145, 10, 10));
+            }
+            
+
+            if (clock.getElapsedTime().asSeconds() > 1) {
+                Damage.setFillColor(Color::Black);
+                fullLife.setOutlineColor(Color::Black);
+                lastTam = life.getGlobalBounds().width;
+                
+            }
+           
+            
         }
+        
     };
 
 
@@ -235,8 +289,9 @@ namespace Rooster {
         int inline getFrames() {
             return frames;
         }
-        void apanhar(int hp) {
-            this->hp -= hp;
+        void apanhar(int dmg) {
+            this->hp -= dmg;
+            bar->update(hp);
         }
 
         void animJump() {

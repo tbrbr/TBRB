@@ -1,9 +1,12 @@
 
 #include <iostream>
+
+
 #define SFML_STATIC
 
 #include <opencv2/core/core.hpp>
-
+#include "efeitos_fodas.h"
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <windows.h>
 #include <SFML/Network.hpp>
@@ -21,7 +24,7 @@ using namespace sf;
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
-#include "jogador_de_video.h"
+//#include "jogador_de_video.h"
 #include "entradas.h"
 #include "Elementos.h"
 #include "Galo.h"
@@ -34,15 +37,7 @@ using namespace Rooster;
 #include "cardapio.h"
 
 
-
-
-
-
-
 int main() {
-
-	//Enter go out of the video
-	//playVideo("intro.mp4");
 	
 	int option = 2;
 
@@ -52,7 +47,7 @@ int main() {
 	catch (const char* e) {
 		cout << e << endl;
 	}
-	
+	seFodaAiWalter(70);
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 
@@ -73,6 +68,7 @@ int main() {
 	fundo.setTexture(&mapa);
 
 	//socket.setBlocking(false);
+
 
 	while (window->isOpen())
 	{

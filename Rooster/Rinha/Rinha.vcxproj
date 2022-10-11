@@ -129,7 +129,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\TBRB\SFML-2.5.1\lib;C:\TBRB\OpenCV\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-window-s.lib;sfml-system-s.lib;opengl32.lib;freetype.lib;sfml-graphics-s.lib;winmm.lib;ws2_32.lib;gdi32.lib;sfml-network-s.lib;opencv_world412.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-window-s.lib;sfml-system-s.lib;opengl32.lib;freetype.lib;sfml-graphics-s.lib;winmm.lib;ws2_32.lib;gdi32.lib;sfml-network-s.lib;sfml-audio.lib;opencv_world412.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="Briga.h" />
     <ClInclude Include="cardapio.h" />
+    <ClInclude Include="efeitos_fodas.h" />
     <ClInclude Include="Elementos.h" />
     <ClInclude Include="entradas.h" />
     <ClInclude Include="fregues.h" />

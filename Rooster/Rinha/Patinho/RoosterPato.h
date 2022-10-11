@@ -45,7 +45,7 @@ struct SpriteMap{
     }
 };
 
-typedef struct
+struct GameInfo
 {
 
     // Texturas
@@ -124,7 +124,7 @@ typedef struct
 
     bool windowGrabbed = true;
 
-} GameInfo;
+} ;
 
 
 

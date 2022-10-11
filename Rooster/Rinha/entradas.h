@@ -6,7 +6,8 @@ namespace Rooster {
 
 		UMJOGADORES,
 		DOISJODADOR,
-		MENU_PRINCIPAL
+		MENU_PRINCIPAL,
+		ISPATOTIME
 	};
 
 	enum inputs {

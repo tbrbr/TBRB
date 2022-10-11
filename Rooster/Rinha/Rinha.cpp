@@ -9,7 +9,7 @@
 #include <SFML/Network.hpp>
 #include <vector>
 #include <cmath>
-
+#include "Patinho/jogoDoPatinho.h"
 
 using namespace std;
 using namespace sf;
@@ -26,10 +26,14 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #include "Elementos.h"
 #include "Galo.h"
 #include "GaloSniper.h"
+
 using namespace Rooster;
+
 #include "Briga.h"
 #include "fregues.h"
 #include "cardapio.h"
+
+
 
 
 
@@ -81,6 +85,9 @@ int main() {
 		case MENU_PRINCIPAL:
 			menuPrincipal(window,option);
 			break;
+		case ISPATOTIME:
+			patinho();
+
 		default:
 			break;
 		}

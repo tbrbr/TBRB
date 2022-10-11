@@ -1,6 +1,13 @@
 
 int OptionMenuPrincipal = 0;
+int OptionMenuIniciar = 0;
+bool iniciar = false;
 
+void makeGif(Sprite * vetor, RectangleShape videoBorder) {
+
+
+
+}
 void menuPrincipal(RenderWindow* window, int& option) {
 
 	int mousex;
@@ -14,45 +21,93 @@ void menuPrincipal(RenderWindow* window, int& option) {
 
 		if (e.type == Event::KeyPressed)
 		{
-			if (e.key.code == Keyboard::Escape)
-			{
-				window->close();
-			}
-			if (e.key.code == Keyboard::W)
-			{
-				OptionMenuPrincipal--;
-				if (OptionMenuPrincipal < 0)
-					OptionMenuPrincipal = 2;
-			}
-			else if (e.key.code == Keyboard::S) {
-				OptionMenuPrincipal++;
-				if (OptionMenuPrincipal > 2)
-					OptionMenuPrincipal = 0;
-			}
-			else if (e.key.code == Keyboard::Up)
-			{
-				OptionMenuPrincipal--;
-				if (OptionMenuPrincipal < 0)
-					OptionMenuPrincipal = 2;
-			}
-			else if (e.key.code == Keyboard::Down) {
-				OptionMenuPrincipal++;
-				if (OptionMenuPrincipal > 2)
-					OptionMenuPrincipal = 0;
-			}
-
-			if (e.key.code == Keyboard::Enter) {
-				switch (OptionMenuPrincipal)
+			if (iniciar) {
+				if (e.key.code == Keyboard::Escape)
 				{
-				case 0:
-				{
-					option = 0;
-
-					//vou mudar isso depois 
-					break;
+					window->close();
 				}
-				default:
-					break;
+				if (e.key.code == Keyboard::W)
+				{
+					OptionMenuIniciar--;
+					if (OptionMenuIniciar < 0)
+						OptionMenuIniciar = 2;
+				}
+				else if (e.key.code == Keyboard::S) {
+					OptionMenuIniciar++;
+					if (OptionMenuIniciar  > 2)
+						OptionMenuIniciar = 0;
+				}
+				else if (e.key.code == Keyboard::Up)
+				{
+					OptionMenuIniciar--;
+					if (OptionMenuIniciar < 0)
+						OptionMenuIniciar = 2;
+				}
+				else if (e.key.code == Keyboard::Down) {
+					OptionMenuIniciar++;
+					if (OptionMenuIniciar > 2)
+						OptionMenuIniciar = 0;
+				}
+				if (e.key.code == Keyboard::Enter) {
+					switch (OptionMenuIniciar)
+					{
+					case 0:
+					{
+						
+						break;
+					}
+					case 1:
+					{
+						option = 0;
+						break;
+					}
+					case 2:
+						option = 3;
+					default:
+						break;
+					}
+				}
+
+			}
+			else {
+				if (e.key.code == Keyboard::Escape)
+				{
+					window->close();
+				}
+				if (e.key.code == Keyboard::W)
+				{
+					OptionMenuPrincipal--;
+					if (OptionMenuPrincipal < 0)
+						OptionMenuPrincipal = 2;
+				}
+				else if (e.key.code == Keyboard::S) {
+					OptionMenuPrincipal++;
+					if (OptionMenuPrincipal > 2)
+						OptionMenuPrincipal = 0;
+				}
+				else if (e.key.code == Keyboard::Up)
+				{
+					OptionMenuPrincipal--;
+					if (OptionMenuPrincipal < 0)
+						OptionMenuPrincipal = 2;
+				}
+				else if (e.key.code == Keyboard::Down) {
+					OptionMenuPrincipal++;
+					if (OptionMenuPrincipal > 2)
+						OptionMenuPrincipal = 0;
+				}
+
+				if (e.key.code == Keyboard::Enter) {
+					switch (OptionMenuPrincipal)
+					{
+					case 0:
+					{
+						iniciar = true;
+						break;
+					}
+					default:
+						break;
+					}
 				}
 			}
 		}
@@ -74,7 +129,7 @@ void menuPrincipal(RenderWindow* window, int& option) {
 	title.setFont(fontTitle);
 	title.setString("Menu Principal");
 	title.setCharacterSize(SCREEN_WIDTH / 16);
-	title.setPosition(SCREEN_WIDTH / 1.4 - title.getGlobalBounds().width / 2, SCREEN_HEIGHT / 6.9);
+	title.setPosition(SCREEN_WIDTH / 1.4 - title.getGlobalBounds().width / 2, SCREEN_HEIGHT /9);
 	title.setFillColor(redText);
 
 	//options
@@ -118,22 +173,9 @@ void menuPrincipal(RenderWindow* window, int& option) {
 
 	//checking for garrinha
 
-
-
-
-
-
 	int spaceBetween = garra.getGlobalBounds().width;
-	if ((mousex > SCREEN_WIDTH / 1.4 - option1.getGlobalBounds().width / 2) &&
-		(mousex < SCREEN_WIDTH / 1.4 + option1.getGlobalBounds().width) && (
-			(mousey > SCREEN_HEIGHT / 2) && (mousey < SCREEN_HEIGHT / 2 + option1.getGlobalBounds().height)))
-	{
-		garra.setPosition(SCREEN_WIDTH / 1.4 - option1.getGlobalBounds().width / 2 - spaceBetween,
-			SCREEN_HEIGHT / 2);
-	}
 
-
-
+	
 	switch (OptionMenuPrincipal)
 	{
 	case 0:
@@ -141,7 +183,7 @@ void menuPrincipal(RenderWindow* window, int& option) {
 			SCREEN_HEIGHT / 2);
 		break;
 	case 1:
-		garra.setPosition(SCREEN_WIDTH / 1.4 - option3.getGlobalBounds().width / 2 - spaceBetween,
+		garra.setPosition(SCREEN_WIDTH / 1.4 - option2.getGlobalBounds().width / 2 - spaceBetween,
 			SCREEN_HEIGHT / 2 + option1.getGlobalBounds().height * 2);
 		break;
 	case 2:
@@ -150,16 +192,95 @@ void menuPrincipal(RenderWindow* window, int& option) {
 		break;
 	}
 
-
+	
 
 	window->draw(fundo);
 	window->draw(title);
 	window->draw(option1);
 	window->draw(option2);
 	window->draw(option3);
+	
+
+	if (iniciar) {
+		RectangleShape borda;
+		borda.setSize(Vector2f(SCREEN_WIDTH / 2,SCREEN_HEIGHT/2));
+		borda.setPosition(SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4,SCREEN_HEIGHT/2 - SCREEN_HEIGHT / 4);
+		borda.setFillColor(Color::Black);
+		borda.setOutlineThickness(SCREEN_WIDTH / 200);
+		borda.setOutlineColor(redText);
+		
+		
+		
+		Text optionInit;
+		optionInit.setFont(fontOption);
+		optionInit.setString("Multiplayer");
+		optionInit.setCharacterSize(SCREEN_WIDTH / 48);
+		optionInit.setPosition(
+			SCREEN_WIDTH / 2 - optionInit.getGlobalBounds().width / 2,
+			SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + option1.getGlobalBounds().height
+		);
+		optionInit.setFillColor(redOption);
+
+		int spaceYBetween = optionInit.getGlobalBounds().height;
+
+		Text optionInit2;
+		optionInit2.setFont(fontOption);
+		optionInit2.setString("Singleplayer");
+		optionInit2.setCharacterSize(SCREEN_WIDTH / 48);
+		optionInit2.setPosition(
+			SCREEN_WIDTH / 2 - optionInit2.getGlobalBounds().width / 2,
+			SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + spaceYBetween*4
+		);
+		optionInit2.setFillColor(redOption);
+
+		Text optionInit3;
+		optionInit3.setFont(fontOption);
+		optionInit3.setString("MiniGames");
+		optionInit3.setCharacterSize(SCREEN_WIDTH / 48);
+		optionInit3.setPosition(
+			SCREEN_WIDTH / 2 - optionInit3.getGlobalBounds().width / 2,
+			SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + spaceYBetween*7
+		);
+		optionInit3.setFillColor(redOption);
+
+		window->draw(borda);
+		window->draw(optionInit);
+		window->draw(optionInit2);
+		window->draw(optionInit3);
+
+		//checking for garrinha
+
+		int spaceBetween = garra.getGlobalBounds().width;
+
+		switch (OptionMenuIniciar)
+		{
+		case 0:
+			garra.setPosition(
+				SCREEN_WIDTH / 2 - optionInit.getGlobalBounds().width / 2 - spaceBetween,
+				SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + option1.getGlobalBounds().height
+			);
+			break;
+		case 1:
+			garra.setPosition(
+				SCREEN_WIDTH / 2 - optionInit2.getGlobalBounds().width / 2 - spaceBetween,
+				SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + spaceYBetween * 4
+			);
+			break;
+		case 2:
+			garra.setPosition(
+				SCREEN_WIDTH / 2 - optionInit3.getGlobalBounds().width / 2 - spaceBetween,
+				SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + spaceYBetween * 7
+			);
+			break;
+		}
+
+
+	}
 	window->draw(garra);
 	window->display();
 }
+
+
 void selectionsingleplayer() {
 	int galos[NUMGALOS];
 	RectangleShape recs[NUMGALOS];

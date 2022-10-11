@@ -9,8 +9,6 @@ void menuPrincipal(RenderWindow* window, int& option) {
 	while (window->pollEvent(e))
 	{
 
-
-
 		mousex = e.mouseMove.x;
 		mousey = e.mouseMove.x;
 

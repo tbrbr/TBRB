@@ -17,7 +17,7 @@ void playVideo(const char * path) {
 
 
     while (capVideo.read(imgFrame)) {
-        resize(imgFrame, imgFrame, cv::Size(1280, 720));
+        resize(imgFrame, imgFrame, cv::Size(SCREEN_WIDTH, SCREEN_HEIGHT));
         cv::imshow("imgFrame", imgFrame);
         cv::moveWindow("imgFrame", 20, 20);
         if (cv::waitKey(25) >= 0)

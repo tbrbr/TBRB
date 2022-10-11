@@ -3,7 +3,7 @@
 #define SFML_STATIC
 
 #include <opencv2/core/core.hpp>
-#include "jogador_de_video.h"
+
 #include <SFML/Graphics.hpp>
 #include <windows.h>
 #include <SFML/Network.hpp>
@@ -17,9 +17,11 @@ using namespace sf;
 #define FRAMERATE_LIMIT 60
 #define G 9.81
 #define PI 3.1415926563
+
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
+#include "jogador_de_video.h"
 #include "entradas.h"
 #include "Elementos.h"
 #include "Galo.h"
@@ -56,15 +58,12 @@ int main() {
 	Texture t;
 	t.loadFromFile("sprites/galoSniper.png");
 
-
-
-	
 	Sniper galo = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t,true);
 	Sniper galo2 = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t,false);
 
 	Texture mapa;
 	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	mapa.loadFromFile("sprites/cenario faroeste.png");
+	mapa.loadFromFile("sprites/shopping.png");
 
 	fundo.setPosition(0, 0);
 	fundo.setTexture(&mapa);

@@ -11,6 +11,14 @@
 			{
 				window->close();
 			}
+			if (e.type == Event::KeyPressed) {
+				if (e.key.code == Keyboard::W)
+				{
+					galo.animJump();
+					galo2.animJump();
+				}
+			}
+			
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -40,7 +48,9 @@
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
+			
 			galo.animJump();
+
 		}
 
 

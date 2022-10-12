@@ -1,33 +1,33 @@
-#include "patinho.h"
 
-int patinho()
-{
-
-    RenderWindow window(VideoMode(1280, 720), "TBRB");
-
-    window.setFramerateLimit(60);
-
-    window.setMouseCursorVisible(false);
-    window.setMouseCursorGrabbed(true);
+class Pato {
 
     GameInfo info;
+    Text FPS;
+    Text txtScore;
+ 
+public:
+    Pato(RenderWindow& window) {
+        SpriteInit(info, window);
 
-    SpriteInit(info, window);
+        info.mapWidth = info.smap.getGlobalBounds().width;
+        info.mapHeight = info.smap.getGlobalBounds().height;
 
-    info.mapWidth = info.smap.getGlobalBounds().width;
-    info.mapHeight = info.smap.getGlobalBounds().height;
+        window.setMouseCursorVisible(false);
+        window.setMouseCursorGrabbed(true);
 
+        addRooster(info);
+        /// Textos
+        FPS.setString("0");
+        FPS.setFont(info.fonte1);
+        FPS.setCharacterSize(30);
 
-    addRooster(info);
+        txtScore.setString("Score: " + info.kills);
+        txtScore.setFont(info.fonte1);
+        txtScore.setCharacterSize(30);
+        txtScore.setPosition(0, window.getSize().y - 80);
+    }
 
-    /// Textos
-    Text FPS("0", info.fonte1, 30);
-    Text txtScore("Score: " + info.kills, info.fonte1, 30);
-    txtScore.setPosition(0, window.getSize().y - 80);
-
-
-    while (window.isOpen())
-    {
+    void patinho(RenderWindow& window) {
         Event e;
 
         while (window.pollEvent(e))
@@ -85,11 +85,9 @@ int patinho()
         }
 
         window.display();
-
     }
 
-    // bom progresso hein
-    // Nestante
+};
 
-    return 0;
-}
+
+

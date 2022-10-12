@@ -95,8 +95,8 @@ struct GameInfo
 
     // Coordenadas da Camera
 
-    float viewWidth = 1280;
-    float viewHeight = 720;
+    float viewWidth = SCREEN_WIDTH;
+    float viewHeight = SCREEN_HEIGHT;
 
     float camX = 0;
     float camY = 0;

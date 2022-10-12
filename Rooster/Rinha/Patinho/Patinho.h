@@ -1,7 +1,6 @@
 #ifndef PATINHO_HPP_INCLUDED
 #define PATINHO_HPP_INCLUDED
 
-#include <iostream>
 #include <math.h>
 #include <sstream>
 #include <vector>
@@ -45,7 +44,7 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
     info.gun.loadFromFile("sprites/gun.png");
     info.Galo.loadFromFile("sprites/galo.png");
     info.Light.loadFromFile("sprites/muzzleF.png");
-    info.sniper.loadFromFile("sprites/galoSniper.png");
+    info.sniper.loadFromFile("sprites/oldSniper.png");
     info.ratoSheet.loadFromFile("sprites/ratShopSheet.png");
 
     info.chorro.loadFromFile("sprites/chorro.png");
@@ -88,9 +87,19 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
 
     info.sChorro.setScale(3, 3);
 
-    info.sgun.setPosition(window.getSize().x/2 - info.sgun.getGlobalBounds().width/3 + 130,
-                          window.getSize().y - info.sgun.getGlobalBounds().height - 25);
-    info.sLight.setPosition(670 - info.sLight.getGlobalBounds().width/2, 390 - info.sLight.getGlobalBounds().height/2);
+    info.sgun.setPosition(
+        SCREEN_WIDTH / 2 - info.sgun.getGlobalBounds().width/2 + SCREEN_WIDTH/5,
+        SCREEN_HEIGHT - info.sgun.getGlobalBounds().height
+    );
+    info.sLight.setPosition(
+        SCREEN_WIDTH / 2 - info.sgun.getGlobalBounds().width / 2 + SCREEN_WIDTH / 7,
+        SCREEN_HEIGHT - info.sgun.getGlobalBounds().height
+    );
+
+    info.smira.setPosition(
+        SCREEN_WIDTH / 2 - info.smira.getGlobalBounds().width / 2,
+        SCREEN_HEIGHT / 2 - info.smira.getGlobalBounds().height / 2
+    );
 
 }
 
@@ -148,8 +157,8 @@ void shoot(GameInfo& info)
 
 
 
-    int miraX = 638 + info.camX;
-    int miraY = 314 + info.camY;
+    int miraX = SCREEN_WIDTH/2 + info.camX;
+    int miraY = SCREEN_HEIGHT/2 + info.camY;
 
 
     int roosterNumber = info.roosters.size();

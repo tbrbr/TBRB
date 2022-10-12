@@ -148,6 +148,7 @@
     <ClInclude Include="IAtaques.h" />
     <ClInclude Include="jogador_de_video.h" />
     <ClInclude Include="muitosjogadores.h" />
+    <ClInclude Include="TilesDoArrocha.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

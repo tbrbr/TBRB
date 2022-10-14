@@ -35,7 +35,6 @@ struct SpriteMap{
                 int yy = imgY + imgHei*i;
 
                 if(imgX >= 0 && xx + imgWid <= texWid && imgY >= 0 && yy + imgHei <= texHei){
-                    cout << "New Image" << endl;
                     IntRect newRect(xx, yy, imgWid, imgHei);
                     images.push_back(newRect);
                     imgNumber++;

@@ -12,16 +12,16 @@ namespace Rooster {
     enum state {
         STOPPED = 0,
         RUNNING,
-        LOW_KICK,
+        DEFENDING,
+        LOW_KICK = 0,
         HIGH_KICK,
         SLAP,
-        JUMP,
         JUMP_KICK,
         SPECIAL,
-        DEFENDING,
-        RIGHT
+       
 
     };
+    
     enum roosters {
         BOTAS,
         SNIPER,
@@ -29,6 +29,7 @@ namespace Rooster {
         PESTE_NEGRA,
         BRUXO,
     };
+
 #define NUMGALOS 5
 
 
@@ -71,6 +72,7 @@ namespace Rooster {
             mk11.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
             playerName.setFont(mk11);
             playerName.setString(galoName);
+            playerName.setCharacterSize(SCREEN_WIDTH / 50);
 
             fullLife.setOutlineThickness(SCREEN_WIDTH / 300);
             fullLife.setOutlineColor(Color::Black);
@@ -214,6 +216,7 @@ namespace Rooster {
         int def;
         int speed;
         int estado;
+       
         std::string name;
 
         Sprite* sprite= new Sprite[9];
@@ -228,13 +231,12 @@ namespace Rooster {
         int frames = 0;
         int initFrames = 0;
         
-
     public:
-       
+        int atacking;
         HitBox hitbox;
         LifeBar* bar;
         bool facingRight = false;
-        bool attackingl = false;
+        
         
 
 
@@ -279,6 +281,10 @@ namespace Rooster {
         void inline setState(int estado) {
             this->estado = estado;
         }
+        int getState() {
+            return this->estado;
+        }
+        
         void inline setHspeed(float spd) {
             hspeed = spd;
         }
@@ -318,11 +324,9 @@ namespace Rooster {
                 }
             }
         }
-        virtual void lightAtack() {
-
-        }
-
-        
+        virtual void defend() = 0; 
+        virtual void lightAtack() = 0;
+ 
 
         void show(sf::RenderWindow& window) {
 

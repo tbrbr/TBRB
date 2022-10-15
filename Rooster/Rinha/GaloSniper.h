@@ -11,6 +11,7 @@ namespace Rooster {
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
         Ataques* lightAtk;
+        
        
     public:
         Sniper(int atk, int def, int speed, int _state, Texture& _texture, bool isp1) : Galo(atk, def, speed, _state) {
@@ -111,8 +112,8 @@ namespace Rooster {
             elementos.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
             elementos.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
 
-            elementos.at(ASA_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-            elementos.at(ASA_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(ASA_FRENTE)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(ASA_ATRAS)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
 
             elementos.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
             elementos.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
@@ -131,58 +132,83 @@ namespace Rooster {
             elementos.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
             elementos.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
 
+            elementos[CORPO]->offset.y *= 0.8;
+
+        }
+        void defend() override{
+            estado = DEFENDING;
+            
+        }
+        void agachadinha() {
+
+            elementos[CORPO]->offset.y += SCREEN_HEIGHT / 100;
+            elementos[PERNA_ATRAS]->offset.y -= SCREEN_HEIGHT / 100;
+            elementos[PERNA_FRENTE]->offset.y -= SCREEN_HEIGHT / 100;
         }
 
         void lightAtack() override {
-            attackingl = true;
+            atacking = HIGH_KICK;
             lightAtk->init.restart();
-            cout << "Attack" << endl;
+        
         }
 
         void lightAtackAnim(){
             Time t = lightAtk->init.getElapsedTime();
 
             if (t > lightAtk->timeLapse) {
-                attackingl = false;
+                atacking = STOPPED;
             }
 
             float percentage = (float) t.asMilliseconds()/(lightAtk->timeLapse.asMilliseconds());
 
             int angFix = (facingRight) ? 1 : -1;
-
+            
 
             if (percentage < 1.f / 3.f) {
                 
-                cout << "Animacao" << endl;
 
                 float thisPercentage = percentage * 3;
                 elementos[CORPO]->angle = angFix * 45 * -sin(thisPercentage*PI/2);
-                elementos[PERNA_FRENTE]->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
-                elementos[PERNA_ATRAS]->angle = angFix * -1 * -sin(thisPercentage * PI / 2);
+                elementos[PERNA_FRENTE]->angle = angFix * -320;
+                elementos[PERNA_ATRAS]->angle = angFix * 90 * -sin(thisPercentage * PI / 2);
                 elementos[ASA_ATRAS]->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
+                elementos[ASA_FRENTE]->angle = angFix * 90 * sin(thisPercentage * PI / 2);
 
-            } else   if (percentage < 2.f / 3.f) {
+            } else if (percentage < 2.f / 3.f) {
                 float thisPercentage = percentage * 3;
-                elementos[CORPO]->angle =  45;
-                elementos[PERNA_FRENTE]->angle = 45;
-                elementos[PERNA_ATRAS]->angle =  -1;
-                elementos[ASA_ATRAS]->angle = 45;
+                elementos[CORPO]->angle = angFix * -45;
+                elementos[PERNA_FRENTE]->angle = angFix * -320;
+                elementos[PERNA_ATRAS]->angle = angFix * -90;
+                elementos[PERNA_ATRAS]->offset.x = angFix * SCREEN_WIDTH/75;
+                elementos[PERNA_ATRAS]->offset.y =  -SCREEN_WIDTH / 75;
+                elementos[ASA_ATRAS]->angle = angFix * -45;
+                elementos[ASA_FRENTE]->angle = angFix * 90;
 
-            } else { 
+            } else if(percentage < 2.9f / 3.f) {
      
-                elementos[CORPO]->angle *= 0.1;
-                elementos[PERNA_FRENTE]->angle *= 0.1;
-                elementos[ASA_ATRAS]->angle *= 0.1;
+                elementos[CORPO]->angle *= 0.9;
+                elementos[PERNA_FRENTE]->angle *= 0.9;
+                elementos[PERNA_ATRAS]->angle *= 0.9;
+                elementos[PERNA_ATRAS]->offset.x = 0;
+                elementos[PERNA_ATRAS]->offset.y = 0;
+                elementos[ASA_ATRAS]->angle *= 0.9;
+                elementos[ASA_FRENTE]->angle *= 0.9;
             }
-
+            else {
+                elementos[CORPO]->angle = 0;
+                elementos[PERNA_FRENTE]->angle = 0;
+                elementos[PERNA_ATRAS]->angle = 0;
+                elementos[PERNA_ATRAS]->offset.x = 0;
+                elementos[PERNA_ATRAS]->offset.y = 0;
+                elementos[ASA_ATRAS]->angle = 0;
+                elementos[ASA_FRENTE]->angle = 0;
+            }
+            
 
         }
         void update() override {
 
-            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
-
-         
-
+            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30};
 
             if (air) {
                 vspeed += peso * G / 100;
@@ -211,21 +237,22 @@ namespace Rooster {
             elementos.at(ASA_FRENTE)->angle = ArmSpinAngFase;
             elementos.at(ASA_ATRAS)->angle = Arm2SpinAngFase;
             
-            if (estado == RUNNING) {
-                
+            if (estado == RUNNING) {    
                 runAnim();
             }
-            else {
+            else if (estado == DEFENDING) {
+                agachadinha();
+            }
+            else if(estado == STOPPED) {
                 runReset();
             }
 
-            if (attackingl) {
+            if (atacking == HIGH_KICK) {
                 lightAtackAnim();
-                
             }
+           
 
             bar->update(hp);
-
 
             for (int i = 1; i < elementos.size(); i++) {
 

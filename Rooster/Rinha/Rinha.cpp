@@ -76,6 +76,7 @@ int main() {
 	while (window->isOpen())
 	{
 
+		
 		//piano.draw(*window);
 
 		

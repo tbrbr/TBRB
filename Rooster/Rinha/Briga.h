@@ -16,13 +16,20 @@
 				{
 					galo.jump();
 				}
+				else if (e.key.code == Keyboard::F) {
+					galo.lightAtack();
+				}
 			}
 			if (e.type == Event::KeyPressed) {
 				if (e.key.code == Keyboard::Up)
 				{
 					galo2.jump();
 				}
+				else if (e.key.code == Keyboard::K) {
+					galo2.lightAtack();
+				}
 			}
+
 			
 		}
 
@@ -45,18 +52,17 @@
 			galo.run();
 
 		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			
+			galo.defend();
+
+		}
 		else
 		{
 			galo.setState(Rooster::state::STOPPED);
 			galo.setHspeed(0);
 
-		}
-
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
-		{
-			galo.lightAtack();
-				
 		}
 
 		//options p2
@@ -73,6 +79,12 @@
 			galo2.setState(Rooster::state::RUNNING);
 			galo2.facingRight = false;
 			galo2.run();
+
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+
+			galo2.defend();
 
 		}
 		else
@@ -93,7 +105,7 @@
 		galo2.update();
 
 		if (pointDistance(galo.hitbox.center, galo2.hitbox.center) < galo.hitbox.radius + galo2.hitbox.radius) {
-			cout << "Coliseu" << endl;
+			cout << "Colidiu" << endl;
 		}
 
 		

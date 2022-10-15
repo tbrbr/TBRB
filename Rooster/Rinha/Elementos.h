@@ -91,13 +91,22 @@ public:
     /// Updates element position based on the Part it's attached to
     void update(float otherX, float otherY, float otherAng) {
 
+
+
+
         float fixAngle = 3.141592 * otherAng / 180;
+
+
+       
 
         /// Calculating actualized position...
 
-
+       
+        
         position.x = offset.x + otherX + scl.x * attach.x * cos(fixAngle) - scl.y * attach.y * sin(fixAngle);
         position.y = offset.y + otherY + scl.x * attach.x * sin(fixAngle) + scl.y * attach.y * cos(fixAngle);
+        
+        
 
         otherAngle = otherAng;
 

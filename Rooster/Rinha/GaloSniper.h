@@ -10,15 +10,17 @@ namespace Rooster {
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
-
+        Ataques* lightAtk;
+       
     public:
-        Sniper(HitBox _hitbox, int atk, int def, int speed, int _state, Texture& _texture, bool isp1) : Galo(_hitbox, atk, def, speed, _state) {
-            hitbox = _hitbox;
+        Sniper(int atk, int def, int speed, int _state, Texture& _texture, bool isp1) : Galo(atk, def, speed, _state) {
             this->name = "Sniper";
             this->maxHp = 100;
             this->hp = 100;
             bar = new LifeBar(maxHp, isp1, name.c_str());
            
+
+            this->lightAtk = new Ataques(0.9, 0.5,HitBox{Vector2f(0, 0), 0}, 10, 3,milliseconds(1000));
 
             r.setSize(Vector2f(20, 20));
             r.setPosition(SCREEN_WIDTH/4, (float) SCREEN_HEIGHT/1.4);
@@ -62,21 +64,124 @@ namespace Rooster {
             elementos[BIGODE_ATRAS]->angle = 25;
         }
 
-        void LightAttack()override {
-
-            if (frames - initFrames < 300) {
-                elementos.at(CORPO)->angle = float((frames - initFrames) / 60) * (315);
+        void weatherAnim(int frames) {
+            elementos.at(CORPO)->angle += 0;
+            elementos.at(CORPO)->update(r.getPosition().x, r.getPosition().y, 0);
+            elementos.at(RABO)->angle = sin(frames / 200.f) * 20;
+        }
+        void jumpAnim() {
+            if (facingRight) {
+                ArmSpinAngFase = -(vspeed / 8) * 45;
+                Arm2SpinAngFase = -(vspeed / 8) * 45;
             }
             else {
-                elementos[CORPO]->angle = 0;
-                isLightAttack = false;
+                ArmSpinAngFase = (vspeed / 8) * 45;
+                Arm2SpinAngFase = (vspeed / 8) * 45;
             }
+            
+           
+
+            elementos.at(PERNA_FRENTE)->offset.y += vspeed / 8;
+            elementos.at(PE_FRENTE)->angle += vspeed / 20;
+
+            elementos.at(PERNA_ATRAS)->offset.y += vspeed / 16;
+            elementos.at(PE_ATRAS)->angle += vspeed / 20;
+            if (facingRight) {
+                elementos.at(BIGODE_FRENTE)->angle += vspeed / 2;
+                elementos.at(BIGODE_ATRAS)->angle += vspeed / 2;
+            }
+            else {
+                elementos.at(BIGODE_FRENTE)->angle -= vspeed / 2;
+                elementos.at(BIGODE_ATRAS)->angle -= vspeed / 2;
+            }
+        }
+        void cairAnim() {
+            elementos.at(PERNA_FRENTE)->offset.y = 0;
+            elementos.at(PERNA_ATRAS)->offset.y = 0;
+
+            elementos.at(PE_FRENTE)->angle = 0;
+            elementos.at(PE_ATRAS)->angle = 0;
+
+            elementos.at(BIGODE_FRENTE)->angle = 345;
+            elementos.at(BIGODE_ATRAS)->angle = 25;
+        }
+        void runAnim() {
+            legWalkAngFase += hspeed;
+            legWalkAngFase -= ((int)legWalkAngFase / 360) * 360;
+            elementos.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
+
+            elementos.at(ASA_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(ASA_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+
+            elementos.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+        }
+        void runReset() {
+            legWalkAngFase *= 0.8;
+            ArmSpinAngFase *= 0.8;
+            Arm2SpinAngFase *= 0.8;
+
+            elementos.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
+
+            elementos.at(ASA_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(ASA_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+
+            elementos.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
+            elementos.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
 
         }
 
-        void HeavyAttack()override {}
+        void lightAtack() override {
+            attackingl = true;
+            lightAtk->init.restart();
+            cout << "Attack" << endl;
+        }
 
+        void lightAtackAnim(){
+            Time t = lightAtk->init.getElapsedTime();
+
+            if (t > lightAtk->timeLapse) {
+                attackingl = false;
+            }
+
+            float percentage = (float) t.asMilliseconds()/(lightAtk->timeLapse.asMilliseconds());
+
+            int angFix = (facingRight) ? 1 : -1;
+
+
+            if (percentage < 1.f / 3.f) {
+                
+                cout << "Animacao" << endl;
+
+                float thisPercentage = percentage * 3;
+                elementos[CORPO]->angle = angFix * 45 * -sin(thisPercentage*PI/2);
+                elementos[PERNA_FRENTE]->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
+                elementos[PERNA_ATRAS]->angle = angFix * -1 * -sin(thisPercentage * PI / 2);
+                elementos[ASA_ATRAS]->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
+
+            } else   if (percentage < 2.f / 3.f) {
+                float thisPercentage = percentage * 3;
+                elementos[CORPO]->angle =  45;
+                elementos[PERNA_FRENTE]->angle = 45;
+                elementos[PERNA_ATRAS]->angle =  -1;
+                elementos[ASA_ATRAS]->angle = 45;
+
+            } else { 
+     
+                elementos[CORPO]->angle *= 0.1;
+                elementos[PERNA_FRENTE]->angle *= 0.1;
+                elementos[ASA_ATRAS]->angle *= 0.1;
+            }
+
+
+        }
         void update() override {
+
+            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
+
+         
 
 
             if (air) {
@@ -90,85 +195,37 @@ namespace Rooster {
             }
 
             r.move(hspeed, vspeed);
-
-            /// Animacao das partes do corpo
-
-            //these parts moves all the time to create weather like animations
+                         
             frames++;
-
-            elementos.at(CORPO)->angle += 0;
-            elementos.at(CORPO)->update(r.getPosition().x, r.getPosition().y, 0);
-            elementos.at(RABO)->angle = sin(frames / 200.f) * 20;
-
-            /******************************************************************/
-
-
-            //jump animation
+            weatherAnim(frames);
+            
+             
             if (air) {
-                ArmSpinAngFase = (vspeed / 8) * 45;
-                Arm2SpinAngFase = (vspeed / 8) * 45;
-
-                elementos.at(PERNA_FRENTE)->offset.y += vspeed / 8;
-                elementos.at(PE_FRENTE)->angle += vspeed / 20;
-
-                elementos.at(PERNA_ATRAS)->offset.y += vspeed / 16;
-                elementos.at(PE_ATRAS)->angle += vspeed / 20;
-
-                elementos.at(BIGODE_FRENTE)->angle -= vspeed / 2;
-                elementos.at(BIGODE_ATRAS)->angle -= vspeed / 2;
+                jumpAnim();
             }
             else {
-                elementos.at(PERNA_FRENTE)->offset.y = 0;
-                elementos.at(PERNA_ATRAS)->offset.y = 0;
-
-                elementos.at(PE_FRENTE)->angle = 0;
-                elementos.at(PE_ATRAS)->angle = 0;
-
-                elementos.at(BIGODE_FRENTE)->angle = 345;
-                elementos.at(BIGODE_ATRAS)->angle = 25;
+                cairAnim();
             }
+
 
             elementos.at(ASA_FRENTE)->angle = ArmSpinAngFase;
-            elementos.at(ASA_FRENTE)->offset.y = sin(frames / 200.f) * 5;
             elementos.at(ASA_ATRAS)->angle = Arm2SpinAngFase;
-            elementos.at(ASA_ATRAS)->offset.y = sin(frames / 200.f) * 5;
-
-            //running animation
+            
             if (estado == RUNNING) {
-                legWalkAngFase += hspeed;
-                legWalkAngFase -= ((int)legWalkAngFase / 360) * 360;
-                elementos.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
-                elementos.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-                elementos.at(ASA_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-                elementos.at(ASA_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-                elementos.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-                elementos.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-
+                
+                runAnim();
             }
             else {
-                legWalkAngFase *= 0.8;
-                ArmSpinAngFase *= 0.8;
-                Arm2SpinAngFase *= 0.8;
+                runReset();
+            }
 
-                elementos.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
-                elementos.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-                elementos.at(ASA_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-                elementos.at(ASA_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-                elementos.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-                elementos.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-
+            if (attackingl) {
+                lightAtackAnim();
+                
             }
 
             bar->update(hp);
 
-            if (isLightAttack)
-                this->LightAttack();
 
             for (int i = 1; i < elementos.size(); i++) {
 

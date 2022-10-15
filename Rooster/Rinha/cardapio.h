@@ -1,5 +1,6 @@
 
 class MenuPrincipal {
+
 	int mousex = 0;
 	int mousey = 0;
 

@@ -147,6 +147,7 @@
     <ClInclude Include="GaloSniper.h" />
     <ClInclude Include="IAtaques.h" />
     <ClInclude Include="jogador_de_video.h" />
+    <ClInclude Include="Math2.h" />
     <ClInclude Include="muitosjogadores.h" />
     <ClInclude Include="TilesDoArrocha.h" />
   </ItemGroup>

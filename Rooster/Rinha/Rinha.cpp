@@ -22,8 +22,7 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #include "TilesDoArrocha.h"
 
 #define FRAMERATE_LIMIT 60
-#define G 9.81
-#define PI 3.1415926563
+#include "Math2.h"
 
 //#include "jogador_de_video.h"
 #include "entradas.h"
@@ -49,15 +48,13 @@ int main() {
 	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
-
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 
-	Rooster::HitBox hb;
 	Texture t;
 	t.loadFromFile("sprites/galoSniper.png");
 
-	Sniper galo = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t,true);
-	Sniper galo2 = Sniper(hb, 20, 20, 20, Rooster::state::STOPPED, t,false);
+	Sniper galo = Sniper( 20, 20, 20, Rooster::state::STOPPED, t,true);
+	Sniper galo2 = Sniper( 20, 20, 20, Rooster::state::STOPPED, t,false);
 
 	Pato *miniGame1 = new Pato((*window));
 

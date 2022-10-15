@@ -142,6 +142,7 @@ namespace Rooster {
         int getLifeBarHeight() {
             return tam.y;
         }
+        
         void draw(RenderWindow *window) {
 
             window->draw(fillBar);
@@ -195,22 +196,16 @@ namespace Rooster {
                 lastTam = life.getGlobalBounds().width;
                 
             }
-           
-            
         }
         
     };
 
 
-    typedef struct {
-        Vector2i xCenter;
-        int radius;
-    } HitBox;
 
-    class Galo : public IAtaques{
+    class Galo{
 
     protected:
-        HitBox hitbox;
+        
         int maxHp;
         int hp;
         int id;
@@ -223,6 +218,7 @@ namespace Rooster {
 
         Sprite* sprite= new Sprite[9];
         RectangleShape r;
+        Vector2f position;
 
         std::vector<int> elementDrawOrder;
         std::vector<Element*> elementos;
@@ -234,10 +230,12 @@ namespace Rooster {
         
 
     public:
+       
+        HitBox hitbox;
         LifeBar* bar;
         bool facingRight = false;
-        bool attacking = false;
-        bool isLightAttack = false;
+        bool attackingl = false;
+        
 
 
         void addElement(sf::Texture& tex, float xTex, float yTex, float wid,
@@ -258,9 +256,10 @@ namespace Rooster {
 
 
 
-        Galo(HitBox _hitbox, int atk, int def, int speed, int _state) {
-
-            hitbox = _hitbox;
+        Galo(int atk, int def, int speed, int _state) {
+            
+            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
+            
             this->atk = atk;
             this->def = def;
             this->speed = speed;
@@ -294,30 +293,36 @@ namespace Rooster {
             bar->update(hp);
         }
 
-        void animJump() {
+        void jump() {
             if (!air) {
                 vspeed += (peso * (-8)) / 2;
                 air = true;
             }
         }
-
-        void animRun() {
+        
+        void run() {
             float acc = 0.5;
 
             if (facingRight) {
                 hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
                 for (int i = 0; i < elementos.size(); i++) {
                     elementos.at(i)->scl.x = -(float)SCREEN_WIDTH / 5120;;
+                    
                 }
             }
             else {
                 hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
                 for (int i = 0; i < elementos.size(); i++) {
-                    elementos.at(i)->scl.x = (float)SCREEN_WIDTH / 5120;;
+                    elementos.at(i)->scl.x = (float)SCREEN_WIDTH / 5120;
+                    
                 }
             }
         }
+        virtual void lightAtack() {
 
+        }
+
+        
 
         void show(sf::RenderWindow& window) {
 
@@ -327,6 +332,8 @@ namespace Rooster {
         }
 
         virtual void update() {
+
+            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
 
             if (air) {
                 vspeed += peso * G / 100;

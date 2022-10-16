@@ -1,0 +1,1524 @@
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include <list>
+#include <string>
+#include <sstream>
+
+
+
+
+using namespace sf;
+
+
+
+
+#include "Galo.h"
+
+
+
+float constrain(float val, float min, float max){
+    if(val < min){
+        return min;
+    } else if(val > max){
+        return max;
+    }
+
+    return val;
+}
+
+
+using namespace Rooster;
+
+std::vector<SpriteBone> bones;
+
+
+sf::Font font;
+
+
+struct engineInfo{
+    bool mouseState[2][3] = {{false, false, false},{false, false, false}};
+    bool selecting = false;
+    int mouseX = 0;
+    int mouseY = 0;
+
+    float screenWidth = 1280;
+    float screenHeight = 720;
+
+    Vector2f selStart;
+    Vector2f selEnd;
+
+    void mouseUpdate(){
+        mouseState[0][1] = false;
+        mouseState[0][2] = false;
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            if(!mouseState[0][0]){
+                mouseState[0][1] = true;
+            }
+            mouseState[0][0] = true;
+
+        } else {
+            if(mouseState[0][0]){
+                mouseState[0][2] = true;
+            }
+            mouseState[0][0] = false;
+
+        }
+
+        mouseState[1][1] = false;
+        mouseState[1][2] = false;
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+            if(!mouseState[1][0]){
+                mouseState[1][1] = true;
+            }
+            mouseState[1][0] = true;
+
+        } else {
+            if(mouseState[1][0]){
+                mouseState[1][2] = true;
+            }
+            mouseState[1][0] = false;
+        }
+
+
+
+
+
+
+
+
+    }
+
+    bool mouseInside(float x, float y, float wid, float hei){
+        if(mouseX > x && mouseX < x+wid && mouseY > y && mouseY < y+hei){
+            return true;
+        }
+
+        return false;
+    }
+
+};
+
+
+class Slider{
+
+public:
+  float x;
+  float y;
+  float sliderX;
+  float len;
+  float hei;
+  float maxVal;
+  float minVal;
+  float val;
+
+  bool moved;
+  bool hovered;
+
+  float sliderWid;
+  float sliderHei;
+
+  bool holded;
+  float mouseXOff;
+  //float mouseYOff;
+
+  Slider(float _x, float _y, float _len, float _min, float _max, float _startVal){
+    x = _x;
+    y = _y;
+    len = _len;
+    maxVal = _max;
+    minVal = _min;
+    float clampVal =  constrain(_startVal, _min, _max);
+    sliderX = _len*((clampVal-_min)/(_max-_min));
+
+    val = ((sliderX/len)*_max)+_min;
+
+    hei = 5;
+    sliderWid = hei*4;
+    sliderHei = hei*4;
+
+    mouseXOff = 0;
+    //mouseYOff = 0;
+
+    holded = false;
+    moved = false;
+  }
+
+  void updateValue(float value){
+    val = constrain(value, minVal, maxVal);
+    sliderX = len*val/(maxVal-minVal);
+  }
+
+  void updateSlider(struct engineInfo& info){
+
+    float xx = x+sliderX-(sliderWid/2);
+    float yy = y+(hei/2)-(sliderHei/2);
+
+    hovered = false;
+    if(info.mouseInside(xx, yy, sliderWid, sliderHei)){
+        hovered = true;
+    }
+
+
+    if(!holded){
+      moved = false;
+      if(info.mouseState[0][1]){
+
+
+        if(hovered){
+          holded = true;
+          mouseXOff = (sliderWid/2)-(info.mouseX-xx);
+        }
+      }
+    } else {
+      moved = true;
+      if(info.mouseState[0][0]){
+        sliderX = constrain(info.mouseX-x+mouseXOff, 0, len);
+      } else {
+        holded = false;
+      }
+    }
+
+    val = ((sliderX/len)*(maxVal-minVal))+minVal;
+  }
+
+  void drawSlider(sf::RenderWindow& window){
+
+    //Line
+     Color strokeColor(100);
+     Color fillColor(60);
+
+    RectangleShape select(Vector2f(len, hei));
+    select.setPosition(x, y);
+    select.setFillColor(fillColor);
+    select.setOutlineColor(strokeColor);
+    select.setOutlineThickness(2);
+
+    window.draw(select);
+
+
+
+
+     //Slider
+
+    RectangleShape slider(Vector2f(sliderWid, sliderHei));
+    slider.setPosition(x+sliderX-(sliderWid/2), y+(hei/2)-(sliderHei/2));
+    slider.setFillColor(Color(200));
+    slider.setOutlineColor(Color(200));
+
+    window.draw(slider);
+
+
+     //Valor
+    // textAlign(LEFT, CENTER);
+     //textSize(20);
+     //text((int)val, x + len + (sliderWid/2) + 4, y);
+  }
+};
+
+struct SpriteArea{
+    sf::IntRect texRect;
+
+    Vector2i center;
+
+    void init(){
+        texRect.left = 0;
+        texRect.top = 0;
+        texRect.width  = 0;
+        texRect.height = 0;
+
+        center.x = 0;
+        center.y = 0;
+    }
+
+    void draw(RenderWindow& window, float scl){
+        RectangleShape select(Vector2f(texRect.width*scl, texRect.height*scl));
+        select.setPosition(texRect.left*scl, texRect.top*scl);
+        select.setFillColor(Color(100, 100, 100, 0));
+        select.setOutlineColor(Color(255));
+        select.setOutlineThickness(4);
+
+        window.draw(select);
+    }
+
+    void draw(RenderWindow& window, float scl, Color fillColor){
+        RectangleShape select(Vector2f(texRect.width*scl, texRect.height*scl));
+        select.setPosition(texRect.left*scl, texRect.top*scl);
+        select.setFillColor(fillColor);
+        select.setOutlineColor(Color(255));
+        select.setOutlineThickness(4);
+
+        window.draw(select);
+    }
+};
+
+
+
+struct dragCircle{
+    bool hovered = false;
+    bool dragged = false;
+
+    bool draggable = true;
+
+    bool released = false;
+
+    float x = 0;
+    float y = 0;
+    float rad = 10;
+    Color col = Color::Red;
+
+    void init(){
+
+    }
+
+
+    void draw(RenderWindow& window){
+        CircleShape circle;
+        circle.setRadius(rad);
+        circle.setPosition(x-rad,y-rad);
+        circle.setOutlineColor(Color::Black);
+        circle.setOutlineThickness(2);
+        circle.setFillColor(col);
+
+        window.draw(circle);
+    }
+
+    void update(struct engineInfo& info){
+
+        released = false;
+        hovered = false;
+        if(info.mouseX > x - rad && info.mouseX < x + rad){
+            if(info.mouseY > y - rad && info.mouseY < y + rad){
+                hovered = true;
+            }
+        }
+
+
+        if(draggable){
+            if(!dragged){
+                if(info.mouseState[0][1]){
+                    if(hovered){
+
+                        dragged = true;
+
+                    }
+                }
+            } else {
+                x = info.mouseX;
+                y = info.mouseY;
+                if(info.mouseState[0][1]){
+                    dragged = false;
+                    released = true;
+                }
+            }
+        }
+    }
+};
+
+
+
+
+
+
+struct Bone{
+    struct SpriteArea sprArea;
+
+    sf::Sprite sprite;
+
+    int id = -1;
+
+    bool hasCenter = false;
+
+    Vector2i center;
+    Vector2i otherCenter;
+
+    std::vector<int> dependents;
+
+    int attachId = -1;
+    Vector2f attach;
+
+    Vector2f offset;
+
+    Vector2f pos;
+    Vector2f otherPos;
+
+    Vector2f drawPos;
+
+    float xScl;
+    float yScl;
+
+    float angle = 0;
+    float otherAngle = 0;
+
+
+    bool hovered = false;
+    bool selected = false;
+
+
+    struct dragCircle drags[3];
+
+    class Slider* angSlider;
+
+
+    void init2(struct engineInfo& info){
+
+        int sliderLen = 120;
+
+        angSlider = new Slider(info.screenWidth - sliderLen - 20, info.screenHeight - 100, sliderLen, 0, 720, 360);
+
+        sprArea.init();
+
+         // Relative to Center of part this is attached to
+        attach.x = 0;
+        attach.y = 0;
+
+        // Angulo e escala
+        angle = 0;
+        xScl = 0.25;
+        yScl = xScl;
+
+        offset.x = 0;
+        offset.y = 0;
+
+        center.x = 0;
+        center.y = 0;
+
+        pos.x = 0;
+        pos.y = 0;
+
+        otherPos.x = 0;
+        otherPos.y = 0;
+
+        otherAngle = 0;
+        otherCenter.x = 0;
+        otherCenter.y = 0;
+
+
+
+        struct dragCircle d1;
+        d1.col = Color::White;
+        d1.rad = 8;
+
+
+        struct dragCircle d2;
+        d2.col = Color::Red;
+        //d2.draggable = false;
+
+        struct dragCircle d3;
+        d3.col = Color::Green;
+
+
+        drags[0] = d1;
+        drags[1] = d2;
+        drags[2] = d3;
+    }
+
+    void init(const sf::Texture* tex, struct engineInfo& info){
+        sprite.setTexture(*tex);
+        init2(info);
+    }
+
+
+    void init(sf::Texture& tex, struct engineInfo& info){
+        sprite.setTexture(tex);
+        init2(info);
+    }
+
+    void removeAttach(){
+        attach.x = 0;
+        attach.y = 0;
+        attachId = -1;
+    }
+
+};
+
+
+
+
+class BoneHandle{
+    public:
+    struct Bone bone;
+
+    std::vector<struct Bone*> allBones;
+    struct engineInfo info;
+
+    BoneHandle(sf::Texture& tex, struct Bone& _bone, std::vector<struct Bone*>& _allBones, struct engineInfo& _info) : bone(_bone), allBones(_allBones), info(_info){
+        bone.init(tex, info);
+    }
+
+    void show(sf::RenderWindow& window){
+        /// Sprite
+        // Probably wont use
+        bone.sprite.setTextureRect(bone.sprArea.texRect);
+
+
+        bone.sprite.setPosition(bone.drawPos);
+        bone.sprite.setRotation(bone.angle + bone.otherAngle);
+        bone.sprite.setScale(bone.xScl, bone.yScl);
+
+        //angle+=1;
+
+        // Not useful at all
+        bone.sprite.setOrigin((Vector2f)bone.center);
+
+        window.draw(bone.sprite);
+
+
+
+
+        /// Frame
+        Color rectColor(200,200, 200, 20);
+        Color borderColor(255, 255, 255, 40);
+
+        if(bone.hovered){
+            rectColor.a = 40;
+            borderColor.a = 100;
+        }
+
+        if(bone.selected){
+            rectColor.a = 100;
+        }
+
+
+        float selWid = bone.sprArea.texRect.width *bone.xScl;
+        float selHei = bone.sprArea.texRect.height*bone.yScl;
+
+        RectangleShape select(Vector2f(selWid, selHei));
+        select.setPosition(bone.pos.x, bone.pos.y);
+
+        select.setFillColor(rectColor);
+        select.setOutlineColor(borderColor);
+        select.setOutlineThickness(4);
+
+        window.draw(select);
+    }
+
+    void showButtons(sf::RenderWindow& window){
+        if(bone.selected){
+
+            bone.drags[1].draw(window);
+
+            bone.drags[2].draw(window);
+
+            bone.drags[0].draw(window);
+
+            bone.angSlider->drawSlider(window);
+
+
+            sf::Text t;
+            std::stringstream str;
+
+            str << "PosX: " << bone.pos.x << " | PosY: " << bone.pos.y << std::endl;
+            str << " | AttachX: " << bone.attach.x << " | AttachY: " << bone.attach.y << std::endl;
+            str << " | AreaWid: " << bone.sprArea.texRect.width*bone.xScl << " | SprWid: " << bone.sprite.getGlobalBounds().width;
+
+            t.setString(str.str());
+            t.setCharacterSize(15);
+            t.setColor(Color::Black);
+            t.setFont(font);
+            t.setPosition(300, 0);
+            window.draw(t);
+
+        }
+
+    }
+
+    bool isHovered(){
+       // Hovering
+        bool hovered = false;
+        // Here we could include Hovering the Spheres and Sliders
+        if(info.mouseInside(bone.pos.x, bone.pos.y, bone.sprArea.texRect.width*bone.xScl, bone.sprArea.texRect.height*bone.yScl)){
+            hovered = true;
+        }
+
+        for(int i = 0; i < 3; i++){
+            if(bone.drags[i].hovered){
+                hovered = true;
+            }
+        }
+
+        if(bone.angSlider->hovered){
+            hovered = true;
+        }
+
+        return hovered;
+    }
+
+    void update(){
+
+        if(bone.attachId != -1){
+            const struct Bone b = *allBones[ bone.attachId];
+
+            /// This is somewhat redundant
+            // But could be useful when deattaching
+            bone.otherAngle    = b.angle;
+
+            // Why not use b.position.
+            bone.otherPos.x    = b.drawPos.x - b.center.x;
+            bone.otherPos.y    = b.drawPos.y - b.center.y;
+            bone.otherCenter   = b.center;
+
+            /// We still need to have xScl and yScl in here if we want for it to flip correctly
+
+            // Transforms from degrees to radians
+            float correctedAngle = 3.141592*b.angle/180;
+
+            float attachXRotated =  b.xScl * sin(correctedAngle) * bone.attach.x + b.yScl * cos(correctedAngle) * bone.attach.y;
+            float attachYRotated =  b.xScl * cos(correctedAngle) * bone.attach.x - b.yScl * sin(correctedAngle) * bone.attach.y;
+
+            bone.pos.x = bone.otherPos.x + bone.otherCenter.x*b.xScl + attachXRotated;
+            bone.pos.y = bone.otherPos.y + bone.otherCenter.y*b.yScl + attachYRotated;
+
+            bone.drawPos.x = bone.pos.x + bone.center.x*bone.xScl;
+            bone.drawPos.y = bone.pos.y + bone.center.y*bone.yScl;
+
+        } else {
+
+            bone.drawPos.x = bone.pos.x + bone.center.x*bone.xScl;
+            bone.drawPos.y = bone.pos.y + bone.center.y*bone.yScl;
+        }
+
+
+
+        // Hovering
+        bone.hovered = isHovered();
+
+        // Selecting
+        if(info.mouseState[0][1]){
+            if(bone.hovered){
+                bone.selected = true;
+            } else {
+                bone.selected = false;
+            }
+        }
+
+
+
+
+
+        /// Sliders, Buttons and Stuff
+        if(bone.selected){
+
+
+            for(int i = 0; i < 3; i++){
+                bone.drags[i].update(info);
+            }
+
+
+
+            /// Position dragger
+            if(bone.attachId == -1){
+                if(bone.drags[1].dragged){
+                    bone.pos.x = bone.drags[1].x + 10;
+                    bone.pos.y = bone.drags[1].y + 10;
+                } else {
+                    bone.drags[1].x = bone.pos.x - 10;
+                    bone.drags[1].y = bone.pos.y - 10;
+                }
+            } else {
+
+                //bone.attach.x =
+            }
+
+
+
+
+            /// Center dragger on Texture
+            if(bone.drags[2].dragged){
+
+                /// Why 2 as scl?
+
+                bone.center.x = bone.drags[2].x*2 - bone.sprArea.texRect.left;
+                bone.center.y = bone.drags[2].y*2 - bone.sprArea.texRect.top;
+
+            }else {
+
+                // Here the inverse of 2
+                bone.drags[2].x = (bone.sprArea.texRect.left + bone.center.x)*0.5;
+                bone.drags[2].y = (bone.sprArea.texRect.top  + bone.center.y)*0.5;
+            }
+
+
+
+
+            /// Center dragger on Bone
+            if(!bone.drags[0].dragged && !bone.drags[0].released){
+                bone.drags[0].x = bone.drawPos.x;
+                bone.drags[0].y = bone.drawPos.y;
+            }
+
+            if(bone.drags[0].released){
+
+                float xx = bone.drags[0].x - bone.drawPos.x;
+                float yy = bone.drags[0].y - bone.drawPos.y;
+
+                bone.center.x += xx/bone.xScl;
+                bone.center.y += yy/bone.yScl;
+            }
+
+
+
+            /// Angle Slider
+            bone.angSlider->updateSlider(info);
+
+            if(bone.angSlider->holded){
+                bone.angle = bone.angSlider->val;
+            } else {
+                bone.angSlider->updateValue(bone.angle);
+            }
+
+        }
+
+
+    }
+
+    void addChild(int id){
+        bone.dependents.push_back(id);
+    }
+
+    void removeChild(int id){
+        for(int i = 0; i < bone.dependents.size(); i++){
+            if(bone.dependents[i] == id){
+                if(allBones[bone.dependents[i]]->attachId == bone.id){
+                    allBones[bone.dependents[i]]->removeAttach();
+                }
+                bone.dependents.erase(bone.dependents.begin() + i);
+
+            }
+        }
+
+    }
+
+        /// This goes inside Bone not here
+    void addAttach(int id){
+
+        removeAttach();
+
+
+        bone.attachId = id;
+
+        // Maybe some compensation here !!
+        bone.attach.x = (allBones[id]->pos.x) - (bone.pos.x + bone.center.x*bone.xScl);
+        bone.attach.y = (allBones[id]->pos.y) - (bone.pos.y + bone.center.y*bone.yScl);
+    }
+
+    /// This goes inside Bone not here
+    void removeAttach(){
+        bone.attachId = -1;
+
+        // Maybe some compensation here !!
+        bone.attach.x = 0;
+        bone.attach.y = 0;
+    }
+
+};
+
+
+
+
+
+
+
+struct dependBar{
+
+    int id;
+
+    int dependOn;
+
+    std::vector<int> dependents;
+
+
+    int depth;
+};
+
+void getAllDependents(std::vector<struct dependBar>& order, int id, std::vector<int>& dependents, int relDepth = 0){
+
+
+    for(int i = 0; i < order[id].dependents.size(); i++){
+        getAllDependents(order, order[id].dependents[i], dependents, relDepth+1);
+    }
+
+    if(relDepth != 0){
+        dependents.push_back(id);
+    }
+}
+
+void updateAllDepths(std::vector<struct stuff>& order, int id, int depth){
+
+
+    for(int i = 0; i < order[id].dependents.size(); i++){
+        updateAllDepths(order, order[id].dependents[i], depth +1);
+    }
+
+    order[id].depth = depth;
+
+}
+
+
+
+
+
+struct BoneManager{
+
+    std::vector<SpriteArea> areas;
+    std::list<Bone> ossos;
+    std::list<BoneHandle> boneHandles;
+
+    Sprite sprSheet;
+
+
+    int areaSelected = -1;
+
+    int elementSelected = -1;
+    bool draggingBar = false;
+
+        /// Right Bar
+
+        struct{
+            float wid = 300;
+            float hei = info.screenHeight;
+            float x = info.screenWidth - barWid;
+            float y = 0;
+            float lHei = 40;
+        } rBar;
+
+
+
+
+    std::list<struct dependBar> dependBars;
+    std::list<int> dependBarOrder;
+
+
+    void init(Texture& t, struct engineInfo& info){
+        sprSheet.setTexture(t);
+        info.sheetScl  = (float)(info.screenHeight - 20)/sprSheet.getLocalBounds().height;
+        sprSheet.setScale(info.sheetScl, info.sheetScl);
+
+    }
+
+    void draw(sf::RenderWindow& window, struct engineInfo& info){
+
+
+
+        /// Panel
+        RectangleShape panel(Vector2f(sprSheet.getGlobalBounds().width, info.screenHeight));
+        panel.setPosition(0,0);
+        panel.setFillColor(Color(150, 150, 150));
+        window.draw(panel);
+
+        // Sprite
+        window.draw(sprSheet);
+
+
+
+        /// Inferior Bar
+        RectangleShape fundo(Vector2f(info.screenWidth, 20));
+        fundo.setPosition(0,info.screenHeight-20);
+        fundo.setFillColor(Color(100, 100, 200));
+        window.draw(fundo);
+
+
+        /// Selection
+        RectangleShape select(Vector2f(info.selEnd.x-info.selStart.x, info.selEnd.y-info.selStart.y));
+        select.setPosition(info.selStart.x, info.selStart.y);
+        select.setFillColor(Color(100, 100, 100, 0));
+        select.setOutlineColor(Color(255));
+        select.setOutlineThickness(4);
+        window.draw(select);
+
+
+
+        /// Areas
+        for(int i = 0; i < areas.size(); i++){
+            RectangleShape a(Vector2f(15, 15));
+            a.setPosition(i*(15+5) + 5, info.screenHeight-17.5);
+            a.setFillColor(Color(200, 230, 180));
+            a.setOutlineColor(Color::Black);
+            a.setOutlineThickness(2);
+            window.draw(a);
+
+            Color col(200, 200, 200, 0);
+
+            if(i == areaSelected){
+                col.a = 100;
+            }
+
+            areas[i].draw(window, sheetScl, col);
+        }
+
+
+
+        /// Bones
+        for(int i = 0; i < boneHandles.size(); i++){
+            boneHandles[i].show(window);
+        }
+
+
+
+
+        float barWid = rBar.wid;
+        float barHei = rBar.hei;
+        float barX = rBar.x;
+        float barY = rBar.y;
+        float layerHei = rBar.lHei;
+
+
+        RectangleShape rightBar(Vector2f(barWid, barHei));
+        rightBar.setPosition(barX, barY);
+        rightBar.setFillColor(Color(200, 200, 200));
+        window.draw(rightBar);
+
+
+
+        for(int i = 0; i < dependBarOrder.size(); i++){
+
+            int ind = dependBarOrder[i];
+
+            float layerX = barX + 30 * dependBars[ind].depth;
+            float layerY = barY + layerHei*i;
+
+            if(ind == elementSelected && draggingBar){
+               layerY = info.mouseY;
+            }
+
+
+
+            Color col = Color((127*ind)%255, (231*ind)%255, (ind*33)%255);
+
+            RectangleShape depBar(Vector2f(barWid, layerHei));
+            depBar.setPosition(layerX, layerY);
+            depBar.setFillColor(col);
+            window.draw(depBar);
+
+
+            col = Color::Black;
+            col.a = 100;
+            depBar.setPosition(layerX + barWid/2, layerY);
+            depBar.setFillColor(col);
+            window.draw(depBar);
+
+            RectangleShape a(Vector2f(15, 15));
+            a.setPosition( barX + barWid - 15, barY+ layerY + layerHei/2 - 15/2);
+            a.setFillColor(Color(200, 230, 180));
+            a.setOutlineColor(Color::Black);
+            a.setOutlineThickness(2);
+            window.draw(a);
+        }
+
+        if(draggingBar){
+            int barNumber = constrain((float)(info.mouseY - barY)/layerHei, 0, dependBars.size()-1);
+            float layerY = barY + layerHei*barNumber;
+
+            bool inside  = ((info.mouseX - barX)/(barWid)) > 0.5 ? true : false;
+
+            RectangleShape a(Vector2f(15, 15));
+            a.setPosition( barX - 20, barY + layerY + layerHei/2 - 15/2);
+
+            Color col = Color(200, 200, 250);
+            if(inside){
+                col.r = 250;
+            }
+            a.setFillColor(col);
+            a.setOutlineColor(Color::Black);
+            a.setOutlineThickness(2);
+            window.draw(a);
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+            /*
+            if(barOrder[ind].id == elementSelected && draggingBar){
+               layerY = info.mouseY;
+            }
+
+
+            rightBar.setSize(Vector2f(barWid, layerHei));
+            rightBar.setPosition(layerX, layerY);
+            rightBar.setFillColor(Color(150, 200, barOrder[ind].id*100));
+            window.draw(rightBar);
+
+
+            if(info.mouseState[0][1]){
+                if(draggingBar){
+
+                } else {
+                    if(info.mouseInside(barX, barY + layerHei*i, barWid, layerHei)){
+                        elementSelected = barOrder[ind].id;
+                        ossos[elementSelected].selected = true;
+
+                        std::cout << "Osso Index: " << barOrder[ind].id << " | BarOrder Index: " << ind << " | BarOrderOrder Index: " << i << std::endl;
+
+
+
+                        draggingBar = true;
+
+                    }
+                }
+            }
+
+            RectangleShape a(Vector2f(15, 15));
+            a.setPosition( barX + barWid - 15, barY+ layerY + layerHei/2 - 15/2);
+
+            a.setFillColor(Color(200, 230, 180));
+            a.setOutlineColor(Color::Black);
+            a.setOutlineThickness(2);
+            window.draw(a);
+
+
+            sf::Text t;
+            std::stringstream str;
+            str << "Id " << barOrder[ind].id << " [ ";
+            //std::cout << barOrder[barOrderOrder[i]].id << " Id" << std::endl;
+
+            std::vector<int> shit;
+
+            getAllDependents(barOrder, ind, shit);
+
+            for(int j = 0; j < shit.size()-1; j++){
+                            str << shit[j];
+
+                            if(j == shit.size()-2){
+                                str << " ]";
+                            } else {
+                                str << ", ";
+                            }
+            }
+            t.setString(str.str());
+            t.setCharacterSize(15);
+            t.setColor(Color::Black);
+            t.setFont(font);
+            t.setPosition(barX, barY+ layerY + layerHei/2 - 15/2);
+            window.draw(t);
+
+        }
+
+
+        for(int i = 0; i < ossos.size(); i++){
+
+            ossos[i].showButtons(window);
+
+        }
+
+
+
+
+
+
+            if(!info.mouseState[0][0]){
+                if(draggingBar){
+                    draggingBar = false;
+                    int mX = info.mouseX;
+                    int mY = info.mouseY;
+
+                    int index = constrain((float)(mY - barY)/layerHei, 0, barOrder.size()-1);
+                    index = barOrderOrder[index];
+
+                    bool inside  = ((mX - barX)/(barWid)) > 0.5 ? true : false;
+
+                    std::cout << (inside ? "Internal " : "External ") << " Index " << index << "   Selected: " << elementSelected << std::endl;
+
+
+                    if(index != elementSelected){
+                        std::vector<int> allIds;
+                        getAllDependents(barOrder, elementSelected, allIds);
+                        bool isIndexInsideAllIds = false;
+                         std::cout << index << " Dependents: [";
+                        for(int i = 0; i < allIds.size(); i++){
+                            std::cout << allIds[i];
+
+                            if(i == allIds.size()-1){
+                                std::cout << " ]" << std::endl;
+                            } else {
+                                std::cout << ", ";
+                            }
+                            if(allIds[i] == index){
+                                isIndexInsideAllIds = true;
+
+                            }
+                        }
+
+
+                        if(!isIndexInsideAllIds){
+                            if(inside){
+
+                                updateAllDepths(barOrder, elementSelected, barOrder[index].depth + 1);
+                                int dependId = barOrder[elementSelected].dependOn;
+
+                                if(dependId != -1){
+                                    for(int j = 0; j < barOrder[dependId].dependents.size(); j++){
+                                        if(barOrder[dependId].dependents[j] == elementSelected){
+                                            barOrder[barOrder[elementSelected].dependOn].dependents.erase(barOrder[barOrder[elementSelected].dependOn].dependents.begin()+j);
+                                        }
+                                    }
+                                }
+
+                                barOrder[index].dependents.push_back(elementSelected);
+                                barOrder[elementSelected].dependOn = index;
+
+
+                                int thisId = barOrder[elementSelected].id;
+                                int atId =   barOrder[index].id;
+
+                                // Sus
+                                ossos[thisId].attachId = atId;
+
+                                ossos[thisId].attach.x = -ossos[atId].position.x + ossos[thisId].position.x;
+                                ossos[thisId].attach.y = -ossos[atId].position.y + ossos[thisId].position.y;
+
+                               // std::cout <<
+                                std::cout << "X1: " << ossos[atId].position.x << "  X2: " << ossos[thisId].position.x;
+                                ossos[thisId].update(ossos[atId].angle, ossos[atId].position.x,ossos[atId].position.y, info);
+                                std::cout << "  X2 Now: " << ossos[atId].position.x << "  X2 Atttach: "  << ossos[thisId].attach.x << std::endl;
+
+
+
+                            } else {
+
+                                updateAllDepths(barOrder, elementSelected, barOrder[index].depth);
+
+                                if(barOrder[elementSelected].dependOn != -1){
+                                    for(int j = 0; j < barOrder[barOrder[elementSelected].dependOn].dependents.size(); j++){
+                                        if(barOrder[barOrder[elementSelected].dependOn].dependents[j] == elementSelected){
+                                            barOrder[barOrder[elementSelected].dependOn].dependents.erase(barOrder[barOrder[elementSelected].dependOn].dependents.begin()+j);
+                                        }
+                                    }
+                                }
+
+                                //barOrder[index].dependents.push_back(elementSelected);
+                                barOrder[elementSelected].dependOn = -1;
+
+
+                                ossos[barOrder[elementSelected].id].attachId = -1;
+                            }
+
+
+                            for(int i = 0; i < allIds.size()-1; i++){
+
+                                for(int j = barOrderOrder.size()-1; j > -1; j--){
+                                    if(allIds[i] == barOrderOrder[j]){
+                                        //std::cout << "Eitan" << std::endl;
+                                        barOrderOrder.erase(barOrderOrder.begin()+j);
+                                    }
+                                }
+
+                            }
+
+                            for(int i = allIds.size()-2; i > -1; i--){
+                               // std::cout << "Eitan " <<  allIds[i] << std::endl;
+                                barOrderOrder.insert(barOrderOrder.begin()+index, allIds[i]);
+                            }
+                        } else {
+                            std::cout << "Filho" << std::endl;
+                        }
+
+                    } else {
+                        std::cout << "Igual" << std::endl;
+                    }
+
+                    std::cout << std::endl;
+                }
+            }
+
+
+            */
+
+
+    }
+
+
+
+
+    void update(engineInfo& info){
+
+        for(int i = 0; i < dependBarOrder.size(); i++){
+
+            int ind = dependBarOrder[i];
+
+            boneHandles[ind].update(info);
+        }
+
+
+        // Selecting areas
+        if(info.mouseState[0][1]){
+            for(int i = 0; i < areas.size(); i++){
+
+                float xx = i*(15+5) + 5;
+                float yy = info.screenHeight-17.5;
+
+                if(info.mouseInside(xx, yy, 15, 15)){
+                    areaSelected = i;
+                }
+            }
+        }
+
+        // Creating Bones
+        if(info.mouseState[1][1]){
+            if(areaSelected != -1){
+                struct Bone b;
+
+                b.init(sprSheet.getTexture(), info);
+
+                b.sprArea = areas[areaSelected];
+                b.x = info.mouseX;
+                b.y = info.mouseY;
+
+                ossos.push_back(b);
+
+                struct BoneHandle bH;
+                bH.init(sprSheet.getTexture(), ossos[ossos.size()-1], ossos, info);
+                boneHandles.push_back(bH);
+
+
+
+                struct dependBar st;
+                st.id = ossos.size()-1;
+                st.depth = 0;
+                st.dependOn = -1;
+
+                dependBars.push_back(st);
+                dependBarOrder.push_back(dependBars.size()-1);
+
+            }
+        }
+
+
+
+
+        float barWid = rBar.wid;
+        float barHei = rBar.hei;
+        float barX = rBar.x;
+        float barY = rBar.y;
+        float layerHei = rBar.lHei;
+
+        /// Selection creation
+        if(info.mouseState[0][1]){
+            if(info.mouseInside(0,0, sprSheet.getGlobalBounds().width, info.screenHeight)){
+                info.selecting = true;
+                info.selStart.x = info.mouseX;
+                info.selStart.y = info.mouseY;
+            }
+
+
+
+            /// Selecting dependBars
+
+            if(info.mouseInside(barX, barY, barWid, layerHei*dependBars.size())){
+                int barNumber = constrain((float)(info.mouseY - barY)/layerHei, 0, dependBars.size()-1);
+                float layerY = barY + layerHei*barNumber;
+
+                elementSelected = dependBarOrder[barNumber];
+                boneHandles[elementSelected].bone.selected = true;
+            }
+
+
+        }
+
+
+        if(draggingBar){
+
+            if(info.mouseState[0][2]){
+                int barNumber = constrain((float)(info.mouseY - barY)/layerHei, 0, dependBars.size()-1);
+                float layerY = barY + layerHei*barNumber;
+
+                bool inside  = ((info.mouseX - barX)/(barWid)) > 0.5 ? true : false;
+
+
+                int otherInd = dependBarOrder[barNumber];
+                int thisInd = elementSelected;
+
+                if(otherInd != thisInd){
+
+                    std::list<int> allDependents;
+                    getAllDependents(dependBars, thisInd, allDependents);
+                    bool otherIsChild = false;
+                    for(int i = 0; i < allDependents.size(); i++){
+                        if(allDependents[i] == otherInd){
+                            i = allDependents.size();
+                            otherIsChild = true;
+                        }
+                    }
+
+                    if(!otherIsChild){
+                        if(inside){
+                            for(int i = 0; i < dependBarOrder.size(); i++){
+
+                                int index = i - (dependBarOrder.size()-1);
+
+
+                                for(int j = 0; j < allDependents.size(); j++){
+                                    if(allDependents[j] == dependBarOrder[index]){
+                                        dependBarOrder.erase(dependBarOrder.begin()+index);
+                                        j = allDependents.size();
+                                    }
+                                }
+                            }
+
+                            int otherOrder = -1;
+                            for(int i = 0; i < dependBarOrder.size(); i++){
+                                if(dependBarOrder[i] == otherInd){
+                                    otherOrder = i;
+                                    i = dependBarOrder.size();
+                                }
+                            }
+
+
+                            dependBarOrder.splice(dependBarOrder.begin()+otherOrder+1, allDependents);
+
+                            boneHandles[thisInd].addAttach(otherInd);
+                            boneHandles[otherInd].addChild(thisInd);
+                            dependBars[otherInd].dependents.push_back(thisInd);
+
+                            int oldDepend = dependBars[thisInd].dependOn ;
+                            if(oldDepend != -1){
+                                dependBars[oldDepend].dependents.remove(thisInd);
+                            }
+                            dependBars[thisInd].dependOn = otherInd;
+
+                            updateAllDepths(dependBars, thisInd, dependBar[otherInd].depth+1);
+
+
+
+
+
+
+                        } else {
+
+                        // Order of thsi mai be improtant
+                            for(int i = 0; i < dependBarOrder.size(); i++){
+
+                                int index = i - (dependBarOrder.size()-1);
+
+
+                                for(int j = 0; j < allDependents.size(); j++){
+                                    if(allDependents[j] == dependBarOrder[index]){
+                                        dependBarOrder.erase(dependBarOrder.begin()+index);
+                                        j = allDependents.size();
+                                    }
+                                }
+                            }
+
+                            int otherOrder = -1;
+                            for(int i = 0; i < dependBarOrder.size(); i++){
+                                if(dependBarOrder[i] == otherInd){
+                                    otherOrder = i;
+                                    i = dependBarOrder.size();
+                                }
+                            }
+
+
+                            dependBarOrder.splice(dependBarOrder.begin()+otherOrder+1, allDependents);
+
+
+                            int otherDependOn = dependBar[otherInd].dependOn;
+                            if(otherDependOn != -1){
+
+                                boneHandles[thisInd].addAttach(otherDependOn);
+                                boneHandles[otherDependOn].addChild(thisInd);
+                                dependBars[otherDependOn].dependents.push_back(thisInd);
+
+
+                                dependBars[thisInd].dependOn = otherDependOn;
+                            } else {
+                                boneHandles[thisInd].removeAttach();
+
+                            }
+
+                            int oldDepend = dependBars[thisInd].dependOn;
+                            if(oldDepend != -1){
+                                dependBars[oldDepend].dependents.remove(thisInd);
+                            }
+
+                            updateAllDepths(dependBars, thisInd, dependBar[otherInd].depth);
+                        }
+                    }
+
+                }
+
+            }
+
+
+        }
+
+
+
+
+
+
+        if(info.selecting){
+            info.selEnd.x = info.mouseX;
+            info.selEnd.y = info.mouseY;
+            if(info.mouseState[0][0]){
+
+            } else {
+                info.selecting = false;
+
+            }
+
+        }
+
+
+
+    }
+
+
+
+};
+
+#define FRAMERATE_LIMIT 60
+#define println(x) std::cout << x << std::endl
+
+
+
+
+
+
+
+
+
+int main(){
+
+    RenderWindow* window = new RenderWindow(VideoMode(1280, 720), "TBRB");
+    window->setFramerateLimit(FRAMERATE_LIMIT);
+
+    Rooster::HitBox hb;
+    Texture t;
+    t.loadFromFile("sprites/galoSniper.png");
+
+    Rooster::Galo galo(hb, 20, 20, 20, Rooster::state::STOPPED, t);
+
+
+    struct engineInfo info;
+    struct BoneManager bManager;
+
+    font.loadFromFile("fonts/Melted Monster.ttf");
+
+    bManager.init(t, info);
+
+
+
+
+
+
+
+
+    while (window->isOpen()) {
+        Event e;
+        while (window->pollEvent(e)) {
+            if (e.type == Event::Closed) {
+                window->close();
+
+            }
+
+            if (e.type == Event::KeyPressed) {
+
+                if(e.key.code == Keyboard::Enter){
+                    if(!info.selecting){
+                        struct SpriteArea area;
+
+                        area.init();
+                        area.center.x = 0;
+                        area.center.y = 0;
+                        area.texRect.left = info.selStart.x/bManager.sheetScl;
+                        area.texRect.top  = info.selStart.y/bManager.sheetScl;
+                        area.texRect.width =  (info.selEnd.x - info.selStart.x)/bManager.sheetScl;
+                        area.texRect.height = (info.selEnd.y - info.selStart.y)/bManager.sheetScl;
+
+                        bManager.areas.push_back(area);
+                    }
+                }
+
+            }
+
+
+            if(e.type == Event::MouseMoved){
+
+                info.mouseX = e.mouseMove.x;
+                info.mouseY = e.mouseMove.y;
+            }
+
+        }
+
+
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+            galo.setState(Rooster::state::RUNNING);
+            galo.facingRight = true;
+            galo.animRun();
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+            galo.setState(Rooster::state::RUNNING);
+            galo.facingRight = false;
+            galo.animRun();
+        } else {
+            galo.setState(Rooster::state::STOPPED);
+            galo.setHspeed(0);
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+            galo.attacking = true;
+        } else {
+            galo.attacking = false;
+        }
+
+
+
+
+
+        info.mouseUpdate();
+
+
+
+
+        galo.update(info.mouseX, info.mouseY);
+        bManager.update(info);
+
+
+
+
+
+
+
+
+
+
+        window->clear();
+
+
+        RectangleShape fundo(Vector2f(1280, 720));
+        fundo.setPosition(0,0);
+        fundo.setFillColor(Color(100, 100, 100));
+
+
+
+        window->draw(fundo);
+
+
+
+
+
+
+        bManager.draw(*window, info);
+
+
+
+        galo.show(*window);
+
+        window->display();
+
+    }
+
+
+
+    return 0;
+}

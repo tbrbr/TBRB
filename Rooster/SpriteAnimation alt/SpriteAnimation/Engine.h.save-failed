@@ -1,0 +1,243 @@
+#ifndef ENGINE_H_INCLUDED
+#define ENGINE_H_INCLUDED
+
+float constrain(float val, float min, float max){
+    if(val < min){
+        return min;
+    } else if(val > max){
+        return max;
+    }
+
+    return val;
+}
+
+void printIntVec(std::vector<int> vec){
+    std::cout << "[ ";
+    for(int i = 0;i  < vec.size(); i++){
+        std::cout << vec[i];
+        if(i == vec.size()-1){
+            std::cout << " ]";
+
+        } else {
+            std::cout << ", ";
+        }
+    }
+}
+
+std::string streamIntVec(std::vector<int> vec){
+    std::stringstream a;
+    a << "[ ";
+    for(int i = 0;i  < vec.size(); i++){
+        a << vec[i];
+        if(i == vec.size()-1){
+
+
+        } else {
+            a << ", ";
+        }
+    }
+    a << " ]";
+
+    return a.str();
+}
+
+
+
+struct GUIInfo{
+    struct{
+        float wid = 260;
+        float hei;
+        float x;
+        float y = 0;
+        float lX = 0;
+        float lHei = 40;
+    } rBar;
+
+    struct{
+        float x = 0;
+        float y = 0;
+    } propBar;
+
+    /// Down Bar
+    struct{
+        float wid;
+        float hei = 40;
+        float x = 0;
+        float y;
+        float toolX;
+    } dBar;
+
+    /// Up Bar
+    struct{
+        float wid;
+        float hei = 40;
+        float x = 0;
+        float y;
+    } uBar;
+};
+
+
+
+struct engineInfo{
+    bool mouseState[2][3] = {{false, false, false},{false, false, false}};
+    bool selecting = false;
+    int mouseX = 0;
+    int mouseY = 0;
+
+    bool keyboardState[sf::Keyboard::KeyCount][3];
+
+    float screenWidth = 1280;
+    float screenHeight = 720;
+
+    Vector2f selStart;
+    Vector2f selEnd;
+
+    float sheetScl = 1;
+
+    int toolSelected = 0;
+
+    float xWholeScl = 1;
+    float yWholeScl = 1;
+    float xWhole = 0;
+    float yWhole = 0;
+    float angWhole = 0;
+
+    bool hoveringGUI = false;
+
+
+    // Text Input
+    char lastChar = ' ';
+    bool newInput = false;
+    bool deleteChar = false;
+    bool confirmInput = false;
+
+    bool typing = false;
+
+    struct GUIInfo GUI;
+
+
+    void init(){
+        for(int i = 0; i < sf::Keyboard::KeyCount; i++){
+            keyboardState[i][0] = false;
+            keyboardState[i][1] = false;
+            keyboardState[i][2] = false;
+        }
+
+    }
+
+    void update(){
+        hoveringGUI = false;
+        typing = false;
+        newInput = false;
+        deleteChar = false;
+        confirmInput = false;
+
+        for(int i = 0; i < sf::Keyboard::KeyCount; i++){
+            bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+            if(!keyboardState[i][0] && keyState){
+                keyboardState[i][1] = true;
+            } else {
+                keyboardState[i][1] = false;
+            }
+
+            if(keyboardState[i][0] && !keyState){
+                keyboardState[i][2] = true;
+            } else {
+                keyboardState[i][2] = false;
+            }
+
+            keyboardState[i][0] = keyState;
+        }
+    }
+
+
+    void mouseUpdate(){
+        mouseState[0][1] = false;
+        mouseState[0][2] = false;
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            if(!mouseState[0][0]){
+                mouseState[0][1] = true;
+            }
+            mouseState[0][0] = true;
+
+        } else {
+            if(mouseState[0][0]){
+                mouseState[0][2] = true;
+            }
+            mouseState[0][0] = false;
+
+        }
+
+        mouseState[1][1] = false;
+        mouseState[1][2] = false;
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+            if(!mouseState[1][0]){
+                mouseState[1][1] = true;
+            }
+            mouseState[1][0] = true;
+
+        } else {
+            if(mouseState[1][0]){
+                mouseState[1][2] = true;
+            }
+            mouseState[1][0] = false;
+        }
+
+    }
+
+    bool mouseInside(float x, float y, float wid, float hei){
+        if(mouseX > x && mouseX < x+wid && mouseY > y && mouseY < y+hei){
+            return true;
+        }
+
+        return false;
+    }
+
+};
+
+
+
+
+
+struct SpriteArea{
+    sf::IntRect texRect;
+
+    Vector2i center;
+
+    void init(){
+        texRect.left = 0;
+        texRect.top = 0;
+        texRect.width  = 0;
+        texRect.height = 0;
+
+        center.x = 0;
+        center.y = 0;
+    }
+
+    void draw(RenderWindow& window, float scl){
+        RectangleShape select(Vector2f(texRect.width*scl, texRect.height*scl));
+        select.setPosition(texRect.left*scl, texRect.top*scl);
+        select.setFillColor(Color(100, 100, 100, 0));
+        select.setOutlineColor(Color(255));
+        select.setOutlineThickness(4);
+
+        window.draw(select);
+    }
+
+    void draw(RenderWindow& window, float scl, Color fillColor){
+        RectangleShape select(Vector2f(texRect.width*scl, texRect.height*scl));
+        select.setPosition(texRect.left*scl, texRect.top*scl);
+        select.setFillColor(fillColor);
+        select.setOutlineColor(Color(255));
+        select.setOutlineThickness(4);
+
+        window.draw(select);
+    }
+};
+
+
+
+
+#endif // ENGINE_H_INCLUDED

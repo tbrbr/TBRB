@@ -223,23 +223,24 @@ namespace Rooster {
         RectangleShape r;
         Vector2f position;
 
-        std::vector<int> elementDrawOrder;
-        std::vector<Element*> elementos;
         bool air;
         float hspeed;
         float vspeed;
         int frames = 0;
         int initFrames = 0;
-        
+        struct Model model;
+        std::vector<struct Animation> animations;
+
     public:
         int atacking;
         HitBox hitbox;
         LifeBar* bar;
         bool facingRight = false;
+        bool estadoUpdate = false;
         
         
 
-
+        /*
         void addElement(sf::Texture& tex, float xTex, float yTex, float wid,
             float hei, float xCenter, float yCenter, float xAttach,
             float yAttach, int idAttach) {
@@ -255,6 +256,7 @@ namespace Rooster {
             part->attachId = idAttach;
             elementos.push_back(part);
         }
+        */
 
 
 
@@ -277,9 +279,12 @@ namespace Rooster {
         }
         void inline setState(state estado) {
             this->estado = estado;
+            this->estadoUpdate = true;
         }
         void inline setState(int estado) {
             this->estado = estado;
+            this->estadoUpdate = true;
+
         }
         int getState() {
             return this->estado;
@@ -311,17 +316,17 @@ namespace Rooster {
 
             if (facingRight) {
                 hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
-                for (int i = 0; i < elementos.size(); i++) {
-                    elementos.at(i)->scl.x = -(float)SCREEN_WIDTH / 5120;;
+               //for (int i = 0; i < elementos.size(); i++) {
+                    //elementos.at(i)->scl.x = -(float)SCREEN_WIDTH / 5120;;
                     
-                }
+                //}
             }
             else {
                 hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
-                for (int i = 0; i < elementos.size(); i++) {
-                    elementos.at(i)->scl.x = (float)SCREEN_WIDTH / 5120;
+                //for (int i = 0; i < elementos.size(); i++) {
+                    //elementos.at(i)->scl.x = (float)SCREEN_WIDTH / 5120;
                     
-                }
+                //}
             }
         }
         virtual void defend() = 0; 
@@ -330,9 +335,10 @@ namespace Rooster {
 
         void show(sf::RenderWindow& window) {
 
-            for (int i = 0; i < elementDrawOrder.size(); i++) {
-                elementos.at(elementDrawOrder.at(i))->show(window);
-            }
+            //for (int i = 0; i < elementDrawOrder.size(); i++) {
+            //    elementos.at(elementDrawOrder.at(i))->show(window);
+            //}
+            model.draw(window);
         }
 
         virtual void update() {
@@ -351,12 +357,18 @@ namespace Rooster {
 
             r.move(hspeed, vspeed);
 
+            model.pos = r.getPosition();
 
-            for (int i = 1; i < elementos.size(); i++) {
+            model.update();
 
-                Element* elem = elementos.at(elementos.at(i)->attachId);
-                elementos.at(i)->update(elem->position.x, elem->position.y, elem->angle + elem->otherAngle);
-            }
+            estadoUpdate = false;
+
+
+            //for (int i = 1; i < elementos.size(); i++) {
+
+               // Element* elem = elementos.at(elementos.at(i)->attachId);
+                //elementos.at(i)->update(elem->position.x, elem->position.y, elem->angle + elem->otherAngle);
+            //}
         }
     };
 

@@ -11,11 +11,18 @@
 #include <vector>
 #include <cmath>
 
+#include <fstream>
+
+#define println(x) (std::cout << x << std::endl)
+
 using namespace std;
 using namespace sf;
 
-const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+//const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
+//const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+
+const int SCREEN_WIDTH = 1500;
+const int SCREEN_HEIGHT = 800;
 
 #include "Patinho/Patinho.h"
 #include "Patinho/jogoDoPatinho.h"
@@ -47,7 +54,7 @@ int main() {
 		cout << e << endl;
 	}
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 
 	Texture t;

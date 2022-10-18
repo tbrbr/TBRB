@@ -55,7 +55,9 @@ int main() {
 	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
+	
 
 	Texture t;
 	t.loadFromFile("sprites/galoSniper.png");
@@ -64,7 +66,7 @@ int main() {
 	Sniper galo2 = Sniper( 20, 20, 20, Rooster::state::STOPPED, t,false);
 
 	Pato *miniGame1 = new Pato((*window));
-
+	
 	Texture mapa;
 	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	mapa.loadFromFile("sprites/shopping.png");
@@ -82,10 +84,6 @@ int main() {
 
 	while (window->isOpen())
 	{
-
-		
-		//piano.draw(*window);
-
 		
 		switch (option)
 		{

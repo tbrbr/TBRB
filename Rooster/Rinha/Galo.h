@@ -311,6 +311,7 @@ namespace Rooster {
         virtual void defend() = 0; 
         virtual void highKick() = 0;
         virtual void lowKick() = 0;
+        virtual void especial() = 0;
 
         void show(sf::RenderWindow& window) {
 

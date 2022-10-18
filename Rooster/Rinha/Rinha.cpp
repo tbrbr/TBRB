@@ -67,14 +67,16 @@ int main() {
 	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 
+	
 
 	Galo *galo = new Sniper( 20, 20, 20, Rooster::state::STOPPED,true);
 	Galo *galo2 = new Kalsa( 20, 20, 20, Rooster::state::STOPPED,false);
 
 	Pato *miniGame1 = new Pato((*window));
-
+	
 	Texture mapa;
 	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	mapa.loadFromFile("sprites/shopping.png");
@@ -92,8 +94,6 @@ int main() {
 
 	while (window->isOpen())
 	{
-
-		
 		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
 			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
 			if (!keyboardState[i][0] && keyState) {
@@ -111,11 +111,8 @@ int main() {
 			}
 
 			keyboardState[i][0] = keyState;
+
 		}
-
-		
-
-		
 		//piano.draw(*window);
 
 		

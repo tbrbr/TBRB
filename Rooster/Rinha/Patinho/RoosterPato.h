@@ -44,6 +44,43 @@ struct SpriteMap{
     }
 };
 
+struct Aim {
+public:
+    RectangleShape aim[4];
+    RectangleShape px = RectangleShape(Vector2f(1, 1));
+    int size;
+
+    Aim(Vector2f _size, int spaceBetween, Color color = Color::Green) {
+
+        size = _size.x * 2 + spaceBetween;
+
+        for (int i = 0; i < 4; i++)
+            aim[i].setFillColor(color);
+        px.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+        px.setFillColor(color);
+
+        aim[0].setSize(Vector2f(_size.x, 2));
+        aim[1].setSize(Vector2f(_size.x, 2));
+        aim[2].setSize(Vector2f(2, _size.y));
+        aim[3].setSize(Vector2f(2, _size.y));
+
+        aim[0].setPosition(SCREEN_WIDTH / 2 - _size.x - spaceBetween, SCREEN_HEIGHT / 2);//13
+        aim[1].setPosition(SCREEN_WIDTH / 2 + spaceBetween, SCREEN_HEIGHT / 2);//22
+
+        aim[2].setPosition(SCREEN_WIDTH / 2 - 1, SCREEN_HEIGHT / 2 - _size.y - spaceBetween + 1);//cima
+        aim[3].setPosition(SCREEN_WIDTH / 2 - 1 , SCREEN_HEIGHT / 2 + spaceBetween);//baixo
+
+    }
+
+    void draw(RenderWindow* window) {
+        for (int i = 0; i < 4; i++)
+            window->draw(aim[i]);
+        window->draw(px);
+    }
+
+};
+
 struct GameInfo
 {
 
@@ -62,7 +99,7 @@ struct GameInfo
     // Sprites
     Sprite sgun;
     Sprite smap;
-    Sprite smira;
+    Aim smira = Aim(Vector2f(10, 10), 6, Color::Red);
     Sprite sgalo;
     Sprite sLight;
     Sprite sSniper;

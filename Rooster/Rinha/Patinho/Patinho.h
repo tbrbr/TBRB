@@ -39,7 +39,7 @@ void addRooster(GameInfo& info)
 void SpriteInit(GameInfo& info,RenderWindow& window)
 {
     /// Inicializando as texturas
-    info.Mira.loadFromFile("sprites/mira.png");
+    //info.Mira.loadFromFile("sprites/mira.png");
     info.Mapa.loadFromFile("sprites/mapa.png");
     info.gun.loadFromFile("sprites/gun.png");
     info.Galo.loadFromFile("sprites/galo.png");
@@ -52,7 +52,10 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
     /// Criando os sprites
     info.sgun.setTexture(info.gun);
     info.smap.setTexture(info.Mapa);
-    info.smira.setTexture(info.Mira);
+
+    
+   
+    //info.smira.setTexture(info.Mira);
     info.sgalo.setTexture(info.Galo);
     info.sLight.setTexture(info.Light);
     info.sSniper.setTexture(info.sniper);
@@ -96,10 +99,12 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
         SCREEN_HEIGHT - info.sgun.getGlobalBounds().height
     );
 
-    info.smira.setPosition(
-        SCREEN_WIDTH / 2 - info.smira.getGlobalBounds().width / 2,
-        SCREEN_HEIGHT / 2 - info.smira.getGlobalBounds().height / 2
+    /*
+    info.smira.s.setPosition(
+        SCREEN_WIDTH / 2 - info.smira.s.getGlobalBounds().width / 2,
+        SCREEN_HEIGHT / 2 - info.smira.s.getGlobalBounds().height / 2
     );
+    */
 
 }
 
@@ -289,9 +294,31 @@ void drawStuff(GameInfo& info, RenderWindow& window){
 
     // Drawing Gun
     window.draw(info.sgun);
+    int miraX = SCREEN_WIDTH / 2 + info.camX;
+    int miraY = SCREEN_HEIGHT / 2 + info.camY;
 
+    Color c = Color::Green;
+
+    for (int i = 0; i < roosterNumber; i++)
+    {
+        Galinho thisRooster = info.roosters.at(i);
+        int xx = thisRooster.x;
+        int yy = thisRooster.y;
+
+        if (miraX > xx && miraX < xx + info.sgalo.getGlobalBounds().width &&
+            miraY > yy && miraY < yy + info.sgalo.getGlobalBounds().height) {
+            c = Color::Red;
+            break;
+        }
+   
+    }
     // Drawing Mira
-    window.draw(info.smira);
+    for (int i = 0; i < 4; i++) {
+        info.smira.aim[i].setFillColor(c);
+    }
+    info.smira.px.setFillColor(c);
+    info.smira.draw(&window);
+   // window.draw(info.smira.s);
 
     // Drawing Cachorro
     if(info.missAnimationTimer > 0){
@@ -330,10 +357,6 @@ void drawStuff(GameInfo& info, RenderWindow& window){
 
         window.draw(rectangle);
     }
-
-
-
-
 }
 
 

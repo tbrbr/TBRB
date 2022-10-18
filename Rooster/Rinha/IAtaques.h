@@ -10,6 +10,21 @@ namespace Rooster {
 		int radius;
 
 
+		/*
+		void draw(sf::RenderWindow& window) {
+			sf::CircleShape circle(radius);
+			circle.setPosition(center.x, center.y);
+			circle.setOrigin(radius, radius);
+			circle.setFillColor(sf::Color::White);
+			circle.setOutlineColor(sf::Color::Black);
+			circle.setOutlineThickness(2);
+
+			window.draw(circle);
+
+		}
+		*/
+
+
 	} HitBox;
 
 
@@ -37,6 +52,11 @@ namespace Rooster {
 		}
 		bool CheckCollision(HitBox galo) {
 			return (pointDistance(galo.center, hitbox.center) < galo.radius + hitbox.radius);
+		}
+
+		void draw(sf::RenderWindow& window) {
+
+
 		}
 		
 	};

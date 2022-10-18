@@ -920,7 +920,7 @@ int main(){
 
     Rooster::HitBox hb;
     Texture t;
-    t.loadFromFile("sprites/galoSniper.png");
+    t.loadFromFile("sprites/galoKalsa.png");
 
     Texture texToolbar;
     texToolbar.loadFromFile("sprites/toolbar.png");
@@ -1096,8 +1096,8 @@ int main(){
         modelo.xScl = (((frames%2000)/1000)*2 )-1;
 
         //modelo.yScl = cos((float)frames/32);
-        modelo.pos.x = 150;
-        modelo.pos.y = 150;
+        modelo.pos = galo.getSprite().getPosition();
+        //modelo.pos.y = 150;
         info.mouseUpdate();
 
         galo.update(info.mouseX, info.mouseY);
@@ -1111,7 +1111,7 @@ int main(){
 
         bManager.draw(*window, info);
 
-        galo.show(*window);
+        //galo.show(*window);
 
         modelo.draw(*window);
 

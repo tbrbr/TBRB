@@ -153,9 +153,6 @@ struct Animation {
 
         }
 
-
-
-
     }
 
     void update() {
@@ -329,12 +326,6 @@ struct Animation {
 
 
 
-
-
-
-
-
-
 struct SpriteArea {
     sf::IntRect texRect;
 
@@ -373,11 +364,6 @@ struct SpriteArea {
         window.draw(select);
     }
 };
-
-
-
-
-
 
 
 
@@ -487,8 +473,6 @@ public:
 };
 
 class ElementHandle {
-
-
 
     int id = -1;
     std::vector<struct Element*>& allBones;

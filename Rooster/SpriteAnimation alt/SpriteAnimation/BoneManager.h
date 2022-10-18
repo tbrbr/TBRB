@@ -454,40 +454,40 @@ struct BoneManager{
             if(info.keyboardState[sf::Keyboard::LControl][0]){
                 if(info.keyboardState[sf::Keyboard::N][2]){
                     int index = 0;
-                    std::ifstream file("SniperModel.txt");
+                    std::ifstream file("kalsaModel.txt");
                     while(file.good()){
 
                         file.close();
                         index++;
 
-                        std::string str = "SniperModel";
+                        std::string str = "kalsaModel";
                         str += std::to_string(index);
                         str += ".txt";
                         file.open(str);
                     }
                     if(index != 0){
-                        std::string str = "SniperModel";
+                        std::string str = "kalsaModel";
                         str += std::to_string(index);
                         str += ".txt";
 
                         saveModel(str);
                     }else {
-                        saveModel("SniperModel.txt");
+                        saveModel("kalsaModel.txt");
                     }
                     //println("Nice creation");
                 }
 
                 if(info.keyboardState[sf::Keyboard::O][1]){
-                    loadAnimation("FirstAnim.txt", info);
+                    loadAnimation("kalsaAnim.txt", info);
                 }
 
                 if(info.keyboardState[sf::Keyboard::L][2]){
-                    loadModel("SniperModel.txt", info);
+                    loadModel("kalsaModel.txt", info);
                    // println("Nice load");
                 }
 
                 if(info.keyboardState[sf::Keyboard::P][1]){
-                    saveAnimation("SecondAnim.txt");
+                    saveAnimation("kalsaAnim.txt");
                     //println("Nice Anim creation");
                 }
             }

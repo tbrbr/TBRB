@@ -105,7 +105,7 @@
 		galo2.update();
 
 		if (pointDistance(galo.hitbox.center, galo2.hitbox.center) < galo.hitbox.radius + galo2.hitbox.radius) {
-			cout << "Colidiu" << endl;
+			//cout << "Colidiu" << endl;
 		}
 
 		

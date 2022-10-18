@@ -278,12 +278,18 @@ namespace Rooster {
             return r;
         }
         void inline setState(state estado) {
+            if (estado != this->estado) {
+                this->estadoUpdate = true;
+            }
             this->estado = estado;
-            this->estadoUpdate = true;
+            
         }
         void inline setState(int estado) {
+            if (estado != this->estado) {
+                this->estadoUpdate = true;
+            }
             this->estado = estado;
-            this->estadoUpdate = true;
+
 
         }
         int getState() {
@@ -338,6 +344,8 @@ namespace Rooster {
             //for (int i = 0; i < elementDrawOrder.size(); i++) {
             //    elementos.at(elementDrawOrder.at(i))->show(window);
             //}
+
+            //hitbox.draw(window);
             model.draw(window);
         }
 

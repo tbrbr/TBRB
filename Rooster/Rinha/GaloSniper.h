@@ -20,7 +20,6 @@ namespace Rooster {
             this->hp = 100;
             bar = new LifeBar(maxHp, isp1, name.c_str());
            
-
             this->lightAtk = new Ataques(0.9, 0.5,HitBox{Vector2f(0, 0), 0}, 10, 3,milliseconds(1000));
 
             r.setSize(Vector2f(20, 20));
@@ -31,11 +30,9 @@ namespace Rooster {
 
             struct Animation agacharAnim;
             agacharAnim.init("SecondAnim.txt");
-            agacharAnim.playingSpeed = 0.5;
+            agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);
-
-
 
         }
 
@@ -46,6 +43,7 @@ namespace Rooster {
             model.at(RABO)->angle = sin(frames / 200.f) * 20;
         }
         void jumpAnim() {
+
             if (facingRight) {
                 ArmSpinAngFase = -(vspeed / 8) * 45;
                 Arm2SpinAngFase = -(vspeed / 8) * 45;
@@ -55,13 +53,12 @@ namespace Rooster {
                 Arm2SpinAngFase = (vspeed / 8) * 45;
             }
 
-
-
             model.at(PERNA_FRENTE)->offset.y += vspeed / 8;
             model.at(PE_FRENTE)->angle += vspeed / 20;
 
             model.at(PERNA_ATRAS)->offset.y += vspeed / 16;
             model.at(PE_ATRAS)->angle += vspeed / 20;
+
             if (facingRight) {
                 model.at(BIGODE_FRENTE)->angle += vspeed / 2;
                 model.at(BIGODE_ATRAS)->angle += vspeed / 2;
@@ -124,32 +121,17 @@ namespace Rooster {
 
         void defend() override {
             estado = DEFENDING;
-
         }
-
-
 
         void agachadinha() {
-
-
-            //model.at(CORPO)->offset.y = 40;
-            //model.at(PERNA_ATRAS)->offset.y = -20;
-            //model.at(PE_FRENTE)->offset.y = -20;
-            //model.at(PERNA_FRENTE)->offset.y = -20;
-            //model.at(PE_ATRAS)->offset.y = -20;
-
             hspeed = 0;
         }
-
 
         void lightAtack() override {
             atacking = HIGH_KICK;
             lightAtk->init.restart();
 
         }
-
-
-
 
         void lightAtackAnim() {
             Time t = lightAtk->init.getElapsedTime();
@@ -213,6 +195,12 @@ namespace Rooster {
 
             hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30};
 
+           if (estadoUpdate) {
+                model.resetToBase();
+                animations[0].playingFrame = 0;
+            }
+
+
             if (air) {
                 vspeed += peso * G / 100;
             }
@@ -223,10 +211,7 @@ namespace Rooster {
                 air = false;
             }
 
-            if (estadoUpdate) {
-                model.resetToBase();
-                animations[0].playingFrame = 0;
-            }
+            
 
             r.move(hspeed, vspeed);
                          
@@ -260,9 +245,15 @@ namespace Rooster {
                 runReset();
             }
 
+            if (estado != RUNNING) {
+                hspeed = 0;
+            }
+
+
             if (atacking == HIGH_KICK) {
                 lightAtackAnim();
             }
+
            
 
             bar->update(hp);

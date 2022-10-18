@@ -4,22 +4,6 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-enum bodyParts {
-    CORPO = 0,
-    CABECA,
-    RABO,
-    ASA_FRENTE,
-    ASA_ATRAS,
-    PERNA_FRENTE,
-    PERNA_ATRAS,
-    PE_ATRAS,
-    PE_FRENTE,
-    BIGODE_FRENTE,
-    BIGODE_ATRAS
-};
-
-
-
 struct AnimationKeyFrame {
 
     float val = 0;

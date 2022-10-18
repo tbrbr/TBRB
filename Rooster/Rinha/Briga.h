@@ -11,25 +11,6 @@
 			{
 				window->close();
 			}
-			if (e.type == Event::KeyPressed) {
-				if (e.key.code == Keyboard::W)
-				{
-					galo.jump();
-				}
-				else if (e.key.code == Keyboard::F) {
-					galo.lightAtack();
-				}
-			}
-			if (e.type == Event::KeyPressed) {
-				if (e.key.code == Keyboard::Up)
-				{
-					galo2.jump();
-				}
-				else if (e.key.code == Keyboard::K) {
-					galo2.lightAtack();
-				}
-			}
-
 			
 		}
 
@@ -38,6 +19,24 @@
 		}
 
 		//options p1
+		
+		if ( keyboardState[Keyboard::W][1])
+		{
+			galo.jump();
+		}
+		else if (keyboardState[Keyboard::F][1]) {
+			if (keyboardState[Keyboard::S][0]) {
+				galo.lowKick();
+			
+			}
+				
+			else
+				galo.highKick();
+
+		}
+		
+		
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
 			galo.setState(Rooster::state::RUNNING);
@@ -53,10 +52,8 @@
 
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{
-			
+		{			
 			galo.defend();
-
 		}
 		else
 		{
@@ -66,6 +63,18 @@
 		}
 
 		//options p2
+		if (e.type == Event::KeyPressed) {
+			if (e.key.code == Keyboard::Up)
+			{
+				galo2.jump();
+			}
+			else if (e.key.code == Keyboard::K) {
+				if (e.key.code == Keyboard::Down)
+					galo2.lowKick();
+				else
+					galo2.highKick();
+			}
+		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{
@@ -98,7 +107,7 @@
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
 		{
 		
-			galo2.lightAtack();
+			galo2.highKick();
 
 		}
 		galo.update();

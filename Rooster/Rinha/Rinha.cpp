@@ -21,8 +21,8 @@ using namespace sf;
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
-//const int SCREEN_WIDTH = 1500;
-//const int SCREEN_HEIGHT = 800;
+bool keyboardState[sf::Keyboard::KeyCount][3];
+
 
 #include "Patinho/Patinho.h"
 #include "Patinho/jogoDoPatinho.h"
@@ -36,6 +36,7 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #include "Elementos.h"
 #include "Galo.h"
 #include "GaloSniper.h"
+#include "galoKalsa.h"
 
 using namespace Rooster;
 
@@ -43,7 +44,18 @@ using namespace Rooster;
 #include "fregues.h"
 #include "cardapio.h"
 
+
+
+
+
 int main() {
+
+
+	for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+		keyboardState[i][0] = false;
+		keyboardState[i][1] = false;
+		keyboardState[i][2] = false;
+	}
 	
 	int option = 2;
 
@@ -57,11 +69,9 @@ int main() {
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 
-	Texture t;
-	t.loadFromFile("sprites/galoSniper.png");
 
-	Sniper galo = Sniper( 20, 20, 20, Rooster::state::STOPPED, t,true);
-	Sniper galo2 = Sniper( 20, 20, 20, Rooster::state::STOPPED, t,false);
+	Galo *galo = new Sniper( 20, 20, 20, Rooster::state::STOPPED,true);
+	Galo *galo2 = new Kalsa( 20, 20, 20, Rooster::state::STOPPED,false);
 
 	Pato *miniGame1 = new Pato((*window));
 
@@ -84,13 +94,35 @@ int main() {
 	{
 
 		
+		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+			if (!keyboardState[i][0] && keyState) {
+				keyboardState[i][1] = true;
+			}
+			else {
+				keyboardState[i][1] = false;
+			}
+
+			if (keyboardState[i][0] && !keyState) {
+				keyboardState[i][2] = true;
+			}
+			else {
+				keyboardState[i][2] = false;
+			}
+
+			keyboardState[i][0] = keyState;
+		}
+
+		
+
+		
 		//piano.draw(*window);
 
 		
 		switch (option)
 		{
 		case UMJOGADORES:
-			singlePlayer(window,galo,galo2,option,fundo);
+			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:
 			menuprincipal->ShowMenu(window,option);

@@ -1,57 +1,37 @@
-#ifndef GALOSNIPER_H_INCLUDED
-#define GALOSNIPER_H
+
+#ifndef GALOKALSA_H_INCLUDED
+#define GALOKALSA_H
 
 #include "Galo.h"
 
 namespace Rooster {
 
-
-    enum bodyParts {
-        CORPO = 0,
-        CABECA,
-        RABO,
-        ASA_FRENTE,
-        ASA_ATRAS,
-        PERNA_FRENTE,
-        PERNA_ATRAS,
-        PE_ATRAS,
-        PE_FRENTE,
-        BIGODE_FRENTE,
-        BIGODE_ATRAS
-    };
-
-    class Sniper : public Galo {
+    class Kalsa : public Galo {
 
         Texture t;
-
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
+        Ataques* lightAtk;
 
-        Ataques* hiKick;
-        Ataques* louKick;
-        Ataques* ultimateShot;
-        
-       
+
     public:
-        Sniper(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
-            this->name = "Sniper";
+        Kalsa(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
+            this->name = "Kalsa";
             this->maxHp = 100;
             this->hp = 100;
             bar = new LifeBar(maxHp, isp1, name.c_str());
-           
-            this->hiKick = new Ataques(0.9, 0.5,HitBox{Vector2f(0, 0), 0}, 10, 3,milliseconds(1000));
-            this->louKick = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, milliseconds(1000));
-            this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, milliseconds(2000));
+
+            this->lightAtk = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, milliseconds(1000));
 
             r.setSize(Vector2f(20, 20));
-            r.setPosition(SCREEN_WIDTH/4, (float) SCREEN_HEIGHT/1.4);
+            r.setPosition(SCREEN_WIDTH / 4, (float)SCREEN_HEIGHT / 1.4);
 
             
-            t.loadFromFile("sprites/galoSniper.png");
+            t.loadFromFile("sprites/galoKalsa.png");
 
             model.tex = &t;
-            model.loadModel("SniperModel.txt");
+            model.loadModel("kalsaModel.txt");
 
             struct Animation agacharAnim;
             agacharAnim.init("SecondAnim.txt");
@@ -77,13 +57,11 @@ namespace Rooster {
                 Arm2SpinAngFase = (vspeed / 8) * 45;
             }
 
-            model.at(PERNA_FRENTE)->angle = vspeed * 2;
-            model.at(PERNA_FRENTE)->offset.y += vspeed / 5;
-            model.at(PE_FRENTE)->angle += vspeed / 5;
+            model.at(PERNA_FRENTE)->offset.y += vspeed / 8;
+            model.at(PE_FRENTE)->angle += vspeed / 20;
 
-            model.at(PERNA_ATRAS)->angle = vspeed / 2;
-            model.at(PERNA_ATRAS)->offset.y += vspeed / 10;
-            model.at(PE_ATRAS)->angle += vspeed / 5;
+            model.at(PERNA_ATRAS)->offset.y += vspeed / 16;
+            model.at(PE_ATRAS)->angle += vspeed / 20;
 
             if (facingRight) {
                 model.at(BIGODE_FRENTE)->angle += vspeed / 2;
@@ -95,8 +73,8 @@ namespace Rooster {
             }
         }
         void cairAnim() {
-            model.at(PERNA_FRENTE)->offset.y *= 0.25;
-            model.at(PERNA_ATRAS)->offset.y *= 0.25;
+            model.at(PERNA_FRENTE)->offset.y = 0;
+            model.at(PERNA_ATRAS)->offset.y = 0;
 
             model.at(PE_FRENTE)->angle = 0;
             model.at(PE_ATRAS)->angle = 0;
@@ -131,10 +109,18 @@ namespace Rooster {
             model.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
 
             model.at(CORPO)->offset.y *= 0.5;
+            model.at(PERNA_ATRAS)->offset.y *= 0.25;
             model.at(PE_FRENTE)->offset.y *= 0.25;
+            model.at(PERNA_FRENTE)->offset.y *= 0.25;
             model.at(PE_ATRAS)->offset.y *= 0.25;
 
-           
+            model.at(CORPO)->offset.y = 0;
+            model.at(PERNA_ATRAS)->offset.y = 0;
+            model.at(PE_FRENTE)->offset.y = 0;
+            model.at(PERNA_FRENTE)->offset.y = 0;
+            model.at(PE_ATRAS)->offset.y = 0;
+
+
         }
 
         void defend() override {
@@ -147,28 +133,18 @@ namespace Rooster {
 
         void highKick() override {
             atacking = HIGH_KICK;
-            hiKick->init.restart();
+            lightAtk->init.restart();
 
         }
-        void lowKick() override {
-            atacking = LOW_KICK;
-            louKick->init.restart();
-        }
-        
-        void especial() override {
-            atacking = LOW_KICK;
-            louKick->init.restart();
-        }
-        
 
-        void highKickAnim() {
-            Time t = hiKick->init.getElapsedTime();
+        void lightAtackAnim() {
+            Time t = lightAtk->init.getElapsedTime();
 
-            if (t > hiKick->timeLapse) {
+            if (t > lightAtk->timeLapse) {
                 atacking = STOPPED;
             }
 
-            float percentage = (float)t.asMilliseconds() / (hiKick->timeLapse.asMilliseconds());
+            float percentage = (float)t.asMilliseconds() / (lightAtk->timeLapse.asMilliseconds());
 
             int angFix = (facingRight) ? 1 : -1;
             angFix = -1;
@@ -218,75 +194,21 @@ namespace Rooster {
 
 
         }
-        void lowKickAnim(){
-            Time t = louKick->init.getElapsedTime();
-
-            if (t > louKick->timeLapse) {
-                atacking = STOPPED;
-            }
-
-            float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
-
-            
-
-            if (percentage < 1.f / 3.f) {
+        void lowKick() override {
+            atacking = LOW_KICK;
+            lightAtk->init.restart();
+        }
 
 
-                float thisPercentage = percentage * 3;
-                
-                model.at(PERNA_FRENTE)->angle += 90 * sin(thisPercentage * PI / 4);
-                model.at(PE_FRENTE)->angle += 90 * -sin(thisPercentage * PI / 4);
-
-                model.at(PERNA_ATRAS)->angle =  90 * sin(thisPercentage * PI / 4);
-                model.at(PE_ATRAS)->angle = 90 * -sin(thisPercentage * PI / 4);
-
-                model.at(ASA_ATRAS)->angle =  45 * -sin(thisPercentage * PI / 2);
-                model.at(ASA_FRENTE)->angle = 90 * sin(thisPercentage * PI / 2);
-
-            }
-            else if (percentage < 2.f / 3.f) {
-            
-                model.at(CORPO)->angle =  45;
-                model.at(PERNA_FRENTE)->angle = -30;
-                model.at(PE_FRENTE)->angle = -90;
-                model.at(PERNA_ATRAS)->angle =  0;
-                model.at(CABECA)->angle = -20;
-                model.at(PERNA_ATRAS)->offset.x = -5;
-                model.at(PERNA_ATRAS)->offset.y = 5;
-                model.at(ASA_ATRAS)->angle =  45;
-                model.at(ASA_FRENTE)->angle =  90;
-
-            }
-            else if (percentage < 2.9f / 3.f) {
-
-                model.at(CORPO)->angle *= 0.9;
-                model.at(PERNA_FRENTE)->angle *= 0.9;
-                model.at(PERNA_ATRAS)->angle *= 0.9;
-                model.at(PERNA_ATRAS)->offset.x = 0;
-                model.at(PERNA_ATRAS)->offset.y = 0;
-                model.at(ASA_ATRAS)->angle *= 0.9;
-                model.at(ASA_FRENTE)->angle *= 0.9;
-                model.at(CABECA)->angle *= 0.9;
-            }
-            else {
-                model.at(CORPO)->angle = 0;
-                model.at(PERNA_FRENTE)->angle = 0;
-                model.at(PERNA_ATRAS)->angle = 0;
-                model.at(PERNA_ATRAS)->offset.x = 0;
-                model.at(PERNA_ATRAS)->offset.y = 0;
-                model.at(ASA_ATRAS)->angle = 0;
-                model.at(ASA_FRENTE)->angle = 0;
-                model.at(CABECA)->angle = 0;
-            }
-
+        void especial() override {
 
         }
 
         void update() override {
 
-            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30};
+            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
 
-           if (estadoUpdate) {
+            if (estadoUpdate) {
                 model.resetToBase();
                 animations[0].playingFrame = 0;
             }
@@ -296,25 +218,25 @@ namespace Rooster {
                 vspeed += peso * G / 100;
             }
 
-            if (r.getPosition().y > (float) SCREEN_HEIGHT/1.399) {
+            if (r.getPosition().y > (float)SCREEN_HEIGHT / 1.399) {
                 vspeed = 0;
-                r.setPosition(r.getPosition().x, (float) SCREEN_HEIGHT/1.4);
+                r.setPosition(r.getPosition().x, (float)SCREEN_HEIGHT / 1.4);
                 air = false;
             }
 
-            
+
 
             r.move(hspeed, vspeed);
-                         
+
             frames++;
-            weatherAnim(frames);
-            
-             
+           // weatherAnim(frames);
+
+
             if (air) {
-                jumpAnim();
+               // jumpAnim();
             }
             else {
-                cairAnim();
+               // cairAnim();
             }
 
 
@@ -322,18 +244,18 @@ namespace Rooster {
             model.at("BackArm")->angle = Arm2SpinAngFase;
 
             if (estado == RUNNING) {
-                runAnim();
+                //runAnim();
             }
             else if (estado == DEFENDING) {
                 animations[0].update();
                 if (animations[0].playingFrame > 15) {
                     animations[0].playingFrame = 15;
                 }
-                model.updateWithAnimation(animations[0]);
+                //model.updateWithAnimation(animations[0]);
 
             }
-            else if(estado == STOPPED) {
-                runReset();
+            else if (estado == STOPPED) {
+                //runReset();
             }
 
             if (estado != RUNNING) {
@@ -342,12 +264,10 @@ namespace Rooster {
 
 
             if (atacking == HIGH_KICK) {
-                highKickAnim();
-            }else if (atacking == LOW_KICK) {
-                lowKickAnim();
+                //lightAtackAnim();
             }
 
-           
+
 
             bar->update(hp);
 
@@ -363,12 +283,11 @@ namespace Rooster {
 
             estadoUpdate = false;
 
-            
-           
+
         }
     };
 
 
 }
 
-#endif // GALOSNIPER_H_INCLUDED
+#endif // GALOKALSA_H_INCLUDED

@@ -13,13 +13,13 @@ namespace Rooster {
         STOPPED = 0,
         RUNNING,
         DEFENDING,
-        LOW_KICK = 0,
+        NOT_ATTACK = 0,
+        LOW_KICK,
         HIGH_KICK,
         SLAP,
         JUMP_KICK,
         SPECIAL,
-       
-
+      
     };
     
     enum roosters {
@@ -238,27 +238,6 @@ namespace Rooster {
         bool facingRight = false;
         bool estadoUpdate = false;
         
-        
-
-        /*
-        void addElement(sf::Texture& tex, float xTex, float yTex, float wid,
-            float hei, float xCenter, float yCenter, float xAttach,
-            float yAttach, int idAttach) {
-
-            float xAt = 0;
-            float yAt = 0;
-            if (idAttach != -1) {
-                xAt = xAttach - (elementos.at(idAttach)->texPos.x + elementos.at(idAttach)->center.x);
-                yAt = yAttach - (elementos.at(idAttach)->texPos.y + elementos.at(idAttach)->center.y);
-            }
-
-            Element* part = new Element(tex, xTex, yTex, wid, hei, xCenter, yCenter, xAt, yAt);
-            part->attachId = idAttach;
-            elementos.push_back(part);
-        }
-        */
-
-
 
         Galo(int atk, int def, int speed, int _state) {
             
@@ -322,30 +301,20 @@ namespace Rooster {
 
             if (facingRight) {
                 hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
-               //for (int i = 0; i < elementos.size(); i++) {
-                    //elementos.at(i)->scl.x = -(float)SCREEN_WIDTH / 5120;;
-                    
-                //}
+              
             }
             else {
                 hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
-                //for (int i = 0; i < elementos.size(); i++) {
-                    //elementos.at(i)->scl.x = (float)SCREEN_WIDTH / 5120;
-                    
-                //}
+                
             }
         }
         virtual void defend() = 0; 
-        virtual void lightAtack() = 0;
- 
+        virtual void highKick() = 0;
+        virtual void lowKick() = 0;
 
         void show(sf::RenderWindow& window) {
 
-            //for (int i = 0; i < elementDrawOrder.size(); i++) {
-            //    elementos.at(elementDrawOrder.at(i))->show(window);
-            //}
-
-            //hitbox.draw(window);
+         
             model.draw(window);
         }
 
@@ -372,11 +341,6 @@ namespace Rooster {
             estadoUpdate = false;
 
 
-            //for (int i = 1; i < elementos.size(); i++) {
-
-               // Element* elem = elementos.at(elementos.at(i)->attachId);
-                //elementos.at(i)->update(elem->position.x, elem->position.y, elem->angle + elem->otherAngle);
-            //}
         }
     };
 

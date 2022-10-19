@@ -28,10 +28,12 @@ namespace Rooster {
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
 
+        
         Ataques* hiKick;
         Ataques* louKick;
         Ataques* ultimateShot;
-        
+        Texture bullet;
+        Sprite sniperBullet;
        
     public:
         Sniper(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
@@ -43,7 +45,9 @@ namespace Rooster {
             this->hiKick = new Ataques(0.9, 0.5,HitBox{Vector2f(0, 0), 0}, 10, 3,milliseconds(1000));
             this->louKick = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, milliseconds(1000));
             this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, milliseconds(2000));
-
+            bullet.loadFromFile("sprites/bullet.png");
+            sniperBullet.setTexture(bullet);
+            
             r.setSize(Vector2f(20, 20));
             r.setPosition(SCREEN_WIDTH/4, (float) SCREEN_HEIGHT/1.4);
 
@@ -52,6 +56,14 @@ namespace Rooster {
 
             model.tex = &t;
             model.loadModel("SniperModel.txt");
+
+            /*
+            for (int i = 0; i < model.allBones.size(); i++) {
+                hurtBox[i].center.x = model.at(i)->sprite.getGlobalBounds().left/2;
+                hurtBox[i].center.y = model.at(i)->sprite.getGlobalBounds().top/2;
+                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width;
+
+            }*/
 
             struct Animation agacharAnim;
             agacharAnim.init("SecondAnim.txt");
@@ -146,20 +158,92 @@ namespace Rooster {
         }
 
         void highKick() override {
-            atacking = HIGH_KICK;
+            if(atacking == NOT_ATTACK)
+                atacking = HIGH_KICK;
             hiKick->init.restart();
 
         }
         void lowKick() override {
-            atacking = LOW_KICK;
+            if (atacking == NOT_ATTACK)
+                atacking = LOW_KICK;
             louKick->init.restart();
         }
         
         void especial() override {
-            atacking = LOW_KICK;
-            louKick->init.restart();
+            if (atacking == NOT_ATTACK)
+                atacking = SPECIAL;
+            ultimateShot->init.restart();
         }
         
+        void especialAnim() {
+            Time t = ultimateShot->init.getElapsedTime();
+
+            if (t > ultimateShot->timeLapse) {
+                atacking = NOT_ATTACK;
+            }
+
+            float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
+
+            int angFix = (facingRight) ? 1 : -1;
+            angFix = -1;
+
+
+            if (percentage < 0.5f / 3.f) {
+
+
+                float thisPercentage = percentage * 3;
+                model.at("Sniper")->angle += 45;
+                model.at(ASA_ATRAS)->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
+                model.at(ASA_FRENTE)->angle = angFix * 90 * sin(thisPercentage * PI / 2);
+
+            }
+            else if (percentage < 2.f / 3.f) {
+                float thisPercentage = percentage * 3;
+
+                model.at("Sniper")->angle = 0;
+                model.at(ASA_ATRAS)->angle =  0;
+                model.at(ASA_FRENTE)->angle = 0;
+                model.at(CABECA)->angle = -10;
+                model.at(PERNA_ATRAS)->offset.y = -10;
+                model.at(PERNA_FRENTE)->offset.y = -10;
+                model.at(PERNA_ATRAS)->angle = -10;
+                model.at(PERNA_FRENTE)->angle = -10;
+                model.at(PE_ATRAS)->angle = 10;
+                model.at(PE_FRENTE)->angle = 10;
+                r.setPosition(r.getGlobalBounds().left, r.getGlobalBounds().top + 10);
+              
+         
+            }
+            else if (percentage < 2.2f / 3.f) {
+
+               //finja que eu consigo fazer um FUCKING TIRO
+
+            }
+            else if (percentage < 2.5f / 3.f) {
+
+                model.at("Sniper")->angle += 5;
+                model.at(ASA_ATRAS)->angle += 5;
+                model.at(ASA_FRENTE)->angle += 5;
+                model.at(CABECA)->angle += 5;
+                model.at(BIGODE_FRENTE)->angle += -90;
+                model.at(BIGODE_ATRAS)->angle += -90;
+                r.setPosition(r.getGlobalBounds().left + 2, r.getGlobalBounds().top);
+            }
+            else if (percentage < 2.9 / 3.f) {
+                model.at("Sniper")->angle *= 0.9;
+                model.at(ASA_ATRAS)->angle *= 0.9;
+                model.at(ASA_FRENTE)->angle *= 0.9;
+                model.at(BIGODE_FRENTE)->angle *= 0.9;
+                model.at(BIGODE_ATRAS)->angle *= 0.9;
+                model.at(CABECA)->angle *= 0.9;
+            }
+            else {
+                model.at("Sniper")->angle = 0;
+                model.at(ASA_ATRAS)->angle = 0;
+                model.at(ASA_FRENTE)->angle = 0;
+                model.at(CABECA)->angle = 0;
+            }
+        }
 
         void highKickAnim() {
             Time t = hiKick->init.getElapsedTime();
@@ -194,6 +278,8 @@ namespace Rooster {
                 model.at(PERNA_ATRAS)->offset.y = -SCREEN_WIDTH / 75;
                 model.at(ASA_ATRAS)->angle = angFix * -45;
                 model.at(ASA_FRENTE)->angle = angFix * 90;
+                //this->hitbox.center = model.at(PE_ATRAS)->offset;
+
 
             }
             else if (percentage < 2.9f / 3.f) {
@@ -293,7 +379,7 @@ namespace Rooster {
 
 
             if (air) {
-                vspeed += peso * G / 100;
+                vspeed += peso * Gravity / 100;
             }
 
             if (r.getPosition().y > (float) SCREEN_HEIGHT/1.399) {
@@ -345,6 +431,9 @@ namespace Rooster {
                 highKickAnim();
             }else if (atacking == LOW_KICK) {
                 lowKickAnim();
+            }
+            else if (atacking == SPECIAL) {
+                especialAnim();
             }
 
            

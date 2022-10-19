@@ -34,6 +34,9 @@
 				galo.highKick();
 
 		}
+		else if ((keyboardState[Keyboard::G][1])){
+			galo.especial();
+		}
 		
 		
 
@@ -63,17 +66,22 @@
 		}
 
 		//options p2
-		if (e.type == Event::KeyPressed) {
-			if (e.key.code == Keyboard::Up)
-			{
-				galo2.jump();
+
+		if (keyboardState[Keyboard::Up][1])
+		{
+			galo2.jump();
+		}
+		else if (keyboardState[Keyboard::K][1]) {
+			if (keyboardState[Keyboard::Down][0]) {
+				galo2.lowKick();
+
 			}
-			else if (e.key.code == Keyboard::K) {
-				if (e.key.code == Keyboard::Down)
-					galo2.lowKick();
-				else
-					galo2.highKick();
-			}
+			else
+				galo2.highKick();
+
+		}
+		else if ((keyboardState[Keyboard::L][1])) {
+			galo2.especial();
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -104,18 +112,21 @@
 		}
 
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
-		{
-		
-			galo2.highKick();
-
-		}
 		galo.update();
 		galo2.update();
 
-		if (pointDistance(galo.hitbox.center, galo2.hitbox.center) < galo.hitbox.radius + galo2.hitbox.radius) {
-			//cout << "Colidiu" << endl;
+		/*
+		for (int i = 0; i < galo.hurtBox.size(); i++) {
+			if (pointDistance(galo.hurtBox[i].center, galo2.hitbox.center) < galo.hurtBox[i].radius + galo2.hitbox.radius) {
+				
+			}
 		}
+
+		for (int i = 0; i < galo2.hurtBox.size(); i++) {
+			if (pointDistance(galo2.hurtBox[i].center, galo.hitbox.center) < galo2.hurtBox[i].radius + galo.hitbox.radius) {
+
+			}
+		}*/
 
 		
 	

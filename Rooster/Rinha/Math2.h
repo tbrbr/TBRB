@@ -1,6 +1,6 @@
 #include <math.h>
 
-#define G 9.81
+#define Gravity 9.81
 #define PI 3.1415926563
 #define EULER 2.71828
 

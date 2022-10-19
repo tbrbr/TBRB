@@ -215,7 +215,7 @@ namespace Rooster {
 
 
             if (air) {
-                vspeed += peso * G / 100;
+                vspeed += peso * Gravity / 100;
             }
 
             if (r.getPosition().y > (float)SCREEN_HEIGHT / 1.399) {

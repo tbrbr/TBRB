@@ -73,7 +73,7 @@ int main() {
 	
 
 	Galo *galo = new Sniper( 20, 20, 20, Rooster::state::STOPPED,true);
-	Galo *galo2 = new Kalsa( 20, 20, 20, Rooster::state::STOPPED,false);
+	Galo *galo2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
 
 	Pato *miniGame1 = new Pato((*window));
 	

@@ -16,7 +16,6 @@ namespace Rooster {
         NOT_ATTACK = 0,
         LOW_KICK,
         HIGH_KICK,
-        SLAP,
         JUMP_KICK,
         SPECIAL,
       
@@ -234,6 +233,7 @@ namespace Rooster {
     public:
         int atacking;
         HitBox hitbox;
+        //std::vector<HitBox> hurtBox;
         LifeBar* bar;
         bool facingRight = false;
         bool estadoUpdate = false;
@@ -241,7 +241,7 @@ namespace Rooster {
 
         Galo(int atk, int def, int speed, int _state) {
             
-            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
+           
             
             this->atk = atk;
             this->def = def;
@@ -307,7 +307,7 @@ namespace Rooster {
                 hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
                 
             }
-        }
+        } 
         virtual void defend() = 0; 
         virtual void highKick() = 0;
         virtual void lowKick() = 0;
@@ -324,7 +324,7 @@ namespace Rooster {
             hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
 
             if (air) {
-                vspeed += peso * G / 100;
+                vspeed += peso * Gravity / 100;
             }
 
             if (r.getPosition().y > (float) SCREEN_HEIGHT / 1.4) {

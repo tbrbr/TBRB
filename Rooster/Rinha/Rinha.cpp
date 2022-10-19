@@ -125,7 +125,7 @@ int main() {
 			menuprincipal->ShowMenu(window,option);
 			break;
 		case ISPATOTIME:
-			miniGame1->patinho(*window);
+			miniGame1->patinho(*window, option);
 
 		default:
 			break;

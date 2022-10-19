@@ -81,6 +81,61 @@ public:
 
 };
 
+
+
+
+struct Particle
+{
+    float x = 0;
+    float y = 0;
+    float hspeed = 0;
+    float vspeed = 0;
+    float vaccel = 0.2;
+
+    Color col = Color::Red;
+
+    int life = 0;
+    bool isStuck = false;
+
+
+    bool isAlive = true;
+
+    void draw(float camX, float camY, RenderWindow& window) {
+
+        RectangleShape rect(Vector2f(5, 5));
+        rect.setFillColor(col);
+        rect.setPosition(x - camX, y - camY);
+
+        window.draw(rect);
+    }
+
+    void update() {
+
+        if (!isStuck) {
+            if (rand() % 1000 == 0) {
+                isStuck = true;
+            }
+            vspeed += vaccel;
+            x += hspeed;
+            y += vspeed;
+        }
+        else if (rand() % 200 == 0) {
+            vspeed += vaccel;
+            x += hspeed / 10;
+            y += vspeed / 10;
+        }
+
+        life--;
+
+        if (life < 0) {
+            isAlive = false;
+        }
+
+
+    }
+
+};
+
 struct GameInfo
 {
 
@@ -94,7 +149,7 @@ struct GameInfo
 
     Texture chorro;
     Texture ratoSheet;
-
+    Texture border;
 
     // Sprites
     Sprite sgun;
@@ -110,6 +165,10 @@ struct GameInfo
     Sprite sRabo;
     SpriteMap sMapRabo;
     Sprite sRato;
+
+    Sprite sBorder;
+
+    Sprite sTile;
 
 
     // Fontes
@@ -128,6 +187,9 @@ struct GameInfo
 
     // Vector dos Roosters
     vector <Galinho> roosters;
+
+    /// Vector das Particles
+    vector <Particle> particles;
 
     // Coordenadas da Camera
 
@@ -160,9 +222,6 @@ struct GameInfo
 
     bool windowGrabbed = true;
 
-} ;
-
-
-
+};
 
 #endif // ROOSTER_HPP_INCLUDED

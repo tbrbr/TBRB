@@ -150,6 +150,10 @@
     <ClInclude Include="jogador_de_video.h" />
     <ClInclude Include="Math2.h" />
     <ClInclude Include="muitosjogadores.h" />
+    <ClInclude Include="Patinho\Fps.h" />
+    <ClInclude Include="Patinho\jogoDoPatinho.h" />
+    <ClInclude Include="Patinho\Patinho.h" />
+    <ClInclude Include="Patinho\RoosterPato.h" />
     <ClInclude Include="TilesDoArrocha.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -111,25 +111,42 @@
 
 		}
 
-
-		galo.update();
-		galo2.update();
-
-		/*
 		for (int i = 0; i < galo.hurtBox.size(); i++) {
-			if (pointDistance(galo.hurtBox[i].center, galo2.hitbox.center) < galo.hurtBox[i].radius + galo2.hitbox.radius) {
-				
+
+			if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
+				galo.apanhar(*galo2.hiKick);
+			}
+			if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
+				galo.apanhar(*galo2.louKick);
+
+			}
+			if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
+				galo.apanhar(*galo2.ultimateShot);
+
 			}
 		}
 
 		for (int i = 0; i < galo2.hurtBox.size(); i++) {
-			if (pointDistance(galo2.hurtBox[i].center, galo.hitbox.center) < galo2.hurtBox[i].radius + galo.hitbox.radius) {
 
+			if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
+				galo2.apanhar(*galo.hiKick);
+				
 			}
-		}*/
+			if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
+				galo2.apanhar(*galo.louKick);
+			}
+			if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
+				galo2.apanhar(*galo.ultimateShot);
+			}
 
-		
-	
+
+
+		}
+		//onde ce ta desenhando as hurtbox
+
+		galo.update();
+		galo2.update();
+
 
 		window->clear();
 		

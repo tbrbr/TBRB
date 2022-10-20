@@ -22,7 +22,7 @@ namespace Rooster {
             this->hp = 100;
             bar = new LifeBar(maxHp, isp1, name.c_str());
 
-            this->lightAtk = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, milliseconds(1000));
+            this->lightAtk = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3,0, milliseconds(1000));
 
             r.setSize(Vector2f(20, 20));
             r.setPosition(SCREEN_WIDTH / 4, (float)SCREEN_HEIGHT / 1.4);

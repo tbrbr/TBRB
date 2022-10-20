@@ -35,24 +35,37 @@ namespace Rooster {
 		HitBox hitbox;
 		int Damage;
 		float KnockBack;
+
+		float angle;
+
 		bool isAtacking = false;
 		Clock init;
 		Time timeLapse;
 		
 		
 		
-		Ataques(float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,Time timelapse) {
+		Ataques(float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse) {
 			this->Stun = Stun;
 			this->CoolDown = CoolDown;
 			this->hitbox = hitbox;
 			this->Damage = Damage;
 			this->KnockBack = KnockBack;
 			this->timeLapse = timelapse;
+			this->angle = angle;
 
 		}
+
+
+
+
 		bool CheckCollision(HitBox galo) {
-			return (pointDistance(galo.center, hitbox.center) < galo.radius + hitbox.radius);
+			if (isAtacking) {
+				return (pointDistance(galo.center, hitbox.center) < galo.radius + hitbox.radius);
+			}
+			return false;
+			
 		}
+
 
 		void draw(sf::RenderWindow& window) {
 

@@ -43,6 +43,7 @@ namespace Rooster {
         RectangleShape life;
         RectangleShape fullLife;
         RectangleShape Damage;
+
         Texture iron;
         Font mk11;
         
@@ -229,20 +230,26 @@ namespace Rooster {
         int initFrames = 0;
         struct Model model;
         std::vector<struct Animation> animations;
+        float floorY = (float)SCREEN_HEIGHT / 1.4;
 
     public:
         int atacking;
         HitBox hitbox;
-        //std::vector<HitBox> hurtBox;
+        std::vector<HitBox> hurtBox;
         LifeBar* bar;
         bool facingRight = false;
         bool estadoUpdate = false;
+
+        // Timer of rooster frames when get hitted by an attack
+        int invFrames = 0;
+        int stunFrames = 0;
+
+        Ataques* hiKick;
+        Ataques* louKick;
+        Ataques* ultimateShot;
         
 
-        Galo(int atk, int def, int speed, int _state) {
-            
-           
-            
+        Galo(int atk, int def, int speed, int _state) { 
             this->atk = atk;
             this->def = def;
             this->speed = speed;
@@ -251,6 +258,7 @@ namespace Rooster {
             this->air = false;
             this->hspeed = 0;
             this->vspeed = 0;
+            this->position = Vector2f(0, 0);
         }
 
         inline RectangleShape getSprite() {
@@ -284,28 +292,33 @@ namespace Rooster {
         int inline getFrames() {
             return frames;
         }
-        void apanhar(int dmg) {
-            this->hp -= dmg;
+        virtual void apanhar(Ataques atk) {
+            this->hp -= atk.Damage;
             bar->update(hp);
         }
 
         void jump() {
-            if (!air) {
-                vspeed += (peso * (-8)) / 2;
-                air = true;
+            if (stunFrames <= 0) {
+                if (!air) {
+                    vspeed += (peso * (-8)) / 2;
+                    air = true;
+                }
             }
         }
         
         void run() {
-            float acc = 0.5;
 
-            if (facingRight) {
-                hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
-              
-            }
-            else {
-                hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
-                
+            if (stunFrames <= 0) {
+                float acc = 0.5;
+
+                if (facingRight) {
+                    hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
+
+                }
+                else {
+                    hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
+
+                }
             }
         } 
         virtual void defend() = 0; 
@@ -317,25 +330,76 @@ namespace Rooster {
 
          
             model.draw(window);
+
+
+            for (int i = 0; i < hurtBox.size(); i++) {
+
+                HitBox box = hurtBox[i];
+
+                drawHitBox(window, box, sf::Color(255, 255, 255, 100));
+
+            }
+
+            if (hiKick->isAtacking) {
+                drawHitBox(window, hiKick->hitbox, sf::Color::Red);
+            }
+
+            
+
+
+
+        }
+
+        void drawHitBox(sf::RenderWindow& window, HitBox box, sf::Color col) {
+            sf::CircleShape circle(box.radius);
+            circle.setPosition(box.center.x, box.center.y);
+            circle.setOrigin(box.radius, box.radius);
+            circle.setFillColor(col);
+            circle.setOutlineColor(sf::Color::Black);
+            circle.setOutlineThickness(2);
+
+            window.draw(circle);
         }
 
         virtual void update() {
 
             hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
 
+
+            
             if (air) {
                 vspeed += peso * Gravity / 100;
             }
 
-            if (r.getPosition().y > (float) SCREEN_HEIGHT / 1.4) {
+
+
+           
+
+
+
+            if (r.getPosition().y > floorY) {
                 vspeed = 0;
-                r.setPosition(r.getPosition().x, (float)SCREEN_HEIGHT / 1.4);
+                r.setPosition(r.getPosition().x, floorY);
                 air = false;
             }
 
+            /// Meus planos
+            /*
+            if (position.y > floorY) {
+                vspeed = 0;
+                position.y = floorY;
+                air = false;
+
+            }
+            */
+
             r.move(hspeed, vspeed);
+            //position.x += hspeed;
+            //position.y += vspeed;
+
 
             model.pos = r.getPosition();
+            //model.pos = position;
 
             model.update();
 

@@ -570,23 +570,6 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 struct Model {
     std::vector<Element*> allBones;
     std::vector<ElementHandle*> allHandles;

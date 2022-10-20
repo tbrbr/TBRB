@@ -7,7 +7,7 @@ class Pato {
     Text FPS;
     Text txtScore;
 
-    static void restartGame(GameInfo& info) {
+    static void restartGame(GameInfo & info) {
 
         info.lives = info.maxLives;
         info.missAnimationStart = 0;
@@ -20,7 +20,7 @@ class Pato {
 
     }
 
-    static float TextMoveX(Text* __over) {
+    static float TextMoveX(Text * __over) {
         int x = SCREEN_WIDTH;
         int finalXPosition = SCREEN_WIDTH / 2 - __over->getGlobalBounds().width / 2;
 
@@ -31,9 +31,9 @@ class Pato {
     }
 
     inline static float BarMoveX() {
-        return (float)SCREEN_WIDTH / (FRAMERATE_LIMIT * 1.5);
+        return (float) SCREEN_WIDTH / (FRAMERATE_LIMIT * 1.5);
     }
-
+ 
     static bool GameOverScreen(RenderWindow* window) {
 
         Font font;
@@ -57,13 +57,13 @@ class Pato {
         bar[0].setFillColor(Color::Red);
         bar[1].setFillColor(Color::Red);
 
-        const float finalXPosition = (float)SCREEN_WIDTH / 2 - __over.getGlobalBounds().width / 2;
+        const float finalXPosition = (float) SCREEN_WIDTH / 2 - __over.getGlobalBounds().width / 2;
 
         float movex = TextMoveX(&__over);
         float barx = BarMoveX();
 
         while (window->isOpen()) {
-
+          
 
             float temp = __over.getPosition().x - finalXPosition;
             if (temp < movex) {
@@ -95,7 +95,7 @@ class Pato {
 
                     movex = __over.getPosition().x - finalXPosition;
                     barx = bar[0].getPosition().x;
-
+  
                 }
             }
 
@@ -110,12 +110,12 @@ class Pato {
     }
 
     static inline bool isButtonComMouseNele(RectangleShape rec, int mousex, int mousey) {
-        return mousex >= rec.getPosition().x && mousex < rec.getSize().x + rec.getPosition().x
+        return mousex >= rec.getPosition().x && mousex < rec.getSize().x + rec.getPosition().x 
             && mousey >= rec.getPosition().y && mousey < rec.getSize().y + rec.getPosition().y;
-
+        
     }
-
-    static int checkButtonHover(RectangleShape* rec, int mousex, int mousey, int i) {
+    
+    static int checkButtonHover(RectangleShape * rec, int mousex, int mousey, int i) {
         if (isButtonComMouseNele(rec[i], mousex, mousey)) {
             return i;
         }
@@ -135,18 +135,18 @@ class Pato {
         Font font;
         font.loadFromFile("..\\Rinha\\fonts\\blops.ttf");
 
-        Text* t[3];
+        Text * t[3];
 
         RectangleShape rec[3];
         for (int i = 0; i < 3; i++) {
             rec[i].setFillColor(Color::Black);
-            rec[i].setSize(Vector2f(SCREEN_WIDTH * 0.25, SCREEN_HEIGHT * 0.1));
+            rec[i].setSize(Vector2f(SCREEN_WIDTH * 0.4, SCREEN_HEIGHT * 0.2));
             rec[i].setOutlineColor(Color::Blue);
             rec[i].setOutlineThickness(1);
             rec[i].setPosition(SCREEN_WIDTH / 2 - rec[i].getSize().x / 2, (yposition * (i + 1)) + spaceBetween * i);
         }
 
-
+       
         t[0] = new Text("Resume", font, SCREEN_HEIGHT / 50);
         t[1] = new Text("Sense do capa", font, SCREEN_HEIGHT / 50);
         t[2] = new Text("QUIT", font, SCREEN_HEIGHT / 50);
@@ -178,7 +178,7 @@ class Pato {
                     }
 
 
-
+                
                 }
 
                 if (e.type == Event::KeyPressed) {
@@ -208,4 +208,115 @@ class Pato {
 
     }
 
+
+
+public:
+    Pato(RenderWindow& window) {
+        SpriteInit(info, window);
+
+        info.mapWidth = info.smap.getGlobalBounds().width;
+        info.mapHeight = info.smap.getGlobalBounds().height;
+
+        window.setMouseCursorVisible(false);
+        window.setMouseCursorGrabbed(true);
+
+        addRooster(info);
+        /// Textos
+        FPS.setString("0");
+        FPS.setFont(info.fonte1);
+        FPS.setCharacterSize(30);
+
+        txtScore.setString("Score: " + info.kills);
+        txtScore.setFont(info.fonte1);
+        txtScore.setCharacterSize(30);
+        txtScore.setPosition(0, window.getSize().y - 80);
+    }
+
+    void patinho(RenderWindow& window, int & option) {
+        Event e;
+        
+
+        while (window.pollEvent(e))
+        {
+            if (e.type == Event::Closed)
+                window.close();
+
+            if (e.type == Event::KeyPressed)
+            {
+                if (e.key.code == Keyboard::Escape) {
+                    int i = PauseMenu(&window);
+                    if (i == 2) {
+                        option = Rooster::MENU_PRINCIPAL;
+                        restartGame(info);
+                        return;
+                    }
+
+                }
+                   
+            }
+
+            if (info.windowGrabbed)
+                if (e.type == Event::MouseMoved)
+                    gamePlay(info, window, e);
+
+            if (e.type == Event::MouseButtonPressed)
+            {
+                if (e.mouseButton.button == Mouse::Left)
+                    shoot(info);
+
+            }
+
+            if (e.type == Event::KeyPressed) {
+                if (e.key.code == Keyboard::C) {
+                    shoot(info);
+                }
+            }
+        }
+
+        window.clear();
+
+        
+        if (info.lives == 0) {
+
+            restartGame(info);
+
+            if (GameOverScreen(&window)) {
+                option = Rooster::ISPATOTIME;
+            }
+            else
+                option = Rooster::MENU_PRINCIPAL;
+
+            return;
+        }
+        
+
+        FPS.setString("FPS: " + GetFrameRate());
+        txtScore.setString("Score: " + IntToString(info.kills));
+
+        if (info.windowGrabbed) {
+            updateInfo(info, window);
+        }
+
+        drawStuff(info, window);
+
+        window.draw(FPS);
+        window.draw(txtScore);
+
+        for (int i = 0; i < info.lives; i++) {
+
+            float sniperX = info.viewWidth - (i + 1) * (info.sSniper.getGlobalBounds().width + 10);
+            float sniperY = info.viewHeight - info.sSniper.getGlobalBounds().height;
+
+            // Icone de Sniper
+            info.sSniper.setColor(Color::White);
+            info.sSniper.setPosition(sniperX, sniperY);
+            window.draw(info.sSniper);
+        }
+       
+        window.display();
+    }
+
 };
+
+
+

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Arquivos de Cabeçalho\Patinho">
+      <UniqueIdentifier>{04c78d0f-38dc-495c-97f2-5b66040afc73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Rinha.cpp">
@@ -64,6 +67,18 @@
     </ClInclude>
     <ClInclude Include="galoKalsa.h">
       <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="Patinho\Fps.h">
+      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
+    </ClInclude>
+    <ClInclude Include="Patinho\jogoDoPatinho.h">
+      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
+    </ClInclude>
+    <ClInclude Include="Patinho\Patinho.h">
+      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
+    </ClInclude>
+    <ClInclude Include="Patinho\RoosterPato.h">
+      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

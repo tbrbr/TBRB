@@ -5,6 +5,50 @@ class Pato {
     Text FPS;
     Text txtScore;
  
+    static void GameOverScreen(RenderWindow* window) {
+
+        Font font;
+        font.loadFromFile("..\\Rinha\\fonts\\Melted Monster.ttf");
+        Text __game("Game", font, SCREEN_HEIGHT * 0.3);
+        Text __over("Over", font, SCREEN_HEIGHT * 0.3);
+
+        __game.setFillColor(Color::Red);
+        __over.setFillColor(Color::Red);
+
+        __over.setPosition(SCREEN_WIDTH, SCREEN_HEIGHT * 0.6);
+        __game.setPosition(__game.getGlobalBounds().width * -1, SCREEN_HEIGHT * 0.3);
+
+        const int finalXPosition = SCREEN_WIDTH / 2 - __over.getGlobalBounds().width / 2;
+
+        while (window->isOpen()) {
+            if (__over.getPosition().x > finalXPosition) {
+                __over.move(-6, 0);
+                __game.move(6, 0);
+            }
+
+            Event e;
+            while (window->pollEvent(e)) {
+                if (e.type == Event::KeyPressed) {
+                    if (__over.getPosition().x == finalXPosition) {
+                        return;
+                    }
+                    __over.setPosition(finalXPosition, SCREEN_HEIGHT * 0.6);
+                    __game.setPosition(finalXPosition, SCREEN_HEIGHT * 0.3);
+                }
+            }
+
+            window->clear();
+            window->draw(__game);
+            window->draw(__over);
+            window->display();
+        }
+        
+      
+
+
+
+
+    }
 public:
     Pato(RenderWindow& window) {
         SpriteInit(info, window);
@@ -27,7 +71,7 @@ public:
         txtScore.setPosition(0, window.getSize().y - 80);
     }
 
-    void patinho(RenderWindow& window) {
+    void patinho(RenderWindow& window, int & option) {
         Event e;
 
         while (window.pollEvent(e))
@@ -61,6 +105,12 @@ public:
 
         window.clear();
 
+        /*
+        if (info.lives == 0) {
+            GameOverScreen(&window);
+            option = MENU_PRINCIPAL;
+        }
+
         FPS.setString("FPS: " + GetFrameRate());
         txtScore.setString("Score: " + IntToString(info.kills));
 
@@ -83,7 +133,8 @@ public:
             info.sSniper.setPosition(sniperX, sniperY);
             window.draw(info.sSniper);
         }
-
+        */
+        GameOverScreen(&window);
         window.display();
     }
 

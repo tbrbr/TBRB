@@ -8,8 +8,20 @@
 using namespace std;
 using namespace sf;
 
+
 #include "RoosterPato.h"
 #include "Fps.h"
+
+
+float randF(float range = 1) {
+    int precision = 10000;
+    return range * (float)(rand() % precision) / precision;
+}
+
+float randRange(float min, float max) {
+    return randF(max - min) + min;
+}
+
 
 /// Cria novos Roosters
 Galinho newRooster(GameInfo& info)
@@ -27,6 +39,26 @@ Galinho newRooster(GameInfo& info)
     newRooster.vaccel = 0.03;
 
     return newRooster;
+}
+
+Particle newParticle(float x, float y, float hspd, float vspd) {
+    Particle newParticle;
+
+    newParticle.x = x;
+    newParticle.y = y;
+
+    newParticle.hspeed = hspd;
+    newParticle.vspeed = vspd;
+
+    return newParticle;
+}
+
+void addParticle(GameInfo& info, float x, float y, float hspd, float vspd){
+    info.particles.push_back(newParticle(x, y, hspd, vspd));
+}
+
+void addParticle(GameInfo& info, Particle part){
+    info.particles.push_back(part);
 }
 
 
@@ -185,6 +217,20 @@ void shoot(GameInfo& info)
 
             info.soundGalo.setPitch(val);
             info.soundGalo.play();
+
+            int partNum = rand() % 40 + 400;
+            int margin = 10;
+            for (int j = 0; j < partNum; j++) {
+                float partX = xx + randRange(margin, info.sgalo.getGlobalBounds().width - margin);
+                float partY = yy + randRange(margin, info.sgalo.getGlobalBounds().height - margin);
+                float partHspd = randRange(-3, 3);
+                float partVspd = randRange(-3, 3);
+                Particle part = newParticle(partX, partY, partHspd, partVspd);
+                part.isStuck = (rand() % 6 == 0) ? true : false;
+                part.life = rand() % 300 + 400;
+                addParticle(info, part);
+            }
+
             if(sqrt(info.kills) > info.roosters.size()){
                 addRooster(info);
             }
@@ -242,7 +288,16 @@ void updateInfo(GameInfo& info, RenderWindow& window)
             if(info.lives < 1){
             }
         }
+        for (int i = 0; i < info.particles.size(); i++) {
+            if (info.particles.at(i).isAlive) {
+                info.particles.at(i).update();
+            }
+            else {
+                info.particles.erase(info.particles.begin() + i);
+                i--;
+            }
 
+        }
 
         info.roosters.at(i) = thisRooster;
     }
@@ -274,6 +329,11 @@ void drawStuff(GameInfo& info, RenderWindow& window){
     info.smap.setPosition(-info.camX, -info.camY);
     window.draw(info.smap);
 
+    int partNum = info.particles.size();
+    for (int i = 0; i < partNum; i++) {
+        info.particles.at(i).draw(info.camX, info.camY, window);
+    }
+
    // Drawing all Roosters
     int roosterNumber = info.roosters.size();
 
@@ -294,29 +354,11 @@ void drawStuff(GameInfo& info, RenderWindow& window){
 
     // Drawing Gun
     window.draw(info.sgun);
+
     int miraX = SCREEN_WIDTH / 2 + info.camX;
     int miraY = SCREEN_HEIGHT / 2 + info.camY;
 
-    Color c = Color::Green;
-
-    for (int i = 0; i < roosterNumber; i++)
-    {
-        Galinho thisRooster = info.roosters.at(i);
-        int xx = thisRooster.x;
-        int yy = thisRooster.y;
-
-        if (miraX > xx && miraX < xx + info.sgalo.getGlobalBounds().width &&
-            miraY > yy && miraY < yy + info.sgalo.getGlobalBounds().height) {
-            c = Color::Red;
-            break;
-        }
    
-    }
-    // Drawing Mira
-    for (int i = 0; i < 4; i++) {
-        info.smira.aim[i].setFillColor(c);
-    }
-    info.smira.px.setFillColor(c);
     info.smira.draw(&window);
    // window.draw(info.smira.s);
 

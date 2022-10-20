@@ -228,14 +228,18 @@ namespace Rooster {
         float vspeed;
         int frames = 0;
         int initFrames = 0;
+
         struct Model model;
+
         std::vector<struct Animation> animations;
+
         float floorY = (float)SCREEN_HEIGHT / 1.4;
 
     public:
         int atacking;
         HitBox hitbox;
         std::vector<HitBox> hurtBox;
+        std::vector<Projectile> projectiles;
         LifeBar* bar;
         bool facingRight = false;
         bool estadoUpdate = false;
@@ -292,7 +296,7 @@ namespace Rooster {
         int inline getFrames() {
             return frames;
         }
-        virtual void apanhar(Ataques atk) {
+        virtual void apanhar(Ataques atk,bool direction) {
             this->hp -= atk.Damage;
             bar->update(hp);
         }
@@ -330,18 +334,21 @@ namespace Rooster {
 
          
             model.draw(window);
+            for (int i = 0; i < projectiles.size(); i++) {
 
+                projectiles[i].draw(window);
+            }
 
             for (int i = 0; i < hurtBox.size(); i++) {
 
-                HitBox box = hurtBox[i];
+                
 
-                drawHitBox(window, box, sf::Color(255, 255, 255, 100));
+                drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 
             if (hiKick->isAtacking) {
-                drawHitBox(window, hiKick->hitbox, sf::Color::Red);
+               // drawHitBox(window, hiKick->hitbox, sf::Color::Red);
             }
 
             
@@ -370,12 +377,6 @@ namespace Rooster {
             if (air) {
                 vspeed += peso * Gravity / 100;
             }
-
-
-
-           
-
-
 
             if (r.getPosition().y > floorY) {
                 vspeed = 0;

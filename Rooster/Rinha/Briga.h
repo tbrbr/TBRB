@@ -61,7 +61,7 @@
 		else
 		{
 			galo.setState(Rooster::state::STOPPED);
-			galo.setHspeed(0);
+			//galo.setHspeed(0);
 
 		}
 
@@ -107,7 +107,7 @@
 		else
 		{
 			galo2.setState(Rooster::state::STOPPED);
-			galo2.setHspeed(0);
+			//galo2.setHspeed(0);
 
 		}
 

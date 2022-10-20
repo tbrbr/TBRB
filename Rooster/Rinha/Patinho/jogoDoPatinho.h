@@ -134,7 +134,7 @@ public:
             window.draw(info.sSniper);
         }
         */
-        GameOverScreen(&window);
+        //GameOverScreen(&window);
         window.display();
     }
 

@@ -38,8 +38,8 @@ namespace Rooster {
 			this->hp = 100;
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 
-			this->hiKick = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3,90, milliseconds(1000));
-			this->louKick = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 0,3,0, milliseconds(1000));
+			this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10,-PI/4, milliseconds(1000));
+			this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20,10,PI/4, milliseconds(1000));
 			this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3,0, milliseconds(2000));
 
 			bullet.loadFromFile("sprites/bullet.png");
@@ -359,6 +359,9 @@ namespace Rooster {
 				model.at(ASA_ATRAS)->angle = 45;
 				model.at(ASA_FRENTE)->angle = 90;
 
+				louKick->hitbox.center = model.at(PE_ATRAS)->drawPos;
+				louKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width / 2;
+				louKick->isAtacking = true;
 			}
 			else if (percentage < 2.9f / 3.f) {
 
@@ -370,6 +373,10 @@ namespace Rooster {
 				model.at(ASA_ATRAS)->angle *= 0.9;
 				model.at(ASA_FRENTE)->angle *= 0.9;
 				model.at(CABECA)->angle *= 0.9;
+				hiKick->hitbox.center = { 0,0 };
+				hiKick->hitbox.radius = 0;
+				hiKick->isAtacking = false;
+
 			}
 			else {
 				model.at(CORPO)->angle = 0;
@@ -392,8 +399,13 @@ namespace Rooster {
 				
 
 				// Calculando os impulsos
-				hspeed += sin(atk.angle) * atk.KnockBack;
-				vspeed += cos(atk.angle) * atk.KnockBack;
+				//e o chute  de tras fudeu ne
+				vspeed += sin(atk.angle) * atk.KnockBack;
+				hspeed += cos(atk.angle) * atk.KnockBack;
+
+				if (vspeed < 0) {
+					air = true;
+				}
 
 				// Tempo de perda de controle sobre o Rooster
 				stunFrames = atk.Stun;
@@ -411,13 +423,10 @@ namespace Rooster {
 		void update() override {
 
 			// Timer 
-			if(invFrames > 0)
-				invFrames--;
-
-
-			if (stunFrames > 0) {
-				stunFrames--;
-			}
+			
+			invFrames--;			
+			stunFrames--;
+			
 
 			hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
 
@@ -440,10 +449,11 @@ namespace Rooster {
 			/// Aqui vem a suavização
 			// A perda de velocidade
 			// Simulando atrito com ar?
-			if (stunFrames > 0) {
+			if (stunFrames < 0 && stunFrames > - 10) {
 				hspeed *= 0.98;
 				vspeed *= 0.98;
 			}
+			
 
 
 
@@ -486,7 +496,7 @@ namespace Rooster {
 				runReset();
 			}
 
-			if (estado != RUNNING) {
+			if (estado != RUNNING && invFrames <= 0) {
 				hspeed = 0;
 			}
 

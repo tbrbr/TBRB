@@ -1,4 +1,8 @@
 
+#ifndef  __entradas
+#define __entradas
+
+
 namespace Rooster {
 
 
@@ -44,3 +48,4 @@ namespace Rooster {
 
 };
 
+#endif // ! __entradas

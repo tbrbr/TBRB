@@ -13,6 +13,8 @@
 
 #include <fstream>
 
+#define FRAMERATE_LIMIT 60
+
 #define println(x) (std::cout << x << std::endl)
 
 using namespace std;
@@ -28,7 +30,7 @@ bool keyboardState[sf::Keyboard::KeyCount][3];
 #include "Patinho/jogoDoPatinho.h"
 #include "TilesDoArrocha.h"
 
-#define FRAMERATE_LIMIT 60
+
 #include "Math2.h"
 
 //#include "jogador_de_video.h"
@@ -43,10 +45,6 @@ using namespace Rooster;
 #include "Briga.h"
 #include "fregues.h"
 #include "cardapio.h"
-
-
-
-
 
 int main() {
 
@@ -115,7 +113,6 @@ int main() {
 		}
 		//piano.draw(*window);
 
-		
 		switch (option)
 		{
 		case UMJOGADORES:
@@ -126,7 +123,7 @@ int main() {
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
-
+			break;
 		default:
 			break;
 		}

@@ -114,14 +114,14 @@
 		for (int i = 0; i < galo.hurtBox.size(); i++) {
 
 			if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.hiKick);
+				galo.apanhar(*galo2.hiKick, galo2.facingRight);
 			}
 			if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.louKick);
+				galo.apanhar(*galo2.louKick, galo2.facingRight);
 
 			}
 			if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.ultimateShot);
+				galo.apanhar(*galo2.ultimateShot,galo2.facingRight);
 
 			}
 		}
@@ -129,14 +129,14 @@
 		for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
 			if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.hiKick);
+				galo2.apanhar(*galo.hiKick,galo.facingRight);
 				
 			}
 			if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.louKick);
+				galo2.apanhar(*galo.louKick,galo.facingRight);
 			}
 			if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.ultimateShot);
+				galo2.apanhar(*galo.ultimateShot,galo.facingRight);
 			}
 
 

@@ -28,8 +28,7 @@ namespace Rooster {
 		float ArmSpinAngFase = 0;
 		float Arm2SpinAngFase = 0;
 
-		Texture bullet;
-		Sprite sniperBullet;
+		
 
 	public:
 		Sniper(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
@@ -40,11 +39,18 @@ namespace Rooster {
 
 			this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10,-PI/4, milliseconds(1000));
 			this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20,10,PI/4, milliseconds(1000));
+
 			this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3,0, milliseconds(2000));
 
-			bullet.loadFromFile("sprites/bullet.png");
-			sniperBullet.setTexture(bullet);
+			
+			
+			char txt[] = "sprites/png - transparent - brass - bullet.png";
 
+			Projectile* bullet = new Projectile(Vector2f(0,0),txt,0,0,Vector2f(0,0));
+			projectiles.push_back(*bullet);
+			delete bullet;
+
+					
 			r.setSize(Vector2f(20, 20));
 			r.setPosition(SCREEN_WIDTH / 4, (float)SCREEN_HEIGHT / 1.4);
 
@@ -220,7 +226,10 @@ namespace Rooster {
 			}
 			else if (percentage < 2.2f / 3.f) {
 
-				//finja que eu consigo fazer um FUCKING TIRO
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+				//projectiles[0].
+				
 
 			}
 			else if (percentage < 2.5f / 3.f) {
@@ -373,9 +382,9 @@ namespace Rooster {
 				model.at(ASA_ATRAS)->angle *= 0.9;
 				model.at(ASA_FRENTE)->angle *= 0.9;
 				model.at(CABECA)->angle *= 0.9;
-				hiKick->hitbox.center = { 0,0 };
-				hiKick->hitbox.radius = 0;
-				hiKick->isAtacking = false;
+				louKick->hitbox.center = { 0,0 };
+				louKick->hitbox.radius = 0;
+				louKick->isAtacking = false;
 
 			}
 			else {
@@ -391,7 +400,7 @@ namespace Rooster {
 
 
 		}
-		void apanhar(Ataques atk) override {
+		void apanhar(Ataques atk, bool direction) override {
 
 			if (invFrames <= 0) {
 
@@ -405,6 +414,9 @@ namespace Rooster {
 
 				if (vspeed < 0) {
 					air = true;
+				}
+				if (!direction) {
+					hspeed *= -1;
 				}
 
 				// Tempo de perda de controle sobre o Rooster

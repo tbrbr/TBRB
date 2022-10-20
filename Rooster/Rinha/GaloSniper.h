@@ -228,7 +228,7 @@ namespace Rooster {
 
 				projectiles[0].setVisibility(true);
 				projectiles[0].setScale(Vector2f(1, 1));
-				//projectiles[0].
+				projectiles[0].setPosition(model.at("Sniper")->drawPos);
 				
 
 			}

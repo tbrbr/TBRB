@@ -60,8 +60,15 @@ namespace Rooster {
 		void setScale(Vector2f scale) {
 			scl = scale;
 		}
-		void update() {
+		void setImpulse(float hSpeed, float vSpeed) {
+			this->hSpeed = hSpeed;
+			this->vSpeed = vSpeed;
+		}
 
+		void setPosition(Vector2f position) {
+			this->position = position;
+		}
+		void update() {
 			position.x += hSpeed;
 			position.y += (vAcc - vSpeed);
 

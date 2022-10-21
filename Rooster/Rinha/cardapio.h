@@ -289,15 +289,111 @@ public:
 
 };
 
+class SelectionSinglePlayer {
 
-void selectionsingleplayer() {
-	int galos[NUMGALOS];
-	RectangleShape recs[NUMGALOS];
-	float squareSize = 50;
-	for (int i = 0; i < NUMGALOS; i++)
-	{
-		recs[i].setSize(Vector2f(squareSize, squareSize));
-	}
-	//recs[0].setTexture(, true);
+	Texture fundo;
+	Sprite sprFundo;
+	IntRect rec;
+	std::vector <Texture> roostersTextures;
+	std::vector <CircleShape> circlesLine;
+	std::vector <CircleShape> roosters;
+	
+public:
+	 SelectionSinglePlayer() {
 
-}
+		 fundo.loadFromFile("sprites\\oldfarmbk.png");
+		 sprFundo.setTexture(fundo);
+		 rec.width = SCREEN_WIDTH;
+		 rec.height = SCREEN_HEIGHT;
+		 rec.left = 0;
+		 rec.top = 0;
+		 sprFundo.setTextureRect(rec);
+
+		 for (int i = 1; i < 6; i++) {
+			 string s = "sprites\\galo" + std::to_string(i);
+			 s += ".png";
+			 Texture t;
+			 t.loadFromFile(s);
+			 roostersTextures.push_back(t);
+		 }
+
+		 CircleShape sniperCircle(SCREEN_WIDTH / 16);
+		 sniperCircle.setTexture(&roostersTextures[0]);
+		 IntRect rec(0, 0, 506, 519);
+		 sniperCircle.setTextureRect(rec);
+		 sniperCircle.setPosition(SCREEN_WIDTH / 8, SCREEN_HEIGHT / 4);
+
+		 roosters.push_back(sniperCircle);
+
+		 CircleShape sniperBorder(SCREEN_WIDTH / 16);
+		 sniperBorder.setOutlineThickness(SCREEN_WIDTH / 75);
+		 sniperBorder.setFillColor(Color::Transparent);
+		 sniperBorder.setOutlineColor(Color::Yellow);
+		 sniperBorder.setPosition(
+			 SCREEN_WIDTH / 8 - sniperBorder.getOutlineThickness() / 2,
+			 SCREEN_HEIGHT / 4 - sniperBorder.getOutlineThickness() / 2
+		 );
+
+		 circlesLine.push_back(sniperBorder);
+		 
+		 CircleShape pesteCircle(SCREEN_WIDTH / 16);
+		 pesteCircle.setTexture(&roostersTextures[4]);
+		 IntRect rec2(0, 0, 1641, 1648.5);
+		 pesteCircle.setTextureRect(rec2);
+		 pesteCircle.setPosition(
+			 SCREEN_WIDTH / 2 - SCREEN_WIDTH / 16,
+			 SCREEN_HEIGHT / 10 
+		 );
+
+		 roosters.push_back(pesteCircle);
+
+		 CircleShape pesteBorder(SCREEN_WIDTH / 16);
+		 pesteBorder.setOutlineThickness(SCREEN_WIDTH / 75);
+		 pesteBorder.setFillColor(Color::Transparent);
+		 pesteBorder.setOutlineColor(Color::Green);
+		 pesteBorder.setPosition(
+			 SCREEN_WIDTH / 2 - SCREEN_WIDTH / 16, 
+			 SCREEN_HEIGHT / 10
+		 );
+
+		 circlesLine.push_back(pesteBorder);
+
+		 CircleShape kalsaCircle(SCREEN_WIDTH / 16);
+		 kalsaCircle.setTexture(&roostersTextures[1]);
+		 IntRect rec3(0, 0,581 ,656);
+		 kalsaCircle.setTextureRect(rec3);
+		 kalsaCircle.setPosition(
+			 SCREEN_WIDTH - SCREEN_WIDTH / 4,
+			 SCREEN_HEIGHT / 4
+		 );
+
+		 roosters.push_back(kalsaCircle);
+
+		 CircleShape kalsaBorder(SCREEN_WIDTH / 16);
+		 kalsaBorder.setOutlineThickness(SCREEN_WIDTH / 75);
+		 kalsaBorder.setFillColor(Color::Transparent);
+		 kalsaBorder.setOutlineColor(Color::Blue);
+		 kalsaBorder.setPosition(
+			 SCREEN_WIDTH - SCREEN_WIDTH / 4,
+			 SCREEN_HEIGHT / 4
+		 );
+
+		 circlesLine.push_back(kalsaBorder);
+
+	 }
+	 void show(RenderWindow* window, int& option) {
+
+		 window->draw(sprFundo);
+		 for (int i = 0; i < 3; i++) {
+			 window->draw(roosters[i]);
+		 }
+		 for (int i = 0; i < 3; i++) {
+			 window->draw(circlesLine[i]);
+		 }
+		
+		 
+		 window->display();
+
+	 }
+
+};

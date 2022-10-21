@@ -85,9 +85,9 @@ int main() {
 
 	//socket.setBlocking(false);
 
-	/*fazendo um ponteiro pra menu pra dar free depois*/
+	//fazendo um ponteiro pra menu pra dar free depois
 	MenuPrincipal* menuprincipal = new MenuPrincipal();
-
+	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 
 
@@ -124,6 +124,9 @@ int main() {
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
+			break;
+		case SELECTION:
+			selector->show(window,option);
 			break;
 		default:
 			break;

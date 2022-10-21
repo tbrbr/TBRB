@@ -334,16 +334,15 @@ namespace Rooster {
 
          
             model.draw(window);
-            for (int i = 0; i < projectiles.size(); i++) {
-
-                projectiles[i].draw(window);
-            }
+            
+            
+            projectiles[0].draw(window);
+            
 
             for (int i = 0; i < hurtBox.size(); i++) {
 
-                
-
-                drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+               
+                //drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 

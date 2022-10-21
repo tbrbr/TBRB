@@ -5,7 +5,6 @@
 #define EULER 2.71828
 
 
-
 float pitagoras(float cateto1, float cateto2) {
 	return sqrt(pow(cateto1, 2) + pow(cateto2, 2));
 }

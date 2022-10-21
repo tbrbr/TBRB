@@ -80,5 +80,8 @@
     <ClInclude Include="Patinho\RoosterPato.h">
       <Filter>Arquivos de Cabeçalho\Patinho</Filter>
     </ClInclude>
+    <ClInclude Include="Sangue.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

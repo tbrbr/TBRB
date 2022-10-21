@@ -1,7 +1,7 @@
 #ifndef ITATECH_JR
 #define ITATECH_JR
 
-
+#include "Sangue.h"
 namespace Rooster {
 	
 
@@ -92,6 +92,10 @@ namespace Rooster {
 
 
 	};
+
+	
+
+
 
 
 	class Ataques {

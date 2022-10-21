@@ -55,7 +55,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 4;
+	int option = 2;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -90,6 +90,7 @@ int main() {
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 
+	explosion e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
 
 	while (window->isOpen())
 	{
@@ -112,8 +113,10 @@ int main() {
 			keyboardState[i][0] = keyState;
 
 		}
+		
+		
 		//piano.draw(*window);
-
+		
 		switch (option)
 		{
 		case UMJOGADORES:
@@ -131,6 +134,7 @@ int main() {
 		default:
 			break;
 		}
+		
 	}
 	return 0;
 }

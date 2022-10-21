@@ -154,6 +154,7 @@
     <ClInclude Include="Patinho\jogoDoPatinho.h" />
     <ClInclude Include="Patinho\Patinho.h" />
     <ClInclude Include="Patinho\RoosterPato.h" />
+    <ClInclude Include="Sangue.h" />
     <ClInclude Include="TilesDoArrocha.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

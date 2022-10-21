@@ -141,7 +141,7 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
 }
 
 void gamePlay(GameInfo& info, RenderWindow& window, Event e)
-{
+{   
     int newMousePositionX = e.mouseMove.x;
     int newMousePositionY = e.mouseMove.y;
 
@@ -153,8 +153,16 @@ void gamePlay(GameInfo& info, RenderWindow& window, Event e)
     int xDif =  newMousePositionX - mainMousePositionX;
     int yDif =  newMousePositionY - mainMousePositionY;
 
-    info.camX += xDif;
-    info.camY += yDif;
+
+    if (xDif != 0) {
+        info.camX += xDif * info.sensi.x;
+    }
+
+
+    if (yDif != 0) {
+        info.camY += yDif * info.sensi.y;
+    }
+  
 
 
     if(info.camX < 0)

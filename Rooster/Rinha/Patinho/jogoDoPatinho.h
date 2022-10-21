@@ -109,22 +109,157 @@ class Pato {
 
     }
 
+    void updateSensi() {
+            
+    }
+
     static inline bool isButtonComMouseNele(RectangleShape rec, int mousex, int mousey) {
-        return mousex >= rec.getPosition().x && mousex < rec.getSize().x + rec.getPosition().x 
-            && mousey >= rec.getPosition().y && mousey < rec.getSize().y + rec.getPosition().y;
+        return mousex >= rec.getPosition().x - 2 && mousex <= rec.getSize().x + rec.getPosition().x + 2
+            && mousey >= rec.getPosition().y - 2  && mousey <= rec.getSize().y + rec.getPosition().y + 2;
         
     }
     
-    static int checkButtonHover(RectangleShape * rec, int mousex, int mousey, int i) {
+    static int checkButtonHover(RectangleShape * rec, int mousex, int mousey, int i, int __finalCondition) {
+        if (mousey == -1) {
+            if (hasBarInMouseX(rec[i], mousex, i + 1)) {
+                return i;
+            }
+            else {
+                return i == __finalCondition ? -1 : hasBarInMouseX(rec[i], mousex, i + 1);
+            }
+        }
         if (isButtonComMouseNele(rec[i], mousex, mousey)) {
             return i;
         }
-        return i == 2 ? -1 : checkButtonHover(rec, mousex, mousey, i + 1);
+        return i == __finalCondition ? -1 : checkButtonHover(rec, mousex, mousey, i + 1, __finalCondition);
     }
 
-    static int PauseMenu(RenderWindow* window) {
+    static int hasBarInMouseX(RectangleShape rec, int mousex, int size) {
+        for (int i = 0; i < size; i++) {
+            if (mousex >= rec.getPosition().x && mousex <= rec.getSize().x + rec.getPosition().x) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    static void configScreen(RenderWindow* window, GameInfo& info)
+    {
+
+        Font font;
+        font.loadFromFile("..\\Rinha\\fonts\\blops.ttf");
+
+        Text sensi("Sensi", font, SCREEN_HEIGHT / 50);
+        Text cor("Cor da Mira", font, SCREEN_HEIGHT / 50);
+        Text back("Voltar", font, SCREEN_HEIGHT / 50);
+
+        sensi.setPosition(SCREEN_WIDTH / 2 - sensi.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.15);
+        cor.setPosition(SCREEN_WIDTH / 2 - cor.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.30);
+        back.setPosition(SCREEN_WIDTH / 2 - back.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.80);
+
+        RectangleShape __back(Vector2f(back.getGlobalBounds().width, back.getGlobalBounds().height * 2));
+        __back.setPosition(back.getPosition());
+        __back.setFillColor(Color::Transparent);
 
 
+        RectangleShape bars[4];
+        RectangleShape _barEnd[4][2];
+        RectangleShape _position[4];
+
+
+
+        for (int i = 0; i < 4; i++) {
+            bars[i].setSize(Vector2f(SCREEN_WIDTH * 0.3, 3));
+            bars[i].setPosition(SCREEN_WIDTH / 2 - bars[i].getSize().x / 2, i * 100 + 10);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            for(int j = 0; j < 2; j++)
+                _barEnd[i][j].setSize(Vector2f(6, bars[i].getSize().y * 5));
+
+            _position[i].setSize(Vector2f(6, bars[i].getSize().y * 8));
+
+            _barEnd[i][0].setPosition(bars[i].getPosition().x - _barEnd[i][0].getSize().x, bars[i].getPosition().y - _barEnd[i][0].getSize().y / 2.5);;
+            _barEnd[i][1].setPosition(bars[i].getSize().x + bars[i].getPosition().x, bars[i].getPosition().y - _barEnd[i][0].getSize().y / 2.5 );
+            _position[i].setPosition(bars[i].getPosition().x, bars[i].getPosition().y - _position[i].getSize().y / 4);
+        }
+
+        
+        int mousex, mousey;
+        int __temp = -1;
+
+        while (window->isOpen()) {
+
+            mousex = Mouse::getPosition(*window).x;
+            mousey = Mouse::getPosition(*window).y;
+
+            Event e;
+
+            while (window->pollEvent(e)) {
+                if (e.type == Event::Closed) {
+                    window->close();
+                }
+
+
+
+                if (e.type == Event::MouseButtonPressed) {
+
+                    if (isButtonComMouseNele(__back, mousex, mousey)) {
+                        return;
+                    }
+
+                    __temp = checkButtonHover(bars, mousex, mousey, 0, 3);
+                    if (__temp != -1) {
+                        _position[__temp].setPosition(mousex, _position[__temp].getPosition().y);
+                    }
+                    else {
+                        __temp = checkButtonHover(_position, mousex, mousey, 0, 3);
+                        if(__temp != -1)
+                         _position[__temp].setPosition(mousex, _position[__temp].getPosition().y);
+                    }
+
+                }
+
+                if (e.type == Event::MouseButtonReleased) {
+                    
+                }
+
+            }
+
+            if (Mouse::isButtonPressed(Mouse::Left)) {
+                if (__temp != -1) {
+                    _position[__temp].setPosition(mousex, _position[__temp].getPosition().y);
+                }
+            }
+
+            window->clear();
+            window->draw(sensi);
+            window->draw(cor);
+            window->draw(__back);
+            window->draw(back);
+
+
+            for (int i = 0; i < 4; i++) {
+                window->draw(bars[i]);
+                window->draw(_position[i]);
+                for (int j = 0; j < 2; j++)
+                    window->draw(_barEnd[i][j]);
+            }
+            window->display();
+        }
+    }
+
+
+    static int PauseMenu(RenderWindow* window, GameInfo & info) {
+
+
+        Texture __t;
+        __t.loadFromFile("..\\Rinha\\Patinho\\pause.jpg");
+
+        RectangleShape background;
+        background.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+        background.setPosition(0, 0);
+        background.setTexture(&__t);
 
         window->setMouseCursorGrabbed(false);
         window->setMouseCursorVisible(true);
@@ -148,7 +283,7 @@ class Pato {
 
        
         t[0] = new Text("Resume", font, SCREEN_HEIGHT / 50);
-        t[1] = new Text("Sense do capa", font, SCREEN_HEIGHT / 50);
+        t[1] = new Text("CONFIG", font, SCREEN_HEIGHT / 50);
         t[2] = new Text("QUIT", font, SCREEN_HEIGHT / 50);
 
 
@@ -163,7 +298,7 @@ class Pato {
             while (window->pollEvent(e)) {
                 if (e.type == Event::MouseButtonPressed) {
 
-                    int i = checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0);
+                    int i = checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
 
                     if (i == 0) {
                         window->setMouseCursorGrabbed(true);
@@ -173,23 +308,18 @@ class Pato {
                     else if (i == 2) {
                         return i;
                     }
-                    else if (i == 3) {
-                        //nada
+                    else if (i == 1) {
+                        configScreen(window, info);
+                        i = -1;
                     }
-
-
                 
-                }
-
-                if (e.type == Event::KeyPressed) {
-                    window->close();
                 }
             }
 
-            int j = checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0);
+            int j = checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
 
             if (j != -1) {
-                rec[j].setFillColor(Color::Color(200, 200, 200, 34));
+                rec[j].setFillColor(Color::Transparent);
             }
             else {
                 for (int k = 0; k < 3; k++) {
@@ -198,6 +328,7 @@ class Pato {
             }
 
             window->clear();
+            window->draw(background);
             for (int i = 0; i < 3; i++) {
                 window->draw(rec[i]);
                 window->draw(*t[i]);
@@ -244,7 +375,7 @@ public:
             if (e.type == Event::KeyPressed)
             {
                 if (e.key.code == Keyboard::Escape) {
-                    int i = PauseMenu(&window);
+                    int i = PauseMenu(&window, info);
                     if (i == 2) {
                         option = Rooster::MENU_PRINCIPAL;
                         restartGame(info);

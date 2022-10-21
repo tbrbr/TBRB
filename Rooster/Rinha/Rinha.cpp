@@ -55,7 +55,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 2;
+	int option = 4;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -126,7 +126,7 @@ int main() {
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-			selector->show(window,option);
+			selector->show(window,option,galo,galo2);
 			break;
 		default:
 			break;

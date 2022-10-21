@@ -31,7 +31,7 @@ class MenuPrincipal {
 
 
 public: 
-	MenuPrincipal() {
+	 MenuPrincipal() {
 
 		/*background rooster*/
 		backgroundTexture.loadFromFile("sprites/background_menu.png");
@@ -294,27 +294,39 @@ class SelectionSinglePlayer {
 	Texture fundo;
 	Sprite sprFundo;
 	IntRect rec;
+
 	Texture podium;
 	Sprite podiumP1;
 	Sprite podiumP2;
+
 	std::vector <Texture> roostersTextures;
+	Texture sniperT;
+
 	std::vector <CircleShape> circlesLine;
 	std::vector <CircleShape> roosters;
+
 	Font fontTitle;
 	Text title;
-	Texture sniperT;
+
 	Font P;
-	CircleShape borderP1;
 	Text P1;
-	CircleShape borderP2;
 	Text P2;
+
+	CircleShape borderP1;
+	CircleShape borderP2;
+
 	Font stats;
+
 	std::vector <Text> statusp1;
 	std::vector <Text> statusp2;
 
+	std::vector <struct Model> models;
 
-	struct Model Sniper;
-	
+	bool isp1Time = true;
+
+	int selectionp1;
+	int selectipnp2;
+
 public:
 	 SelectionSinglePlayer() {
 
@@ -498,6 +510,7 @@ public:
 		 borderP2.setFillColor(Color::Transparent);
 		 borderP2.setOutlineColor(Color(145, 0, 0));
 
+		 Model Sniper;
 
 		 sniperT.loadFromFile("sprites/galoSniper.png");
 		 Sniper.tex = &sniperT;
@@ -512,9 +525,10 @@ public:
 		 Sniper.xScl = -(float)SCREEN_WIDTH / 1280;
 		 Sniper.yScl = (float)SCREEN_WIDTH / 1280;
 
+		 models.push_back(Sniper);
 
 	 }
-	 void show(RenderWindow* window, int& option) {
+	 void show(RenderWindow* window, int& option,Galo* galop1, Galo* galop2) {
 
 		 window->setMouseCursorVisible(true);
 
@@ -526,7 +540,6 @@ public:
 				 window->close();
 			 }
 			 
-
 		 }
 
 		 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -545,36 +558,54 @@ public:
 		 int mousex = Mouse::getPosition(*window).x;
 		 int mousey = Mouse::getPosition(*window).y;
 	     
+		
+		 
+
 		 for (int i = 0; i < 5; i++) {
+
 			 if(pointDistance(Vector2f(mousex,mousey),
 					 Vector2f(
 						 circlesLine[i].getPosition().x + circlesLine[i].getRadius(),						  
 						 circlesLine[i].getPosition().y + circlesLine[i].getRadius()
 					 ))< circlesLine[i].getRadius())
 			 {
-				 borderP1.setPosition(circlesLine[i].getPosition());
-				 P1.setPosition(
-					 circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
-					 circlesLine[i].getPosition().y
-				 );
-				 window->draw(borderP1);
-				 window->draw(P1);
+				 if (isp1Time) {
+					 borderP1.setPosition(circlesLine[i].getPosition());
+					 P1.setPosition(
+						 circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
+						 circlesLine[i].getPosition().y
+					 );
+					 window->draw(borderP1);
+					 window->draw(P1);
+					 
+					 //models[0].draw(*window);
+
+				 }
+				 else {
+					 borderP2.setPosition(circlesLine[i].getPosition());
+					 P2.setPosition(
+						 circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
+						 circlesLine[i].getPosition().y
+					 );
+					 window->draw(borderP2);
+					 window->draw(P2);
+					// models[0].update();
+					// models[0].draw(*window);
+				 }
+				
 			 }
 				 
 		 }
-		 //window->draw(borderP1);
-		 //window->draw(P1);
+		 
 		 window->draw(podiumP1);
 		 window->draw(podiumP2);
-
-
+		 //models[0].update();
+		 //models[0].draw(*window);
 		
 
 
 
-		 Sniper.update();
-
-		 Sniper.draw(*window);
+		
 		 window->display();
 
 	 }

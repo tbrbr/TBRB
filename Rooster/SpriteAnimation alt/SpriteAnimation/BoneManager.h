@@ -454,25 +454,25 @@ struct BoneManager{
             if(info.keyboardState[sf::Keyboard::LControl][0]){
                 if(info.keyboardState[sf::Keyboard::N][2]){
                     int index = 0;
-                    std::ifstream file("kalsaModel.txt");
+                    std::ifstream file("bruxoModel.txt");
                     while(file.good()){
 
                         file.close();
                         index++;
 
-                        std::string str = "kalsaModel";
+                        std::string str = "bruxoModel";
                         str += std::to_string(index);
                         str += ".txt";
                         file.open(str);
                     }
                     if(index != 0){
-                        std::string str = "kalsaModel";
+                        std::string str = "bruxoModel";
                         str += std::to_string(index);
                         str += ".txt";
 
                         saveModel(str);
                     }else {
-                        saveModel("kalsaModel.txt");
+                        saveModel("bruxoModel.txt");
                     }
                     //println("Nice creation");
                 }

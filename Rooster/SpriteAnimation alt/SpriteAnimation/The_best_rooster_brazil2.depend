@@ -3324,7 +3324,7 @@
 	<SFML/Graphics/Drawable.hpp>
 	<SFML/Window/GlResource.hpp>
 
-1666097517 source:c:\tbrb\rooster\spriteanimation alt\spriteanimation\main.cpp
+1666374992 source:c:\tbrb\rooster\spriteanimation alt\spriteanimation\main.cpp
 	<iostream>
 	<SFML/Graphics.hpp>
 	<vector>
@@ -3352,5 +3352,5 @@
 
 1666013780 c:\tbrb\rooster\spriteanimation alt\spriteanimation\timelinemanager.h
 
-1666097517 c:\tbrb\rooster\spriteanimation alt\spriteanimation\bonemanager.h
+1666374917 c:\tbrb\rooster\spriteanimation alt\spriteanimation\bonemanager.h
 

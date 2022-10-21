@@ -65,6 +65,7 @@ int main() {
 	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 

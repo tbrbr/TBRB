@@ -203,7 +203,7 @@ struct GameInfo
     float mapHeight = 0;
 
     bool Shot;
-
+    Vector2f sensi = Vector2f(0.1, 0);
     int counter = 0;
 
     // Roosters abatidos

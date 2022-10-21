@@ -147,12 +147,12 @@ void gamePlay(GameInfo& info, RenderWindow& window, Event e)
 
 
     if (xDif != 0) {
-        info.camX += xDif * info.sensi.x;
+        info.camX += xDif * info.sensi;
     }
 
 
     if (yDif != 0) {
-        info.camY += yDif * info.sensi.y;
+        info.camY += yDif * info.sensi;
     }
   
 

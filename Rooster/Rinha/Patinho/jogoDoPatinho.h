@@ -1,5 +1,6 @@
 
 #include "..\\entradas.h"
+#pragma warning(disable : 4996)
 
 class Pato {
 
@@ -225,7 +226,7 @@ class Pato {
             _position[i].setPosition(bars[i].getPosition().x, bars[i].getPosition().y - _position[i].getSize().y / 4);
         }
 
-        _position[0].move(SentiToBar(info.sensi.x),0);
+        _position[0].move(SentiToBar(info.sensi),0);
 
 
         _position[1].move(RGBToBar(bars[1], info.smira.aim[0].getFillColor().r), 0);
@@ -265,6 +266,12 @@ class Pato {
                             info.smira.aim[i].setFillColor(aim.aim[0].getFillColor());
                         }
                         info.smira.px.setFillColor(aim.aim[0].getFillColor());
+
+                        std::fstream config("config.ini", ios::out | ios::trunc);
+                        config << info.sensi << std::endl;
+                        config << (int)info.smira.aim[0].getFillColor().r << " " << (int)info.smira.aim[0].getFillColor().g << " " << (int)info.smira.aim[0].getFillColor().b;
+                        config.close();
+
                         return;
                     }
 
@@ -286,8 +293,7 @@ class Pato {
                 if (__temp != -1) {
                     _position[__temp].setPosition(mousex, _position[__temp].getPosition().y);
                     if (__temp == 0) {
-                        info.sensi.x = BarToSensi(bars[__temp], _position[__temp]);
-                        info.sensi.y = BarToSensi(bars[__temp], _position[__temp]);
+                        info.sensi = BarToSensi(bars[__temp], _position[__temp]);
                     }
                  
                 }
@@ -368,9 +374,9 @@ class Pato {
         RectangleShape rec[3];
 
        
-        t[0] = new Text("Resume", font, SCREEN_HEIGHT / 50);
-        t[1] = new Text("CONFIG", font, SCREEN_HEIGHT / 50);
-        t[2] = new Text("QUIT", font, SCREEN_HEIGHT / 50);
+        t[0] = new Text("Resume", font, SCREEN_HEIGHT / 30);
+        t[1] = new Text("CONFIG", font, SCREEN_HEIGHT / 30);
+        t[2] = new Text("QUIT", font, SCREEN_HEIGHT / 30);
 
         for (int i = 0; i < 3; i++) {
             rec[i].setFillColor(Color::Transparent);
@@ -453,6 +459,39 @@ public:
         txtScore.setFont(info.fonte1);
         txtScore.setCharacterSize(30);
         txtScore.setPosition(0, window.getSize().y - 80);
+
+
+        {
+            std::fstream config("config.ini", std::ios::in);
+            if (config.fail()) {
+                config.close();
+                config.open("config.ini", std::ios::out | std::ios::trunc);
+                config << info.sensi << " ";
+                config << (int)info.smira.aim[0].getFillColor().r << " " << (int)info.smira.aim[0].getFillColor().g << " " << (int)info.smira.aim[0].getFillColor().b;
+                config.close();
+
+                exit(0);
+            }
+            config.close();
+        }
+
+        FILE* file = fopen("config.ini", "r");
+        
+
+
+        int r = 255, g = 0, b = 0;
+        float sensi;
+
+        fscanf(file, "%f %d %d %d", &sensi, &r, &g, &b);
+        cout << r << endl << g << endl << b << endl;
+
+        for (int i = 0; i < 4; i++) {
+            info.smira.aim[i].setFillColor(Color::Color(r, g, b));
+        }
+        info.smira.px.setFillColor(Color::Color(r, g, b));
+        info.sensi = sensi;
+        fclose(file);
+
     }
 
     void patinho(RenderWindow& window, int & option) {

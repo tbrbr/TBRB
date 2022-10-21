@@ -55,7 +55,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 2;
+	int option = 4;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);

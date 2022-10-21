@@ -294,6 +294,9 @@ class SelectionSinglePlayer {
 	Texture fundo;
 	Sprite sprFundo;
 	IntRect rec;
+	Texture podium;
+	Sprite podiumP1;
+	Sprite podiumP2;
 	std::vector <Texture> roostersTextures;
 	std::vector <CircleShape> circlesLine;
 	std::vector <CircleShape> roosters;
@@ -317,81 +320,143 @@ public:
 			 roostersTextures.push_back(t);
 		 }
 
-		 CircleShape sniperCircle(SCREEN_WIDTH / 16);
+		 CircleShape sniperCircle(SCREEN_WIDTH / 24);
+		
 		 sniperCircle.setTexture(&roostersTextures[0]);
-		 IntRect rec(0, 0, 506, 519);
+		 IntRect rec(100,100, 506, 519);
 		 sniperCircle.setTextureRect(rec);
-		 sniperCircle.setPosition(SCREEN_WIDTH / 8, SCREEN_HEIGHT / 4);
+		 sniperCircle.setPosition(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4);
 
 		 roosters.push_back(sniperCircle);
 
-		 CircleShape sniperBorder(SCREEN_WIDTH / 16);
-		 sniperBorder.setOutlineThickness(SCREEN_WIDTH / 75);
-		 sniperBorder.setFillColor(Color::Transparent);
-		 sniperBorder.setOutlineColor(Color::Yellow);
+		 CircleShape sniperBorder(SCREEN_WIDTH / 24);
+		 sniperBorder.setOutlineThickness(SCREEN_WIDTH / 100);
+		 Color cor(255, 0, 0, 100);
+		 sniperBorder.setFillColor(cor);
+		
+		 sniperBorder.setOutlineColor(Color::Red);
 		 sniperBorder.setPosition(
-			 SCREEN_WIDTH / 8 - sniperBorder.getOutlineThickness() / 2,
-			 SCREEN_HEIGHT / 4 - sniperBorder.getOutlineThickness() / 2
+			 SCREEN_WIDTH / 4,
+			 SCREEN_HEIGHT / 4 
 		 );
 
 		 circlesLine.push_back(sniperBorder);
 		 
-		 CircleShape pesteCircle(SCREEN_WIDTH / 16);
+		 CircleShape pesteCircle(SCREEN_WIDTH / 24);
 		 pesteCircle.setTexture(&roostersTextures[4]);
+
 		 IntRect rec2(0, 0, 1641, 1648.5);
 		 pesteCircle.setTextureRect(rec2);
 		 pesteCircle.setPosition(
-			 SCREEN_WIDTH / 2 - SCREEN_WIDTH / 16,
-			 SCREEN_HEIGHT / 10 
+			 SCREEN_WIDTH / 2 - SCREEN_WIDTH / 24,
+			 SCREEN_HEIGHT / 6 
 		 );
 
 		 roosters.push_back(pesteCircle);
 
-		 CircleShape pesteBorder(SCREEN_WIDTH / 16);
-		 pesteBorder.setOutlineThickness(SCREEN_WIDTH / 75);
-		 pesteBorder.setFillColor(Color::Transparent);
+		 CircleShape pesteBorder(SCREEN_WIDTH / 24);
+		 pesteBorder.setOutlineThickness(SCREEN_WIDTH / 100);
+		 Color cor2(0, 255, 2,100);
+		 pesteBorder.setFillColor(cor2);
 		 pesteBorder.setOutlineColor(Color::Green);
 		 pesteBorder.setPosition(
-			 SCREEN_WIDTH / 2 - SCREEN_WIDTH / 16, 
-			 SCREEN_HEIGHT / 10
+			 SCREEN_WIDTH / 2 - SCREEN_WIDTH / 24,
+			 SCREEN_HEIGHT / 6
 		 );
 
 		 circlesLine.push_back(pesteBorder);
 
-		 CircleShape kalsaCircle(SCREEN_WIDTH / 16);
+		 CircleShape kalsaCircle(SCREEN_WIDTH / 24);
 		 kalsaCircle.setTexture(&roostersTextures[1]);
 		 IntRect rec3(0, 0,581 ,656);
 		 kalsaCircle.setTextureRect(rec3);
 		 kalsaCircle.setPosition(
-			 SCREEN_WIDTH - SCREEN_WIDTH / 4,
+			 SCREEN_WIDTH - SCREEN_WIDTH / 4 - SCREEN_WIDTH/12,
 			 SCREEN_HEIGHT / 4
 		 );
 
 		 roosters.push_back(kalsaCircle);
 
-		 CircleShape kalsaBorder(SCREEN_WIDTH / 16);
-		 kalsaBorder.setOutlineThickness(SCREEN_WIDTH / 75);
-		 kalsaBorder.setFillColor(Color::Transparent);
+		 CircleShape kalsaBorder(SCREEN_WIDTH / 24);
+		 kalsaBorder.setOutlineThickness(SCREEN_WIDTH / 100);
+		 Color cor3(0, 0, 255, 100);
+		 kalsaBorder.setFillColor(cor3);
 		 kalsaBorder.setOutlineColor(Color::Blue);
 		 kalsaBorder.setPosition(
-			 SCREEN_WIDTH - SCREEN_WIDTH / 4,
+			 SCREEN_WIDTH - SCREEN_WIDTH / 4 - SCREEN_WIDTH / 12,
 			 SCREEN_HEIGHT / 4
 		 );
 
 		 circlesLine.push_back(kalsaBorder);
 
+		 CircleShape magoCircle(SCREEN_WIDTH / 24);
+		 magoCircle.setTexture(&roostersTextures[3]);
+		 IntRect rec4(200,700, 1021.33,844);
+		 magoCircle.setTextureRect(rec4);
+		 magoCircle.setPosition(
+			 SCREEN_WIDTH / 4 + SCREEN_WIDTH / 8,
+			 SCREEN_HEIGHT / 4 + SCREEN_WIDTH / 12
+		 );
+
+		 roosters.push_back(magoCircle);
+
+		 CircleShape magoBorder(SCREEN_WIDTH / 24);
+		 magoBorder.setOutlineThickness(SCREEN_WIDTH / 100);
+		 Color cor4(255,0, 255, 100);
+		 magoBorder.setFillColor(cor4);
+		 magoBorder.setOutlineColor(Color::Magenta);
+		 magoBorder.setPosition(
+			 SCREEN_WIDTH / 4 + SCREEN_WIDTH / 8,
+			 SCREEN_HEIGHT / 4 + SCREEN_WIDTH / 12
+		 );
+
+		 circlesLine.push_back(magoBorder);
+
+		 CircleShape botasCircle(SCREEN_WIDTH / 24);
+		 botasCircle.setTexture(&roostersTextures[2]);
+		 //IntRect rec5(200, 700, 1021.33, 844);
+		 //botasCircle.setTextureRect(rec5);
+		 botasCircle.setPosition(
+			 SCREEN_WIDTH - (SCREEN_WIDTH / 4 + SCREEN_WIDTH / 8) - SCREEN_WIDTH / 12,
+			 SCREEN_HEIGHT / 4  + SCREEN_WIDTH / 12
+		 );
+
+		 roosters.push_back(botasCircle);
+
+		 CircleShape botasBorder(SCREEN_WIDTH / 24);
+		 botasBorder.setOutlineThickness(SCREEN_WIDTH / 100);
+		 Color cor5(255, 255, 0, 100);
+		 botasBorder.setFillColor(cor5);
+		 botasBorder.setOutlineColor(Color::Yellow);
+		 botasBorder.setPosition(
+			 SCREEN_WIDTH - (SCREEN_WIDTH / 4 + SCREEN_WIDTH / 8) - SCREEN_WIDTH / 12,
+			 SCREEN_HEIGHT / 4 + SCREEN_WIDTH / 12
+		 );
+
+		 circlesLine.push_back(botasBorder);
+
+
+		 podium.loadFromFile("sprites\\ninho.png");
+		 podiumP1.setTexture(podium);
+		 podiumP2.setTexture(podium);
+		 podiumP1.setPosition(SCREEN_WIDTH / 10, SCREEN_HEIGHT - podiumP1.getGlobalBounds().height);
+		 podiumP2.setPosition(
+			 SCREEN_WIDTH - SCREEN_WIDTH / 10 - podiumP2.getGlobalBounds().width,
+			 SCREEN_HEIGHT - podiumP1.getGlobalBounds().height
+		 );
 	 }
 	 void show(RenderWindow* window, int& option) {
 
 		 window->draw(sprFundo);
-		 for (int i = 0; i < 3; i++) {
-			 window->draw(roosters[i]);
-		 }
-		 for (int i = 0; i < 3; i++) {
+		 
+		 for (int i = 0; i < 5; i++) {
 			 window->draw(circlesLine[i]);
 		 }
-		
-		 
+		 for (int i = 0; i < 5; i++) {
+			 window->draw(roosters[i]);
+		 }
+		 window->draw(podiumP1);
+		 window->draw(podiumP2);
 		 window->display();
 
 	 }

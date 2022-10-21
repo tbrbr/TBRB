@@ -300,9 +300,25 @@ class SelectionSinglePlayer {
 	std::vector <Texture> roostersTextures;
 	std::vector <CircleShape> circlesLine;
 	std::vector <CircleShape> roosters;
+	Font fontTitle;
+	Text title;
+	Texture sniperT;
+	Font P;
+	CircleShape borderP1;
+	Text P1;
+	CircleShape borderP2;
+	Text P2;
+	Font stats;
+	std::vector <Text> statusp1;
+	std::vector <Text> statusp2;
+
+
+	struct Model Sniper;
 	
 public:
 	 SelectionSinglePlayer() {
+
+		
 
 		 fundo.loadFromFile("sprites\\oldfarmbk.png");
 		 sprFundo.setTexture(fundo);
@@ -311,6 +327,17 @@ public:
 		 rec.left = 0;
 		 rec.top = 0;
 		 sprFundo.setTextureRect(rec);
+
+		 fontTitle.loadFromFile("fonts\\Act_Of_Rejection.ttf");
+		 title.setFont(fontTitle);
+		 title.setString("Choose your Rooster!");
+		 Color corTitulo(250, 77, 2);
+		 title.setFillColor(corTitulo);
+		 title.setOutlineThickness(SCREEN_WIDTH / 200);
+		 title.setOutlineColor(Color(250, 200, 0));
+		 title.setCharacterSize(SCREEN_WIDTH/20);
+		 title.setPosition(SCREEN_WIDTH / 2 - title.getGlobalBounds().width /2, SCREEN_HEIGHT/50);
+		 
 
 		 for (int i = 1; i < 6; i++) {
 			 string s = "sprites\\galo" + std::to_string(i);
@@ -444,10 +471,70 @@ public:
 			 SCREEN_WIDTH - SCREEN_WIDTH / 10 - podiumP2.getGlobalBounds().width,
 			 SCREEN_HEIGHT - podiumP1.getGlobalBounds().height
 		 );
+
+		 P.loadFromFile("fonts/Overfield.ttf");
+		 P1.setFont(P);
+		 P2.setFont(P);
+
+		 P1.setOutlineColor(Color(200, 200, 200));
+		 P1.setOutlineThickness(SCREEN_WIDTH / 200);
+		 P1.setCharacterSize(SCREEN_WIDTH / 50);
+		 P1.setFillColor(Color(85, 185, 230));
+		 P1.setString("P1");
+
+		 P2.setOutlineColor(Color(200, 200, 200));
+		 P2.setOutlineThickness(SCREEN_WIDTH / 200);
+		 P2.setCharacterSize(SCREEN_WIDTH / 50);
+		 P2.setFillColor(Color(145, 0, 0));
+		 P2.setString("P2");
+
+		 borderP1.setRadius(SCREEN_WIDTH / 24);
+		 borderP1.setOutlineThickness(SCREEN_WIDTH / 100);
+		 borderP1.setFillColor(Color::Transparent);
+		 borderP1.setOutlineColor(Color(85, 185, 230));
+
+		 borderP2.setRadius(SCREEN_WIDTH / 24);
+		 borderP2.setOutlineThickness(SCREEN_WIDTH / 100);
+		 borderP2.setFillColor(Color::Transparent);
+		 borderP2.setOutlineColor(Color(145, 0, 0));
+
+
+		 sniperT.loadFromFile("sprites/galoSniper.png");
+		 Sniper.tex = &sniperT;
+		 Sniper.loadModel("SniperModel.txt");
+
+		 Sniper.pos = Vector2f(
+			 SCREEN_WIDTH / 10 + podiumP1.getGlobalBounds().width / 2,
+
+			 SCREEN_HEIGHT - podiumP1.getGlobalBounds().height - Sniper.at(PE_FRENTE)->sprArea.texRect.height/2
+			 
+		 );
+		 Sniper.xScl = -(float)SCREEN_WIDTH / 1280;
+		 Sniper.yScl = (float)SCREEN_WIDTH / 1280;
+
+
 	 }
 	 void show(RenderWindow* window, int& option) {
 
+		 window->setMouseCursorVisible(true);
+
+		 Event e;
+		 while (window->pollEvent(e))
+		 {
+			 if (e.type == Event::Closed)
+			 {
+				 window->close();
+			 }
+			 
+
+		 }
+
+		 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			 window->close();
+		 }
+		 
 		 window->draw(sprFundo);
+		 window->draw(title);
 		 
 		 for (int i = 0; i < 5; i++) {
 			 window->draw(circlesLine[i]);
@@ -455,8 +542,39 @@ public:
 		 for (int i = 0; i < 5; i++) {
 			 window->draw(roosters[i]);
 		 }
+		 int mousex = Mouse::getPosition(*window).x;
+		 int mousey = Mouse::getPosition(*window).y;
+	     
+		 for (int i = 0; i < 5; i++) {
+			 if(pointDistance(Vector2f(mousex,mousey),
+					 Vector2f(
+						 circlesLine[i].getPosition().x + circlesLine[i].getRadius(),						  
+						 circlesLine[i].getPosition().y + circlesLine[i].getRadius()
+					 ))< circlesLine[i].getRadius())
+			 {
+				 borderP1.setPosition(circlesLine[i].getPosition());
+				 P1.setPosition(
+					 circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
+					 circlesLine[i].getPosition().y
+				 );
+				 window->draw(borderP1);
+				 window->draw(P1);
+			 }
+				 
+		 }
+		 //window->draw(borderP1);
+		 //window->draw(P1);
 		 window->draw(podiumP1);
 		 window->draw(podiumP2);
+
+
+		
+
+
+
+		 Sniper.update();
+
+		 Sniper.draw(*window);
 		 window->display();
 
 	 }

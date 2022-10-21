@@ -115,6 +115,7 @@
 
 			if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
 				galo.apanhar(*galo2.hiKick, galo2.facingRight);
+				
 			}
 			if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
 				galo.apanhar(*galo2.louKick, galo2.facingRight);

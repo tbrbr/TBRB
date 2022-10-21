@@ -47,7 +47,7 @@ namespace Rooster {
 			this->vSpeed = vSpeed;
 			this->vAcc = Gravity / 10;
 
-			texture;
+			
 			texture.loadFromFile(textureFile);
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
@@ -56,6 +56,9 @@ namespace Rooster {
 		}
 		void setVisibility(bool isVisible) {
 			this->isVisible = isVisible;
+		}
+		bool getVisibility() {
+			return isVisible;
 		}
 		void setScale(Vector2f scale) {
 			scl = scale;
@@ -67,6 +70,12 @@ namespace Rooster {
 
 		void setPosition(Vector2f position) {
 			this->position = position;
+		}
+		Vector2f getSize() {
+			return Vector2f(sprite.getGlobalBounds().width,sprite.getGlobalBounds().height);
+		}
+		Vector2f getPosition() {
+			return position;
 		}
 		void update() {
 			position.x += hSpeed;
@@ -98,9 +107,12 @@ namespace Rooster {
 		bool isAtacking = false;
 		Clock init;
 		Time timeLapse;
+
+		SoundBuffer bufferCollision;
+		Sound soundCollision;
 		
 			
-		Ataques(float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse) {
+		Ataques(float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
 			this->Stun = Stun;
 			this->CoolDown = CoolDown;
 			this->hitbox = hitbox;
@@ -108,9 +120,13 @@ namespace Rooster {
 			this->KnockBack = KnockBack;
 			this->timeLapse = timelapse;
 			this->angle = angle;
-
+			bufferCollision.loadFromFile(txt);
+			soundCollision.setBuffer(bufferCollision);
 		}
 
+		void playSound() {
+			soundCollision.play();
+		}
 
 		bool CheckCollision(HitBox galo) {
 			if (isAtacking) {

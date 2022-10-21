@@ -28,7 +28,7 @@ namespace Rooster {
 		float ArmSpinAngFase = 0;
 		float Arm2SpinAngFase = 0;
 
-		
+
 
 	public:
 		Sniper(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
@@ -37,20 +37,18 @@ namespace Rooster {
 			this->hp = 100;
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 
-			this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10,-PI/4, milliseconds(1000));
-			this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20,10,PI/4, milliseconds(1000));
+			this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1000),"");
+			this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000),"");
+			this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, 0, milliseconds(2000),"sounds\\awp.ogg");
 
-			this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3,0, milliseconds(2000));
 
-			
-			
-			char txt[] = "sprites/png - transparent - brass - bullet.png";
 
-			Projectile* bullet = new Projectile(Vector2f(0,0),txt,0,0,Vector2f(0,0));
+			const char const* txt = "sprites\\bullet.png";
+
+			Projectile* bullet = new Projectile(Vector2f(0, 0), txt, 0, 0, Vector2f(0, 0));
 			projectiles.push_back(*bullet);
-			delete bullet;
 
-					
+
 			r.setSize(Vector2f(20, 20));
 			r.setPosition(SCREEN_WIDTH / 4, (float)SCREEN_HEIGHT / 1.4);
 
@@ -169,7 +167,7 @@ namespace Rooster {
 			if (atacking == NOT_ATTACK)
 				atacking = HIGH_KICK;
 			hiKick->init.restart();
-			
+
 
 		}
 		void lowKick() override {
@@ -228,9 +226,25 @@ namespace Rooster {
 
 				projectiles[0].setVisibility(true);
 				projectiles[0].setScale(Vector2f(1, 1));
-				projectiles[0].setPosition(model.at("Sniper")->drawPos);
-				
 
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						    (model.at("Sniper")->drawPos.y - projectiles[0].getSize().y/2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(90, 0);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+
+				else {
+					projectiles[0].setImpulse(-90, 0);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				
+				ultimateShot->isAtacking = true;
 			}
 			else if (percentage < 2.5f / 3.f) {
 
@@ -243,7 +257,7 @@ namespace Rooster {
 
 				if (facingRight)
 					r.setPosition(r.getGlobalBounds().left - 2, r.getGlobalBounds().top);
-				else 
+				else
 					r.setPosition(r.getGlobalBounds().left + 2, r.getGlobalBounds().top);
 
 
@@ -299,7 +313,7 @@ namespace Rooster {
 				model.at(ASA_FRENTE)->angle = angFix * 90;
 
 				hiKick->hitbox.center = model.at(PE_ATRAS)->drawPos;
-				hiKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width/2;
+				hiKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width / 2;
 				hiKick->isAtacking = true;
 
 			}
@@ -313,10 +327,10 @@ namespace Rooster {
 				model.at(ASA_ATRAS)->angle *= 0.9;
 				model.at(ASA_FRENTE)->angle *= 0.9;
 
-				hiKick->hitbox.center = {0,0};
+				hiKick->hitbox.center = { 0,0 };
 				hiKick->hitbox.radius = 0;
 				hiKick->isAtacking = false;
-				
+
 			}
 			else {
 				model.at(CORPO)->angle = 0;
@@ -330,6 +344,7 @@ namespace Rooster {
 
 
 		}
+
 		void lowKickAnim() {
 			Time t = louKick->init.getElapsedTime();
 
@@ -338,7 +353,6 @@ namespace Rooster {
 			}
 
 			float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
-
 
 
 			if (percentage < 1.f / 3.f) {
@@ -400,15 +414,15 @@ namespace Rooster {
 
 
 		}
-		void apanhar(Ataques atk, bool direction) override {
+		void apanhar(Ataques atk, bool direction) override { 
 
 			if (invFrames <= 0) {
 
 				hp -= atk.Damage;
-				
+
 
 				// Calculando os impulsos
-				//e o chute  de tras fudeu ne
+				
 				vspeed += sin(atk.angle) * atk.KnockBack;
 				hspeed += cos(atk.angle) * atk.KnockBack;
 
@@ -427,7 +441,9 @@ namespace Rooster {
 
 				bar->update(hp);
 
-				
+				atk.playSound();
+
+
 			}
 
 
@@ -435,18 +451,22 @@ namespace Rooster {
 		void update() override {
 
 			// Timer 
-			
-			invFrames--;			
+
+			invFrames--;
 			stunFrames--;
-			
+
 
 			hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
+
+
 
 			if (estadoUpdate) {
 				model.resetToBase();
 				animations[0].playingFrame = 0;
 			}
-
+			projectiles[0].update();
+			ultimateShot->hitbox.center = projectiles[0].getPosition();
+			ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
 
 			if (air) {
 				vspeed += peso * Gravity / 100;
@@ -461,11 +481,11 @@ namespace Rooster {
 			/// Aqui vem a suavização
 			// A perda de velocidade
 			// Simulando atrito com ar?
-			if (stunFrames < 0 && stunFrames > - 10) {
+			if (stunFrames < 0 && stunFrames > -10) {
 				hspeed *= 0.98;
 				vspeed *= 0.98;
 			}
-			
+
 
 
 
@@ -474,7 +494,7 @@ namespace Rooster {
 			for (int i = 0; i < hurtBox.size(); i++) {
 
 				hurtBox[i].center = model.at(i)->drawPos;
-				hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width/2;
+				hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
 
 			}
 

@@ -71,7 +71,6 @@ void addRooster(GameInfo& info)
 void SpriteInit(GameInfo& info,RenderWindow& window)
 {
     /// Inicializando as texturas
-    //info.Mira.loadFromFile("sprites/mira.png");
     info.Mapa.loadFromFile("sprites/mapa.png");
     info.gun.loadFromFile("sprites/gun.png");
     info.Galo.loadFromFile("sprites/galo.png");
@@ -87,7 +86,6 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
 
     
    
-    //info.smira.setTexture(info.Mira);
     info.sgalo.setTexture(info.Galo);
     info.sLight.setTexture(info.Light);
     info.sSniper.setTexture(info.sniper);
@@ -131,12 +129,6 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
         SCREEN_HEIGHT - info.sgun.getGlobalBounds().height
     );
 
-    /*
-    info.smira.s.setPosition(
-        SCREEN_WIDTH / 2 - info.smira.s.getGlobalBounds().width / 2,
-        SCREEN_HEIGHT / 2 - info.smira.s.getGlobalBounds().height / 2
-    );
-    */
 
 }
 

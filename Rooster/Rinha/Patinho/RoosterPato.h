@@ -154,7 +154,7 @@ struct GameInfo
     // Sprites
     Sprite sgun;
     Sprite smap;
-    Aim smira = Aim(Vector2f(10, 10), 6, Color::Red);
+    Aim smira = Aim(Vector2f(10, 10), 6, Color::Color(255, 0, 0));
     Sprite sgalo;
     Sprite sLight;
     Sprite sSniper;

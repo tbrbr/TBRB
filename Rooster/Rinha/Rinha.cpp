@@ -79,8 +79,8 @@ int main() {
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
 
-	Galo *galo = new Sniper(20, 20, 20, Rooster::state::STOPPED,true);
-    Galo *galo2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
+	Galo* galo = NULL;// = new Sniper(20, 20, 20, Rooster::state::STOPPED,true);
+	Galo* galo2 = NULL;// = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
 
 	Pato *miniGame1 = new Pato((*window));
 	
@@ -127,7 +127,9 @@ int main() {
 		switch (option)
 		{
 		case UMJOGADORES:
-			
+			if (!galo) {
+				return 1;
+			}
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:
@@ -138,6 +140,7 @@ int main() {
 			break;
 		case SELECTION:
 			selector->show(window,option,galo,galo2);
+
 			break;
 		default:
 			break;

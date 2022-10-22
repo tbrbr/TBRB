@@ -1,3 +1,6 @@
+#ifndef JUNIOTELES
+#define JUNIOTELES
+
 #include <math.h>
 
 #define Gravity 9.81
@@ -19,3 +22,5 @@ float pointDistance(Vector2f point1, Vector2f point2){
 float toRadiAnus(int angle) {
 	return (angle * PI) / 180;
 }
+
+#endif // !JUNIOTELES

@@ -4,13 +4,21 @@
 
 using namespace sf;
 
-int selecionarModo(RenderWindow * window, RectangleShape & background, Text & title) {
+int selecionarModo(RenderWindow * window, RectangleShape & background) {
 
 	
 
 	Text* t[4];
+
 	Font font;
+	Font titleFont;
+	titleFont.loadFromFile("fonts/CloisterBlack.ttf");
 	font.loadFromFile("fonts/blops.ttf");
+
+
+	Text title("GAME MODE", titleFont, SCREEN_HEIGHT / 13);
+	title.setPosition(SCREEN_WIDTH * 0.6, SCREEN_HEIGHT * 0.15);
+	title.setFillColor(Color::Red);
 
 
 	t[0] = new Text("SINGLEPLAYER", font, SCREEN_HEIGHT / 30);
@@ -58,7 +66,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background, Text & ti
 					if (__temp != -1) {
 
 						if (__temp == 0) {
-							return Rooster::UMJOGADORES;;
+							return Rooster::SELECTION;;
 						}
 						else if (__temp == 1) {
 							return Rooster::UMJOGADORES;
@@ -175,7 +183,7 @@ int MenuPrincipal(RenderWindow * window) {
 							window->close();
 						}
 						else if(__temp == 0) {
-							int __op = selecionarModo(window, background, title);
+							int __op = selecionarModo(window, background);
 							if (__op != -1) {
 								return __op;
 							}

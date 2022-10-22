@@ -34,6 +34,8 @@ class Pato {
     inline static float BarMoveX() {
         return (float) SCREEN_WIDTH / (FRAMERATE_LIMIT * 1.5);
     }
+
+   
  
     static bool GameOverScreen(RenderWindow* window) {
 
@@ -109,11 +111,6 @@ class Pato {
         }
 
     }
-
-
-   
-
-    
 
     static float BarToSensi(const RectangleShape & BAR, const RectangleShape & POSITION) {
 
@@ -512,7 +509,7 @@ public:
         window.clear();
 
         
-        if (info.lives == 0) {
+        if (info.lives == 0 || true) {
 
             restartGame(info);
 

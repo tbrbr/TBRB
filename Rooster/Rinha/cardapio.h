@@ -341,8 +341,8 @@ class SelectionSinglePlayer {
 	int selectionp1;
 	int selectipnp2;
 
-	Texture cursorT;
-	Sprite cursor;
+
+	
 
 public:
 	 SelectionSinglePlayer() {
@@ -544,14 +544,17 @@ public:
 
 		 models.push_back(Sniper);
 
-		 cursorT.loadFromFile("sprites/cursor.png");
-		 cursor.setTexture(cursorT);
-		 cursor.setScale(0.05, 0.05);
+		
 
 	 }
+
+	 
+
 	 void show(RenderWindow* window, int& option,Galo* galop1, Galo* galop2) {
 
-		 window->setMouseCursorVisible(false);
+		 int mousex = Mouse::getPosition(*window).x;
+		 int mousey = Mouse::getPosition(*window).y;
+
 
 		 Event e;
 		 while (window->pollEvent(e))
@@ -561,6 +564,56 @@ public:
 				 window->close();
 			 }
 			 
+			 if (e.type == Event::MouseButtonPressed) {
+				 if (e.mouseButton.button == Mouse::Left) {
+					 
+					 for (int i = 0; i < 5; i++) {
+						 if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey)) {
+								 if (i == 0) {
+									 if (isp1Time) {
+										 galop1 = new Sniper(20, 20, 20, Rooster::state::STOPPED, true);
+									 }
+									 else {
+										 galop2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
+									 }
+
+								 }
+								 else if (i == 1) {
+									 return;
+								 }
+								 else if (i == 2) {
+									 if (isp1Time) {
+										 galop1 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, true);
+									 }
+									 else {
+										 galop2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
+									 }
+
+								 }
+								 else if (i == 3) {
+									 if (isp1Time) {
+										// galop1 = new Bruxo(20, 20, 20, Rooster::state::STOPPED, true);
+									 }
+									 else {
+										 galop2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
+									 }
+								 }
+								 else if (i == 4) {
+									 return;
+								 
+								 }
+
+								 if (!isp1Time) {
+									 option = Rooster::UMJOGADORES;
+								 }
+
+								 isp1Time = false;
+							 return;
+						 }
+					 }
+
+				 }
+			 }
 		 }
 
 		 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -576,19 +629,13 @@ public:
 		 for (int i = 0; i < 5; i++) {
 			 window->draw(roosters[i]);
 		 }
-		 int mousex = Mouse::getPosition(*window).x;
-		 int mousey = Mouse::getPosition(*window).y;
-	     
+
 		 
 		 
 
 		 for (int i = 0; i < 5; i++) {
 
-			 if(pointDistance(Vector2f(mousex,mousey),
-					 Vector2f(
-						 circlesLine[i].getPosition().x + circlesLine[i].getRadius(),						  
-						 circlesLine[i].getPosition().y + circlesLine[i].getRadius()
-					 ))< circlesLine[i].getRadius())
+			 if(ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey))
 			 {
 				 if (isp1Time) {
 					 borderP1.setPosition(circlesLine[i].getPosition());
@@ -618,12 +665,10 @@ public:
 				 
 		 }
 
-		 Vector2i mouseP = Mouse::getPosition();
-		 cursor.setPosition(mouseP.x, mouseP.y);
+	
 
 		 window->draw(podiumP1);
 		 window->draw(podiumP2);
-		 window->draw(cursor);
 		 //models[0].update();
 		 //models[0].draw(*window);
 		

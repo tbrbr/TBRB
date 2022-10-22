@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="Briga.h" />
     <ClInclude Include="cardapio.h" />
+    <ClInclude Include="checador_de_posicao.h" />
     <ClInclude Include="efeitos_fodas.h" />
     <ClInclude Include="Elementos.h" />
     <ClInclude Include="entradas.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="IAtaques.h" />
     <ClInclude Include="jogador_de_video.h" />
     <ClInclude Include="Math2.h" />
+    <ClInclude Include="menu_inicial.h" />
     <ClInclude Include="muitosjogadores.h" />
     <ClInclude Include="Patinho\Fps.h" />
     <ClInclude Include="Patinho\jogoDoPatinho.h" />

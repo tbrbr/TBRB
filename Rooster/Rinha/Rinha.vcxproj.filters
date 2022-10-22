@@ -83,5 +83,11 @@
     <ClInclude Include="Sangue.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="menu_inicial.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="checador_de_posicao.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

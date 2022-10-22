@@ -111,35 +111,9 @@ class Pato {
     }
 
 
-    static inline bool isButtonComMouseNele(RectangleShape rec, int mousex, int mousey) {
-        return mousex >= rec.getPosition().x && mousex <= rec.getSize().x + rec.getPosition().x
-            && mousey >= rec.getPosition().y - 3 && mousey <= rec.getSize().y + rec.getPosition().y + 2;
-        
-    }
-    
-    static int checkButtonHover(RectangleShape * rec, int mousex, int mousey, int i, int __finalCondition) {
-        if (mousey == -1) {
-            if (hasBarInMouseX(rec[i], mousex, i + 1)) {
-                return i;
-            }
-            else {
-                return i == __finalCondition ? -1 : hasBarInMouseX(rec[i], mousex, i + 1);
-            }
-        }
-        if (isButtonComMouseNele(rec[i], mousex, mousey)) {
-            return i;
-        }
-        return i == __finalCondition ? -1 : checkButtonHover(rec, mousex, mousey, i + 1, __finalCondition);
-    }
+   
 
-    static int hasBarInMouseX(RectangleShape rec, int mousex, int size) {
-        for (int i = 0; i < size; i++) {
-            if (mousex >= rec.getPosition().x && mousex <= rec.getSize().x + rec.getPosition().x) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    
 
     static float BarToSensi(const RectangleShape & BAR, const RectangleShape & POSITION) {
 
@@ -260,7 +234,7 @@ class Pato {
 
                 if (e.type == Event::MouseButtonPressed) {
 
-                    if (isButtonComMouseNele(__back, mousex, mousey)) {
+                    if (ButtonCheck::isButtonComMouseNele(__back, mousex, mousey)) {
                         for (int i = 0; i < 4; i++)
                         {
                             info.smira.aim[i].setFillColor(aim.aim[0].getFillColor());
@@ -275,12 +249,12 @@ class Pato {
                         return;
                     }
 
-                    __temp = checkButtonHover(bars, mousex, mousey, 0, 3);
+                    __temp = ButtonCheck::checkButtonHover(bars, mousex, mousey, 0, 3);
                     if (__temp != -1) {
                         _position[__temp].setPosition(mousex, _position[__temp].getPosition().y);
                     }
                     else {
-                        __temp = checkButtonHover(_position, mousex, mousey, 0, 3);
+                        __temp = ButtonCheck::checkButtonHover(_position, mousex, mousey, 0, 3);
                         if (__temp != -1)
                             _position[__temp].setPosition(mousex, _position[__temp].getPosition().y);
                     }
@@ -322,7 +296,7 @@ class Pato {
                     }
                 }
 
-            if (isButtonComMouseNele(__back, mousex, mousey)) {
+            if (ButtonCheck::isButtonComMouseNele(__back, mousex, mousey)) {
                 back.setFillColor(Color::Yellow);
             }
             else {
@@ -396,7 +370,7 @@ class Pato {
             while (window->pollEvent(e)) {
                 if (e.type == Event::MouseButtonPressed) {
 
-                    int i = checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
+                    int i = ButtonCheck::checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
 
                     if (i == 0 || i == 2) {
                         window->setMouseCursorGrabbed(true);
@@ -414,7 +388,7 @@ class Pato {
                 
                 }
             }
-            int i = checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
+            int i = ButtonCheck::checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
             if (i != -1) {
                 t[i]->setFillColor(Color::Yellow);
             }

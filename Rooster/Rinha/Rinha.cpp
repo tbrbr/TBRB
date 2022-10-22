@@ -25,6 +25,7 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
+#include "checador_de_posicao.h"
 
 #include "Patinho/Patinho.h"
 #include "Patinho/jogoDoPatinho.h"
@@ -45,6 +46,7 @@ using namespace Rooster;
 #include "Briga.h"
 #include "fregues.h"
 #include "cardapio.h"
+#include "menu_inicial.h"
 
 int main() {
 
@@ -86,11 +88,11 @@ int main() {
 	//socket.setBlocking(false);
 
 	//fazendo um ponteiro pra menu pra dar free depois
-	MenuPrincipal* menuprincipal = new MenuPrincipal();
+	//MenuPrincipal* menuprincipal = new MenuPrincipal();
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 
-	explosion e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
+	//explosion e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
 
 	while (window->isOpen())
 	{
@@ -123,7 +125,7 @@ int main() {
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:
-			menuprincipal->ShowMenu(window,option);
+			option = MenuPrincipal(window);
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);

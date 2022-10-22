@@ -1,3 +1,5 @@
+
+#include "Math2.h"
 class ButtonCheck {
 
 public:
@@ -29,5 +31,10 @@ public:
             return i;
         }
         return i == __finalCondition ? -1 : checkButtonHover(rec, mousex, mousey, i + 1, __finalCondition);
+    }
+
+    static bool checkCircleHover(CircleShape circle, int mousex, int mousey) {
+       return pointDistance(Vector2f(mousex, mousey), Vector2f(  circle.getPosition().x + circle.getRadius(),  circle.getPosition().y + circle.getRadius())) < circle.getRadius();
+ 
     }
 };

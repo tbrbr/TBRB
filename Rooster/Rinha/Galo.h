@@ -341,7 +341,7 @@ namespace Rooster {
             for (int i = 0; i < hurtBox.size(); i++) {
 
                
-                drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+                //drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 

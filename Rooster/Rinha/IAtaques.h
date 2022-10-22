@@ -54,6 +54,21 @@ namespace Rooster {
 			sprite.setScale(scl);
 
 		}
+		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl,IntRect spriteRec) {
+			this->position = position;
+			this->texture = texture;
+			this->hSpeed = hSpeed;
+			this->vSpeed = vSpeed;
+			this->vAcc = Gravity / 10;
+
+			texture.loadFromFile(textureFile);
+			sprite.setTexture(texture);
+			sprite.setPosition(position);
+			sprite.setScale(scl);
+			sprite.setTextureRect(spriteRec);
+
+		}
+
 		void setVisibility(bool isVisible) {
 			this->isVisible = isVisible;
 		}
@@ -67,7 +82,9 @@ namespace Rooster {
 			this->hSpeed = hSpeed;
 			this->vSpeed = vSpeed;
 		}
-
+		void setTextureRec(IntRect rec) {
+			sprite.setTextureRect(rec);
+		}
 		void setPosition(Vector2f position) {
 			this->position = position;
 		}

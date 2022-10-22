@@ -21,15 +21,33 @@ namespace Rooster {
             this->maxHp = 100;
             this->hp = 100;
             bar = new LifeBar(maxHp, isp1, name.c_str());
+
             this->peso = 4;
     
-            this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1200), "");
-            this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000), "");
-            this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, 0, milliseconds(2000), "sounds\\awp.ogg");
+            this->hiKick = new Ataques(
+                8, 0.5, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, -PI / 4, milliseconds(1200), ""
+            );
+            this->louKick = new Ataques(
+                5, 0.5, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, PI / 4, milliseconds(1000), ""
+            );
 
-            const char const* txt = "sprites\\bullet.png";
-            Projectile* bullet = new Projectile(Vector2f(0, 0), txt, 0, 0, Vector2f(0, 0));
-            projectiles.push_back(*bullet);
+            this->ultimateShot = new Ataques(
+                0.9, 0.5, HitBox{ Vector2f(0, 0), 0 },
+                10, 3, 0, milliseconds(2000),
+                "sounds\\awp.ogg"
+            );
+        
+            Projectile* cinto = new Projectile(
+                Vector2f(0, 0),
+                "sprites\\Cinto.png",
+                0, 0, Vector2f(1, 1),
+                IntRect(0,0,603,100)
+            );
+
+            atacking = NOT_ATTACK;
+            projectiles.push_back(*cinto);
 
             if (isp1)
                 position.x = SCREEN_WIDTH / 4;
@@ -128,18 +146,93 @@ namespace Rooster {
         }
 
         void highKick() override {
-            atacking = HIGH_KICK;
-            hiKick->init.restart();
-
+            if (atacking == NOT_ATTACK) {
+                atacking = HIGH_KICK;
+                hiKick->init.restart();
+            }
+            
         }
         
         void lowKick() override {
-            atacking = LOW_KICK;
-            louKick->init.restart();
+            if (atacking == NOT_ATTACK) {
+                atacking = LOW_KICK;
+                louKick->init.restart();
+            }
         }
 
         void especial() override {
+            if (atacking == NOT_ATTACK) {
+                atacking = SPECIAL;
+                ultimateShot->init.restart();
+            }
+        
+        }
+        void especialAnim() {
+            Time t = ultimateShot->init.getElapsedTime();
 
+            if (t > ultimateShot->timeLapse) {
+                atacking = NOT_ATTACK;
+            }
+
+            float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
+
+            int angFix = (facingRight) ? 1 : -1;
+            angFix = -1;
+
+
+            if (percentage < 0.5f / 3.f) {
+
+
+                float thisPercentage = percentage * 3;
+                
+
+            }
+            else if (percentage < 2.f / 3.f) {
+                float thisPercentage = percentage * 3;
+
+            
+            }
+            else if (percentage < 2.05f / 3.f) {
+                ultimateShot->playSound();
+            }
+            else if (percentage < 2.2f / 3.f) {
+
+
+
+                projectiles[0].setVisibility(true);
+              
+
+                projectiles[0].setPosition(
+                    Vector2f(model.at("BackArm")->drawPos.x,
+                        (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 2)
+                    )
+                );
+
+                if (facingRight) {
+                    projectiles[0].setImpulse(20, 0);
+                    projectiles[0].setScale(Vector2f(0.5, 0.5));
+                }
+
+                else {
+                    projectiles[0].setImpulse(-20, 0);
+                    projectiles[0].setScale(Vector2f(-0.5, 0.5));
+                }
+
+
+                ultimateShot->isAtacking = true;
+            }
+            else if (percentage < 2.5f / 3.f) {
+
+          
+
+
+            }
+            else if (percentage < 2.9 / 3.f) {
+               
+            }
+            else {
+                
+            }
         }
 
         void louKickAnim() {
@@ -315,13 +408,25 @@ namespace Rooster {
 
             frames++;
            
+            for (int i = 0; i < hurtBox.size(); i++) {
 
+                hurtBox[i].center = model.at(i)->drawPos;
+                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
+
+            }
+
+            projectiles[0].update();
 
             if (air) {
                 jumpAnim();
             }
             else {
                 cairAnim();
+            }
+
+            if (estadoUpdate) {
+                model.resetToBase();
+                animations[0].playingFrame = 0;
             }
 
 
@@ -332,11 +437,11 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
-                //animations[0].update();
-                //if (animations[0].playingFrame > 15) {
-                //    animations[0].playingFrame = 15;
+                //animations[1].update();
+                //if (animations[1].playingFrame > 15) {
+                   // animations[1].playingFrame = 15;
                 //}
-                //model.updateWithAnimation(animations[0]);
+                //model.updateWithAnimation(animations[1]);
 
             }
             else if (estado == STOPPED) {
@@ -353,6 +458,9 @@ namespace Rooster {
             }
             else if (atacking == LOW_KICK) {
                 louKickAnim();
+            }
+            else if (atacking == SPECIAL) {
+                especialAnim();
             }
 
 

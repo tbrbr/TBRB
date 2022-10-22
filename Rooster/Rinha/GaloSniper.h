@@ -223,10 +223,13 @@ namespace Rooster {
 				model.at(PE_FRENTE)->angle = 10;
 				position.y += 10;
 
-
-
+			}
+			else if (percentage < 2.05f / 3.f) {
+				ultimateShot->playSound();
 			}
 			else if (percentage < 2.2f / 3.f) {
+
+				
 
 				projectiles[0].setVisibility(true);
 				projectiles[0].setScale(Vector2f(1, 1));

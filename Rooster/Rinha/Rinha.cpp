@@ -80,7 +80,7 @@ int main() {
 	window->setMouseCursor(cursor);
 
 	Galo *galo = new Bruxo(20, 20, 20, Rooster::state::STOPPED,true);
-    Galo *galo2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
+    Galo *galo2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
 
 	Pato *miniGame1 = new Pato((*window));
 	
@@ -98,7 +98,7 @@ int main() {
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 
-	explosion e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
+	ExplosionEffect e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
 
 	while (window->isOpen())
 	{

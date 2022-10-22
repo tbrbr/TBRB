@@ -54,12 +54,13 @@ namespace Rooster {
             else
                 position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
 
-            position.y = (float)SCREEN_HEIGHT / 1.4;
+            position.y = floorY;
             
             t.loadFromFile("sprites/galoKalsa.png");
 
             model.tex = &t;
             model.loadModel("kalsaModel.txt");
+            model.autoSetBounds(model.at("Body"), model.at("BackLeg"), model.at("Head"));
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {

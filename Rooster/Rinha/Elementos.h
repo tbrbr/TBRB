@@ -664,7 +664,7 @@ struct Model {
                 allHandles[drawOrder[i]]->draw(window);
             }
 
-            drawBounds(window);
+            //drawBounds(window);
         }
     }
 

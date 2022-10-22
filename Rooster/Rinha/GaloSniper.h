@@ -108,15 +108,11 @@ namespace Rooster {
 			model.at(PERNA_ATRAS)->angle = vspeed / 2;
 			model.at(PERNA_ATRAS)->offset.y += vspeed / 10;
 			model.at(PE_ATRAS)->angle += vspeed / 5;
-
-			if (facingRight) {
-				model.at(BIGODE_FRENTE)->angle += vspeed / 2;
-				model.at(BIGODE_ATRAS)->angle += vspeed / 2;
-			}
-			else {
-				model.at(BIGODE_FRENTE)->angle -= vspeed / 2;
-				model.at(BIGODE_ATRAS)->angle -= vspeed / 2;
-			}
+		
+			model.at(BIGODE_FRENTE)->angle += vspeed / 2;
+			model.at(BIGODE_ATRAS)->angle += vspeed / 2;
+			
+			
 		}
 		void cairAnim() {
 			model.at(PERNA_FRENTE)->offset.y *= 0.25;

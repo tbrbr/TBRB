@@ -80,7 +80,8 @@ int main() {
 	window->setMouseCursor(cursor);
 
 	Galo *galo = new Bruxo(20, 20, 20, Rooster::state::STOPPED,true);
-    Galo *galo2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
+    Galo *galo2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
+
 
 	Pato *miniGame1 = new Pato((*window));
 	
@@ -127,7 +128,9 @@ int main() {
 		switch (option)
 		{
 		case UMJOGADORES:
-			
+			if (!galo) {
+				return 1;
+			}
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:
@@ -137,7 +140,7 @@ int main() {
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-			selector->show(window,option,galo,galo2);
+			selector->show(window,option,&galo,&galo2);
 			break;
 		default:
 			break;

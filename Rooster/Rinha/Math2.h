@@ -1,3 +1,6 @@
+#ifndef JUNIOTELES
+#define JUNIOTELES
+
 #include <math.h>
 
 #define Gravity 9.81
@@ -66,3 +69,6 @@ float toRadiAnus(int angle) {
 	return (angle * PI) / 180;
 }
 
+
+
+#endif // !JUNIOTELES

@@ -89,19 +89,19 @@ namespace Rooster {
         void jumpAnim() {
 
             
-            ArmSpinAngFase = -(vspeed / 8) * 45;
-            Arm2SpinAngFase = -(vspeed / 8) * 45;
+            ArmSpinAngFase = -(vspeed / 16) * 45;
+            Arm2SpinAngFase = -(vspeed / 16) * 45;
             
             model.at("FrontLeg")->offset.y -= vspeed / 8;
             model.at("BackLeg")->offset.y -= vspeed / 16;
 
-            model.at("FrontLeg")->angle = sin(toRadiAnus(vspeed)*2);
-            model.at("BackLeg")->angle = sin(toRadiAnus(vspeed)*2);
+            model.at("FrontLeg")->angle -= (vspeed)*2;
+            model.at("BackLeg")->angle  -= (vspeed)*2;
 
             // mortal fodase?
             
             model.at("Body")->angle += hspeed/2;
-
+            
         }
         void cairAnim() {
             model.at("FrontLeg")->offset.y = 0;
@@ -418,13 +418,7 @@ namespace Rooster {
 
             projectiles[0].update();
 
-            if (air) {
-                jumpAnim();
-            }
-            else {
-                cairAnim();
-            }
-
+            
             if (estadoUpdate) {
                 model.resetToBase();
                 animations[0].playingFrame = 0;
@@ -451,6 +445,13 @@ namespace Rooster {
 
             if (estado != RUNNING) {
                 hspeed = 0;
+            }
+
+            if (air) {
+                jumpAnim();
+            }
+            else {
+                cairAnim();
             }
 
 

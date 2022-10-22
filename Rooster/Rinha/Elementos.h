@@ -412,6 +412,35 @@ public:
         sprite.setTextureRect(sprArea.texRect);
     }
 
+
+    SpriteArea getBaseArea() {
+        return baseSprArea;
+    }
+
+    Vector2i getBaseCenter() {
+        return baseCenter;
+    }
+
+    Vector2f getBaseAttach() {
+        return baseAttach;
+    }
+
+    Vector2f getBaseOffset() {
+        return baseOffset;
+    }
+
+    Vector2f getBaseScale() {
+        return Vector2f(baseXScl, baseYScl);
+    }
+
+    float getBaseAngle() {
+        return baseAngle;
+    }
+
+
+
+
+
     void setBaseProperties(Vector2i center, Vector2f attach, Vector2f offset, float xScl, float yScl, float angle, int attachId, struct SpriteArea sprArea) {
         this->center = center;
         this->baseCenter = center;
@@ -587,13 +616,68 @@ struct Model {
 
     std::map<std::string, int> boneMap;
 
+    IntRect bounds;
+    Vector2f center;
+
+
+    void setBounds(IntRect bounds, Vector2f center) {
+        this->bounds = bounds;
+        this->center = center;
+    }
+
+    void autoSetBounds(Element* mainBody, Element* floorPart, Element* ceilingPart) {
+
+        if (valid) {
+
+            resetToBase();
+            update();
+
+            float centerX = mainBody->drawPos.x;
+            float centerY = mainBody->drawPos.y;
+
+            float wid = mainBody->sprArea.texRect.width * mainBody->finalXScl;
+
+            float bottomY = floorPart->pos.y + floorPart->sprArea.texRect.height * floorPart->finalYScl;
+            float topY    = ceilingPart->pos.y;
+
+
+
+            bounds.top = 0;
+            bounds.left = 0;
+            bounds.height = (bottomY - topY) / yScl;
+            bounds.width = wid / xScl;
+
+            center.x = wid / 2;
+            center.y = centerY - topY;
+        }
+
+
+    }
+
+
+
+
     void draw(sf::RenderWindow& window) {
         /// Bones Drawing
         if (valid) {
             for (int i = 0; i < drawOrder.size(); i++) {
                 allHandles[drawOrder[i]]->draw(window);
             }
+
+            //drawBounds(window);
         }
+    }
+
+    void drawBounds(sf::RenderWindow& window) {
+        sf::RectangleShape rect(Vector2f(bounds.width * xScl, bounds.height * yScl));
+        rect.setPosition(pos.x , pos.y - (bounds.height - center.y) * yScl);
+        rect.setOrigin(center.x*xScl, center.y*yScl);
+
+        rect.setFillColor(Color(0, 0, 0, 0));
+        rect.setOutlineColor(Color(0, 0, 0));
+        rect.setOutlineThickness(4);
+        window.draw(rect);
+
     }
 
     void update() {
@@ -603,7 +687,7 @@ struct Model {
                 allHandles[executeOrder[i]]->bone->xWholeScl = xScl;
                 allHandles[executeOrder[i]]->bone->yWholeScl = yScl;
                 allHandles[executeOrder[i]]->bone->xWhole = pos.x;
-                allHandles[executeOrder[i]]->bone->yWhole = pos.y;
+                allHandles[executeOrder[i]]->bone->yWhole = pos.y - (bounds.height - center.y)*yScl;
 
                 allHandles[executeOrder[i]]->update();
             }

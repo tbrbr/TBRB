@@ -582,14 +582,21 @@ public:
 		 Sniper.tex = &sniperT;
 		 Sniper.loadModel("SniperModel.txt");
 
+
+		 Sniper.autoSetBounds(Sniper.at("Body"), Sniper.at("BackShoe"), Sniper.at("Head"));
+
+		 Sniper.xScl = -(float)SCREEN_WIDTH / 1280;
+		 Sniper.yScl = (float)SCREEN_WIDTH / 1280;
+
 		 Sniper.pos = Vector2f(
 			 SCREEN_WIDTH / 10 + podiumP1.getGlobalBounds().width / 2,
 
-			 SCREEN_HEIGHT - podiumP1.getGlobalBounds().height - Sniper.at(PE_FRENTE)->sprArea.texRect.height/2
+			 SCREEN_HEIGHT - podiumP1.getGlobalBounds().height - (Sniper.bounds.height - Sniper.center.y) * Sniper.yScl
 			 
 		 );
-		 Sniper.xScl = -(float)SCREEN_WIDTH / 1280;
-		 Sniper.yScl = (float)SCREEN_WIDTH / 1280;
+
+
+		
 
 		 models.push_back(Sniper);
 		 circlePodium1.setRadius(circlesLine[0].getRadius());

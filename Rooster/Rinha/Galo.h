@@ -4,6 +4,10 @@
 #include "IAtaques.h"
 #include "Elementos.h"
 
+
+
+
+
 namespace Rooster {
 
     /* a element is a small part of a rooster or any character available
@@ -30,6 +34,8 @@ namespace Rooster {
     };
 
 #define NUMGALOS 5
+
+    float floorY = (float)SCREEN_HEIGHT / 1.1;
 
 
     class LifeBar {
@@ -232,7 +238,7 @@ namespace Rooster {
 
         std::vector<struct Animation> animations;
 
-        float floorY = (float)SCREEN_HEIGHT / 1.4;
+        
 
     public:
         int atacking;

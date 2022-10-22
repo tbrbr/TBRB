@@ -1,7 +1,7 @@
 #include <math.h>
 
 #define Gravity 9.81
-#define PI 3.1415926563
+const long double PI  = 3.141592653589793;
 #define EULER 2.71828
 
 
@@ -15,4 +15,7 @@ float pitagoras(Vector2f Catetos) {
 float pointDistance(Vector2f point1, Vector2f point2){
 	return pitagoras(point1 - point2);
 
+}
+float toRadiAnus(int angle) {
+	return (angle * PI) / 180;
 }

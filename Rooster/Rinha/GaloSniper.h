@@ -442,8 +442,7 @@ namespace Rooster {
 				bar->update(hp);
 
 				atk.playSound();
-
-
+				
 			}
 
 

@@ -145,6 +145,7 @@
     <ClInclude Include="entradas.h" />
     <ClInclude Include="fregues.h" />
     <ClInclude Include="Galo.h" />
+    <ClInclude Include="GaloBruxo.h" />
     <ClInclude Include="galoKalsa.h" />
     <ClInclude Include="GaloSniper.h" />
     <ClInclude Include="IAtaques.h" />

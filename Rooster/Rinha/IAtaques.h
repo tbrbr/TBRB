@@ -115,6 +115,7 @@ namespace Rooster {
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
 		
+		
 			
 		Ataques(float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
 			this->Stun = Stun;

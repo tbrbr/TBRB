@@ -64,6 +64,7 @@
 			//galo.setHspeed(0);
 
 		}
+		
 
 		//options p2
 
@@ -110,6 +111,7 @@
 			//galo2.setHspeed(0);
 
 		}
+		
 
 		for (int i = 0; i < galo.hurtBox.size(); i++) {
 
@@ -126,6 +128,7 @@
 
 			}
 		}
+		
 
 		for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
@@ -140,23 +143,27 @@
 				galo2.apanhar(*galo.ultimateShot,galo.facingRight);
 			}
 
-
-
 		}
-		//onde ce ta desenhando as hurtbox
-
-		galo.update();
-		galo2.update();
-
-
-		window->clear();
+		
 		
 
+		galo.update();
+		
+		galo2.update();
+		
+
+
+		window->clear();		
 		window->draw(fundo);
+
 		galo.bar->draw(window);
+		
 		galo2.bar->draw(window);
+		
 		galo.show(*window);
+		
 		galo2.show(*window);
+		
 		window->display();
 
 	}

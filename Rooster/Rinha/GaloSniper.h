@@ -49,8 +49,12 @@ namespace Rooster {
 			projectiles.push_back(*bullet);
 
 
-			r.setSize(Vector2f(20, 20));
-			r.setPosition(SCREEN_WIDTH / 4, (float)SCREEN_HEIGHT / 1.4);
+			if (isp1) 
+				position.x = SCREEN_WIDTH / 4;
+			else
+				position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
+			
+			position.y = (float)SCREEN_HEIGHT / 1.4;
 
 
 			t.loadFromFile("sprites/galoSniper.png");
@@ -217,7 +221,7 @@ namespace Rooster {
 				model.at(PERNA_FRENTE)->angle = -10;
 				model.at(PE_ATRAS)->angle = 10;
 				model.at(PE_FRENTE)->angle = 10;
-				r.setPosition(r.getGlobalBounds().left, r.getGlobalBounds().top + 10);
+				position.y += 10;
 
 
 
@@ -256,9 +260,9 @@ namespace Rooster {
 				model.at(BIGODE_ATRAS)->angle += -90;
 
 				if (facingRight)
-					r.setPosition(r.getGlobalBounds().left - 2, r.getGlobalBounds().top);
+					position.x -= 2;
 				else
-					r.setPosition(r.getGlobalBounds().left + 2, r.getGlobalBounds().top);
+					position.x += 2;
 
 
 			}
@@ -454,11 +458,6 @@ namespace Rooster {
 			invFrames--;
 			stunFrames--;
 
-
-			hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
-
-
-
 			if (estadoUpdate) {
 				model.resetToBase();
 				animations[0].playingFrame = 0;
@@ -471,24 +470,16 @@ namespace Rooster {
 				vspeed += peso * Gravity / 100;
 			}
 
-			if (r.getPosition().y > floorY) {
-				vspeed = 0;
-				r.setPosition(r.getPosition().x, floorY);
-				air = false;
-			}
+			
 
 			/// Aqui vem a suavização
 			// A perda de velocidade
 			// Simulando atrito com ar?
+
 			if (stunFrames < 0 && stunFrames > -10) {
 				hspeed *= 0.98;
 				vspeed *= 0.98;
 			}
-
-
-
-
-			r.move(hspeed, vspeed);
 
 			for (int i = 0; i < hurtBox.size(); i++) {
 
@@ -543,11 +534,23 @@ namespace Rooster {
 			}
 
 
+			if (position.y > floorY) {
+				vspeed = 0;
+				position.y = floorY;
+				air = false;
+			}
+
+			position.x += hspeed;
+			position.y += vspeed;
+
+
+			model.pos = position;
+
 
 			bar->update(hp);
 
 
-			model.pos = r.getPosition();
+			model.pos = position;
 			model.xScl = 4 * (facingRight ? 1 : -1) * -(float)SCREEN_WIDTH / 5120;
 			model.yScl = 4 * (float)SCREEN_WIDTH / 5120;
 

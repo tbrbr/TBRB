@@ -220,7 +220,6 @@ namespace Rooster {
         std::string name;
 
         Sprite* sprite= new Sprite[9];
-        RectangleShape r;
         Vector2f position;
 
         bool air;
@@ -265,9 +264,9 @@ namespace Rooster {
             this->position = Vector2f(0, 0);
         }
 
-        inline RectangleShape getSprite() {
-            return r;
-        }
+        //inline RectangleShape getSprite() {
+            //return r;
+        //}
         void inline setState(state estado) {
             if (estado != this->estado) {
                 this->estadoUpdate = true;
@@ -342,7 +341,7 @@ namespace Rooster {
             for (int i = 0; i < hurtBox.size(); i++) {
 
                
-                //drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+                drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 
@@ -369,37 +368,34 @@ namespace Rooster {
 
         virtual void update() {
 
-            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
-
-
-            
+           
             if (air) {
                 vspeed += peso * Gravity / 100;
             }
 
+            /*
             if (r.getPosition().y > floorY) {
                 vspeed = 0;
                 r.setPosition(r.getPosition().x, floorY);
                 air = false;
             }
-
+            */
             /// Meus planos
-            /*
+            
             if (position.y > floorY) {
                 vspeed = 0;
                 position.y = floorY;
                 air = false;
-
             }
-            */
+            
 
-            r.move(hspeed, vspeed);
-            //position.x += hspeed;
-            //position.y += vspeed;
+            //r.move(hspeed, vspeed);
+            position.x += hspeed;
+            position.y += vspeed;
 
 
-            model.pos = r.getPosition();
-            //model.pos = position;
+            //model.pos = r.getPosition();
+            model.pos = position;
 
             model.update();
 

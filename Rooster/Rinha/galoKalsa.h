@@ -12,7 +12,7 @@ namespace Rooster {
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
-        Ataques* lightAtk;
+       
 
 
     public:
@@ -21,17 +21,38 @@ namespace Rooster {
             this->maxHp = 100;
             this->hp = 100;
             bar = new LifeBar(maxHp, isp1, name.c_str());
+            this->peso = 4;
+    
+            this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1200), "");
+            this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000), "");
+            this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, 0, milliseconds(2000), "sounds\\awp.ogg");
 
-            this->lightAtk = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3,0, milliseconds(1000),"");
+            const char const* txt = "sprites\\bullet.png";
+            Projectile* bullet = new Projectile(Vector2f(0, 0), txt, 0, 0, Vector2f(0, 0));
+            projectiles.push_back(*bullet);
 
-            r.setSize(Vector2f(20, 20));
-            r.setPosition(SCREEN_WIDTH / 4, (float)SCREEN_HEIGHT / 1.4);
+            if (isp1)
+                position.x = SCREEN_WIDTH / 4;
+            else
+                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
 
+            position.y = (float)SCREEN_HEIGHT / 1.4;
             
             t.loadFromFile("sprites/galoKalsa.png");
 
             model.tex = &t;
             model.loadModel("kalsaModel.txt");
+
+            HitBox* hit = new HitBox;
+            for (int i = 0; i < model.allBones.size(); i++) {
+               
+                hit->center = model.at(i)->drawPos;
+                hit->radius = model.at(i)->sprite.getGlobalBounds().width / 2;
+
+                hurtBox.push_back(*hit);
+            }
+
+            delete hit;
 
             struct Animation agacharAnim;
             agacharAnim.init("SecondAnim.txt");
@@ -48,79 +69,54 @@ namespace Rooster {
         }
         void jumpAnim() {
 
-            if (facingRight) {
-                ArmSpinAngFase = -(vspeed / 8) * 45;
-                Arm2SpinAngFase = -(vspeed / 8) * 45;
-            }
-            else {
-                ArmSpinAngFase = (vspeed / 8) * 45;
-                Arm2SpinAngFase = (vspeed / 8) * 45;
-            }
+            
+            ArmSpinAngFase = -(vspeed / 8) * 45;
+            Arm2SpinAngFase = -(vspeed / 8) * 45;
+            
+            model.at("FrontLeg")->offset.y -= vspeed / 8;
+            model.at("BackLeg")->offset.y -= vspeed / 16;
 
-            model.at(PERNA_FRENTE)->offset.y += vspeed / 8;
-            model.at(PE_FRENTE)->angle += vspeed / 20;
+            model.at("FrontLeg")->angle = sin(toRadiAnus(vspeed)*2);
+            model.at("BackLeg")->angle = sin(toRadiAnus(vspeed)*2);
 
-            model.at(PERNA_ATRAS)->offset.y += vspeed / 16;
-            model.at(PE_ATRAS)->angle += vspeed / 20;
+            // mortal fodase?
+            
+            model.at("Body")->angle += hspeed/2;
 
-            if (facingRight) {
-                model.at(BIGODE_FRENTE)->angle += vspeed / 2;
-                model.at(BIGODE_ATRAS)->angle += vspeed / 2;
-            }
-            else {
-                model.at(BIGODE_FRENTE)->angle -= vspeed / 2;
-                model.at(BIGODE_ATRAS)->angle -= vspeed / 2;
-            }
         }
         void cairAnim() {
-            model.at(PERNA_FRENTE)->offset.y = 0;
-            model.at(PERNA_ATRAS)->offset.y = 0;
+            model.at("FrontLeg")->offset.y = 0;
+            model.at("BackLeg")->offset.y = 0;
 
-            model.at(PE_FRENTE)->angle = 0;
-            model.at(PE_ATRAS)->angle = 0;
-
-            model.at(BIGODE_FRENTE)->angle = 345;
-            model.at(BIGODE_ATRAS)->angle = 25;
+            model.at("Body")->angle *= 0.7;
         }
         void runAnim() {
             legWalkAngFase += hspeed;
             legWalkAngFase -= ((int)legWalkAngFase / 360) * 360;
-            model.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
 
-            model.at(ASA_FRENTE)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at(ASA_ATRAS)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("FrontLeg")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("BackLeg")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
 
-            model.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("FrontArm")->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("BackArm")->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+
         }
         void runReset() {
             legWalkAngFase *= 0.8;
             ArmSpinAngFase *= 0.8;
             Arm2SpinAngFase *= 0.8;
 
-            model.at(PERNA_FRENTE)->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at(PERNA_ATRAS)->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("FrontLeg")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("BackLeg")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
 
-            model.at(ASA_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at(ASA_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-            model.at(BIGODE_FRENTE)->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at(BIGODE_ATRAS)->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
-
-            model.at(CORPO)->offset.y *= 0.5;
-            model.at(PERNA_ATRAS)->offset.y *= 0.25;
-            model.at(PE_FRENTE)->offset.y *= 0.25;
-            model.at(PERNA_FRENTE)->offset.y *= 0.25;
-            model.at(PE_ATRAS)->offset.y *= 0.25;
-
-            model.at(CORPO)->offset.y = 0;
-            model.at(PERNA_ATRAS)->offset.y = 0;
-            model.at(PE_FRENTE)->offset.y = 0;
-            model.at(PERNA_FRENTE)->offset.y = 0;
-            model.at(PE_ATRAS)->offset.y = 0;
+            model.at("FrontArm")->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("BackArm")->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
 
 
+            model.at("Body")->offset.y = 0;
+            model.at("BackLeg")->offset.y = 0;     
+            model.at("FrontLeg")->offset.y = 0;
+          
         }
 
         void defend() override {
@@ -133,81 +129,171 @@ namespace Rooster {
 
         void highKick() override {
             atacking = HIGH_KICK;
-            lightAtk->init.restart();
+            hiKick->init.restart();
 
         }
-
-        void lightAtackAnim() {
-            Time t = lightAtk->init.getElapsedTime();
-
-            if (t > lightAtk->timeLapse) {
-                atacking = STOPPED;
-            }
-
-            float percentage = (float)t.asMilliseconds() / (lightAtk->timeLapse.asMilliseconds());
-
-            int angFix = (facingRight) ? 1 : -1;
-            angFix = -1;
-
-
-            if (percentage < 1.f / 3.f) {
-
-
-                float thisPercentage = percentage * 3;
-                model.at(CORPO)->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
-                model.at(PERNA_FRENTE)->angle = angFix * -320;
-                model.at(PERNA_ATRAS)->angle = angFix * 90 * -sin(thisPercentage * PI / 2);
-                model.at(ASA_ATRAS)->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
-                model.at(ASA_FRENTE)->angle = angFix * 90 * sin(thisPercentage * PI / 2);
-
-            }
-            else if (percentage < 2.f / 3.f) {
-                float thisPercentage = percentage * 3;
-                model.at(CORPO)->angle = angFix * -45;
-                model.at(PERNA_FRENTE)->angle = angFix * -320;
-                model.at(PERNA_ATRAS)->angle = angFix * -90;
-                model.at(PERNA_ATRAS)->offset.x = angFix * SCREEN_WIDTH / 75;
-                model.at(PERNA_ATRAS)->offset.y = -SCREEN_WIDTH / 75;
-                model.at(ASA_ATRAS)->angle = angFix * -45;
-                model.at(ASA_FRENTE)->angle = angFix * 90;
-
-            }
-            else if (percentage < 2.9f / 3.f) {
-
-                model.at(CORPO)->angle *= 0.9;
-                model.at(PERNA_FRENTE)->angle *= 0.9;
-                model.at(PERNA_ATRAS)->angle *= 0.9;
-                model.at(PERNA_ATRAS)->offset.x = 0;
-                model.at(PERNA_ATRAS)->offset.y = 0;
-                model.at(ASA_ATRAS)->angle *= 0.9;
-                model.at(ASA_FRENTE)->angle *= 0.9;
-            }
-            else {
-                model.at(CORPO)->angle = 0;
-                model.at(PERNA_FRENTE)->angle = 0;
-                model.at(PERNA_ATRAS)->angle = 0;
-                model.at(PERNA_ATRAS)->offset.x = 0;
-                model.at(PERNA_ATRAS)->offset.y = 0;
-                model.at(ASA_ATRAS)->angle = 0;
-                model.at(ASA_FRENTE)->angle = 0;
-            }
-
-
-        }
+        
         void lowKick() override {
             atacking = LOW_KICK;
-            lightAtk->init.restart();
+            louKick->init.restart();
         }
-
 
         void especial() override {
 
         }
 
+        void louKickAnim() {
+            Time t = louKick->init.getElapsedTime();
+
+            if (t > louKick->timeLapse) {
+                atacking = STOPPED;
+            }
+
+            float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
+
+
+            if (percentage < 1.f / 3.f) {
+
+                float thisPercentage = percentage * 3;
+                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = 20 * sin(thisPercentage * PI / 2);
+                model.at("BackLeg")->angle = 20 * sin(thisPercentage * PI / 2);
+                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
+                model.at("FrontEyebrow")->offset.y += 0.5;
+                model.at("BackEyebrow")->offset.y += 0.5;
+                model.at("FrontLeg")->offset.y = -20 * thisPercentage;
+                model.at("BackLeg")->offset.y = -20 * thisPercentage;
+                model.at("Biko")->offset.x = -2;
+                model.at("Body")->offset.y = -20 * thisPercentage;
+                model.at("Body")->angle = 45 * sin(thisPercentage * PI / 2);
+            }
+            else if (percentage < 2.f / 3.f) {
+
+                model.at("Body")->angle = -75 ;
+                model.at("FrontArm")->angle = -60;
+                model.at("BackArm")->angle = -60;
+
+                model.at("BackLeg")->angle = 20;
+                model.at("Head")->angle = 45;      
+                model.at("Head")->offset.x = -15;
+
+                model.at("FrontLeg")->angle = 45;
+                model.at("BackLeg")->angle = 45; 
+
+               
+            }
+            else if (percentage < 2.9f / 3.f) {
+
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackArm")->angle *= 0.9;
+
+                model.at("BackArm")->angle *= 0.9;
+                model.at("BackLeg")->angle *= 0.9;
+
+                model.at("Head")->angle *= 0.9;
+                model.at("Head")->offset.x *= 0.9;
+
+                model.at("FrontEyebrow")->offset.y *= 0.9;
+                model.at("BackEyebrow")->offset.y *= 0.9;
+
+                model.at("FrontLeg")->angle *= 0.9;
+                model.at("BackLeg")->offset.y *= 0.9;
+
+                model.at("Body")->angle *= 0.9;
+
+            }
+            else {
+
+                model.at("FrontArm")->angle = 0;
+                model.at("BackArm")->angle = 0;
+
+                model.at("BackArm")->angle = 0;
+                model.at("BackLeg")->angle = 0;
+
+                model.at("Head")->angle = 0;
+                model.at("Head")->offset.x = 0;
+
+                model.at("FrontEyebrow")->offset.y = 0;
+                model.at("BackEyebrow")->offset.y = 0;
+
+                model.at("FrontLeg")->angle = 0;
+                model.at("BackLeg")->offset.y = 0;
+
+                model.at("Body")->angle = 0;
+            }
+
+
+        }
+        
+        void highAtackAnim() {
+            Time t = hiKick->init.getElapsedTime();
+
+            if (t > hiKick->timeLapse) {
+                atacking = STOPPED;
+            }
+
+            float percentage = (float)t.asMilliseconds() / (hiKick->timeLapse.asMilliseconds());
+
+            if (percentage < 0.5 / 3.f) {
+
+                float thisPercentage = percentage * 6;
+
+                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = -90 * sin(thisPercentage * PI / 2);
+                model.at("BackLeg")->angle = 15 * sin(thisPercentage * PI / 2);
+                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
+                model.at("FrontEyebrow")->offset.y += 1;
+                model.at("BackEyebrow")->offset.y += 1;
+                model.at("FrontLeg")->offset.y = -20 * sin(thisPercentage * PI / 2);
+
+            }
+            else if (percentage < 1.f / 3.f) {
+                float thisPercentage = percentage * 3;
+
+                model.at("Body")->angle = -60 * sin(thisPercentage * PI / 2);
+                model.at("BackLeg")->angle = 50 * sin(thisPercentage * PI / 2);
+
+            }
+            else if (percentage < 2.f / 3.f) {
+
+                model.at("Body")->angle = 60;
+                model.at("BackLeg")->angle = 50;
+                model.at("FrontLeg")->angle = -45;
+                model.at("BackLeg")->offset.x -= 1;
+                model.at("BackLeg")->offset.y -= 1;
+                model.at("FrontArm")->angle = -45;
+                model.at("BackArm")->angle = 90;
+            }
+            else if (percentage < 2.9f / 3.f) {
+
+                model.at("Body")->angle *= 0.9;
+                model.at("BackLeg")->angle *= 0.9;
+                model.at("BackLeg")->offset.x *= 0.9;
+                model.at("BackLeg")->offset.y *= 0.9;
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackArm")->angle *= 0.9;
+                model.at("FrontLeg")->offset.y *= 0.9;
+                model.at("Head")->angle *= 0.9;
+            }
+            else {
+                model.at("Body")->angle = 0;
+                model.at("BackLeg")->angle = 0;
+                model.at("BackLeg")->offset.x = 0;
+                model.at("BackLeg")->offset.y = 0;
+                model.at("FrontArm")->angle = 0;
+                model.at("BackArm")->angle = 0;
+                model.at("FrontLeg")->offset.y = 0;
+                model.at("Head")->angle *= 0;
+                model.at("FrontEyebrow")->offset.y = 0;
+                model.at("BackEyebrow")->offset.y = 0;
+            }
+        }
+
+        
+
         void update() override {
 
-            hitbox = { Vector2f(r.getPosition().x, r.getPosition().y), 30 };
-
+        
             if (estadoUpdate) {
                 model.resetToBase();
                 animations[0].playingFrame = 0;
@@ -218,25 +304,24 @@ namespace Rooster {
                 vspeed += peso * Gravity / 100;
             }
 
-            if (r.getPosition().y > (float)SCREEN_HEIGHT / 1.399) {
+            if (position.y > floorY) {
                 vspeed = 0;
-                r.setPosition(r.getPosition().x, (float)SCREEN_HEIGHT / 1.4);
+                position.y = floorY;
                 air = false;
             }
 
-
-
-            r.move(hspeed, vspeed);
+            position.x += hspeed;
+            position.y += vspeed;
 
             frames++;
-           // weatherAnim(frames);
+           
 
 
             if (air) {
-               // jumpAnim();
+                jumpAnim();
             }
             else {
-               // cairAnim();
+                cairAnim();
             }
 
 
@@ -244,18 +329,18 @@ namespace Rooster {
             model.at("BackArm")->angle = Arm2SpinAngFase;
 
             if (estado == RUNNING) {
-                //runAnim();
+                runAnim();
             }
             else if (estado == DEFENDING) {
-                animations[0].update();
-                if (animations[0].playingFrame > 15) {
-                    animations[0].playingFrame = 15;
-                }
+                //animations[0].update();
+                //if (animations[0].playingFrame > 15) {
+                //    animations[0].playingFrame = 15;
+                //}
                 //model.updateWithAnimation(animations[0]);
 
             }
             else if (estado == STOPPED) {
-                //runReset();
+                runReset();
             }
 
             if (estado != RUNNING) {
@@ -264,7 +349,10 @@ namespace Rooster {
 
 
             if (atacking == HIGH_KICK) {
-                //lightAtackAnim();
+                highAtackAnim();
+            }
+            else if (atacking == LOW_KICK) {
+                louKickAnim();
             }
 
 
@@ -272,7 +360,7 @@ namespace Rooster {
             bar->update(hp);
 
 
-            model.pos = r.getPosition();
+            model.pos = position;
             model.xScl = 4 * (facingRight ? 1 : -1) * -(float)SCREEN_WIDTH / 5120;
             model.yScl = 4 * (float)SCREEN_WIDTH / 5120;
 

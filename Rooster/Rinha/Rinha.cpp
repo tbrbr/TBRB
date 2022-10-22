@@ -140,8 +140,7 @@ int main() {
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-			selector->show(window,option,galo,galo2);
-
+			selector->show(window,option,&galo,&galo2);
 			break;
 		default:
 			break;

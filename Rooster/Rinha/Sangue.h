@@ -17,6 +17,12 @@ namespace Rooster {
 			point.setFillColor(color);
 
 		}
+		Particle() {
+			point.setRadius(10);
+			color = Color::Red;
+			point.setFillColor(color);
+
+		}
 		void setPosition(Vector2f position) {
 			this->position = position;
 		}
@@ -28,16 +34,21 @@ namespace Rooster {
 			return position;
 		}
 		void setImpulse(float hSpeed,float vSpeed) {
-			this-> hSpeed = hSpeed;
-			this-> vSpeed = vSpeed;
+			this->hSpeed = hSpeed;
+			this->vSpeed = vSpeed;
 		}
 		void update() {
+
+			
 			position.x += hSpeed;
 			hSpeed *= friction;
 			position.y += vSpeed + vAcc;
+			
+			point.setPosition(position.x, position.y);
 		}
 		void draw(RenderWindow& window) {
 			window.draw(point);
+			
 		}
 	};
 
@@ -68,16 +79,28 @@ namespace Rooster {
 
 	public:
 		explosion(float radius, Vector2f center,Color cor, Vector2f impact){
-			float diameter = radius * 2;
+			int diameter = radius * 2;
+
 			for (int i = 0; i < diameter;i++) {
-				Particle p(cor);
+
+
+				Particle p(Color::Red);
+
 				p.setPosition(center);
+				int ang = rand() % 360;
+
+				int impactx = rand() % (int)impact.x;
+				int impacty = rand() % (int)impact.y;
+
 				p.setImpulse(
-					sin (360/i * impact.x),
-					cos (360/i * impact.y)
+					 cos(toRadiAnus(ang)) + impactx,
+					 sin(toRadiAnus(ang)) + impacty
 				);
+
+				
 				gotas.push_back(p);
 			}
+
 		}
 
 		void setRadius(float radius) {
@@ -87,12 +110,14 @@ namespace Rooster {
 			for (int i = 0; i < gotas.size(); i++) {
 				gotas[i].update();
 			}
+
 		}
 		void draw(RenderWindow& pqp) override {
 			for (int i = 0; i < gotas.size(); i++) {
 				gotas[i].draw(pqp);
 			}
 			
+
 		}
 	};
 }

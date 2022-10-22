@@ -39,6 +39,7 @@ bool keyboardState[sf::Keyboard::KeyCount][3];
 #include "Galo.h"
 #include "GaloSniper.h"
 #include "galoKalsa.h"
+#include "GaloBruxo.h"
 
 using namespace Rooster;
 
@@ -65,14 +66,17 @@ int main() {
 	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
-
 	
 
+
+	
+	
 	Galo *galo = new Sniper( 20, 20, 20, Rooster::state::STOPPED,true);
-	Galo *galo2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
+    Galo *galo2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
 
 	Pato *miniGame1 = new Pato((*window));
 	
@@ -89,8 +93,7 @@ int main() {
 	MenuPrincipal* menuprincipal = new MenuPrincipal();
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
-
-	explosion e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
+	
 
 	while (window->isOpen())
 	{
@@ -113,8 +116,7 @@ int main() {
 			keyboardState[i][0] = keyState;
 
 		}
-		
-		
+	
 		//piano.draw(*window);
 		
 		switch (option)
@@ -134,6 +136,7 @@ int main() {
 		default:
 			break;
 		}
+		
 		
 	}
 	return 0;

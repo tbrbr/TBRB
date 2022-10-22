@@ -3,7 +3,7 @@
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
-
+		
 		Event e;
 		while (window->pollEvent(e))
 		{

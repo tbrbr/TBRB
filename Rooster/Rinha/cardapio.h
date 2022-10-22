@@ -27,8 +27,8 @@ class MenuPrincipal {
 	Text optionInit;
 	Text optionInit2;
 	Text optionInit3;
-
-
+	Texture cursorT;
+	Sprite cursor;
 
 public: 
 	 MenuPrincipal() {
@@ -117,6 +117,10 @@ public:
 			SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4 + spaceYBetween * 7
 		);
 		optionInit3.setFillColor(Color(193, 0, 0));
+
+		cursorT.loadFromFile("sprites/cursor.png");
+		cursor.setTexture(cursorT);
+		cursor.setScale(0.05, 0.05);
 	}
 
 	void ShowMenu(RenderWindow* window, int& option) {
@@ -220,6 +224,15 @@ public:
 			}
 
 		}
+		window->setMouseCursorVisible(false);
+
+		
+		
+		
+
+		Vector2i mouseP = Mouse::getPosition();
+		cursor.setPosition(mouseP.x, mouseP.y);
+
 		int spaceBetween = garra.getGlobalBounds().width;
 
 		switch (OptionMenuPrincipal)
@@ -280,6 +293,7 @@ public:
 
 		}
 		window->draw(garra);
+		window->draw(cursor);
 		window->display();
 
 
@@ -326,6 +340,9 @@ class SelectionSinglePlayer {
 
 	int selectionp1;
 	int selectipnp2;
+
+	Texture cursorT;
+	Sprite cursor;
 
 public:
 	 SelectionSinglePlayer() {
@@ -527,10 +544,14 @@ public:
 
 		 models.push_back(Sniper);
 
+		 cursorT.loadFromFile("sprites/cursor.png");
+		 cursor.setTexture(cursorT);
+		 cursor.setScale(0.05, 0.05);
+
 	 }
 	 void show(RenderWindow* window, int& option,Galo* galop1, Galo* galop2) {
 
-		 window->setMouseCursorVisible(true);
+		 window->setMouseCursorVisible(false);
 
 		 Event e;
 		 while (window->pollEvent(e))
@@ -558,7 +579,7 @@ public:
 		 int mousex = Mouse::getPosition(*window).x;
 		 int mousey = Mouse::getPosition(*window).y;
 	     
-		
+		 
 		 
 
 		 for (int i = 0; i < 5; i++) {
@@ -596,9 +617,13 @@ public:
 			 }
 				 
 		 }
-		 
+
+		 Vector2i mouseP = Mouse::getPosition();
+		 cursor.setPosition(mouseP.x, mouseP.y);
+
 		 window->draw(podiumP1);
 		 window->draw(podiumP2);
+		 window->draw(cursor);
 		 //models[0].update();
 		 //models[0].draw(*window);
 		

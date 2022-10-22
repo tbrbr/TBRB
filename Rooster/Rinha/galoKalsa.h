@@ -272,7 +272,11 @@ namespace Rooster {
 
                 model.at("FrontLeg")->angle = 45;
                 model.at("BackLeg")->angle = 45; 
+                louKick->hitbox.center = model.at(PE_ATRAS)->drawPos;
+                louKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width / 2;
+                louKick->isAtacking = true;
 
+                
                
             }
             else if (percentage < 2.9f / 3.f) {
@@ -293,6 +297,7 @@ namespace Rooster {
                 model.at("BackLeg")->offset.y *= 0.9;
 
                 model.at("Body")->angle *= 0.9;
+                louKick->isAtacking = false;
 
             }
             else {
@@ -356,6 +361,11 @@ namespace Rooster {
                 model.at("BackLeg")->offset.y -= 1;
                 model.at("FrontArm")->angle = -45;
                 model.at("BackArm")->angle = 90;
+
+                hiKick->hitbox.center = model.at("BackLeg")->drawPos;
+                hiKick->hitbox.radius = model.at("BackLeg")->sprite.getGlobalBounds().width / 2;
+                hiKick->isAtacking = true;
+
             }
             else if (percentage < 2.9f / 3.f) {
 
@@ -367,6 +377,7 @@ namespace Rooster {
                 model.at("BackArm")->angle *= 0.9;
                 model.at("FrontLeg")->offset.y *= 0.9;
                 model.at("Head")->angle *= 0.9;
+                hiKick->isAtacking = false;
             }
             else {
                 model.at("Body")->angle = 0;

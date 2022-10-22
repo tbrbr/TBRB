@@ -79,9 +79,8 @@ int main() {
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
 
-	Galo* galo = NULL;// = new Sniper(20, 20, 20, Rooster::state::STOPPED,true);
-	Galo* galo2 = NULL;// = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
-
+	Galo* galo = NULL;
+	Galo* galo2 = NULL;
 
 	Pato *miniGame1 = new Pato((*window));
 	

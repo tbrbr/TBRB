@@ -79,14 +79,9 @@ int main() {
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
 
-<<<<<<< HEAD
 	Galo* galo = NULL;
 	Galo* galo2 = NULL;
-=======
-	Galo *galo = new Bruxo(20, 20, 20, Rooster::state::STOPPED,true);
-    Galo *galo2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
 
->>>>>>> 1bbec0e74e69f08f897b4242ed9aa097135dfc7e
 
 	Pato *miniGame1 = new Pato((*window));
 	
@@ -99,8 +94,6 @@ int main() {
 
 	//socket.setBlocking(false);
 
-	//fazendo um ponteiro pra menu pra dar free depois
-	//MenuPrincipal* menuprincipal = new MenuPrincipal();
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 

@@ -163,6 +163,11 @@
 		galo.show(*window);
 		
 		galo2.show(*window);
+
+
+
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
 		
 		window->display();
 

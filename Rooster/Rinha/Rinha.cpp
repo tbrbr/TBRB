@@ -9,6 +9,7 @@
 #include <windows.h>
 #include <SFML/Network.hpp>
 #include <vector>
+#include <random>
 #include <cmath>
 
 #include <fstream>
@@ -35,6 +36,12 @@ bool keyboardState[sf::Keyboard::KeyCount][3];
 #include "Math2.h"
 
 //#include "jogador_de_video.h"
+
+
+#include "Sangue.h"
+Rooster::ParticleSystem mainPartSystem;
+
+
 #include "entradas.h"
 #include "Elementos.h"
 #include "Galo.h"
@@ -72,6 +79,7 @@ int main() {
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
+
 	Cursor cursor;
 	Image c;
 	c.loadFromFile("sprites/cursor_teste.png");
@@ -79,14 +87,14 @@ int main() {
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
 
-<<<<<<< HEAD
+
+
+	//Rooster::ExplosionEffect* exp = 
+	//mainPartSystem.effects.push_back(new Rooster::ExplosionEffect(10, Vector2f(0, 0), Color::Red, Vector2f(2, 2), Vector2f(1, 2))); 
+
 	Galo* galo = NULL;
 	Galo* galo2 = NULL;
-=======
-	Galo *galo = new Bruxo(20, 20, 20, Rooster::state::STOPPED,true);
-    Galo *galo2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
 
->>>>>>> 1bbec0e74e69f08f897b4242ed9aa097135dfc7e
 
 	Pato *miniGame1 = new Pato((*window));
 	
@@ -104,7 +112,13 @@ int main() {
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 
-	ExplosionEffect e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
+
+
+
+
+
+
+	
 
 	while (window->isOpen())
 	{

@@ -1,29 +1,12 @@
 #ifndef ITATECH_JR
 #define ITATECH_JR
 
-#include "Sangue.h"
 namespace Rooster {
 	
 
 	typedef struct {
 		Vector2f center;
 		int radius;
-
-
-		/*
-		void draw(sf::RenderWindow& window) {
-			sf::CircleShape circle(radius);
-			circle.setPosition(center.x, center.y);
-			circle.setOrigin(radius, radius);
-			circle.setFillColor(sf::Color::White);
-			circle.setOutlineColor(sf::Color::Black);
-			circle.setOutlineThickness(2);
-
-			window.draw(circle);
-
-		}
-		*/
-
 
 	} HitBox;
 
@@ -95,8 +78,11 @@ namespace Rooster {
 			return position;
 		}
 		void update() {
+
+			vSpeed += vAcc;
+
 			position.x += hSpeed;
-			position.y += (vAcc - vSpeed);
+			position.y += vSpeed;
 
 			sprite.setPosition(position);
 			sprite.setScale(scl);
@@ -129,6 +115,12 @@ namespace Rooster {
 		Clock init;
 		Time timeLapse;
 
+		Vector2f colPos;
+		Vector2f colDif;
+		float colAngle = 0;
+
+
+
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
 		
@@ -144,6 +136,12 @@ namespace Rooster {
 			this->angle = angle;
 			bufferCollision.loadFromFile(txt);
 			soundCollision.setBuffer(bufferCollision);
+
+			colPos.x = 0;
+			colPos.y = 0;
+
+			colDif.x = 0;
+			colDif.y = 0;
 		}
 
 		void playSound() {
@@ -152,10 +150,25 @@ namespace Rooster {
 
 		bool CheckCollision(HitBox galo) {
 			if (isAtacking) {
+				colPos.x = (galo.center.x + hitbox.center.x) / 2;
+				colPos.y = (galo.center.y + hitbox.center.y) / 2;
+				colPos = galo.center;
+				colDif = (galo.center - hitbox.center);
+
+				colDif = normalizar(colDif);
+
+				colAngle = vecToAngle(colDif);
+
+
 				return (pointDistance(galo.center, hitbox.center) < galo.radius + hitbox.radius);
 			}
 			return false;
 			
+		}
+
+		void createBlood(ParticleSystem& partSys) {
+			ExplosionEffect* exp = new ExplosionEffect(10, colPos, Color::Red, Vector2f(colDif.x * Damage, colDif.y * Damage), 10, colAngle, 60);
+			partSys.effects.push_back(exp);
 		}
 
 	};

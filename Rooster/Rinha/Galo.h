@@ -301,9 +301,44 @@ namespace Rooster {
         int inline getFrames() {
             return frames;
         }
-        virtual void apanhar(Ataques atk,bool direction) {
-            this->hp -= atk.Damage;
-            bar->update(hp);
+
+
+        virtual void apanhar(Ataques atk, bool direction){
+
+            if (invFrames <= 0) {
+
+                hp -= atk.Damage;
+
+
+                // Calculando os impulsos
+
+
+                atk.createBlood(mainPartSystem);
+
+
+                vspeed += sin(atk.angle) * atk.KnockBack;
+                hspeed += cos(atk.angle) * atk.KnockBack;
+
+                if (vspeed < 0) {
+                    air = true;
+                }
+                if (!direction) {
+                    hspeed *= -1;
+                }
+
+                // Tempo de perda de controle sobre o Rooster
+                stunFrames = atk.Stun;
+
+                // Tempo de invulnerabilidade
+                invFrames = 30;
+
+                bar->update(hp);
+
+                atk.playSound();
+
+            }
+
+
         }
 
         void jump() {

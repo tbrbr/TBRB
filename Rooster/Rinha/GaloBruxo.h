@@ -399,6 +399,9 @@ namespace Rooster {
 
         void update() override {
 
+            invFrames--;
+            stunFrames--;
+
 
             if (estadoUpdate) {
                 model.resetToBase();

@@ -427,6 +427,10 @@ namespace Rooster {
 
 
 				// Calculando os impulsos
+
+
+				atk.createBlood(mainPartSystem);
+
 				
 				vspeed += sin(atk.angle) * atk.KnockBack;
 				hspeed += cos(atk.angle) * atk.KnockBack;
@@ -442,7 +446,7 @@ namespace Rooster {
 				stunFrames = atk.Stun;
 
 				// Tempo de invulnerabilidade
-				invFrames = 100;
+				invFrames = 30;
 
 				bar->update(hp);
 

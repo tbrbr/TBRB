@@ -152,7 +152,7 @@ namespace Rooster {
 			if (isAtacking) {
 				colPos.x = (galo.center.x + hitbox.center.x) / 2;
 				colPos.y = (galo.center.y + hitbox.center.y) / 2;
-				colPos = galo.center;
+				colPos = hitbox.center;
 				colDif = (galo.center - hitbox.center);
 
 				colDif = normalizar(colDif);

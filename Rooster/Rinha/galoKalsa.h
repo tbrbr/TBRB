@@ -16,13 +16,10 @@ namespace Rooster {
 
 
     public:
-        Kalsa(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
+        Kalsa(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
             this->name = "Kalsa";
-            this->maxHp = 100;
-            this->hp = 100;
-            bar = new LifeBar(maxHp, isp1, name.c_str());
 
-            this->peso = 4;
+            bar = new LifeBar(maxHp, isp1, name.c_str());
     
             this->hiKick = new Ataques(
                 8, 0.5, HitBox{ Vector2f(0, 0), 0 },
@@ -49,13 +46,11 @@ namespace Rooster {
             atacking = NOT_ATTACK;
             projectiles.push_back(*cinto);
 
-            if (isp1)
-                position.x = SCREEN_WIDTH / 4;
-            else
-                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
-
-            position.y = floorY;
+      
             
+
+
+
             t.loadFromFile("sprites/galoKalsa.png");
 
             model.tex = &t;
@@ -64,7 +59,7 @@ namespace Rooster {
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
-               
+
                 hit->center = model.at(i)->drawPos;
                 hit->radius = model.at(i)->sprite.getGlobalBounds().width / 2;
 
@@ -72,6 +67,8 @@ namespace Rooster {
             }
 
             delete hit;
+
+
 
             struct Animation agacharAnim;
             agacharAnim.init("SecondAnim.txt");
@@ -403,44 +400,9 @@ namespace Rooster {
         }
 
         
-
-        void update() override {
-
-        
-            invFrames--;
-            stunFrames--;
-
-            if (estadoUpdate) {
-                model.resetToBase();
-                animations[0].playingFrame = 0;
-            }
-
-
-            if (air) {
-                vspeed += peso * Gravity / 100;
-            }
-
-            if (position.y > floorY) {
-                vspeed = 0;
-                position.y = floorY;
-                air = false;
-            }
-
-            position.x += hspeed;
-            position.y += vspeed;
-
-            frames++;
-           
-            for (int i = 0; i < hurtBox.size(); i++) {
-
-                hurtBox[i].center = model.at(i)->drawPos;
-                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
-
-            }
-
-            projectiles[0].update();
-
-            
+        void updateAnimations() override {
+            // Abaixo temos
+            // CA OS TO TAL
             if (estadoUpdate) {
                 model.resetToBase();
                 animations[0].playingFrame = 0;
@@ -465,10 +427,6 @@ namespace Rooster {
                 runReset();
             }
 
-            if (estado != RUNNING) {
-                hspeed = 0;
-            }
-
             if (air) {
                 jumpAnim();
             }
@@ -477,6 +435,9 @@ namespace Rooster {
             }
 
 
+
+
+            // Attack Animation
             if (atacking == HIGH_KICK) {
                 highAtackAnim();
             }
@@ -486,12 +447,34 @@ namespace Rooster {
             else if (atacking == SPECIAL) {
                 especialAnim();
             }
+        }
+
+        /*
+        void update() override {
+
+        
+            updatePhysics();
 
 
+            
+            for (int i = 0; i < hurtBox.size(); i++) {
 
+                hurtBox[i].center = model.at(i)->drawPos;
+                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
+
+            }
+
+            projectiles[0].update();
+
+
+            updateAnimations();
+
+
+            // Health Bar Update
             bar->update(hp);
 
 
+            // Model Update
             model.pos = position;
             model.xScl = 4 * (facingRight ? 1 : -1) * -(float)SCREEN_WIDTH / 5120;
             model.yScl = 4 * (float)SCREEN_WIDTH / 5120;
@@ -505,6 +488,7 @@ namespace Rooster {
 
 
         }
+        */
     };
 
 

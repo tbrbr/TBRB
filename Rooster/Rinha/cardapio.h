@@ -634,16 +634,30 @@ public:
 
 			 if (e.type == Event::MouseButtonPressed) {
 				 if (e.mouseButton.button == Mouse::Left) {
+
+					 struct GaloStats sniperSt;
+					 struct GaloStats kalsaSt;
+					 struct GaloStats bruxoSt;
+
+					 sniperSt = {100, 10, 10, 10, 5};
+					 kalsaSt = {100, 10, 10, 10, 5};
+					 bruxoSt = {60, 10, 10, 10, 5};
+
+
 					 
 					 for (int i = 0; i < 5; i++) {
 						 if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey)) {
 								 if (i == 0) {
+
+									 
+
+
 									 if (isp1Time) {
-										 *galop1 = new Sniper(20, 20, 20, Rooster::state::STOPPED, true);
+										 *galop1 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 										 
 									 }
 									 else {
-										 *galop2 = new Sniper(20, 20, 20, Rooster::state::STOPPED, false);
+										 *galop2 = new Sniper(sniperSt, Rooster::state::STOPPED, false);
 									 }
 
 
@@ -653,19 +667,19 @@ public:
 								 }
 								 else if (i == 2) {
 									 if (isp1Time) {
-										 *galop1 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, true);
+										 *galop1 = new Kalsa(kalsaSt, Rooster::state::STOPPED, true);
 									 }
 									 else {
-										 *galop2 = new Kalsa(20, 20, 20, Rooster::state::STOPPED, false);
+										 *galop2 = new Kalsa(kalsaSt, Rooster::state::STOPPED, false);
 									 }
 
 								 }
 								 else if (i == 3) {
 									 if (isp1Time) {
-										*galop1 = new Bruxo(20, 20, 20, Rooster::state::STOPPED, true);
+										*galop1 = new Bruxo(bruxoSt, Rooster::state::STOPPED, true);
 									 }
 									 else {
-										 *galop2 = new Bruxo(20, 20, 20, Rooster::state::STOPPED, false);
+										 *galop2 = new Bruxo(bruxoSt, Rooster::state::STOPPED, false);
 									 }
 								 }
 								 else if (i == 4) {

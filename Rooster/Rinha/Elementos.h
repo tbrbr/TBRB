@@ -664,14 +664,18 @@ struct Model {
                 allHandles[drawOrder[i]]->draw(window);
             }
 
-            //drawBounds(window);
+            drawBounds(window);
         }
     }
 
     void drawBounds(sf::RenderWindow& window) {
-        sf::RectangleShape rect(Vector2f(bounds.width * xScl, bounds.height * yScl));
-        rect.setPosition(pos.x , pos.y - (bounds.height - center.y) * yScl);
-        rect.setOrigin(center.x*xScl, center.y*yScl);
+
+        float xSclAbs = abs(xScl);
+        float ySclAbs = abs(yScl);
+
+        sf::RectangleShape rect(Vector2f(bounds.width * xSclAbs, bounds.height * ySclAbs));
+        rect.setPosition(pos.x , pos.y - (bounds.height - center.y) * ySclAbs);
+        rect.setOrigin(center.x*xSclAbs, center.y*ySclAbs);
 
         rect.setFillColor(Color(0, 0, 0, 0));
         rect.setOutlineColor(Color(0, 0, 0));
@@ -692,6 +696,10 @@ struct Model {
                 allHandles[executeOrder[i]]->update();
             }
         }
+    }
+
+    FloatRect getBounds() {
+        return FloatRect(pos.x - center.x*xScl, pos.y - center.y*yScl, bounds.width*xScl, bounds.height*yScl);
     }
 
     Element* at(int id) {

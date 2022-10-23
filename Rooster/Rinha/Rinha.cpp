@@ -21,8 +21,10 @@
 using namespace std;
 using namespace sf;
 
-const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+
+
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
@@ -74,7 +76,7 @@ int main() {
 		cout << e << endl;
 	}
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);

@@ -110,13 +110,10 @@ namespace Rooster {
 
 	};
 
-	
-
-
-
 
 	class Ataques {
 	public:
+		int id;
 		float Stun;
 		float CoolDown;
 		HitBox hitbox;
@@ -126,15 +123,20 @@ namespace Rooster {
 		float angle;
 
 		bool isAtacking = false;
+		bool getHitted = false;
 		Clock init;
 		Time timeLapse;
+		Clock init2;
+		Time timeLapse2;
+		
 
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
 		
 		
 			
-		Ataques(float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
+		Ataques(int id,float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
+			this->id = id;
 			this->Stun = Stun;
 			this->CoolDown = CoolDown;
 			this->hitbox = hitbox;
@@ -145,11 +147,26 @@ namespace Rooster {
 			bufferCollision.loadFromFile(txt);
 			soundCollision.setBuffer(bufferCollision);
 		}
+		Ataques(int id, float Stun, float CoolDown, HitBox hitbox, int Damage, float KnockBack,
+			float angle, Time timelapse,const char* txt, Time timelapse2) {
+			this->id = id;
+			this->Stun = Stun;
+			this->CoolDown = CoolDown;
+			this->hitbox = hitbox;
+			this->Damage = Damage;
+			this->KnockBack = KnockBack;
+			this->timeLapse = timelapse;
+			this->angle = angle;
+			this->timeLapse2 = timelapse2;
+			bufferCollision.loadFromFile(txt);
+			soundCollision.setBuffer(bufferCollision);
+		}
 
 		void playSound() {
 			soundCollision.play();
 		}
-
+		
+		
 		bool CheckCollision(HitBox galo) {
 			if (isAtacking) {
 				return (pointDistance(galo.center, hitbox.center) < galo.radius + hitbox.radius);

@@ -305,7 +305,37 @@ namespace Rooster {
             this->hp -= atk.Damage;
             bar->update(hp);
         }
+        virtual void apanharByKalsa(Galo * g2) {
+           
+            float frames = ultimateShot->init2.getElapsedTime().asMilliseconds();
+            float maxFrames = ultimateShot->timeLapse2.asMilliseconds();
+            if (frames > maxFrames) {
+                ultimateShot->getHitted = false;
+            }
+            println(frames);
+           
+            ConvexShape star(10);
 
+            Vector2f nextPosition = position;
+            
+            if ((float)frames/maxFrames < 0.5) {
+                
+                g2->facingRight = !g2->facingRight;
+                
+                
+                g2->position.x += ((position.x - g2->position.x - 200) * frames * 2) / maxFrames;
+                
+                
+            }
+            else {
+                g2->model.at("Head")->angle += 90 ;
+                g2->model.at("FrontArm")->angle += 90;
+                g2->model.at("BackArm")->angle += 90;
+                println("else");
+            }
+            
+         
+        }
         void jump() {
             if (stunFrames <= 0) {
                 if (!air) {
@@ -351,8 +381,8 @@ namespace Rooster {
 
             }
 
-            if (hiKick->isAtacking) {
-               // drawHitBox(window, hiKick->hitbox, sf::Color::Red);
+            if (ultimateShot->isAtacking) {
+                drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
             }
 
             

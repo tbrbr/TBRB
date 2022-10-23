@@ -124,8 +124,21 @@
 
 			}
 			if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.ultimateShot,galo2.facingRight);
+				if (galo2.ultimateShot->id == 5) {
 
+					if (galo2.ultimateShot->id == 5) {
+
+						if (!galo2.ultimateShot->getHitted) {
+							galo2.ultimateShot->getHitted = true;
+							galo2.ultimateShot->init2.restart();
+						}
+
+						
+
+					}
+					else
+						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+				}
 			}
 		}
 		
@@ -140,12 +153,27 @@
 				galo2.apanhar(*galo.louKick,galo.facingRight);
 			}
 			if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.ultimateShot,galo.facingRight);
+				if (galo.ultimateShot->id == 5) {
+	
+					if (!galo.ultimateShot->getHitted) {
+						galo.ultimateShot->getHitted = true;
+						galo.ultimateShot->init2.restart();
+					}					
+				}
+				else
+					galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+
+
 			}
 
 		}
 		
-		
+		if (galo.ultimateShot->getHitted) {
+			galo.apanharByKalsa(&galo2);
+		}
+		else if (galo2.ultimateShot->getHitted) {
+			galo2.apanharByKalsa(&galo);
+		}
 
 		galo.update();
 		

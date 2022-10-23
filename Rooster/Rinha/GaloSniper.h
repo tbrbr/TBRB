@@ -37,9 +37,9 @@ namespace Rooster {
 			this->hp = 100;
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 
-			this->hiKick = new Ataques(8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1000),"");
-			this->louKick = new Ataques(5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000),"");
-			this->ultimateShot = new Ataques(0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, 0, milliseconds(2000),"sounds\\awp.ogg");
+			this->hiKick = new Ataques(0,8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1000),"");
+			this->louKick = new Ataques(1,5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000),"");
+			this->ultimateShot = new Ataques(2,0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, 0, milliseconds(2000),"sounds\\awp.ogg");
 
 
 
@@ -459,6 +459,7 @@ namespace Rooster {
 			invFrames--;
 			stunFrames--;
 
+		
 			if (estadoUpdate) {
 				model.resetToBase();
 				animations[0].playingFrame = 0;
@@ -504,35 +505,39 @@ namespace Rooster {
 			model.at("FrontArm")->angle = ArmSpinAngFase;
 			model.at("BackArm")->angle = Arm2SpinAngFase;
 
-			if (estado == RUNNING) {
-				runAnim();
-			}
-			else if (estado == DEFENDING) {
-				animations[0].update();
-				if (animations[0].playingFrame > 15) {
-					animations[0].playingFrame = 15;
+			if (stunFrames <= 0) {
+				if (estado == RUNNING) {
+					runAnim();
 				}
-				model.updateWithAnimation(animations[0]);
+				else if (estado == DEFENDING) {
+					animations[0].update();
+					if (animations[0].playingFrame > 15) {
+						animations[0].playingFrame = 15;
+					}
+					model.updateWithAnimation(animations[0]);
 
-			}
-			else if (estado == STOPPED) {
-				runReset();
-			}
+				}
+				else if (estado == STOPPED) {
+					runReset();
+				}
 
-			if (estado != RUNNING && invFrames <= 0) {
-				hspeed = 0;
-			}
+				if (estado != RUNNING && invFrames <= 0) {
+					hspeed = 0;
+				}
 
 
-			if (atacking == HIGH_KICK) {
-				highKickAnim();
+				if (atacking == HIGH_KICK) {
+					highKickAnim();
+				}
+				else if (atacking == LOW_KICK) {
+					lowKickAnim();
+				}
+				else if (atacking == SPECIAL) {
+					especialAnim();
+				}
 			}
-			else if (atacking == LOW_KICK) {
-				lowKickAnim();
-			}
-			else if (atacking == SPECIAL) {
-				especialAnim();
-			}
+			
+			
 
 
 			if (position.y > floorY) {

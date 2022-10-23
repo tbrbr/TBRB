@@ -25,16 +25,16 @@ namespace Rooster {
 
             this->peso = 4;
 
-            this->hiKick = new Ataques(
+            this->hiKick = new Ataques(6,
                 8, 0.5, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(1200), ""
             );
-            this->louKick = new Ataques(
+            this->louKick = new Ataques(7,
                 5, 0.5, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, PI / 4, milliseconds(1000), ""
             );
 
-            this->ultimateShot = new Ataques(
+            this->ultimateShot = new Ataques(8,
                 0.9, 0.5, HitBox{ Vector2f(0, 0), 0 },
                 10, 3, 0, milliseconds(2000),
                 "sounds\\awp.ogg"
@@ -450,11 +450,11 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
-                //animations[1].update();
-                //if (animations[1].playingFrame > 15) {
-                   // animations[1].playingFrame = 15;
-                //}
-                //model.updateWithAnimation(animations[1]);
+                animations[0].update();
+                if (animations[0].playingFrame > 15) {
+                    animations[0].playingFrame = 15;
+                }
+                 model.updateWithAnimation(animations[0]);
 
             }
             else if (estado == STOPPED) {
@@ -472,7 +472,7 @@ namespace Rooster {
                // highAtackAnim();
             }
             else if (atacking == LOW_KICK) {
-               // louKickAnim();
+                //louKickAnim();
             }
             else if (atacking == SPECIAL) {
                // especialAnim();

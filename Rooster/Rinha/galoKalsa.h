@@ -202,8 +202,8 @@ namespace Rooster {
             }
             else if (percentage < 2.2f / 3.f) {
                
-                model.at("FrontArm")->angle = -20;
-                model.at("BackArm")->angle = 90;
+                model.at("FrontArm")->angle = toRadiAnus(-20);
+                model.at("BackArm")->angle = toRadiAnus(90);
 
                 projectiles[0].setVisibility(true);
               
@@ -218,7 +218,6 @@ namespace Rooster {
                     projectiles[0].setImpulse(20, 0);
                     projectiles[0].setScale(Vector2f(0.5, 0.5));
                 }
-
                 else {
                     projectiles[0].setImpulse(-20, 0);
                     projectiles[0].setScale(Vector2f(-0.5, 0.5));
@@ -229,15 +228,16 @@ namespace Rooster {
             }
             else if (percentage < 2.5f / 3.f) {
 
-                model.at("FrontArm")->angle = -20;
-                model.at("BackArm")->angle = 90;
+                model.at("FrontArm")->angle = toRadiAnus(-20);
+                model.at("BackArm")->angle = toRadiAnus(90);
 
           
 
 
             }
             else if (percentage < 2.9 / 3.f) {
-               
+                model.at("FrontArm")->angle = -20;
+                model.at("BackArm")->angle = 90;
             }
             else {
                 
@@ -281,8 +281,8 @@ namespace Rooster {
 
                 model.at("FrontLeg")->angle = 45;
                 model.at("BackLeg")->angle = 45; 
-                louKick->hitbox.center = model.at(PE_ATRAS)->drawPos;
-                louKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width / 2;
+                louKick->hitbox.center = model.at("Biko")->drawPos;
+                louKick->hitbox.radius = model.at("Biko")->sprite.getGlobalBounds().width / 2;
                 louKick->isAtacking = true;
 
                 

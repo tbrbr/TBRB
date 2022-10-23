@@ -337,11 +337,11 @@ namespace Rooster {
 
         void show(sf::RenderWindow& window) {
 
-         
+            projectiles[0].draw(window);
             model.draw(window);
             
             
-            projectiles[0].draw(window);
+            
             
 
             for (int i = 0; i < hurtBox.size(); i++) {

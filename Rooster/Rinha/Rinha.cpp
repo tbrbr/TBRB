@@ -88,10 +88,6 @@ int main() {
 	window->setMouseCursor(cursor);
 
 
-
-	//Rooster::ExplosionEffect* exp = 
-	//mainPartSystem.effects.push_back(new Rooster::ExplosionEffect(10, Vector2f(0, 0), Color::Red, Vector2f(2, 2), Vector2f(1, 2))); 
-
 	Galo* galo = NULL;
 	Galo* galo2 = NULL;
 
@@ -100,15 +96,13 @@ int main() {
 	
 	Texture mapa;
 	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	mapa.loadFromFile("sprites/shopping.png");
+	mapa.loadFromFile("sprites/ceasa.png");
 
 	fundo.setPosition(0, 0);
 	fundo.setTexture(&mapa);
 
 	//socket.setBlocking(false);
 
-	//fazendo um ponteiro pra menu pra dar free depois
-	//MenuPrincipal* menuprincipal = new MenuPrincipal();
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 

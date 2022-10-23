@@ -181,24 +181,29 @@ namespace Rooster {
             angFix = -1;
 
 
-            if (percentage < 0.5f / 3.f) {
+            if (percentage < 1.f / 3.f) {
 
 
                 float thisPercentage = percentage * 3;
-                
+                model.at("FrontEyebrow")->offset.y += 0.25;
+                model.at("BackEyebrow")->offset.y += 0.25;
+
+                model.at("Head")->angle  = -15 * sin(thisPercentage * PI / 2);
+                model.at("FrontArm")->angle = -45 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = 20 * sin(thisPercentage * PI / 2);
+                model.at("FrontLeg")->angle = -20 * sin(thisPercentage * PI / 2);
 
             }
             else if (percentage < 2.f / 3.f) {
-                float thisPercentage = percentage * 3;
-
+                float thisPercentage = (percentage * 3) /2;
+                model.at("FrontArm")->angle = -20 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = 90 * sin(thisPercentage * PI / 2);
             
             }
-            else if (percentage < 2.05f / 3.f) {
-                ultimateShot->playSound();
-            }
             else if (percentage < 2.2f / 3.f) {
-
-
+               
+                model.at("FrontArm")->angle = -20;
+                model.at("BackArm")->angle = 90;
 
                 projectiles[0].setVisibility(true);
               
@@ -223,6 +228,9 @@ namespace Rooster {
                 ultimateShot->isAtacking = true;
             }
             else if (percentage < 2.5f / 3.f) {
+
+                model.at("FrontArm")->angle = -20;
+                model.at("BackArm")->angle = 90;
 
           
 

@@ -87,7 +87,7 @@ int main() {
 	
 	Texture mapa;
 	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	mapa.loadFromFile("sprites/shopping.png");
+	mapa.loadFromFile("sprites/ceasa.png");
 
 	fundo.setPosition(0, 0);
 	fundo.setTexture(&mapa);

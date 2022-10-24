@@ -179,14 +179,12 @@ void introducao(RenderWindow* window, int& menuOption) {
 			
 		}
 		else if (timer >= 30000 && timer <= 82000){
-
-			
-
-			
+		
 			
 			int ind = (timer - 30000)/500;
 			
 			int a = ind % 8;
+			
 
 			if (a == 0) {
 				window->draw(vetor[ind]);
@@ -199,7 +197,7 @@ void introducao(RenderWindow* window, int& menuOption) {
 				window->draw(vetor[ind - 2]);
 				window->draw(vetor[ind - 1]);
 				window->draw(vetor[ind]);
-			}else if(a > 3) {
+			}else if(a >= 3) {
 				
 				if (a == 4) {
 					ind -= 1;
@@ -214,18 +212,21 @@ void introducao(RenderWindow* window, int& menuOption) {
 					ind -= 4;
 				}
 				
-				if (ind > 52) {
-					ind = 51;
-				}
 				
 				window->draw(vetor[ind - 3]);
 				window->draw(vetor[ind - 2]);
 				window->draw(vetor[ind - 1]);
 				window->draw(vetor[ind]);
 			}
-			
-			
-
+			static int counter = 0;
+			if (ind == 51) {
+				counter++;
+				
+			}
+			if (counter == 4) {
+				return;
+				menuOption = 2;
+			}
 			
 			
 			

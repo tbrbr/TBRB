@@ -446,7 +446,9 @@ namespace Rooster {
                
             }
             else {
-
+                g2->model.at("Head")->angle = 0;
+                g2->model.at("FrontArm")->angle = 0;
+                g2->model.at("BackArm")->angle = 0;
             }
             
          
@@ -478,7 +480,16 @@ namespace Rooster {
 
         void show(sf::RenderWindow& window) {
 
+            /*
+            for (int i = 0; i < 2; i++) {
+                if(!projectiles[i].NULO)
+                    projectiles[i].draw(window);
+                println("é possivel");
+            }*/
             projectiles[0].draw(window);
+            println(projectiles[0].getVisibility());
+            println(projectiles[0].getPosition().x);
+            println(projectiles[0].getPosition().y);
 
 
             model.draw(window);
@@ -616,9 +627,10 @@ namespace Rooster {
 
 
             // Projectiles
+            /*pare de tentar ajudar e destruir o restp da miinhda vdasidnbhasvgy
             for (int i = 0; i < projectiles.size(); i++) {
                 projectiles[i].update();
-            }
+            }*/
 
 
             updateAnimations();

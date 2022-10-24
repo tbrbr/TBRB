@@ -2,6 +2,7 @@
 
 #define SFML_STATIC
 
+#include <opencv2/core/core.hpp>
 #include "efeitos_fodas.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -22,10 +23,16 @@ using namespace sf;
 
 
 
+<<<<<<< HEAD
 //const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
 //const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
+=======
+const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
+
+>>>>>>> 3e210fdf28e0c371ddbd1e0e07ac0291452e09cb
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
@@ -53,7 +60,6 @@ Rooster::ParticleSystem mainPartSystem;
 #include "galoKalsa.h"
 #include "GaloBruxo.h"
 #include "galoPeste.h"
-
 using namespace Rooster;
 
 #include "Briga.h"
@@ -79,10 +85,9 @@ int main() {
 		cout << e << endl;
 	}
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
 	window->clear(Color::Black);
-	window->display();
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(false);
@@ -111,6 +116,9 @@ int main() {
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
+
+
+	
 
 	while (window->isOpen())
 	{

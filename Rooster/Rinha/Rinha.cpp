@@ -52,6 +52,7 @@ Rooster::ParticleSystem mainPartSystem;
 #include "GaloSniper.h"
 #include "galoKalsa.h"
 #include "GaloBruxo.h"
+#include "galoPeste.h"
 
 using namespace Rooster;
 

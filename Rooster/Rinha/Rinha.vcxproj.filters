@@ -28,5 +28,6 @@
     <ClInclude Include="Sangue.h" />
     <ClInclude Include="TilesDoArrocha.h" />
     <ClInclude Include="introducoes.h" />
+    <ClInclude Include="galoPeste.h" />
   </ItemGroup>
 </Project>

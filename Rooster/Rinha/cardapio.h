@@ -337,11 +337,7 @@ public:
 
 
 		if (p2 != -1) {
-			while (window->isOpen())
-				if (sf::Keyboard::isKeyPressed(Keyboard::Escape) || sf::Keyboard::isKeyPressed(Keyboard::Enter)) {
-					option = Rooster::UMJOGADORES;
-					return;
-				}
+			option = Rooster::UMJOGADORES;
 		}
 		Event e;
 		while (window->pollEvent(e))
@@ -384,7 +380,13 @@ public:
 
 							}
 							else if (i == 1) {
-								return;
+								if (isp1Time) {
+									*galop1 = new Peste(sniperSt, Rooster::state::STOPPED, true);
+
+								}
+								else {
+									*galop2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
+								}
 							}
 							else if (i == 2) {
 								if (isp1Time) {

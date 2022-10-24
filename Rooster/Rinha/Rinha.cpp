@@ -22,8 +22,10 @@ using namespace sf;
 
 
 
-const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
+//const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
+//const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
@@ -82,7 +84,7 @@ int main() {
 	window->display();
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
-
+	window->setMouseCursorGrabbed(false);
 	Cursor cursor;
 	Image c;
 	c.loadFromFile("sprites/cursor_teste.png");

@@ -115,6 +115,10 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 int MenuPrincipal(RenderWindow * window) {
 	
 	window->setMouseCursorVisible(true);
+	
+	Music opening;
+	opening.openFromFile("sounds\\freefires.ogg");
+	opening.play();
 	Texture background_t;
 	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	background.setPosition(0, 0);

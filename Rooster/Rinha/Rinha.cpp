@@ -110,7 +110,7 @@ int main() {
 	pianoYamaha piano;
 
 
-	introducao intro;
+	
 
 	while (window->isOpen())
 	{
@@ -154,11 +154,7 @@ int main() {
 			selector->show(window,option,&galo,&galo2);
 			break;
 		case INTRO: {
-			if (intro.firstTime) {
-				intro.firstTime = false;
-				intro.time.restart();
-			}
-			intro.draw(window, option);
+			introducao(window,option);
 
 			break;
 		}

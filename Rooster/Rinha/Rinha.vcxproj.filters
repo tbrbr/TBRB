@@ -1,97 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Arquivos de Origem">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Arquivos de Cabeçalho">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Arquivos de Recurso">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Arquivos de Cabeçalho\Patinho">
-      <UniqueIdentifier>{04c78d0f-38dc-495c-97f2-5b66040afc73}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Galo.cpp" />
+    <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Rinha.cpp">
-      <Filter>Arquivos de Origem</Filter>
-    </ClCompile>
-    <ClCompile Include="Galo.cpp">
-      <Filter>Arquivos de Origem</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Galo.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="Elementos.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="GaloSniper.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="fregues.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="entradas.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="muitosjogadores.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="IAtaques.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="jogador_de_video.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="cardapio.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="Briga.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="efeitos_fodas.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="TilesDoArrocha.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="Math2.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="galoKalsa.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="Patinho\Fps.h">
-      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
-    </ClInclude>
-    <ClInclude Include="Patinho\jogoDoPatinho.h">
-      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
-    </ClInclude>
-    <ClInclude Include="Patinho\Patinho.h">
-      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
-    </ClInclude>
-    <ClInclude Include="Patinho\RoosterPato.h">
-      <Filter>Arquivos de Cabeçalho\Patinho</Filter>
-    </ClInclude>
-    <ClInclude Include="Sangue.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="menu_inicial.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="checador_de_posicao.h">
-=======
-    <ClInclude Include="GaloBruxo.h">
->>>>>>> a291714080b9e6f3b6ee9fb79d006b18bb7f63bb
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
+    <ClInclude Include="Briga.h" />
+    <ClInclude Include="cardapio.h" />
+    <ClInclude Include="checador_de_posicao.h" />
+    <ClInclude Include="efeitos_fodas.h" />
+    <ClInclude Include="Elementos.h" />
+    <ClInclude Include="entradas.h" />
+    <ClInclude Include="fregues.h" />
+    <ClInclude Include="Galo.h" />
+    <ClInclude Include="GaloBruxo.h" />
+    <ClInclude Include="galoKalsa.h" />
+    <ClInclude Include="GaloSniper.h" />
+    <ClInclude Include="IAtaques.h" />
+    <ClInclude Include="jogador_de_video.h" />
+    <ClInclude Include="Math2.h" />
+    <ClInclude Include="menu_inicial.h" />
+    <ClInclude Include="muitosjogadores.h" />
+    <ClInclude Include="Patinho\Fps.h" />
+    <ClInclude Include="Patinho\jogoDoPatinho.h" />
+    <ClInclude Include="Patinho\Patinho.h" />
+    <ClInclude Include="Patinho\RoosterPato.h" />
+    <ClInclude Include="Sangue.h" />
+    <ClInclude Include="TilesDoArrocha.h" />
+    <ClInclude Include="introducoes.h" />
   </ItemGroup>
 </Project>

@@ -149,6 +149,7 @@
     <ClInclude Include="galoKalsa.h" />
     <ClInclude Include="GaloSniper.h" />
     <ClInclude Include="IAtaques.h" />
+    <ClInclude Include="introducoes.h" />
     <ClInclude Include="jogador_de_video.h" />
     <ClInclude Include="Math2.h" />
     <ClInclude Include="menu_inicial.h" />

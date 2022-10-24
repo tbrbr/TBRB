@@ -23,11 +23,12 @@ using namespace sf;
 
 
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
+#include "introducoes.h"
 #include "checador_de_posicao.h"
 
 #include "Patinho/Patinho.h"
@@ -67,7 +68,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 2;
+	int option = 5;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -109,12 +110,7 @@ int main() {
 	pianoYamaha piano;
 
 
-
-
-
-
-
-	
+	introducao intro;
 
 	while (window->isOpen())
 	{
@@ -157,6 +153,16 @@ int main() {
 		case SELECTION:
 			selector->show(window,option,&galo,&galo2);
 			break;
+		case INTRO: {
+			if (intro.firstTime) {
+				intro.firstTime = false;
+				intro.time.restart();
+			}
+			intro.draw(window, option);
+
+			break;
+		}
+			
 		default:
 			break;
 		}

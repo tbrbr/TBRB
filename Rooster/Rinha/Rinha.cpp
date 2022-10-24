@@ -24,8 +24,8 @@ using namespace sf;
 
 //const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
 //const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
@@ -70,7 +70,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 2;
+	int option = 5;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);

@@ -49,6 +49,7 @@ int introducao(RenderWindow* window) {
 
 		marcadoresT[i].loadFromFile(s);
 		marcadores[i].setTexture(marcadoresT[i]);
+		marcadores[i].setScale(0.6, 0.6);
 		marcadores[i].setPosition(SCREEN_WIDTH / 2 - marcadores[i].getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - marcadores[i].getGlobalBounds().height / 2);
 	}
 	for (int i = 0; i < 4; i++) {
@@ -57,8 +58,8 @@ int introducao(RenderWindow* window) {
 
 		pichadaT[i].loadFromFile(s);
 		pichada[i].setTexture(pichadaT[i]);
-		pichada[i].setPosition(SCREEN_WIDTH / 2 - pichada[i].getGlobalBounds().width / 2,
-			SCREEN_HEIGHT / 2 - pichada[i].getGlobalBounds().height / 2);
+		pichada[i].setScale(0.5, 0.65);
+		pichada[i].setPosition(SCREEN_WIDTH / 2 - pichada[i].getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - pichada[i].getGlobalBounds().height / 2);
 	}
 
 	logoT.loadFromFile("IntroFiles\\logo.png");
@@ -77,7 +78,7 @@ int introducao(RenderWindow* window) {
 	piscada.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	Music music;
-	music.openFromFile("IntroFiles\\music intro.ogg");
+	music.openFromFile("IntroFiles\\fulerage.ogg");
 	music.play();
 	time.restart();
 	int memoryTime = 0;
@@ -102,7 +103,7 @@ int introducao(RenderWindow* window) {
 				}
 				if (e.key.code == Keyboard::Space)
 				{
-					println(timer);
+					return 2;
 				}
 
 			}

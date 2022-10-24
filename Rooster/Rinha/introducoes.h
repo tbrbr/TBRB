@@ -181,63 +181,62 @@ int introducao(RenderWindow* window) {
 			}
 			
 		}
-		else if (timer >= 30000 && timer < 52000){
+		else if (timer >= 30000 && timer <= 82000){
 			
 			
 					
-			int ind = (timer - 30000)/1000;
-			int a = ind % 4;
+			int thisTime = (timer - 30000);
+			int restTime = thisTime % 4000;
 			
-									
-			if (a == 0) {
-				window->draw(vetor[ind]);
+			int ind =  4*(int)(thisTime/4000);
 
-				println(ind);
+			if (ind > 48) {
+				ind = 48;
 			}
-			else if (a == 1) {
-				window->draw(vetor[ind - 1]);
-				window->draw(vetor[ind]);
+			
+						
+			if (restTime < 1000) {
+				if (restTime < 250) {
+					window->draw(vetor[ind]);
 
-				println(ind);
-			}
-			else if (a == 2) {
-				window->draw(vetor[ind - 2]);
-				window->draw(vetor[ind - 1]);
-				window->draw(vetor[ind]);
+					
+				}
+				else if (restTime < 500) {
+					window->draw(vetor[ind]);
+					window->draw(vetor[ind + 1]);
 
-				println(ind);
-			}
-			else if (ind == 3) {
-				window->draw(vetor[ind - 3]);
-				window->draw(vetor[ind - 2]);
-				window->draw(vetor[ind - 1]);
-				window->draw(vetor[ind]);
-			}
-			else{
 				
-				ind -= (a - 3);
-				
-				window->draw(vetor[ind - 3]);
-				window->draw(vetor[ind - 2]);
-				window->draw(vetor[ind - 1]);
-				window->draw(vetor[ind]);
+				}
+				else if (restTime < 750) {
+					window->draw(vetor[ind]);
+					window->draw(vetor[ind + 1]);
+					window->draw(vetor[ind + 2]);
 
-				println(ind);
-			}
-			
-			static int counter = 0;
-			if (ind == 51) {
-				counter++;
+					
+				}
+				else {
+					window->draw(vetor[ind]);
+					window->draw(vetor[ind + 1]);
+					window->draw(vetor[ind + 2]);
+					window->draw(vetor[ind + 3]);
+				}
 				
 			}
-			if (counter == 4) {
-				
-				return 2;
+			else {
+
+				window->draw(vetor[ind ]);
+				window->draw(vetor[ind + 1]);
+				window->draw(vetor[ind + 2]);
+				window->draw(vetor[ind + 3]);
+
 				
 			}
 			
-			
-			
+		
+						
+		}
+		else {
+			return 2;
 		}
 		window->display();
 	}

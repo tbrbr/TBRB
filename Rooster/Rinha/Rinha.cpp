@@ -22,17 +22,8 @@ using namespace std;
 using namespace sf;
 
 
-
-<<<<<<< HEAD
-//const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
-//const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
-=======
 const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
-
->>>>>>> 3e210fdf28e0c371ddbd1e0e07ac0291452e09cb
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 

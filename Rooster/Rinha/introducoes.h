@@ -1,5 +1,7 @@
 
 int introducao(RenderWindow* window) {
+
+	window->setMouseCursorGrabbed(false);
 	Texture vetorT[52];
 	Sprite vetor[52];
 	Texture marcadoresT[6];
@@ -178,46 +180,50 @@ int introducao(RenderWindow* window) {
 			}
 			
 		}
-		else if (timer >= 30000 && timer <= 82000){
-		
+		else if (timer >= 30000 && timer < 52000){
 			
-			int ind = (timer - 30000)/500;
 			
-			int a = ind % 8;
+					
+			int ind = (timer - 30000)/1000;
+			int a = ind % 4;
 			
-
+									
 			if (a == 0) {
 				window->draw(vetor[ind]);
+
+				println(ind);
 			}
 			else if (a == 1) {
 				window->draw(vetor[ind - 1]);
 				window->draw(vetor[ind]);
+
+				println(ind);
 			}
 			else if (a == 2) {
 				window->draw(vetor[ind - 2]);
 				window->draw(vetor[ind - 1]);
 				window->draw(vetor[ind]);
-			}else if(a >= 3) {
-				
-				if (a == 4) {
-					ind -= 1;
-				}
-				else if (a == 5) {
-					ind -= 2;
-				}
-				else if (a == 6) {
-					ind -= 3;
-				}
-				else if (a == 7) {
-					ind -= 4;
-				}
-				
-				
+
+				println(ind);
+			}
+			else if (ind == 3) {
 				window->draw(vetor[ind - 3]);
 				window->draw(vetor[ind - 2]);
 				window->draw(vetor[ind - 1]);
 				window->draw(vetor[ind]);
 			}
+			else{
+				
+				ind -= (a - 3);
+				
+				window->draw(vetor[ind - 3]);
+				window->draw(vetor[ind - 2]);
+				window->draw(vetor[ind - 1]);
+				window->draw(vetor[ind]);
+
+				println(ind);
+			}
+			
 			static int counter = 0;
 			if (ind == 51) {
 				counter++;

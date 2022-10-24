@@ -154,7 +154,7 @@ int main() {
 			selector->show(window,option,&galo,&galo2);
 			break;
 		case INTRO: {
-			introducao(window,option);
+			option = introducao(window);
 
 			break;
 		}

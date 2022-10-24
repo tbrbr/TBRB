@@ -1,5 +1,5 @@
 
-void introducao(RenderWindow* window, int& menuOption) {
+int introducao(RenderWindow* window) {
 	Texture vetorT[52];
 	Sprite vetor[52];
 	Texture marcadoresT[6];
@@ -224,8 +224,9 @@ void introducao(RenderWindow* window, int& menuOption) {
 				
 			}
 			if (counter == 4) {
-				return;
-				menuOption = 2;
+				
+				return 2;
+				
 			}
 			
 			

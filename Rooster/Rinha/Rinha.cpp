@@ -2,7 +2,6 @@
 
 #define SFML_STATIC
 
-#include <opencv2/core/core.hpp>
 #include "efeitos_fodas.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -68,7 +67,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 5;
+	int option = 2;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -77,9 +76,10 @@ int main() {
 		cout << e << endl;
 	}
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
 
 	window->clear(Color::Black);
+	window->display();
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 
@@ -108,9 +108,6 @@ int main() {
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
-
-
-	
 
 	while (window->isOpen())
 	{

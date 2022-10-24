@@ -46,9 +46,16 @@ namespace Rooster {
                 0, 0, Vector2f(1, 1),
                 IntRect(0, 0, 603, 100)
             );
+            Projectile* cintoAmarrado = new Projectile(
+                Vector2f(0, 0),
+                "sprites\\Cinto.png",
+                0, 0, Vector2f(1, 1),
+                IntRect(0, 200, 603, 100)
+            );
 
             atacking = NOT_ATTACK;
             projectiles.push_back(*cinto);
+            projectiles.push_back(*cintoAmarrado);
 
             if (isp1)
                 position.x = SCREEN_WIDTH / 4;
@@ -249,7 +256,7 @@ namespace Rooster {
                     if (facingRight) {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x + (projectiles[0].getSize().x / 2 * thisPercentage),
+                                model.at("BackArm")->drawPos.x + (projectiles[0].getSize().x / 2.5 * thisPercentage),
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -257,7 +264,7 @@ namespace Rooster {
                     else {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x - (projectiles[0].getSize().x / 2 * thisPercentage),
+                                model.at("BackArm")->drawPos.x - (projectiles[0].getSize().x / 2.5 * thisPercentage),
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -325,7 +332,7 @@ namespace Rooster {
                 }
             }
             else {
-                
+            
                 if (percentage < 2.f / 3.f) {
 
                     float thisPercentage = (percentage * 3) / 2;
@@ -375,22 +382,11 @@ namespace Rooster {
                     model.at("FrontArm")->angle = -20;
                     model.at("BackArm")->angle = 120;
 
-                    if (facingRight) {
-                        projectiles[0].setPosition(
-                            Vector2f(
-                                model.at("BackArm")->drawPos.x + (projectiles[0].getSize().x / 2 * thisPercentage),
-                                model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
-                            )
-                        );
-                    }
-                    else {
-                        projectiles[0].setPosition(
-                            Vector2f(
-                                model.at("BackArm")->drawPos.x - (projectiles[0].getSize().x / 2 * thisPercentage),
-                                model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
-                            )
-                        );
-                    }
+                    projectiles[0].setPosition(
+                        Vector2f(model.at("BackArm")->drawPos.x,
+                            (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4)
+                        )
+                    );
 
                     if (facingRight) {
                         ultimateShot->hitbox.center.x = (
@@ -412,7 +408,7 @@ namespace Rooster {
                     float thisPercentage = (percentage * 3) / 2.9;
 
                     model.at("FrontArm")->angle = -20;
-                    model.at("BackArm")->angle = 120 / sin(thisPercentage * PI / 2);
+                    model.at("BackArm")->angle -= 1;
 
                     model.at("FrontEyebrow")->offset.y *= 0.9;
                     model.at("BackEyebrow")->offset.y *= 0.9;
@@ -421,7 +417,7 @@ namespace Rooster {
                     if (facingRight) {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x - (projectiles[0].getSize().y * thisPercentage),
+                                projectiles[0].getPosition().x - 1,
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -429,7 +425,7 @@ namespace Rooster {
                     else {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x + (projectiles[0].getSize().y * thisPercentage),
+                                projectiles[0].getPosition().x + 1,
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -691,6 +687,7 @@ namespace Rooster {
 
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
+
             if (stunFrames <= 0) {
                 if (estado == RUNNING) {
                     runAnim();

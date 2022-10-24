@@ -9,6 +9,7 @@
 #include <windows.h>
 #include <SFML/Network.hpp>
 #include <vector>
+#include <random>
 #include <cmath>
 
 #include <fstream>
@@ -35,6 +36,12 @@ bool keyboardState[sf::Keyboard::KeyCount][3];
 #include "Math2.h"
 
 //#include "jogador_de_video.h"
+
+
+#include "Sangue.h"
+Rooster::ParticleSystem mainPartSystem;
+
+
 #include "entradas.h"
 #include "Elementos.h"
 #include "Galo.h"
@@ -49,8 +56,8 @@ using namespace Rooster;
 #include "cardapio.h"
 #include "menu_inicial.h"
 
-int main() {
 
+int main() {
 
 	for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
 		keyboardState[i][0] = false;
@@ -72,12 +79,14 @@ int main() {
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
+
 	Cursor cursor;
 	Image c;
 	c.loadFromFile("sprites/cursor_teste.png");
 
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
+
 
 	Galo* galo = NULL;
 	Galo* galo2 = NULL;
@@ -97,7 +106,13 @@ int main() {
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
 
-	ExplosionEffect e(10, Vector2f(0, 0), Color::Red, Vector2f(20, 20));
+
+
+
+
+
+
+	
 
 	while (window->isOpen())
 	{

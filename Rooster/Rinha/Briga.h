@@ -3,7 +3,9 @@
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
-		
+		window->clear();
+		window->draw(fundo);
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -169,10 +171,10 @@
 		}
 		
 		if (galo.ultimateShot->getHitted) {
-			galo.apanharByKalsa(&galo2);
+			galo.apanharByKalsa(&galo2,window);
 		}
 		else if (galo2.ultimateShot->getHitted) {
-			galo2.apanharByKalsa(&galo);
+			galo2.apanharByKalsa(&galo,window);
 		}
 
 		galo.update();
@@ -181,8 +183,7 @@
 		
 
 
-		window->clear();		
-		window->draw(fundo);
+		
 
 		galo.bar->draw(window);
 		
@@ -191,6 +192,11 @@
 		galo.show(*window);
 		
 		galo2.show(*window);
+
+
+
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
 		
 		window->display();
 

@@ -1,15 +1,48 @@
 
 namespace Rooster {
 
+	
+		Texture star;
+		Sprite estrelinha;
+			
+		
+		void drawEstrelinhas(RenderWindow * window,Vector2f position) {
+			star.loadFromFile("sprites\\estrelinhas.png");
+			estrelinha.setTexture(star);
+						
+			static int frames = 0;
+			frames++;
+			if (frames > 60) {
+				frames = 0;
+			}
+			int frameTime = frames % 11 - 5;
+			if (frames == 5) {
+				estrelinha.setScale(-10, 10);
+				
+			}
+			else if(frames == -5) {
+				estrelinha.setScale(10, 10);
+			}
+			
+			estrelinha.setPosition(0, 0);
+			window->draw(estrelinha);
+			
+			
+		}
+		
+	
 	class Particle {
+
+
+	public:
 		Vector2f position;
 		float hSpeed = 0;
 		float vSpeed = 0;
 		float vAcc = 0;
 		float hAcc = 0;
 
-		float maxHspd = 100;
-		float maxVspd = 100;
+		float maxHspd = 10;
+		float maxVspd = 10;
 
 
 		float ang = 0;
@@ -20,7 +53,8 @@ namespace Rooster {
 
 		float friction = 0.999;
 
-		float life = 0;
+		int life = 500;
+		bool mortal = true;
 		float active = false;
 
 
@@ -31,28 +65,29 @@ namespace Rooster {
 		float sprScl;
 		Vector2f sprCenter;
 		Sprite sprite;
-		
+
 
 		Color color;
-		float radius = 2;
-		
+		float radius = 10;
+
 		CircleShape point;
 
 
 
 
-	public:
 
 		Particle(Color color) {
 			point.setRadius(1);
 			this->color = color;
 			point.setFillColor(color);
+			active = true;
 
 		}
 		Particle() {
 			point.setRadius(10);
 			color = Color::Red;
 			point.setFillColor(color);
+			active = true;
 
 		}
 		void setPosition(Vector2f position) {
@@ -65,7 +100,7 @@ namespace Rooster {
 		Vector2f getPosition() {
 			return position;
 		}
-		void setImpulse(float hSpeed,float vSpeed) {
+		void setImpulse(float hSpeed, float vSpeed) {
 			this->hSpeed = hSpeed;
 			this->vSpeed = vSpeed;
 		}
@@ -82,20 +117,24 @@ namespace Rooster {
 			if (active) {
 				hSpeed += hAcc;
 				vSpeed += vAcc;
+				ang += angSpeed;
 
 				hSpeed *= friction;
 				vSpeed *= friction;
+				angSpeed *= angFriction;
 
 				hSpeed = constrain(hSpeed, -maxHspd, maxHspd);
 				vSpeed = constrain(vSpeed, -maxVspd, maxVspd);
 
 				position.x += hSpeed;
 				position.y += vSpeed;
+				ang += angSpeed;
 
 
 				if (hasSprite) {
 					sprite.setPosition(position.x, position.y);
 					sprite.setOrigin(sprCenter * sprScl);
+					sprite.setRotation(ang);
 					sprite.setScale(sprScl, sprScl);
 				}
 				else {
@@ -104,7 +143,7 @@ namespace Rooster {
 					point.setRadius(radius);
 				}
 
-				life--;
+				life -= mortal;
 
 				if (life < 0) {
 					active = false;
@@ -152,14 +191,17 @@ namespace Rooster {
 
 
 
-	class Effects {
+	class Effect {
 	protected:
 		std::vector <Particle> gotas;
 		Vector2f position;
 
-		float depth = 0;
-		
+
 	public:
+
+		bool active = true;
+		int life = 100;
+		float depth = 0;
 
 		void setPosition(Vector2f position) {
 			this->position = position;
@@ -168,7 +210,7 @@ namespace Rooster {
 			this->position.x = x;
 			this->position.y = y;
 		}
-		
+
 		virtual void update() = 0;
 		virtual void draw(RenderWindow& window) = 0;
 
@@ -179,32 +221,41 @@ namespace Rooster {
 
 
 
-	class ExplosionEffect : public Effects {
+	class ExplosionEffect : public Effect {
 		float radius;
 		Vector2f center;
 		Vector2f impact;
 
 	public:
-		ExplosionEffect(float radius, Vector2f center,Color cor, Vector2f impact){
+		ExplosionEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
 			int diameter = radius * 2;
 
-			for (int i = 0; i < diameter;i++) {
+			life = 100;
+
+			for (int i = 0; i < 500; i++) {
 
 
 				Particle p(Color::Red);
 
 				p.setPosition(center);
-				int ang = rand() % 360;
+				p.vAcc = Gravity/80;
+				p.mortal = true;
+				p.life = randIntRange(50, 150);
+				p.maxHspd = 40;
+				p.maxVspd = 40;
+				p.radius = randIntRange(1, 10);
 
-				int impactx = rand() % (int)impact.x;
-				int impacty = rand() % (int)impact.y;
+				float ang = toRadiAnus(randFloatRangeNormal(angle-180,angle+180, angleFocus));
+
+
+				float impact = randFloat(explosionForce);
 
 				p.setImpulse(
-					 cos(toRadiAnus(ang))*impactx + impact.x,
-					 sin(toRadiAnus(ang))*impacty + impact.y
+					(cos(ang) * impact) + impactForce.x,
+					(sin(ang) * impact) + impactForce.y
 				);
 
-				
+
 				gotas.push_back(p);
 			}
 
@@ -213,18 +264,74 @@ namespace Rooster {
 		void setRadius(float radius) {
 			this->radius = radius;
 		}
-		void update() override{
+
+		void update() override {
 			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].update();
-			}
+				gotas[i].update();			}
 
 		}
+
 		void draw(RenderWindow& window) override {
 			for (int i = 0; i < gotas.size(); i++) {
 				gotas[i].draw(window);
 			}
-			
+		}
+	};
+
+
+
+
+	class ParticleSystem {
+
+
+	public:
+		std::vector<Effect*> effects;
+
+
+
+		ParticleSystem() {
 
 		}
+
+		void update() {
+			for (int i = 0; i < effects.size(); i++) {
+				effects[i]->update();
+			}
+
+
+			for (int i = 0; i < effects.size(); i++) {
+				if (!effects[i]->active) {
+					removeEffect(i);
+				}
+			}
+
+		}
+
+
+
+
+
+
+		void draw(RenderWindow& window) {
+			for (int i = 0; i < effects.size(); i++) {
+				effects[i]->draw(window);
+			}
+		}
+
+
+		void removeEffect(int effectId) {
+			delete effects[effectId];
+			effects.erase(effects.begin() + effectId);
+		}
+
+		void clear() {
+			for (int i = 0; i < effects.size(); i++) {
+				delete effects[i];
+			}
+
+			effects.clear();
+		}
+
+
 	};
 }

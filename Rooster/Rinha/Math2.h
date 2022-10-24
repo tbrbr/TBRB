@@ -25,16 +25,16 @@ int sign(float val) {
 // Maximo Minimo e Constrain que e os dois juntos
 float maximum(float val, float max) {
 	if (val > max) {
-		return max;
+		return val;
 	}
-	return val;
+	return max;
 }
 
 float minimum(float val, float min) {
 	if (val < min) {
-		return min;
+		return val;
 	}
-	return val;
+	return min;
 }
 
 
@@ -44,10 +44,32 @@ float constrain(float val, float min, float max) {
 
 
 
+// Random
+int randInt(int max) {
+	return rand() % max;
+}
 
-//float randFloat(float max) {
-	
-//}
+int randIntRange(int min, int max) {
+	return min + randInt(max-min);
+}
+
+float randFloat(float max) {	
+	return max * rand() / (RAND_MAX + 1.);
+}
+
+float randFloatRange(float min, float max) {
+	return min + randFloat(max - min);
+}
+
+float randFloatRangeNormal(float min, float max, float desvio) {
+
+	static std::default_random_engine generator;
+	std::normal_distribution<double> distribution((max-min) / 2, desvio);
+
+	return min + distribution(generator);
+
+}
+
 
 
 
@@ -68,6 +90,26 @@ float pointDistance(Vector2f point1, Vector2f point2){
 float toRadiAnus(int angle) {
 	return (angle * PI) / 180;
 }
+
+
+
+
+
+Vector2f normalizar(Vector2f vec) {
+	float dist = pitagoras(vec);
+
+	if (dist == 0) {
+		return Vector2f(0, 0);
+	}
+
+	return Vector2f(vec.x / dist, vec.y / dist);
+
+}
+
+float vecToAngle(Vector2f vec) {
+	return atan2(vec.x, vec.y);
+}
+
 
 
 

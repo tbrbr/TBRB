@@ -37,6 +37,8 @@ namespace Rooster {
 
     float floorY = (float)SCREEN_HEIGHT / 1.1;
 
+    
+
 
     class LifeBar {
         Vector2i tam = { SCREEN_WIDTH / 3,SCREEN_HEIGHT / 54 };
@@ -252,6 +254,7 @@ namespace Rooster {
         // Timer of rooster frames when get hitted by an attack
         int invFrames = 0;
         int stunFrames = 0;
+        int coolDownFrames = 0;
 
         Ataques* hiKick;
         Ataques* louKick;
@@ -301,37 +304,77 @@ namespace Rooster {
         int inline getFrames() {
             return frames;
         }
-        virtual void apanhar(Ataques atk,bool direction) {
-            this->hp -= atk.Damage;
-            bar->update(hp);
+
+
+        virtual void apanhar(Ataques atk, bool direction){
+
+            if (invFrames <= 0) {
+
+                hp -= atk.Damage;
+
+
+                // Calculando os impulsos
+
+
+                atk.createBlood(mainPartSystem);
+
+
+                vspeed += sin(atk.angle) * atk.KnockBack;
+                hspeed += cos(atk.angle) * atk.KnockBack;
+
+                if (vspeed < 0) {
+                    air = true;
+                }
+                if (!direction) {
+                    hspeed *= -1;
+                }
+
+                // Tempo de perda de controle sobre o Rooster
+                stunFrames = atk.Stun;
+
+                // Tempo de invulnerabilidade
+                invFrames = 30;
+
+                bar->update(hp);
+
+                atk.playSound();
+
+            }
+
+
         }
-        virtual void apanharByKalsa(Galo * g2) {
+        virtual void apanharByKalsa(Galo * g2, RenderWindow * af) {
            
             float frames = ultimateShot->init2.getElapsedTime().asMilliseconds();
             float maxFrames = ultimateShot->timeLapse2.asMilliseconds();
             if (frames > maxFrames) {
                 ultimateShot->getHitted = false;
             }
-            println(frames);
-           
-            ConvexShape star(10);
+            
+                     
+            
 
             Vector2f nextPosition = position;
             
-            if ((float)frames/maxFrames < 0.5) {
+            if ((float)frames/maxFrames < 0.4) {
                 
                 g2->facingRight = !g2->facingRight;
-                
-                
-                g2->position.x += ((position.x - g2->position.x - 200) * frames * 2) / maxFrames;
+
+                g2->position.x += facingRight?
+                    ((position.x - g2->position.x + 200) * frames * 2) / maxFrames:
+                    ((position.x - g2->position.x - 200) * frames * 2)/maxFrames;
                 
                 
             }
-            else {
+            else if ((float)frames / maxFrames < 0.7) {
+                drawEstrelinhas(af,g2->position);
                 g2->model.at("Head")->angle += 90 ;
                 g2->model.at("FrontArm")->angle += 90;
                 g2->model.at("BackArm")->angle += 90;
-                println("else");
+               
+            }
+            else {
+
             }
             
          
@@ -368,12 +411,12 @@ namespace Rooster {
         void show(sf::RenderWindow& window) {
 
             projectiles[0].draw(window);
+            
+            
             model.draw(window);
             
-            
-            
-            
-
+                        
+         
             for (int i = 0; i < hurtBox.size(); i++) {
 
                

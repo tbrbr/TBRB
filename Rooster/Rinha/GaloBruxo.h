@@ -17,18 +17,19 @@ namespace Rooster {
 
 
     public:
-        Bruxo(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
+        Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
+           
+            // Stats
             this->name = "Bruxo";
-            this->maxHp = 100;
-            this->hp = 100;
-            bar = new LifeBar(maxHp, isp1, name.c_str());
 
-            this->peso = 4;
 
+
+            // Creating Attacks
             this->hiKick = new Ataques(6,
                 8, 0.5, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(1200), ""
             );
+
             this->louKick = new Ataques(7,
                 5, 0.5, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, PI / 4, milliseconds(1000), ""
@@ -47,15 +48,14 @@ namespace Rooster {
                 IntRect(0, 0, 603, 100)
             );
 
+
             atacking = NOT_ATTACK;
             projectiles.push_back(*cinto);
 
-            if (isp1)
-                position.x = SCREEN_WIDTH / 4;
-            else
-                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
 
-            position.y = floorY;
+
+
+
 
             t.loadFromFile("sprites/galoBruxo.png");
 
@@ -79,6 +79,9 @@ namespace Rooster {
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);
+
+
+            bar = new LifeBar(maxHp, isp1, name.c_str());
 
         }
 
@@ -395,55 +398,59 @@ namespace Rooster {
             }
         }
 
-        void apanhar(Ataques atk, bool direction) override {
-
-            if (invFrames <= 0) {
-
-                hp -= atk.Damage;
-
-
-                // Calculando os impulsos
-
-
-                atk.createBlood(mainPartSystem);
-
-
-                vspeed += sin(atk.angle) * atk.KnockBack;
-                hspeed += cos(atk.angle) * atk.KnockBack;
-
-                if (vspeed < 0) {
-                    air = true;
-                }
-                if (!direction) {
-                    hspeed *= -1;
-                }
-
-                // Tempo de perda de controle sobre o Rooster
-                stunFrames = atk.Stun;
-
-                // Tempo de invulnerabilidade
-                invFrames = 30;
-
-                bar->update(hp);
-
-                atk.playSound();
-
+        void updateAnimations() override {
+            if (estadoUpdate) {
+                model.resetToBase();
+                animations[0].playingFrame = 0;
             }
 
+            model.at("FrontArm")->angle = ArmSpinAngFase;
+            model.at("BackArm")->angle = Arm2SpinAngFase;
+            if (air) {
+                jumpAnim();
+            }
+            else {
+                cairAnim();
+            }
+
+            if (estado == RUNNING) {
+                runAnim();
+            }
+            else if (estado == DEFENDING) {
+                animations[0].update();
+                if (animations[0].playingFrame > 15) {
+                    animations[0].playingFrame = 15;
+                }
+                model.updateWithAnimation(animations[0]);
+
+            }
+            else if (estado == STOPPED) {
+                runReset();
+            }
+
+             
+
+            if (atacking == HIGH_KICK) {
+                // highAtackAnim();
+            }
+            else if (atacking == LOW_KICK) {
+                // louKickAnim();
+            }
+            else if (atacking == SPECIAL) {
+                // especialAnim();
+            }
 
         }
 
 
+        /*
         void update() override {
 
             invFrames--;
             stunFrames--;
 
 
-            if (estadoUpdate) {
-                model.resetToBase();
-                animations[0].playingFrame = 0;
-            }
+
 
 
             if (air) {
@@ -536,6 +543,7 @@ namespace Rooster {
 
 
         }
+        */
     };
 
 

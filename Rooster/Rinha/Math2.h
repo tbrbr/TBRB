@@ -22,6 +22,7 @@ int sign(float val) {
 
 
 
+
 // Maximo Minimo e Constrain que e os dois juntos
 float maximum(float val, float max) {
 	if (val > max) {

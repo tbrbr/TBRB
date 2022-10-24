@@ -31,15 +31,17 @@ namespace Rooster {
 
 
 	public:
-		Sniper(int atk, int def, int speed, int _state, bool isp1) : Galo(atk, def, speed, _state) {
+		Sniper(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
 			this->name = "Sniper";
-			this->maxHp = 100;
-			this->hp = 100;
-			bar = new LifeBar(maxHp, isp1, name.c_str());
 
-			this->hiKick = new Ataques(0,8, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1000),"");
-			this->louKick = new Ataques(1,5, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000),"");
-			this->ultimateShot = new Ataques(2,0.9, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 3, 0, milliseconds(2000),"sounds\\awp.ogg");
+
+
+
+			bar = new LifeBar(maxHp, isp1, name.c_str());
+			
+			this->hiKick = new Ataques(0, 20, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1000),"");
+			this->louKick = new Ataques(1,20, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000),"");
+			this->ultimateShot = new Ataques(2,10, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 20, 0, milliseconds(2000),"sounds\\awp.ogg");
 
 
 
@@ -49,12 +51,6 @@ namespace Rooster {
 			projectiles.push_back(*bullet);
 
 
-			if (isp1) 
-				position.x = SCREEN_WIDTH / 4;
-			else
-				position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
-			
-			position.y = floorY;
 
 
 			t.loadFromFile("sprites/galoSniper.png");
@@ -419,6 +415,9 @@ namespace Rooster {
 
 
 		}
+
+
+		/*
 		void apanhar(Ataques atk, bool direction) override { 
 
 			if (invFrames <= 0) {
@@ -456,45 +455,16 @@ namespace Rooster {
 
 
 		}
-		void update() override {
 
-			// Timer 
+		*/
 
-			invFrames--;
-			stunFrames--;
 
-		
+		void updateAnimations() override {
 			if (estadoUpdate) {
 				model.resetToBase();
 				animations[0].playingFrame = 0;
 			}
-			projectiles[0].update();
-			ultimateShot->hitbox.center = projectiles[0].getPosition();
-			ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
 
-			if (air) {
-				vspeed += peso * Gravity / 100;
-			}
-
-			
-
-			/// Aqui vem a suavização
-			// A perda de velocidade
-			// Simulando atrito com ar?
-
-			if (stunFrames < 0 && stunFrames > -10) {
-				hspeed *= 0.98;
-				vspeed *= 0.98;
-			}
-
-			for (int i = 0; i < hurtBox.size(); i++) {
-
-				hurtBox[i].center = model.at(i)->drawPos;
-				hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
-
-			}
-
-			frames++;
 			weatherAnim(frames);
 
 
@@ -509,38 +479,68 @@ namespace Rooster {
 			model.at("FrontArm")->angle = ArmSpinAngFase;
 			model.at("BackArm")->angle = Arm2SpinAngFase;
 
-			if (stunFrames <= 0) {
-				if (estado == RUNNING) {
-					runAnim();
+			if (estado == RUNNING) {
+				runAnim();
+			} else if (estado == DEFENDING) {
+				animations[0].update();
+				if (animations[0].playingFrame > 15) {
+					animations[0].playingFrame = 15;
 				}
-				else if (estado == DEFENDING) {
-					animations[0].update();
-					if (animations[0].playingFrame > 15) {
-						animations[0].playingFrame = 15;
-					}
-					model.updateWithAnimation(animations[0]);
+				model.updateWithAnimation(animations[0]);
 
-				}
-				else if (estado == STOPPED) {
-					runReset();
-				}
-
-				if (estado != RUNNING && invFrames <= 0) {
-					hspeed = 0;
-				}
-
-
-				if (atacking == HIGH_KICK) {
-					highKickAnim();
-				}
-				else if (atacking == LOW_KICK) {
-					lowKickAnim();
-				}
-				else if (atacking == SPECIAL) {
-					especialAnim();
-				}
+			} else if (estado == STOPPED) {
+				runReset();
 			}
+
+
+			if (atacking == HIGH_KICK) {
+				highKickAnim();
+			}
+			else if (atacking == LOW_KICK) {
+				lowKickAnim();
+			}
+			else if (atacking == SPECIAL) {
+				especialAnim();
+			}
+
+			ultimateShot->hitbox.center = projectiles[0].getPosition();
+			ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
+
+		}
+
+
+		/*
+		void update() override {
+
+			// Timer 
+
+			invFrames--;
+			stunFrames--;
+
+
+			projectiles[0].update();
+
+
+			if (air) {
+				vspeed += peso * Gravity / 100;
+			}
+
 			
+
+			/// Aqui vem a suavização
+			// A perda de velocidade
+			// Simulando atrito com ar?
+
+
+
+			for (int i = 0; i < hurtBox.size(); i++) {
+
+				hurtBox[i].center = model.at(i)->drawPos;
+				hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
+
+			}
+
+			frames++;
 			
 
 
@@ -574,6 +574,7 @@ namespace Rooster {
 
 
 		}
+		*/
 	};
 
 

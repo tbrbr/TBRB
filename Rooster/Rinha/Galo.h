@@ -35,7 +35,7 @@ namespace Rooster {
 
 #define NUMGALOS 5
 
-    float floorY = (float)SCREEN_HEIGHT / 1.1;
+    const float floorY = (float)SCREEN_HEIGHT / 1.1;
 
     
 
@@ -212,70 +212,139 @@ namespace Rooster {
 
 
 
+    struct GaloStats {
+        int hp;
+        int speed;
+        int atk;
+        int def;
+        int peso;
+    };
+
+
+
     class Galo{
 
     protected:
         
+        // Identificadores
+        int id;
+        std::string name;
+
+        // Stats
         int maxHp;
         int hp;
-        int id;
-        float peso;
         int atk;
         int def;
         int speed;
+        float peso;
         int estado;
-       
-        std::string name;
 
-        Sprite* sprite= new Sprite[9];
+        struct GaloStats stats;   
+
+        
+        // Physics
+        float hspeed;
+        float hspeedLimit;
+        float hAcc;
+
+        float vspeed;
+        float vspeedLimit;
+        float jumpSpeed;
+        
         Vector2f position;
 
         bool air;
-        float hspeed;
-        float vspeed;
+
+
+        // Frames for Animation
         int frames = 0;
-        int initFrames = 0;
 
+
+        // Models and Animations
         struct Model model;
-
         std::vector<struct Animation> animations;
 
         
 
     public:
+
+        // Attacks and Hitboxes
         int atacking;
         HitBox hitbox;
         std::vector<HitBox> hurtBox;
         std::vector<Projectile> projectiles;
-        LifeBar* bar;
-        bool facingRight = false;
-        bool estadoUpdate = false;
-
-        // Timer of rooster frames when get hitted by an attack
-        int invFrames = 0;
-        int stunFrames = 0;
-        int coolDownFrames = 0;
 
         Ataques* hiKick;
         Ataques* louKick;
         Ataques* ultimateShot;
+
+
+        // Lifebar
+        LifeBar* bar;
+
+
+        // Invulnerability
+        bool invunerable = false;
+        int invFrames = 0;
+
+        // Stunning
+        bool stunned = false;
+        int stunFrames = 0;
+        int coolDownFrames = 0;
+
+
+
+        bool facingRight = false;
+        bool estadoUpdate = false;
+
+
         
 
-        Galo(int atk, int def, int speed, int _state) { 
-            this->atk = atk;
-            this->def = def;
-            this->speed = speed;
+        Galo(struct GaloStats stats, int _state, bool isp1) { 
+
+            // Stats
+            this->stats = stats;
+
+            this->maxHp = stats.hp;
+            this->hp = stats.hp;
+            this->atk = stats.atk;
+            this->def = stats.def;
+            this->speed = stats.speed;
+            this->peso = stats.peso;
+
+
+            // States
             this->estado = _state;
-            this->peso = 2;
             this->air = false;
+
+            // Physics
             this->hspeed = 0;
             this->vspeed = 0;
+            this->hspeedLimit = 10;
+            this->vspeedLimit = 10;
+            this->hAcc = 0.5;
+            this->jumpSpeed = (peso * (-8)) / 2;
+
             this->position = Vector2f(0, 0);
+
+            if (isp1)
+                position.x = SCREEN_WIDTH / 4;
+            else
+                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
+
+            position.y = floorY;
+
+
+
+
+
+
+
+
         }
 
-        //inline RectangleShape getSprite() {
-            //return r;
-        //}
+
+        // States
         void inline setState(state estado) {
             if (estado != this->estado) {
                 this->estadoUpdate = true;
@@ -283,6 +352,7 @@ namespace Rooster {
             this->estado = estado;
             
         }
+
         void inline setState(int estado) {
             if (estado != this->estado) {
                 this->estadoUpdate = true;
@@ -294,13 +364,15 @@ namespace Rooster {
         int getState() {
             return this->estado;
         }
-        
+
+
+        // Set Hspeed
         void inline setHspeed(float spd) {
             hspeed = spd;
         }
-        void inline setInitFrames(int initframes) {
-            initFrames = initframes;
-        }
+
+
+
         int inline getFrames() {
             return frames;
         }
@@ -308,14 +380,12 @@ namespace Rooster {
 
         virtual void apanhar(Ataques atk, bool direction){
 
-            if (invFrames <= 0) {
+            if (!invunerable) {
 
                 hp -= atk.Damage;
 
 
                 // Calculando os impulsos
-
-
                 atk.createBlood(mainPartSystem);
 
 
@@ -331,9 +401,11 @@ namespace Rooster {
 
                 // Tempo de perda de controle sobre o Rooster
                 stunFrames = atk.Stun;
+                stunned = true;
 
                 // Tempo de invulnerabilidade
                 invFrames = 30;
+                invunerable = true;
 
                 bar->update(hp);
 
@@ -380,9 +452,10 @@ namespace Rooster {
          
         }
         void jump() {
-            if (stunFrames <= 0) {
+
+            if (!stunned) {
                 if (!air) {
-                    vspeed += (peso * (-8)) / 2;
+                    vspeed += jumpSpeed;
                     air = true;
                 }
             }
@@ -390,19 +463,14 @@ namespace Rooster {
         
         void run() {
 
-            if (stunFrames <= 0) {
-                float acc = 0.5;
+            if (!stunned) {
+                float acc = hAcc * ((facingRight) ? 1:-1);
 
-                if (facingRight) {
-                    hspeed = (hspeed + acc) > 10 ? 10 : (hspeed + acc);
-
-                }
-                else {
-                    hspeed = (hspeed - acc) < -10 ? -10 : (hspeed - acc);
-
-                }
+                hspeed = constrain(hspeed + acc, -hspeedLimit, hspeedLimit);
             }
         } 
+
+
         virtual void defend() = 0; 
         virtual void highKick() = 0;
         virtual void lowKick() = 0;
@@ -411,28 +479,24 @@ namespace Rooster {
         void show(sf::RenderWindow& window) {
 
             projectiles[0].draw(window);
-            
-            
+
+
             model.draw(window);
-            
-                        
-         
+
+
+
             for (int i = 0; i < hurtBox.size(); i++) {
 
-               
+
                 //drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 
             if (ultimateShot->isAtacking) {
-                drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+               // drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
             }
-
-            
-
-
-
         }
+
 
         void drawHitBox(sf::RenderWindow& window, HitBox box, sf::Color col) {
             sf::CircleShape circle(box.radius);
@@ -445,42 +509,138 @@ namespace Rooster {
             window.draw(circle);
         }
 
-        virtual void update() {
 
-           
+        virtual void updatePhysics() {
+
+            // Timers
+            frames++;
+
+            if (invFrames <= 0) {
+                invunerable = false;
+            }
+            else {
+                invunerable = true;
+                invFrames--;
+            }
+
+            if (stunFrames <= 0) {
+                stunned = false;
+            }
+            else {
+                stunned = true;
+                stunFrames--;
+            }
+
+            
+
+            // Gravity
             if (air) {
                 vspeed += peso * Gravity / 100;
             }
 
-            /*
-            if (r.getPosition().y > floorY) {
-                vspeed = 0;
-                r.setPosition(r.getPosition().x, floorY);
-                air = false;
-            }
-            */
-            /// Meus planos
-            
+
+            /// Meus planos foram realizados !!!
+            // Floor Collision
+
+            FloatRect galoBounds = model.getBounds();
+
             if (position.y > floorY) {
                 vspeed = 0;
                 position.y = floorY;
                 air = false;
             }
+
+            // Wall collision
+            
+            
+            if (position.x > SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl))) {
+                
+                if (stunned) {
+                    hspeed *= -0.8;
+                }
+                else {
+                    hspeed = 0;
+                }
+
+                position.x = SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl));
+            }
+
+            if (position.x < model.center.x * abs(model.xScl)) {
+                if (stunned) {
+                    hspeed *= -0.8;
+                }
+                else {
+                    hspeed = 0;
+                }
+                position.x = model.center.x * abs(model.xScl);
+            }
             
 
-            //r.move(hspeed, vspeed);
+            if (estado != RUNNING && !stunned) {
+                hspeed = 0;
+            }
+
+            if (stunned && stunFrames < 20) {
+                hspeed *= 0.98;
+                vspeed *= 0.98;
+            }
+            
+
+
+
+
             position.x += hspeed;
             position.y += vspeed;
+        }
 
 
-            //model.pos = r.getPosition();
+        virtual void updateAnimations() = 0;
+
+        
+
+
+
+        virtual void update() {
+
+
+            updatePhysics();
+
+
+            // Hurtbox update
+            for (int i = 0; i < hurtBox.size(); i++) {
+
+                hurtBox[i].center = model.at(i)->drawPos;
+                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
+
+            }
+
+
+            // Projectiles
+            for (int i = 0; i < projectiles.size(); i++) {
+                projectiles[i].update();
+            }
+
+
+            updateAnimations();
+
+
+            // Health Bar Update
+            bar->update(hp);
+
+
+
+
+
             model.pos = position;
 
+
+            float resizeScl = (float)SCREEN_WIDTH / 5120;
+
+            model.xScl = 4 * (facingRight ? -1 : 1) * resizeScl;
+            model.yScl = 4 * resizeScl;
             model.update();
 
             estadoUpdate = false;
-
-
         }
     };
 

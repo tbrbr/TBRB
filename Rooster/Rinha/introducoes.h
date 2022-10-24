@@ -235,7 +235,7 @@ int introducao(RenderWindow* window) {
 		
 						
 		}
-		else {
+		else if(timer > 52000) {
 			return 2;
 		}
 		window->display();

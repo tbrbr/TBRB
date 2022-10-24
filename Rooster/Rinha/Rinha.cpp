@@ -77,7 +77,7 @@ int main() {
 		cout << e << endl;
 	}
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);

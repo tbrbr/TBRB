@@ -49,8 +49,8 @@ namespace Rooster {
 
 			Projectile* bullet = new Projectile(Vector2f(0, 0), txt, 0, 0, Vector2f(0, 0));
 			projectiles.push_back(*bullet);
-
-
+			Projectile* n2 = new Projectile(true);
+			projectiles.push_back(*n2);
 
 
 			t.loadFromFile("sprites/galoSniper.png");
@@ -502,6 +502,8 @@ namespace Rooster {
 			else if (atacking == SPECIAL) {
 				especialAnim();
 			}
+
+			projectiles[0].update();
 
 			ultimateShot->hitbox.center = projectiles[0].getPosition();
 			ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;

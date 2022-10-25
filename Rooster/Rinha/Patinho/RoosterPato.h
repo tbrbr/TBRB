@@ -222,6 +222,11 @@ struct GameInfo
 
     bool windowGrabbed = true;
 
+    ~GameInfo() {
+        particles.clear();
+        roosters.clear();
+    }
+
 };
 
 #endif // ROOSTER_HPP_INCLUDED

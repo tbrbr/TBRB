@@ -46,12 +46,8 @@ namespace Rooster {
                 0, 0, Vector2f(1, 1),
                 IntRect(0, 0, 603, 100)
             );
-            Projectile* cintoAmarrado = new Projectile(
-                Vector2f(0, 0),
-                "sprites\\Cinto.png",
-                0, 0, Vector2f(1, 1),
-                IntRect(0, 200, 603, 100)
-            );
+
+            Projectile* cintoAmarrado = new Projectile(true);
 
             atacking = NOT_ATTACK;
             projectiles.push_back(*cinto);
@@ -710,47 +706,11 @@ namespace Rooster {
                     especialAnim();
                 }
             }
-
-        }
-        
-        /*
-        void update() override {
-
-        
-            updatePhysics();
-
-
             
-            for (int i = 0; i < hurtBox.size(); i++) {
-
-                hurtBox[i].center = model.at(i)->drawPos;
-                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
-
-            }
-
             projectiles[0].update();
 
 
-            updateAnimations();
-
-
-            // Health Bar Update
-            bar->update(hp);
-
-
-            // Model Update
-            model.pos = position;
-            model.xScl = 4 * (facingRight ? 1 : -1) * -(float)SCREEN_WIDTH / 5120;
-            model.yScl = 4 * (float)SCREEN_WIDTH / 5120;
-
-
-            model.update();
-
-
-            estadoUpdate = false;
-
         }
-        */
         
         
     };

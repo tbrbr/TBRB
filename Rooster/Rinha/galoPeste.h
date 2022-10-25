@@ -20,7 +20,7 @@ namespace Rooster {
         Peste(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
 
             // Stats
-            this->name = "Bruxo";
+            this->name = "Peste";
 
 
 
@@ -52,6 +52,8 @@ namespace Rooster {
             atacking = NOT_ATTACK;
             projectiles.push_back(*cinto);
 
+            Projectile* n2 = new Projectile(true);
+            projectiles.push_back(*n2);
 
 
 
@@ -400,32 +402,32 @@ namespace Rooster {
 
         void updateAnimations() override {
             if (estadoUpdate) {
-                model.resetToBase();
-                animations[0].playingFrame = 0;
+               // model.resetToBase();
+              // animations[0].playingFrame = 0;
             }
 
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
             if (air) {
-                jumpAnim();
+               // jumpAnim();
             }
             else {
-                cairAnim();
+                //cairAnim();
             }
 
             if (estado == RUNNING) {
-                runAnim();
+                //runAnim();
             }
             else if (estado == DEFENDING) {
-                animations[0].update();
-                if (animations[0].playingFrame > 15) {
-                    animations[0].playingFrame = 15;
-                }
-                model.updateWithAnimation(animations[0]);
+               // animations[0].update();
+               // if (animations[0].playingFrame > 15) {
+               //     animations[0].playingFrame = 15;
+               // }
+               // model.updateWithAnimation(animations[0]);
 
             }
             else if (estado == STOPPED) {
-                runReset();
+              //  runReset();
             }
 
 
@@ -440,6 +442,7 @@ namespace Rooster {
                 // especialAnim();
             }
 
+            projectiles[0].update();
         }
 
 

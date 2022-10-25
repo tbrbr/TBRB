@@ -21,8 +21,13 @@ namespace Rooster {
 		float vAcc;
 		Vector2f scl;
 		bool isVisible = false;
-
+		
 	public:
+		bool NULO = false;
+
+		Projectile(bool NUlO) {
+			this->NULO = NULO;
+		}
 		Projectile(Vector2f position,  const char* textureFile, float hSpeed, float vSpeed, Vector2f scl) {
 			this->position = position;
 			this->texture = texture;
@@ -36,6 +41,7 @@ namespace Rooster {
 			sprite.setPosition(position);
 			sprite.setScale(scl);
 
+			
 		}
 		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl,IntRect spriteRec) {
 			this->position = position;
@@ -48,10 +54,10 @@ namespace Rooster {
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
 			sprite.setScale(scl);
-			sprite.setTextureRect(spriteRec);
+			sprite.setTextureRect(spriteRec);			
 
 		}
-
+		
 		void setVisibility(bool isVisible) {
 			this->isVisible = isVisible;
 		}
@@ -60,6 +66,9 @@ namespace Rooster {
 		}
 		void setScale(Vector2f scale) {
 			scl = scale;
+		}
+		void setScale(float x, float y) {
+			setScale(Vector2f(x, y));
 		}
 		void setImpulse(float hSpeed, float vSpeed) {
 			this->hSpeed = hSpeed;
@@ -73,12 +82,19 @@ namespace Rooster {
 		}
 		void setPosition(Vector2f position) {
 			this->position = position;
+			sprite.setPosition(position);
+		}
+		void setPosition(float x,float y) {
+			setPosition(Vector2f(x, y));
 		}
 		Vector2f getSize() {
 			return Vector2f(sprite.getGlobalBounds().width,sprite.getGlobalBounds().height);
 		}
 		Vector2f getPosition() {
 			return position;
+		}
+		void setSpriteAngle(float angle) {
+			sprite.setRotation(angle);
 		}
 		void update() {
 
@@ -88,16 +104,19 @@ namespace Rooster {
 
 			sprite.setPosition(position);
 			sprite.setScale(scl);
+
 		}
 		void draw(RenderWindow& window) {
 			if (isVisible) {
 				window.draw(sprite);
+				println("mano eu vou me matar nada da certo na minha vida");
 			}
 		}
 
 
 	};
 
+	
 
 	class Ataques {
 	public:

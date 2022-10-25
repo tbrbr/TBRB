@@ -18,7 +18,6 @@ namespace Rooster {
 
     public:
         Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
-           
             // Stats
             this->name = "Bruxo";
 
@@ -41,19 +40,20 @@ namespace Rooster {
                 "sounds\\awp.ogg"
             );
 
-            Projectile* cinto = new Projectile(
+            Projectile* defense = new Projectile(
                 Vector2f(0, 0),
-                "sprites\\Cinto.png",
-                0, 0, Vector2f(1, 1),
-                IntRect(0, 0, 603, 100)
+                "sprites\\escudo.png",
+                0, 0, Vector2f(0.25, 0.25)            
             );
 
 
+           
+            projectiles.push_back(*defense);
+
+            Projectile* n2 = new Projectile(true);
+            projectiles.push_back(*n2);
+
             atacking = NOT_ATTACK;
-            projectiles.push_back(*cinto);
-
-
-
 
 
 
@@ -132,7 +132,7 @@ namespace Rooster {
 
             model.at("Hat")->angle += -sin(2 * PI * legWalkAngFase / 360);
            
-
+            projectiles.at(0).setVisibility(false);
         }
         void runReset() {
            
@@ -149,7 +149,7 @@ namespace Rooster {
             model.at("BackShoe")->offset.y = 0;
             model.at("FrontShoe")->offset.y = 0;
 
-           
+            projectiles.at(0).setVisibility(false);
 
         }
 
@@ -402,10 +402,13 @@ namespace Rooster {
             if (estadoUpdate) {
                 model.resetToBase();
                 animations[0].playingFrame = 0;
+                
             }
+            
 
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
+
             if (air) {
                 jumpAnim();
             }
@@ -417,17 +420,34 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
+
+                if (facingRight) {
+                    projectiles[0].setPosition(position.x + projectiles[0].getSize().x,position.y - projectiles[0].getSize().y);
+                    projectiles[0].setImpulse(0, 0);
+                    
+                }
+                else {
+                    projectiles[0].setPosition(position.x - projectiles[0].getSize().x*2, position.y - projectiles[0].getSize().y);
+                    projectiles[0].setImpulse(0, 0);
+                    
+                }
+
+                projectiles[0].setVisibility(true);
+               
+
                 animations[0].update();
                 if (animations[0].playingFrame > 15) {
                     animations[0].playingFrame = 15;
                 }
                 model.updateWithAnimation(animations[0]);
+               
 
             }
             else if (estado == STOPPED) {
                 runReset();
             }
 
+            
              
 
             if (atacking == HIGH_KICK) {
@@ -440,110 +460,12 @@ namespace Rooster {
                 // especialAnim();
             }
 
-        }
-
-
-        /*
-        void update() override {
-
-            invFrames--;
-            stunFrames--;
-
-
-
-
-
-            if (air) {
-                vspeed += peso * Gravity / 100;
-            }
-
-            if (position.y > floorY) {
-                vspeed = 0;
-                position.y = floorY;
-                air = false;
-            }
-
-            position.x += hspeed;
-            position.y += vspeed;
-
-            frames++;
-
-            for (int i = 0; i < hurtBox.size(); i++) {
-
-                hurtBox[i].center = model.at(i)->drawPos;
-                hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
-
-            }
-
-            projectiles[0].update();
-
-            
-            if (estadoUpdate) {
-                model.resetToBase();
-                //animations[0].playingFrame = 0;
-            }
-
-
-            model.at("FrontArm")->angle = ArmSpinAngFase;
-            model.at("BackArm")->angle = Arm2SpinAngFase;
-            if (air) {
-                jumpAnim();
-            }
-            else {
-                cairAnim();
-            }
-
-            if (estado == RUNNING) {
-                runAnim();
-            }
-            else if (estado == DEFENDING) {
-                animations[0].update();
-                if (animations[0].playingFrame > 15) {
-                    animations[0].playingFrame = 15;
-                }
-                 model.updateWithAnimation(animations[0]);
-
-            }
-            else if (estado == STOPPED) {
-                runReset();
-            }
-
-            if (estado != RUNNING) {
-                hspeed = 0;
-            }
-
-           
-
-
-            if (atacking == HIGH_KICK) {                               
-               // highAtackAnim();
-            }
-            else if (atacking == LOW_KICK) {
-                //louKickAnim();
-            }
-            else if (atacking == SPECIAL) {
-               // especialAnim();
-            }
-
-
-
-            bar->update(hp);
-
-
-            model.pos = position;
-            model.xScl = 4 * (facingRight ? 1 : -1) * -(float)SCREEN_WIDTH / 5120;
-            model.yScl = 4 * (float)SCREEN_WIDTH / 5120;
-
-
-
-            model.update();
-
-
-            estadoUpdate = false;
-
+           // projectiles[0].update();
 
         }
-        */
+
+
+        
     };
 
 

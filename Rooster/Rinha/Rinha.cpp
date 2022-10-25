@@ -2,6 +2,7 @@
 
 #define SFML_STATIC
 
+#include "varios_idiomas.h"
 #include "efeitos_fodas.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -14,20 +15,18 @@
 #include <fstream>
 
 #define FRAMERATE_LIMIT 60
-
+#pragma warning(disable : 4996)
 #define println(x) (std::cout << x << std::endl)
 
 using namespace std;
 using namespace sf;
 
 
-
-//const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
-//const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
-
 bool keyboardState[sf::Keyboard::KeyCount][3];
+
+LANGUAGE LANG;
 
 #include "introducoes.h"
 #include "checador_de_posicao.h"
@@ -53,7 +52,6 @@ Rooster::ParticleSystem mainPartSystem;
 #include "galoKalsa.h"
 #include "GaloBruxo.h"
 #include "galoPeste.h"
-
 using namespace Rooster;
 
 #include "Briga.h"
@@ -63,6 +61,17 @@ using namespace Rooster;
 
 
 int main() {
+
+	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
+	{
+		FILE* file = fopen("lang/start_lang.ini", "r");
+		if (file != NULL) {
+			if(fscanf(file, "%d", (int *) & lang))
+				fclose(file);
+		}
+	}
+
+	LANG.startAllTexts(lang);
 
 	for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
 		keyboardState[i][0] = false;
@@ -79,10 +88,9 @@ int main() {
 		cout << e << endl;
 	}
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
 	window->clear(Color::Black);
-	window->display();
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(false);
@@ -115,6 +123,9 @@ int main() {
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	pianoYamaha piano;
+
+
+	
 
 	while (window->isOpen())
 	{

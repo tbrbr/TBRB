@@ -151,9 +151,9 @@ class Pato {
         Font font;
         font.loadFromFile("..\\Rinha\\fonts\\blops.ttf");
 
-        Text sensi("Sensi", font, SCREEN_HEIGHT / 50);
-        Text cor("Aim Color", font, SCREEN_HEIGHT / 50);
-        Text back("Back", font, SCREEN_HEIGHT / 50);
+        Text sensi(LANG.getLine(LANGUAGE::SENSI), font, SCREEN_HEIGHT / 50);
+        Text cor(LANG.getLine(LANGUAGE::AIM_COLOR), font, SCREEN_HEIGHT / 50);
+        Text back(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 50);
 
         sensi.setPosition(SCREEN_WIDTH / 2 - sensi.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.15);
         cor.setPosition(SCREEN_WIDTH / 2 - cor.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.30);
@@ -345,9 +345,9 @@ class Pato {
         RectangleShape rec[3];
 
        
-        t[0] = new Text("Resume", font, SCREEN_HEIGHT / 30);
-        t[1] = new Text("CONFIG", font, SCREEN_HEIGHT / 30);
-        t[2] = new Text("QUIT", font, SCREEN_HEIGHT / 30);
+        t[0] = new Text(LANG.getLine(LANGUAGE::RESUME), font, SCREEN_HEIGHT / 30);
+        t[1] = new Text(LANG.getLine(LANGUAGE::SETTINGS), font, SCREEN_HEIGHT / 30);
+        t[2] = new Text(LANG.getLine(LANGUAGE::QUIT), font, SCREEN_HEIGHT / 30);
 
         for (int i = 0; i < 3; i++) {
             rec[i].setFillColor(Color::Transparent);
@@ -468,6 +468,7 @@ public:
     void patinho(RenderWindow& window, int & option) {
         Event e;
         
+        window.setMouseCursorVisible(false);
 
         while (window.pollEvent(e))
         {
@@ -509,7 +510,7 @@ public:
         window.clear();
 
         
-        if (info.lives == 0 || true) {
+        if (info.lives == 0) {
 
             restartGame(info);
 
@@ -518,13 +519,13 @@ public:
             }
             else
                 option = Rooster::MENU_PRINCIPAL;
-
+            window.setMouseCursorVisible(true);
             return;
         }
         
 
         FPS.setString("FPS: " + GetFrameRate());
-        txtScore.setString("Score: " + IntToString(info.kills));
+        txtScore.setString(LANG.getLine(LANGUAGE::SCORE) + ": " + IntToString(info.kills));
 
         if (info.windowGrabbed) {
             updateInfo(info, window);

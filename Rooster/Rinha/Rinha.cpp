@@ -149,6 +149,9 @@ int main() {
 
 		}
 	
+		
+		
+
 		//piano.draw(*window);
 		
 		switch (option)
@@ -177,6 +180,7 @@ int main() {
 		default:
 			break;
 		}
+		
 		
 		
 	}

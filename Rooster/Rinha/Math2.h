@@ -21,6 +21,20 @@ int sign(float val) {
 }
 
 
+void drawFibonacci(int a,RenderWindow * window) {
+	CircleShape b(a);
+	b.setFillColor(Color::Blue);
+	b.setOutlineThickness(10);
+	b.setTextureRect(IntRect(0, 0, a, a));
+	b.setPosition(200, 200);
+
+	window->draw(b);
+
+	if(a < 10)
+		drawFibonacci(a + (a - 1), window);
+	else
+		return;
+}
 
 
 // Maximo Minimo e Constrain que e os dois juntos

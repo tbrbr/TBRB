@@ -109,6 +109,8 @@ public:
 	void updateText() {
 
 		//t.setString(LANG.getLine(LANGUAGE::RESTART_GAME));
+
+
 		tn.setString(LANG.getLine(LANGUAGE::NO));
 		ty.setString(LANG.getLine(LANGUAGE::YES));
 	}

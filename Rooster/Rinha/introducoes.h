@@ -287,6 +287,7 @@ int introducao(RenderWindow* window) {
 		}
 		else if (timer > 89000) {
 			return 2;
+
 		}
 		window->display();
 	}

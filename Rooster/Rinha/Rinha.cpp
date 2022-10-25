@@ -24,8 +24,8 @@ using namespace sf;
 
 //const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
 //const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
@@ -70,7 +70,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = 2;
+	int option = INTRO;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -92,6 +92,10 @@ int main() {
 
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
+
+	struct GaloStats sniperSt;
+	struct GaloStats kalsaSt;
+	struct GaloStats bruxoSt;
 
 
 	Galo* galo = NULL;

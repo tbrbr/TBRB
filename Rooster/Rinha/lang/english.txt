@@ -1,0 +1,18 @@
+main menu
+start 
+setitngs
+quit
+back
+singleplayer
+multiplayer
+resume
+aim color
+sensibility 
+minigames
+game mode
+language
+EN
+restart game
+yes
+no
+score

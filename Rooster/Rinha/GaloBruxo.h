@@ -18,7 +18,6 @@ namespace Rooster {
 
     public:
         Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
-           
             // Stats
             this->name = "Bruxo";
 

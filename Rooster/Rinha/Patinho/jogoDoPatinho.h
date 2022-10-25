@@ -509,7 +509,7 @@ public:
         window.clear();
 
         
-        if (info.lives == 0 || true) {
+        if (info.lives == 0) {
 
             restartGame(info);
 

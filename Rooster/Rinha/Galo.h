@@ -486,10 +486,11 @@ namespace Rooster {
                     projectiles[i].draw(window);
                 println("é possivel");
             }*/
-            projectiles[0].draw(window);
-            println(projectiles[0].getVisibility());
-            println(projectiles[0].getPosition().x);
-            println(projectiles[0].getPosition().y);
+            if (projectiles[0].isTrans) 
+                projectiles[0].drawTrans(window);
+            else
+                projectiles[0].draw(window);
+            
 
 
             model.draw(window);

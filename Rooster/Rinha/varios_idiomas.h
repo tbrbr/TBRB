@@ -83,7 +83,6 @@ public:
 	}
 
 	void startAllTexts(Lang lang) {
-		__lang = lang;
 		ifstream readfile(file_path(lang));
 		string line;
 		readLines(readfile, line);
@@ -95,7 +94,7 @@ public:
 		ofstream file("lang/start_lang.ini", ios::out | ios::trunc);
 		file << lang << " " << this->__lang;
 		file.close();
-
+		__last_lang = __lang;
 		__lang = lang;
 		GAME_TEXT.clear();
 		this->startAllTexts(lang);

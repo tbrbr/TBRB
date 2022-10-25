@@ -47,7 +47,7 @@ namespace Rooster {
                 0, 0, Vector2f(0.25, 0.25)            
             );
 
-
+            defense->setOriginCenter();
            
             projectiles.push_back(*defense);
 
@@ -421,20 +421,39 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
-
+                static int angle = 0;
+                angle++;
                 if (facingRight) {
-                    projectiles[0].setPosition(position.x + projectiles[0].getSize().x,position.y - projectiles[0].getSize().y);
+                                                     
                     projectiles[0].setImpulse(0, 0);
+                    projectiles[0].setSpriteAngle(angle);
+
+                    projectiles[0].setScale(0.125, 0.25);
+
+                    projectiles[0].setPosition(
+                        position.x + projectiles[0].getLocalSize().x/2,
+                        position.y - projectiles[0].getLocalSize().y/2
+                    );
+                    
                     
                 }
                 else {
-                    projectiles[0].setPosition(position.x - projectiles[0].getSize().x*2, position.y - projectiles[0].getSize().y);
-                    projectiles[0].setImpulse(0, 0);
+                    
+                    projectiles[0].setSpriteAngle(-angle);
+
+                    projectiles[0].setScale(0.25, 0.25);
+                    projectiles[0].setPosition(
+                        position.x - projectiles[0].getLocalSize().x/2,
+                        position.y - projectiles[0].getLocalSize().y/2 
+                    );
+                   
+                    projectiles[0].setImpulse(0,0);
+                    
                     
                 }
 
                 projectiles[0].setVisibility(true);
-               
+                projectiles[0].update();
 
                 animations[0].update();
                 if (animations[0].playingFrame > 15) {

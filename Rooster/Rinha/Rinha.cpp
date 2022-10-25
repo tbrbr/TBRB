@@ -132,16 +132,12 @@ int main() {
 			keyboardState[i][0] = keyState;
 
 		}
-		RectangleShape a;
-		a.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-		a.setFillColor(Color::Red);
-		window->draw(a);
-		drawFibonacci(0, window);
+	
 		
-		window->display();
+		
 
 		//piano.draw(*window);
-		/*
+		
 		switch (option)
 		{
 		case UMJOGADORES:
@@ -168,7 +164,7 @@ int main() {
 		default:
 			break;
 		}
-		*/
+		
 		
 		
 	}

@@ -88,11 +88,6 @@ namespace Rooster {
 
         }
 
-
-        void weatherAnim(int frames) {
-            model.at(CORPO)->angle += 0;
-            model.at(RABO)->angle = sin(frames / 200.f) * 20;
-        }
         void jumpAnim() {
 
 
@@ -251,7 +246,7 @@ namespace Rooster {
 
             }
         }
-
+        
         void louKickAnim() {
             Time t = louKick->init.getElapsedTime();
 

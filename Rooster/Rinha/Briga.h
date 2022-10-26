@@ -3,201 +3,305 @@
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
-		window->clear();
-		window->draw(fundo);
+		int rounds = 0;
+		int p1Rounds = 0;
+		int p2Rounds = 0;
 
-		Event e;
-		while (window->pollEvent(e))
-		{
-			if (e.type == Event::Closed)
+		Font fonte;
+		fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
+
+		Text round[3];
+
+		for (int i = 0; i < 3; i++) {
+			string name = "Round";
+			name += to_string(i + 1);
+			round[i].setString(name);
+			round[i].setFont(fonte);
+			round[i].setCharacterSize(SCREEN_WIDTH / 30);
+
+			round[i].setFillColor(Color::Yellow);
+			round[i].setOutlineColor(Color::Black);
+			round[i].setOutlineThickness(SCREEN_WIDTH / 1000);
+
+			round[i].setPosition(
+				SCREEN_WIDTH / 2 - round[i].getGlobalBounds().width/2,
+				SCREEN_HEIGHT / 2 - round[i].getGlobalBounds().height/2
+			);
+		}	
+
+		Text fight("Fight !!!", fonte, SCREEN_WIDTH / 20);
+		fight.setFillColor(Color::Red);
+		fight.setOutlineColor(Color::Black);
+		fight.setOutlineThickness(SCREEN_WIDTH / 1000);
+				
+		fight.setPosition(
+			SCREEN_WIDTH / 2 - fight.getGlobalBounds().width/2,
+			SCREEN_HEIGHT / 2 - fight.getGlobalBounds().height/2
+		);
+
+
+		SoundBuffer player1winsbuf;
+		player1winsbuf.loadFromFile("sounds/Player_1_Wins.wav");
+		SoundBuffer player2winsbuf;
+		player1winsbuf.loadFromFile("sounds/Player_2_Wins.wav");
+
+		SoundBuffer roundBuf[3];
+		Sound soundRound[3];
+
+		SoundBuffer fightb;
+		fightb.loadFromFile("sounds/Fight.wav");
+		Sound s;
+		s.setBuffer(fightb);
+
+		for (int i = 0; i < 3; i++) {
+			string name = "sounds/Round_";
+			name += to_string(i + 1);
+			name += ".wav";
+			roundBuf[i].loadFromFile(name);
+			soundRound[i].setBuffer(roundBuf[i]);
+		}
+
+		int framesRound = 60;
+		int framesFight = 0;
+
+		while (window->isOpen()) {
+			window->clear();
+			window->draw(fundo);
+
+			Event e;
+			while (window->pollEvent(e))
 			{
+				if (e.type == Event::Closed)
+				{
+					window->close();
+				}
+
+			}
+			for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+
+				bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+
+				if (!keyboardState[i][0] && keyState) {
+					keyboardState[i][1] = true;
+				}
+				else {
+					keyboardState[i][1] = false;
+				}
+
+				if (keyboardState[i][0] && !keyState) {
+					keyboardState[i][2] = true;
+				}
+				else {
+					keyboardState[i][2] = false;
+				}
+
+				keyboardState[i][0] = keyState;
+
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window->close();
 			}
-			
-		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-			window->close();
-		}
+			//options p1
 
-		//options p1
-		
-		if ( keyboardState[Keyboard::W][1])
-		{
-			galo.jump();
-		}
-		else if (keyboardState[Keyboard::F][1]) {
-			if (keyboardState[Keyboard::S][0]) {
-				galo.lowKick();
-			
+			if (keyboardState[Keyboard::W][1])
+			{
+				galo.jump();
 			}
-				
-			else
-				galo.highKick();
+			else if (keyboardState[Keyboard::F][1]) {
+				if (keyboardState[Keyboard::S][0]) {
+					galo.lowKick();
 
-		}
-		else if ((keyboardState[Keyboard::G][1])){
-			galo.especial();
-		}
-		
-		
+				}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = true;
-			galo.run();
+				else
+					galo.highKick();
 
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = false;
-			galo.run();
+			}
+			else if ((keyboardState[Keyboard::G][1])) {
+				galo.especial();
+			}
 
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{			
-			galo.defend();
-		}
-		else
-		{
-			galo.setState(Rooster::state::STOPPED);
-			//galo.setHspeed(0);
 
-		}
-		
 
-		//options p2
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			{
+				galo.setState(Rooster::state::RUNNING);
+				galo.facingRight = true;
+				galo.run();
 
-		if (keyboardState[Keyboard::Up][1])
-		{
-			galo2.jump();
-		}
-		else if (keyboardState[Keyboard::K][1]) {
-			if (keyboardState[Keyboard::Down][0]) {
-				galo2.lowKick();
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			{
+				galo.setState(Rooster::state::RUNNING);
+				galo.facingRight = false;
+				galo.run();
 
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			{
+				galo.defend();
 			}
 			else
-				galo2.highKick();
-
-		}
-		else if ((keyboardState[Keyboard::L][1])) {
-			galo2.especial();
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			galo2.setState(Rooster::state::RUNNING);
-			galo2.facingRight = true;
-			galo2.run();
-
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			galo2.setState(Rooster::state::RUNNING);
-			galo2.facingRight = false;
-			galo2.run();
-
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-
-			galo2.defend();
-
-		}
-		else
-		{
-			galo2.setState(Rooster::state::STOPPED);
-			//galo2.setHspeed(0);
-
-		}
-		
-
-		for (int i = 0; i < galo.hurtBox.size(); i++) {
-
-			if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.hiKick, galo2.facingRight);
-				
-			}
-			if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.louKick, galo2.facingRight);
+			{
+				galo.setState(Rooster::state::STOPPED);
+				//galo.setHspeed(0);
 
 			}
-			if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
-				if (galo2.ultimateShot->id == 5) {
 
+
+			//options p2
+
+			if (keyboardState[Keyboard::Up][1])
+			{
+				galo2.jump();
+			}
+			else if (keyboardState[Keyboard::K][1]) {
+				if (keyboardState[Keyboard::Down][0]) {
+					galo2.lowKick();
+
+				}
+				else
+					galo2.highKick();
+
+			}
+			else if ((keyboardState[Keyboard::L][1])) {
+				galo2.especial();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				galo2.setState(Rooster::state::RUNNING);
+				galo2.facingRight = true;
+				galo2.run();
+
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			{
+				galo2.setState(Rooster::state::RUNNING);
+				galo2.facingRight = false;
+				galo2.run();
+
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			{
+
+				galo2.defend();
+
+			}
+			else
+			{
+				galo2.setState(Rooster::state::STOPPED);
+				//galo2.setHspeed(0);
+
+			}
+
+
+			for (int i = 0; i < galo.hurtBox.size(); i++) {
+
+				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
+					galo.apanhar(*galo2.hiKick, galo2.facingRight);
+
+				}
+				if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
+					galo.apanhar(*galo2.louKick, galo2.facingRight);
+
+				}
+				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
 					if (galo2.ultimateShot->id == 5) {
 
-						if (!galo2.ultimateShot->getHitted) {
-							galo2.ultimateShot->getHitted = true;
-							galo2.ultimateShot->init2.restart();
+						if (galo2.ultimateShot->id == 5) {
+
+							if (!galo2.ultimateShot->getHitted) {
+								galo2.ultimateShot->getHitted = true;
+								galo2.ultimateShot->init2.restart();
+							}
+
+
+
 						}
+						else
+							galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+					}
+				}
+			}
 
-						
 
+			for (int i = 0; i < galo2.hurtBox.size(); i++) {
+
+				if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
+					galo2.apanhar(*galo.hiKick, galo.facingRight);
+
+				}
+				if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
+					galo2.apanhar(*galo.louKick, galo.facingRight);
+				}
+				if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
+					if (galo.ultimateShot->id == 5) {
+
+						if (!galo.ultimateShot->getHitted) {
+							galo.ultimateShot->getHitted = true;
+							galo.ultimateShot->init2.restart();
+						}
 					}
 					else
 						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+
+
 				}
+
 			}
-		}
-		
 
-		for (int i = 0; i < galo2.hurtBox.size(); i++) {
+			if (galo.ultimateShot->getHitted) {
+				galo.apanharByKalsa(&galo2, window);
+			}
+			else if (galo2.ultimateShot->getHitted) {
+				galo2.apanharByKalsa(&galo, window);
+			}
 
-			if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.hiKick,galo.facingRight);
+			galo.update();
+
+			galo2.update();
+
+
+			galo.bar->draw(window);
+			galo2.bar->draw(window);
+
+			galo.show(*window);
+
+			galo2.show(*window);
+
+			mainPartSystem.update();
+			mainPartSystem.draw(*window);
+
+			if (galo.gethp() < 0 || galo2.gethp() < 0) {
+
+				rounds++;
+				framesRound = 60;
+				galo.sethp(galo.getMaxhp());
+				galo2.sethp(galo.getMaxhp());
+			}
+			
+
+			if (framesRound > 0) {
+				if (framesRound == 60) {
+					soundRound[rounds].play();
+				}
+				framesRound--;
+				if (framesRound == 0) {
+					s.play();
+					framesFight = 60;
+				}
+				window->draw(round[rounds]);
 				
 			}
-			if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.louKick,galo.facingRight);
-			}
-			if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
-				if (galo.ultimateShot->id == 5) {
-	
-					if (!galo.ultimateShot->getHitted) {
-						galo.ultimateShot->getHitted = true;
-						galo.ultimateShot->init2.restart();
-					}					
-				}
-				else
-					galo2.apanhar(*galo.ultimateShot, galo.facingRight);
-
-
+			if (framesFight > 0) {				
+				framesFight--;				
+				window->draw(fight);
 			}
 
+
+			window->display();
 		}
-		
-		if (galo.ultimateShot->getHitted) {
-			galo.apanharByKalsa(&galo2,window);
-		}
-		else if (galo2.ultimateShot->getHitted) {
-			galo2.apanharByKalsa(&galo,window);
-		}
-
-		galo.update();
-		
-		galo2.update();
-		
-
-
-		
-
-		galo.bar->draw(window);
-		
-		galo2.bar->draw(window);
-		
-		galo.show(*window);
-		
-		galo2.show(*window);
-
-
-
-		mainPartSystem.update();
-		mainPartSystem.draw(*window);
-		
-		window->display();
-
 	}

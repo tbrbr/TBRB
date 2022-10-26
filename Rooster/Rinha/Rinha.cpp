@@ -79,7 +79,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = BOTAPRAARROCHAR;
+	int option = INTRO;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -128,8 +128,11 @@ int main() {
 
 	while (window->isOpen())
 	{
+
 		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+
 			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+
 			if (!keyboardState[i][0] && keyState) {
 				keyboardState[i][1] = true;
 			}

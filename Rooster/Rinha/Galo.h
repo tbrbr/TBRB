@@ -146,6 +146,12 @@ namespace Rooster {
         int getMaxhp() {
             return Maxhp;
         }
+        int gethp() {
+            return hp;
+        }
+        void sethp(int hp) {
+            this->hp = hp;
+        }
         int getLifeBarWidth() {
             return tam.x;
         }
@@ -377,6 +383,15 @@ namespace Rooster {
             return frames;
         }
 
+        int getMaxhp() {
+            return maxHp;
+        }
+        int gethp() {
+            return hp;
+        }
+        void sethp(int hp) {
+            this->hp = hp;
+        }
 
         virtual void apanhar(Ataques atk, bool direction){
 

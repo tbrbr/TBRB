@@ -122,15 +122,17 @@ int main() {
 	//socket.setBlocking(false);
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
-	pianoYamaha piano;
-
+	
 
 	
 
 	while (window->isOpen())
 	{
+
 		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+
 			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+
 			if (!keyboardState[i][0] && keyState) {
 				keyboardState[i][1] = true;
 			}
@@ -150,9 +152,6 @@ int main() {
 		}
 	
 		
-		
-
-		//piano.draw(*window);
 		
 		switch (option)
 		{
@@ -176,6 +175,9 @@ int main() {
 
 			break;
 		}
+		case BOTAPRAARROCHAR:
+			pianoTiles(window);
+			break;
 			
 		default:
 			break;

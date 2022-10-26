@@ -47,7 +47,10 @@ namespace Rooster {
             );
 
             defense->setOriginCenter();
-           
+            defense->isTrans = true;
+            Transform te;
+            te.scale(0.5, 0.75);
+            defense->setTransfrom(te);
             projectiles.push_back(*defense);
 
             Projectile* n2 = new Projectile(true);
@@ -85,11 +88,6 @@ namespace Rooster {
 
         }
 
-
-        void weatherAnim(int frames) {
-            model.at(CORPO)->angle += 0;
-            model.at(RABO)->angle = sin(frames / 200.f) * 20;
-        }
         void jumpAnim() {
 
 
@@ -205,8 +203,6 @@ namespace Rooster {
             }
             else if (percentage < 2.f / 3.f) {
                 float thisPercentage = percentage * 3;
-
-
             }
             else if (percentage < 2.05f / 3.f) {
                 ultimateShot->playSound();
@@ -250,7 +246,7 @@ namespace Rooster {
 
             }
         }
-
+        
         void louKickAnim() {
             Time t = louKick->init.getElapsedTime();
 
@@ -420,39 +416,50 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
+                
+
                 static int angle = 0;
                 angle++;
+                
+                Transform trans;
+                trans.scale(0.5, 0.75);
+
                 if (facingRight) {
                                                      
                     projectiles[0].setImpulse(0, 0);
                     projectiles[0].setSpriteAngle(angle);
-
-                    projectiles[0].setScale(0.125, 0.25);
+                    
+                    projectiles[0].setTransfrom(trans);
 
                     projectiles[0].setPosition(
-                        position.x + projectiles[0].getLocalSize().x/2,
-                        position.y - projectiles[0].getLocalSize().y/2
+                        position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
+                        position.y/2 + (projectiles[0].getLocalSize().y)
                     );
+                   // trans.scale(-0.75, 1);
                     
-                    
+                                        
                 }
                 else {
                     
                     projectiles[0].setSpriteAngle(-angle);
 
-                    projectiles[0].setScale(0.25, 0.25);
+                    projectiles[0].setTransfrom(trans);
+
+                    
                     projectiles[0].setPosition(
-                        position.x - projectiles[0].getLocalSize().x/2,
-                        position.y - projectiles[0].getLocalSize().y/2 
+                        position.x * 2 - (projectiles[0].getLocalSize().x * 1.25),
+                        position.y / 2 + (projectiles[0].getLocalSize().y)
+                                             
                     );
-                   
+                    
                     projectiles[0].setImpulse(0,0);
+                   // trans.scale(-0.75, 1);
                     
                     
                 }
 
                 projectiles[0].setVisibility(true);
-                projectiles[0].update();
+               // projectiles[0].update();
 
                 animations[0].update();
                 if (animations[0].playingFrame > 15) {

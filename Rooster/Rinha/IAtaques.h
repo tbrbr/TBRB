@@ -23,9 +23,11 @@ namespace Rooster {
 		bool isVisible = false;
 		Vector2f size;
 		float hei;
+		Transform t;
 		
 	public:
 		bool NULO = false;
+		bool isTrans = false;
 
 		Projectile(bool NUlO) {
 			this->NULO = NULO;
@@ -110,6 +112,12 @@ namespace Rooster {
 		void setSpriteAngle(float angle) {
 			sprite.setRotation(angle);
 		}
+		void setTransfrom(Transform trans) {
+			t = trans;
+		}
+		Transform getTransform() {
+			return t;
+		}
 		void update() {
 
 
@@ -123,7 +131,13 @@ namespace Rooster {
 		void draw(RenderWindow& window) {
 			if (isVisible) {
 				window.draw(sprite);
-				println("mano eu vou me matar nada da certo na minha vida");
+				
+			}
+		}
+		void drawTrans(RenderWindow& window) {
+			if (isVisible) {
+				window.draw(sprite,t);
+				
 			}
 		}
 

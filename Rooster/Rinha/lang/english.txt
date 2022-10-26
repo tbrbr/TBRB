@@ -1,4 +1,4 @@
-main menu
+MAIN MENU
 start 
 setitngs
 quit

@@ -495,21 +495,23 @@ namespace Rooster {
 
         void show(sf::RenderWindow& window) {
 
+
+            if (projectiles[0].isTrans)
+                projectiles[0].drawTrans(window);
+            else
+                projectiles[0].draw(window);
+
             /*
             for (int i = 0; i < 2; i++) {
                 if(!projectiles[i].NULO)
                     projectiles[i].draw(window);
                 println("é possivel");
             }*/
-            if (projectiles[0].isTrans) 
-                projectiles[0].drawTrans(window);
-            else
-                projectiles[0].draw(window);
             
-
-
+           
             model.draw(window);
 
+            
 
 
             for (int i = 0; i < hurtBox.size(); i++) {
@@ -659,8 +661,8 @@ namespace Rooster {
 
 
 
-            model.pos = position;
-
+            model.pos.x = (position.x*SCREEN_WIDTH)/1920;
+            model.pos.y = (position.y * SCREEN_HEIGHT)/1080;
 
             float resizeScl = (float)SCREEN_WIDTH / 5120;
 

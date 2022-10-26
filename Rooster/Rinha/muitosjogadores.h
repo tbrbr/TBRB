@@ -5,14 +5,13 @@
 
 void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, RectangleShape fundo) {
 
+	unsigned short myport = 59000;
+	unsigned short portaofmota = 59001;
 
-	try {
-		connectToServer("10.50.208.56", 59000);
-	}
-	catch (const char* e) {
-		cout << e << endl;
-	}
-
+	sf::IpAddress recipient = "10.50.280.56";
+	
+	connectToServer(portaofmota);
+	
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
@@ -166,9 +165,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 
 
 		Packet* p = inputToPacket(&galo);
-		sendData(*p);
+		sendData(*p,recipient,portaofmota);
 
-		receiveData(*p);
+		receiveData(*p, recipient,myport);
 		*galo2 = (Galo*) p->getData();
 
 

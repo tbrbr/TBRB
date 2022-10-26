@@ -5,7 +5,7 @@
 using namespace sf;
 
 
-TcpSocket suck;
+UdpSocket socketudp;
 
 
 Packet* inputToPacket(void* input) {
@@ -16,21 +16,19 @@ Packet* inputToPacket(void* input) {
 
 }
 
-void inline connectToServer(IpAddress ip, unsigned short port) {
-	suck.setBlocking(false);
-	Socket::Status status = suck.connect(ip, port);
-	if (status != Socket::Done) {
-		throw "Falha na conexão com o servidor";
-	}
+void inline connectToServer(unsigned short port) {
+	socketudp.bind(54000);	
 }
 
-void inline sendData(Packet pacotinho) {
-	suck.send(pacotinho);
+void inline sendData(Packet pacotinho,IpAddress recebedorip,unsigned short recipientPort) {
+	socketudp.send(pacotinho,recebedorip,recipientPort);
 }
 
-void inline receiveData(Packet& pacotinho) {
-	suck.receive(pacotinho);
+void inline receiveData(Packet& pacotinho, IpAddress ip, unsigned short port) {
+	socketudp.receive(pacotinho,ip,port);
 }
+
+
 
 
 #endif

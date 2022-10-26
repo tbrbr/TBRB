@@ -151,7 +151,7 @@ int main() {
 
 		}
 	
-		
+		cout << IpAddress::getLocalAddress();
 		
 		switch (option)
 		{
@@ -177,6 +177,12 @@ int main() {
 		}
 		case BOTAPRAARROCHAR:
 			pianoTiles(window);
+			break;
+		case DOISJODADOR:
+			if (!galo) {
+				return 1;
+			}
+			multiPlayer(window, *galo, &galo2, option, fundo);
 			break;
 			
 		default:

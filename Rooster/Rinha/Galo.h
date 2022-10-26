@@ -22,7 +22,7 @@ namespace Rooster {
         HIGH_KICK,
         JUMP_KICK,
         SPECIAL,
-      
+        FATALITY,      
     };
     
     enum roosters {
@@ -624,7 +624,9 @@ namespace Rooster {
         virtual void updateAnimations() = 0;
 
         
+        virtual void fatality() {
 
+        }
 
 
         virtual void update() {

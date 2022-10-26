@@ -3,15 +3,24 @@
 
 
 
-void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, RectangleShape fundo) {
+void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, RectangleShape fundo) {
 
-	unsigned short myport = 59000;
-	unsigned short portaofmota = 59001;
+	UdpSocket socketudp;
+	unsigned short myport = 59001;
+	unsigned short portaofmota = 59000;
 
-	sf::IpAddress recipient = "10.50.280.56";
-	
-	connectToServer(portaofmota);
-	
+	cout << IpAddress::getLocalAddress();
+	sf::IpAddress recipient = "10.50.208.56";
+
+	if (socketudp.bind(myport) != Socket::Done) {
+		cout << "nao bindou";
+		return;
+	}
+
+	socketudp.setBlocking(false);
+
+		
+
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
@@ -73,10 +82,12 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 	int framesRound = 60;
 	int framesFight = 0;
 
+	char c = '0';
+
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
-
+		
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -116,6 +127,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 
 		if (keyboardState[Keyboard::W][1])
 		{
+			c = 'w';
 			galo.jump();
 		}
 		else if (keyboardState[Keyboard::F][1]) {
@@ -162,38 +174,42 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 		
 
 		galo.update();
+;
+		
+		char c2 = '0';
+		size_t meta;
 
 
-		Packet* p = inputToPacket(&galo);
-		sendData(*p,recipient,portaofmota);
-
-		receiveData(*p, recipient,myport);
-		*galo2 = (Galo*) p->getData();
-
-
-		if (galo.ultimateShot->getHitted) {
-			galo.apanharByKalsa(galo2[0], window);
+		socketudp.receive(&c2,1, meta, recipient, portaofmota);
+		socketudp.send(&c, 1, recipient, portaofmota);
+		
+		if (c2 == 'w') {
+			galo2->jump();
 		}
-		else if (galo2[0]->ultimateShot->getHitted) {
-			galo2[0]->apanharByKalsa(&galo, window);
+		galo2->update();
+		if (galo.ultimateShot->getHitted) {
+			galo.apanharByKalsa(galo2, window);
+		}
+		else if (galo2->ultimateShot->getHitted) {
+			galo2->apanharByKalsa(&galo, window);
 		}
 
 		galo.bar->draw(window);
-		galo2[0]->bar->draw(window);
+		galo2->bar->draw(window);
 
 		galo.show(*window);
 
-		galo2[0]->show(*window);
+		galo2->show(*window);
 
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);
 
-		if (galo.gethp() < 0 || galo2[0]->gethp() < 0) {
+		if (galo.gethp() < 0 || galo2->gethp() < 0) {
 
 			rounds++;
 			framesRound = 60;
 			galo.sethp(galo.getMaxhp());
-			galo2[0]->sethp(galo.getMaxhp());
+			galo2->sethp(galo.getMaxhp());
 		}
 
 
@@ -216,6 +232,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 
 
 		window->display();
+		c = '0';
 	}
 }
 

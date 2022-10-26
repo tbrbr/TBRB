@@ -63,6 +63,7 @@
 
 		int framesRound = 60;
 		int framesFight = 0;
+		int framesWin = 0;
 
 		while (window->isOpen()) {
 			window->clear();
@@ -275,12 +276,31 @@
 			mainPartSystem.update();
 			mainPartSystem.draw(*window);
 
-			if (galo.gethp() < 0 || galo2.gethp() < 0) {
+			if (galo.gethp() < 0 ) {
 
 				rounds++;
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo.getMaxhp());
+				if (rounds == 3 || p2Rounds) {
+					framesWin = 60;
+				}
+				else {
+					framesRound = 60;
+					galo.sethp(galo.getMaxhp());
+					galo2.sethp(galo.getMaxhp());
+					p2Rounds++;
+				}
+			}
+			else if (galo2.gethp() < 0) {
+				rounds++;
+				if (rounds == 3 || p1Rounds == 2) {
+					framesWin = 60;
+				}
+				else {
+					framesRound = 60;
+					galo.sethp(galo.getMaxhp());
+					galo2.sethp(galo.getMaxhp());
+					p1Rounds++;
+				}
+				
 			}
 			
 
@@ -299,6 +319,9 @@
 			if (framesFight > 0) {				
 				framesFight--;				
 				window->draw(fight);
+			}
+			if (framesWin > 0) {
+				return;
 			}
 
 

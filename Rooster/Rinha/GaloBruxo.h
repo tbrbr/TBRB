@@ -13,7 +13,7 @@ namespace Rooster {
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
-
+        Clock clockFatal;
 
 
     public:
@@ -159,6 +159,18 @@ namespace Rooster {
             hspeed = 0;
         }
 
+        void fatality() override {
+            if (estado != FATALITY) {
+                estado = FATALITY;
+                
+                clockFatal.restart();
+            }
+            
+        }
+        void nossasenhora() {
+            int time = clockFatal.getElapsedTime().asMilliseconds();
+
+        }
         void highKick() override {
             if (atacking == NOT_ATTACK) {
                 atacking = HIGH_KICK;
@@ -327,7 +339,6 @@ namespace Rooster {
                 model.at("Body")->angle = 0;
             }
 
-
         }
 
         void highAtackAnim() {
@@ -471,6 +482,9 @@ namespace Rooster {
             }
             else if (estado == STOPPED) {
                 runReset();
+            }
+            else if (estado == FATALITY) {
+                nossasenhora();
             }
 
             

@@ -5,9 +5,9 @@
 using namespace sf;
 
 
-UdpSocket socketudp;
 
 
+/*
 Packet* inputToPacket(void* input) {
 
 	Packet* pacote = new (Packet);
@@ -15,9 +15,9 @@ Packet* inputToPacket(void* input) {
 	return pacote;
 
 }
-
+/*
 void inline connectToServer(unsigned short port) {
-	socketudp.bind(54000);	
+	socketudp.bind(port);	
 }
 
 void inline sendData(Packet pacotinho,IpAddress recebedorip,unsigned short recipientPort) {
@@ -28,7 +28,7 @@ void inline receiveData(Packet& pacotinho, IpAddress ip, unsigned short port) {
 	socketudp.receive(pacotinho,ip,port);
 }
 
-
+*/
 
 
 #endif

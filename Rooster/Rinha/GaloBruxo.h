@@ -427,6 +427,7 @@ namespace Rooster {
                 angle++;
                 
                 Transform trans;
+                trans.scale(-0.5, 0.75);
                 if (facingRight) {
                                                      
                     projectiles[0].setImpulse(0, 0);
@@ -436,10 +437,11 @@ namespace Rooster {
                         position.y - projectiles[0].getLocalSize().y / 2
                     );
                     projectiles[0].setPosition(
-                        (float)position.x/2 * 3 ,//+ (projectiles[0].getLocalSize().x),
+                        (float)position.x * 2 ,//+ (projectiles[0].getLocalSize().x),
                         position.y/2 + (projectiles[0].getLocalSize().y)
                     );
-                   
+                    trans.scale(0.75, 1);
+                    projectiles[0].setTransfrom(trans);
                                         
                 }
                 else {
@@ -448,13 +450,14 @@ namespace Rooster {
 
                     
                     projectiles[0].setPosition(
-                       (float) position.x/2 * 3 ,// - (projectiles[0].getLocalSize().x),
+                       (float) position.x * 2 ,// - (projectiles[0].getLocalSize().x),
                         position.y/2 + (projectiles[0].getLocalSize().y)
                                              
                     );
-                   
-                    projectiles[0].setImpulse(0,0);
                     
+                    projectiles[0].setImpulse(0,0);
+                    trans.scale(-0.75, 1);
+                    projectiles[0].setTransfrom(trans);
                     
                 }
 

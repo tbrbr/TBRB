@@ -79,7 +79,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = INTRO;
+	int option = BOTAPRAARROCHAR;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);
@@ -122,8 +122,7 @@ int main() {
 	//socket.setBlocking(false);
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
-	pianoYamaha piano;
-
+	
 
 	
 
@@ -151,9 +150,6 @@ int main() {
 	
 		
 		
-
-		//piano.draw(*window);
-		
 		switch (option)
 		{
 		case UMJOGADORES:
@@ -176,6 +172,9 @@ int main() {
 
 			break;
 		}
+		case BOTAPRAARROCHAR:
+			pianoTiles(window);
+			break;
 			
 		default:
 			break;

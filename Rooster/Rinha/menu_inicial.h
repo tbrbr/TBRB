@@ -402,10 +402,10 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 					if (__temp != -1) {
 
 						if (__temp == 0) {
-							return Rooster::SELECTION;;
+							return Rooster::SELECTION;
 						}
 						else if (__temp == 1) {
-							return Rooster::UMJOGADORES;
+							return Rooster::DOISJODADOR;
 						}
 						else if (__temp == 2) {
 							return Rooster::ISPATOTIME;

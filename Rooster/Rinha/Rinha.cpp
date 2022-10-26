@@ -24,10 +24,12 @@ using namespace sf;
 
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
 LANGUAGE LANG;
 
+#include "fregues.h"
 #include "introducoes.h"
 #include "checador_de_posicao.h"
 
@@ -55,7 +57,8 @@ Rooster::ParticleSystem mainPartSystem;
 using namespace Rooster;
 
 #include "Briga.h"
-#include "fregues.h"
+#include "muitosjogadores.h"
+
 #include "cardapio.h"
 #include "menu_inicial.h"
 
@@ -81,12 +84,6 @@ int main() {
 	
 	int option = INTRO;
 
-	try {
-		//connectToServer("192.169.0.0", 59000);
-	}
-	catch (const char* e) {
-		cout << e << endl;
-	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
@@ -105,8 +102,11 @@ int main() {
 	struct GaloStats kalsaSt;
 	struct GaloStats bruxoSt;
 
+	sniperSt = { 100, 10, 10, 10, 5 };
+	kalsaSt = { 100, 10, 10, 10, 5 };
+	bruxoSt = { 60, 10, 10, 10, 5 };
 
-	Galo* galo = NULL;
+	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 	Galo* galo2 = NULL;
 
 

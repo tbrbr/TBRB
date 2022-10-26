@@ -422,7 +422,7 @@ namespace Rooster {
                 angle++;
                 
                 Transform trans;
-                trans.scale(0.5, 0.75);
+                trans.scale((float)SCREEN_WIDTH/3840,(float)SCREEN_HEIGHT/1440);
 
                 if (facingRight) {
                                                      

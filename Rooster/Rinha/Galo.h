@@ -38,8 +38,6 @@ namespace Rooster {
     const float floorY = (float)SCREEN_HEIGHT / 1.1;
 
     
-
-
     class LifeBar {
         Vector2i tam = { SCREEN_WIDTH / 3,SCREEN_HEIGHT / 54 };
         int spaceForTime = SCREEN_WIDTH / 6;
@@ -661,8 +659,8 @@ namespace Rooster {
 
 
 
-            model.pos.x = (position.x*SCREEN_WIDTH)/1920;
-            model.pos.y = (position.y * SCREEN_HEIGHT)/1080;
+            model.pos.x = position.x ;
+            model.pos.y = position.y ;
 
             float resizeScl = (float)SCREEN_WIDTH / 5120;
 

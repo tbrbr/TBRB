@@ -66,7 +66,6 @@ int main() {
 		keyboardState[i][1] = false;
 		keyboardState[i][2] = false;
 	}
-	
 	int option = 5;
 
 	try {

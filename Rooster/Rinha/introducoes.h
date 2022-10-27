@@ -1,4 +1,6 @@
-
+int degradenavalhado(int suvinil, int timeh, int start, int size) {
+	return (float)suvinil - (suvinil * (timeh - start) / size);
+}
 int introducao(RenderWindow* window) {
 
 	window->setMouseCursorGrabbed(false);
@@ -26,17 +28,17 @@ int introducao(RenderWindow* window) {
 	texto1.setFont(price);
 
 	texto1.setString("Shelby LTDA Presents");
-	texto1.setPosition((SCREEN_WIDTH - texto1.getGlobalBounds().width) / 2,(SCREEN_HEIGHT - texto1.getGlobalBounds().height) / 2);
+	texto1.setPosition((SCREEN_WIDTH - texto1.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - texto1.getGlobalBounds().height) / 2);
 
 	Text texto2;
 	texto2.setFillColor(Color(255, 255, 255, 204));
 	texto2.setCharacterSize(SCREEN_WIDTH / 40);
-	texto2.setFont(price);	
+	texto2.setFont(price);
 	texto2.setString("a game from the wild Sergipe");
 	texto2.setPosition((SCREEN_WIDTH - texto2.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - texto2.getGlobalBounds().height) / 2);
 
 	int spaceInline = SCREEN_HEIGHT / 75;
-	
+
 	Text texto3;
 	texto3.setFillColor(Color(217, 173, 43));
 	texto3.setCharacterSize(SCREEN_WIDTH / 20);
@@ -65,6 +67,20 @@ int introducao(RenderWindow* window) {
 	texto6.setString("Walter Henrique Doideira");
 	texto6.setPosition((SCREEN_WIDTH - texto6.getGlobalBounds().width) / 2, SCREEN_HEIGHT / 2 + spaceInline);
 
+	Text texto7;
+	texto7.setFillColor(Color(193, 0, 0));
+	texto7.setCharacterSize(SCREEN_WIDTH / 15);
+	texto7.setFont(titleFont);
+	texto7.setString("Atenção");
+	texto7.setPosition((SCREEN_WIDTH - texto7.getGlobalBounds().width) / 2, SCREEN_HEIGHT / 10);
+
+	Text texto8;
+	texto8.setFillColor(Color(255, 255, 255, 204));
+	texto8.setCharacterSize(SCREEN_WIDTH / 35);
+	texto8.setFont(price);
+	texto8.setString("DURANTE  O   DESENVOLVIMENTO  DA  THE  BEST ROOSTER\nBRASIL NENHUM  GALO  SOFREU NENHUM TIPOS  DE   DANO\nFÍSICO,  MENTAL   OU   MAUS  TRATOS, A  TBRB  DEFENDE\nOS  DIREITOS DOS  ANIMAIS.\n\n         DIGA  NÃO  AOS  MAUS  TRATOS  AOS  ANIMAIS		\n                    DIGA  SIM  A  PL  N°  1037 / 2020");
+	texto8.setPosition((SCREEN_WIDTH - texto8.getGlobalBounds().width) / 2, SCREEN_HEIGHT / 3);
+
 	for (int i = 0; i < 52; i++) {
 		string s = "IntroFiles\\" + std::to_string(i + 1);
 		s += ".png";
@@ -81,7 +97,7 @@ int introducao(RenderWindow* window) {
 		marcadores[i].setTexture(marcadoresT[i]);
 		marcadores[i].setScale((float)SCREEN_WIDTH / 1920, (float)SCREEN_WIDTH / 1920);
 		marcadores[i].setPosition(SCREEN_WIDTH / 2 - marcadores[i].getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - marcadores[i].getGlobalBounds().height / 2);
-		
+
 	}
 	for (int i = 0; i < 4; i++) {
 		string s = "IntroFiles\\pichado" + std::to_string(i + 1);
@@ -116,8 +132,8 @@ int introducao(RenderWindow* window) {
 	int memoryTime = 0;
 	int lastind = 0;
 
-	while (window->isOpen()) {
 
+	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
 
@@ -185,8 +201,7 @@ int introducao(RenderWindow* window) {
 				piscada.setFillColor(Color(255, 255, 255, 255 - (255 * (timer - 25000) / 500)));
 
 				logo.setScale(1.5 - (0.5 * (timer - 25000) / 500), 1.5 - (0.5 * (timer - 25000) / 500));
-				logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2,
-					SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
+				logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
 				window->draw(logo);
 				window->draw(piscada);
 
@@ -194,16 +209,14 @@ int introducao(RenderWindow* window) {
 			else if (timer > 25500 && timer < 26500) {
 
 				logo.setScale(1.0 - (0.10 * (timer - 25500) / 1000), 1.0 - (0.10 * (timer - 25500) / 1000));
-				logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2,
-					SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
+				logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
 				window->draw(logo);
 
 				//constante
 			}
 			else {
 				logo.setScale(0.9 - (0.15 * (timer - 26500) / 2500), 0.9 - (0.15 * (timer - 26500) / 2500));
-				logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2,
-					SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
+				logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
 
 				int c = 255 - (255 * (timer - 26500)) / 2500;
 				logo.setColor(Color(c, c, c));
@@ -253,8 +266,18 @@ int introducao(RenderWindow* window) {
 				}
 
 			}
+			else if (restTime > 1000 && restTime < 3000) {
+				window->draw(vetor[ind]);
+				window->draw(vetor[ind + 1]);
+				window->draw(vetor[ind + 2]);
+				window->draw(vetor[ind + 3]);
+			}
 			else {
-
+				int s = 255 - (255 * (restTime - 3000)) / 1000;
+				vetor[ind].setColor(Color(s, s, s));
+				vetor[ind + 1].setColor(Color(s, s, s));
+				vetor[ind + 2].setColor(Color(s, s, s));
+				vetor[ind + 3].setColor(Color(s, s, s));
 				window->draw(vetor[ind]);
 				window->draw(vetor[ind + 1]);
 				window->draw(vetor[ind + 2]);
@@ -263,7 +286,7 @@ int introducao(RenderWindow* window) {
 		}
 		else if (timer > 83000 && timer < 86000) {
 			if (timer > 83000 && timer < 85000) {
-				texto3.setFillColor(Color(217, 173, 43,204));
+				texto3.setFillColor(Color(217, 173, 43, 204));
 				texto4.setFillColor(Color(255, 255, 255, 204));
 			}
 			else {
@@ -284,6 +307,18 @@ int introducao(RenderWindow* window) {
 			}
 			window->draw(texto5);
 			window->draw(texto6);
+		}
+		else if (timer > 89000 && timer < 94000) {
+			if (timer > 89000 && timer < 93000) {
+				texto7.setFillColor(Color(193, 0, 0, 204));
+				texto8.setFillColor(Color(255, 255, 255, 204));
+			}
+			else {
+				texto7.setFillColor(Color(193, 0, 0, (204 - (204 * (timer - 93000)) / 1000)));
+				texto8.setFillColor(Color(255, 255, 255, (204 - (204 * (timer - 93000)) / 1000)));
+			}
+			window->draw(texto7);
+			window->draw(texto8);
 		}
 		else if (timer > 89000) {
 			return 2;

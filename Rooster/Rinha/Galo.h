@@ -440,22 +440,42 @@ namespace Rooster {
             
 
             Vector2f nextPosition = position;
+
+
+
+            float perc = (float)frames / maxFrames;
             
-            if ((float)frames/maxFrames < 0.4) {
+            if (perc < 0.4) {
                 
-                g2->facingRight = !g2->facingRight;
+                // Tava na busca de entender pq o tiro do sniper n funciona como player 2
+                // Permite?
+                if(((int)frames)%3 == 0) {
+                    g2->facingRight = !g2->facingRight;
+                }
+
+                // Permite?
+                // Na verdade eu n sei o que to fazendo perdao
+                /*
+                int add = 7 * sin(toRadiAnus(frames * 2));
+                g2->model.at("Head")->angle += add;
+                g2->model.at("FrontArm")->angle += add;
+                g2->model.at("BackArm")->angle += add;
+                */
+
 
                 g2->position.x += facingRight?
-                    ((position.x - g2->position.x + 200) * frames * 2) / maxFrames:
+                    ((position.x - g2->position.x + 200) * frames * 2)/maxFrames:
                     ((position.x - g2->position.x - 200) * frames * 2)/maxFrames;
                 
                 
             }
-            else if ((float)frames / maxFrames < 0.7) {
+            else if (perc < 0.7) {
                 drawEstrelinhas(af,g2->position);
-                g2->model.at("Head")->angle += 90 ;
-                g2->model.at("FrontArm")->angle += 90;
-                g2->model.at("BackArm")->angle += 90;
+                //int add = 20*(0.7-perc)*sin(toRadiAnus(frames*2));
+                int add = 45;
+                g2->model.at("Head")->angle += add;
+                g2->model.at("FrontArm")->angle += add;
+                g2->model.at("BackArm")->angle += add;
                
             }
             else {
@@ -645,6 +665,7 @@ namespace Rooster {
 
 
             // Projectiles
+            // KEKEKEKEKEEKEEKEKKEKEKKEKEKKEKEKEKEEKEKKEKEKEKEKEKEKEKEKKEKEKEKEKEKEKKEK
             /*pare de tentar ajudar e destruir o restp da miinhda vdasidnbhasvgy
             for (int i = 0; i < projectiles.size(); i++) {
                 projectiles[i].update();

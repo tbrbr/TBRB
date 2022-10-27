@@ -97,27 +97,8 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 			}
 
 		}
-		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
-
-			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
-
-			if (!keyboardState[i][0] && keyState) {
-				keyboardState[i][1] = true;
-			}
-			else {
-				keyboardState[i][1] = false;
-			}
-
-			if (keyboardState[i][0] && !keyState) {
-				keyboardState[i][2] = true;
-			}
-			else {
-				keyboardState[i][2] = false;
-			}
-
-			keyboardState[i][0] = keyState;
-
-		}
+		
+		mainInput.update();
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			window->close();
@@ -125,49 +106,51 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 
 		//options p1
 
-		if (keyboardState[Keyboard::W][1])
+
+		int player = 0;
+
+		if (mainInput.inputState[player][GOUP][1])
 		{
-			c = 'w';
+			c = 'W';
 			galo.jump();
 		}
-		else if (keyboardState[Keyboard::F][1]) {
-			if (keyboardState[Keyboard::S][0]) {
-				galo.lowKick();
 
+		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+			if (mainInput.inputState[player][GODOWN][0]) {
+				galo.lowKick();
 			}
 
 			else
 				galo.highKick();
 
 		}
-		else if ((keyboardState[Keyboard::G][1])) {
+		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
 			galo.especial();
 		}
 
 
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		if (mainInput.inputState[player][GORIGHT][1])
 		{
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = true;
 			galo.run();
 
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		else if (mainInput.inputState[player][GOLEFT][1])
 		{
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = false;
 			galo.run();
 
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		else if (mainInput.inputState[player][GODOWN][1])
 		{
 			galo.defend();
 		}
 		else
 		{
 			galo.setState(Rooster::state::STOPPED);
-			//galo.setHspeed(0);
 
 		}
 

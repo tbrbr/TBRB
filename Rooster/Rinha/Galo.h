@@ -22,7 +22,7 @@ namespace Rooster {
         HIGH_KICK,
         JUMP_KICK,
         SPECIAL,
-      
+        FATALITY,      
     };
     
     enum roosters {
@@ -38,8 +38,6 @@ namespace Rooster {
     const float floorY = (float)SCREEN_HEIGHT / 1.1;
 
     
-
-
     class LifeBar {
         Vector2i tam = { SCREEN_WIDTH / 3,SCREEN_HEIGHT / 54 };
         int spaceForTime = SCREEN_WIDTH / 6;
@@ -495,21 +493,23 @@ namespace Rooster {
 
         void show(sf::RenderWindow& window) {
 
+
+            if (projectiles[0].isTrans)
+                projectiles[0].drawTrans(window);
+            else
+                projectiles[0].draw(window);
+
             /*
             for (int i = 0; i < 2; i++) {
                 if(!projectiles[i].NULO)
                     projectiles[i].draw(window);
                 println("é possivel");
             }*/
-            if (projectiles[0].isTrans) 
-                projectiles[0].drawTrans(window);
-            else
-                projectiles[0].draw(window);
             
-
-
+           
             model.draw(window);
 
+            
 
 
             for (int i = 0; i < hurtBox.size(); i++) {
@@ -624,7 +624,9 @@ namespace Rooster {
         virtual void updateAnimations() = 0;
 
         
+        virtual void fatality() {
 
+        }
 
 
         virtual void update() {
@@ -659,8 +661,8 @@ namespace Rooster {
 
 
 
-            model.pos = position;
-
+            model.pos.x = position.x ;
+            model.pos.y = position.y ;
 
             float resizeScl = (float)SCREEN_WIDTH / 5120;
 

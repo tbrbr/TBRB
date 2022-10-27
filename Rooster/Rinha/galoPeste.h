@@ -98,58 +98,53 @@ namespace Rooster {
             ArmSpinAngFase = -(vspeed / 8) * 45;
             Arm2SpinAngFase = -(vspeed / 8) * 45;
 
-            model.at("Hat")->offset.y += vspeed / 8;
+           
+            model.at("FrontLeg")->angle = vspeed;
+            model.at("BackLeg")->angle = vspeed;
 
-            if (model.at("Hat")->offset.y > 0) {
-                model.at("Hat")->offset.y = 0;
-            }
-            model.at("FrontShoe")->angle = vspeed;
-            model.at("BackShoe")->angle = vspeed;
-
-            model.at("FrontBigode")->angle += vspeed / 2;
-            model.at("BackBigode")->angle += vspeed / 2;
-
-
-
+            model.at("FrontLeg")->offset.y = (float)vspeed/2;
+            model.at("BackLeg")->offset.y =(float) vspeed/2;
+          
         }
         void cairAnim() {
-            model.at("Hat")->offset.y = 0;
-            model.at("FrontBigode")->angle *= 0.9;
-            model.at("BackBigode")->angle *= 0.9;
 
-            model.at("Body")->angle *= 0.7;
+            model.at("FrontLeg")->angle *= 0.9;
+            model.at("BackLeg")->angle *= 0.9;
+
+            model.at("FrontLeg")->offset.y *= 0.9;
+            model.at("BackLeg")->offset.y *= 0.9;
+            
         }
         void runAnim() {
             legWalkAngFase += hspeed;
             legWalkAngFase -= ((int)legWalkAngFase / 360) * 360;
 
-            model.at("FrontShoe")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at("BackShoe")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
+            ArmSpinAngFase += hspeed;
+            Arm2SpinAngFase -= ((int)ArmSpinAngFase / 360) * 360;
 
-            model.at("FrontBigode")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at("BackBigode")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("FrontLeg")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("BackLeg")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
+         
 
-            model.at("FrontArm")->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at("BackArm")->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("FrontArm")->angle = sin(2 * PI * ArmSpinAngFase / 360) * 60;
+            model.at("BackArm")->angle = -sin(2 * PI * ArmSpinAngFase / 360) * 60;
 
-            model.at("Hat")->angle += -sin(2 * PI * legWalkAngFase / 360);
-
-
+            
         }
         void runReset() {
 
 
-            model.at("FrontShoe")->angle *= 0.8;
-            model.at("BackShoe")->angle *= 0.8;
+            model.at("FrontLeg")->angle *= 0.8;
+            model.at("BackLeg")->angle *= 0.8;
 
             model.at("FrontArm")->angle = 0;
             model.at("BackArm")->angle = 0;
 
-            model.at("Hat")->angle *= 0.9;
+            
 
             model.at("Body")->offset.y = 0;
-            model.at("BackShoe")->offset.y = 0;
-            model.at("FrontShoe")->offset.y = 0;
+            model.at("BackLeg")->offset.y = 0;
+            model.at("FrontLeg")->offset.y = 0;
 
 
 
@@ -406,28 +401,31 @@ namespace Rooster {
               // animations[0].playingFrame = 0;
             }
 
-            model.at("FrontArm")->angle = ArmSpinAngFase;
-            model.at("BackArm")->angle = Arm2SpinAngFase;
+          
+
             if (air) {
-               // jumpAnim();
+                jumpAnim();
             }
             else {
-                //cairAnim();
+                cairAnim();
             }
+            model.at("FrontArm")->angle = ArmSpinAngFase;
+            model.at("BackArm")->angle = Arm2SpinAngFase;
 
             if (estado == RUNNING) {
-                //runAnim();
+                runAnim();
             }
             else if (estado == DEFENDING) {
-               // animations[0].update();
-               // if (animations[0].playingFrame > 15) {
-               //     animations[0].playingFrame = 15;
-               // }
-               // model.updateWithAnimation(animations[0]);
-
+                /*
+                animations[0].update();
+                if (animations[0].playingFrame > 15) {
+                    animations[0].playingFrame = 15;
+                }
+                model.updateWithAnimation(animations[0]);
+                */
             }
             else if (estado == STOPPED) {
-              //  runReset();
+                runReset();
             }
 
 

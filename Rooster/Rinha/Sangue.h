@@ -186,11 +186,6 @@ namespace Rooster {
 	};
 
 
-
-
-
-
-
 	class Effect {
 	protected:
 		std::vector <Particle> gotas;
@@ -202,6 +197,10 @@ namespace Rooster {
 		bool active = true;
 		int life = 100;
 		float depth = 0;
+
+		~Effect() {
+			gotas.clear();
+		}
 
 		void setPosition(Vector2f position) {
 			this->position = position;

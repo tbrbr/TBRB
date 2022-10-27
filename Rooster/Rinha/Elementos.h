@@ -38,6 +38,11 @@ struct Animation {
     float playingSpeed = 0.1;
     bool connectLoop = false;
 
+    ~Animation() {
+        timeline.clear();
+        propertyName.clear();
+    }
+
     void init(std::string filename) {
         std::ifstream file(filename);
         timeline.clear();
@@ -491,8 +496,15 @@ class ElementHandle {
     std::vector<struct Element*>& allBones;
 
 public:
+
+
+
     struct Element* bone;
 
+    ~ElementHandle() {
+        allBones.clear();
+        delete bone;
+    }
 
     ElementHandle(std::vector<struct Element*>& _allBones, int id) : allBones(_allBones) {
         this->id = id;

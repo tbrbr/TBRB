@@ -21,9 +21,13 @@ namespace Rooster {
 		float vAcc;
 		Vector2f scl;
 		bool isVisible = false;
+		Vector2f size;
+		float hei;
+		Transform t;
 		
 	public:
 		bool NULO = false;
+		bool isTrans = false;
 
 		Projectile(bool NUlO) {
 			this->NULO = NULO;
@@ -39,6 +43,9 @@ namespace Rooster {
 			texture.loadFromFile(textureFile);
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
+			size.x = sprite.getGlobalBounds().width;
+			size.y = sprite.getGlobalBounds().height;
+			
 			sprite.setScale(scl);
 
 			
@@ -57,7 +64,9 @@ namespace Rooster {
 			sprite.setTextureRect(spriteRec);			
 
 		}
-		
+		void setOriginCenter() {
+			sprite.setOrigin(size.x / 2, size.y / 2);
+		}
 		void setVisibility(bool isVisible) {
 			this->isVisible = isVisible;
 		}
@@ -90,11 +99,24 @@ namespace Rooster {
 		Vector2f getSize() {
 			return Vector2f(sprite.getGlobalBounds().width,sprite.getGlobalBounds().height);
 		}
+		Vector2f getLocalSize() {
+			float lastAngle = sprite.getRotation();
+			sprite.setRotation(0);
+			Vector2f a(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height);
+			sprite.setRotation(lastAngle);
+			return a;
+		}
 		Vector2f getPosition() {
 			return position;
 		}
 		void setSpriteAngle(float angle) {
 			sprite.setRotation(angle);
+		}
+		void setTransfrom(Transform trans) {
+			t = trans;
+		}
+		Transform getTransform() {
+			return t;
 		}
 		void update() {
 
@@ -109,7 +131,13 @@ namespace Rooster {
 		void draw(RenderWindow& window) {
 			if (isVisible) {
 				window.draw(sprite);
-				println("mano eu vou me matar nada da certo na minha vida");
+				
+			}
+		}
+		void drawTrans(RenderWindow& window) {
+			if (isVisible) {
+				window.draw(sprite,t);
+				
 			}
 		}
 

@@ -2,7 +2,7 @@
 
 #define SFML_STATIC
 
-#include <opencv2/core/core.hpp>
+#include "varios_idiomas.h"
 #include "efeitos_fodas.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -15,18 +15,21 @@
 #include <fstream>
 
 #define FRAMERATE_LIMIT 60
-
+#pragma warning(disable : 4996)
 #define println(x) (std::cout << x << std::endl)
 
 using namespace std;
 using namespace sf;
 
 
-const int SCREEN_WIDTH = sf::VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = sf::VideoMode::getDesktopMode().height;
+const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
 bool keyboardState[sf::Keyboard::KeyCount][3];
 
+LANGUAGE LANG;
+
+#include "fregues.h"
 #include "introducoes.h"
 #include "checador_de_posicao.h"
 
@@ -54,26 +57,34 @@ Rooster::ParticleSystem mainPartSystem;
 using namespace Rooster;
 
 #include "Briga.h"
-#include "fregues.h"
+#include "muitosjogadores.h"
+
 #include "cardapio.h"
 #include "menu_inicial.h"
 
 
 int main() {
 
+	
+	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
+	{
+		FILE* file = fopen("lang/start_lang.ini", "r");
+		if (file != NULL) {
+			if(fscanf(file, "%d", (int *) & lang))
+				fclose(file);
+		}
+	}
+
+	LANG.startAllTexts(lang);
+
 	for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
 		keyboardState[i][0] = false;
 		keyboardState[i][1] = false;
 		keyboardState[i][2] = false;
 	}
-	int option = 5;
+	
+	int option = INTRO;
 
-	try {
-		//connectToServer("192.169.0.0", 59000);
-	}
-	catch (const char* e) {
-		cout << e << endl;
-	}
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
@@ -88,9 +99,16 @@ int main() {
 	cursor.loadFromPixels(c.getPixelsPtr(), Vector2u(c.getSize().x, c.getSize().y), Vector2u(0, 0));
 	window->setMouseCursor(cursor);
 
+	struct GaloStats sniperSt;
+	struct GaloStats kalsaSt;
+	struct GaloStats bruxoSt;
 
-	Galo* galo = NULL;
-	Galo* galo2 = NULL;
+	sniperSt = { 100, 10, 10, 10, 5 };
+	kalsaSt = { 100, 10, 10, 10, 5 };
+	bruxoSt = { 60, 10, 10, 10, 5 };
+
+	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
+	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 
 
 	Pato *miniGame1 = new Pato((*window));
@@ -102,18 +120,20 @@ int main() {
 	fundo.setPosition(0, 0);
 	fundo.setTexture(&mapa);
 
-	//socket.setBlocking(false);
+	
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
-	pianoYamaha piano;
-
+	
 
 	
 
 	while (window->isOpen())
 	{
+
 		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+
 			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+
 			if (!keyboardState[i][0] && keyState) {
 				keyboardState[i][1] = true;
 			}
@@ -131,8 +151,7 @@ int main() {
 			keyboardState[i][0] = keyState;
 
 		}
-	
-		//piano.draw(*window);
+			
 		
 		switch (option)
 		{
@@ -156,10 +175,20 @@ int main() {
 
 			break;
 		}
+		case BOTAPRAARROCHAR:
+			pianoTiles(window);
+			break;
+		case DOISJODADOR:
+			if (!galo) {
+				return 1;
+			}
+			multiPlayer(window, *galo, galo2, option, fundo);
+			break;
 			
 		default:
 			break;
 		}
+		
 		
 		
 	}

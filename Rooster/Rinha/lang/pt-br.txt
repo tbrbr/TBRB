@@ -1,0 +1,18 @@
+menu principal
+iniciar
+configuracoes
+sair
+voltar
+singleplayer
+multiplayer
+continuar
+cor da mira
+sensibilidade 
+minigames
+modo de jogo
+idioma
+pt-br
+reiniciar jogo
+sim
+nao
+Pontuacao

@@ -22,7 +22,7 @@ namespace Rooster {
         HIGH_KICK,
         JUMP_KICK,
         SPECIAL,
-      
+        FATALITY,      
     };
     
     enum roosters {
@@ -38,8 +38,6 @@ namespace Rooster {
     const float floorY = (float)SCREEN_HEIGHT / 1.1;
 
     
-
-
     class LifeBar {
         Vector2i tam = { SCREEN_WIDTH / 3,SCREEN_HEIGHT / 54 };
         int spaceForTime = SCREEN_WIDTH / 6;
@@ -145,6 +143,12 @@ namespace Rooster {
         }
         int getMaxhp() {
             return Maxhp;
+        }
+        int gethp() {
+            return hp;
+        }
+        void sethp(int hp) {
+            this->hp = hp;
         }
         int getLifeBarWidth() {
             return tam.x;
@@ -377,6 +381,15 @@ namespace Rooster {
             return frames;
         }
 
+        int getMaxhp() {
+            return maxHp;
+        }
+        int gethp() {
+            return hp;
+        }
+        void sethp(int hp) {
+            this->hp = hp;
+        }
 
         virtual void apanhar(Ataques atk, bool direction){
 
@@ -480,20 +493,23 @@ namespace Rooster {
 
         void show(sf::RenderWindow& window) {
 
+
+            if (projectiles[0].isTrans)
+                projectiles[0].drawTrans(window);
+            else
+                projectiles[0].draw(window);
+
             /*
             for (int i = 0; i < 2; i++) {
                 if(!projectiles[i].NULO)
                     projectiles[i].draw(window);
                 println("é possivel");
             }*/
-            projectiles[0].draw(window);
-            println(projectiles[0].getVisibility());
-            println(projectiles[0].getPosition().x);
-            println(projectiles[0].getPosition().y);
-
-
+            
+           
             model.draw(window);
 
+            
 
 
             for (int i = 0; i < hurtBox.size(); i++) {
@@ -608,7 +624,9 @@ namespace Rooster {
         virtual void updateAnimations() = 0;
 
         
+        virtual void fatality() {
 
+        }
 
 
         virtual void update() {
@@ -643,8 +661,8 @@ namespace Rooster {
 
 
 
-            model.pos = position;
-
+            model.pos.x = position.x ;
+            model.pos.y = position.y ;
 
             float resizeScl = (float)SCREEN_WIDTH / 5120;
 

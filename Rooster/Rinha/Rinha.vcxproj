@@ -161,6 +161,7 @@
     <ClInclude Include="Patinho\RoosterPato.h" />
     <ClInclude Include="Sangue.h" />
     <ClInclude Include="TilesDoArrocha.h" />
+    <ClInclude Include="varios_idiomas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

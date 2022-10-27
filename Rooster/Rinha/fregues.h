@@ -3,40 +3,32 @@
 
 #include <SFML/Network.hpp>
 using namespace sf;
+
+
+
+
 /*
-TcpSocket socket;
+Packet* inputToPacket(void* input) {
 
-
-Packet inputToPacket(void* input) {
-
-	Packet pacote;
-	pacote << input;
+	Packet* pacote = new (Packet);
+	*pacote << input;
 	return pacote;
 
 }
-
-void inline connectToServer(IpAddress ip, unsigned short port) {
-	socket.setBlocking(false);
-	Socket::Status status = socket.connect(ip, port);
-	if (status != Socket::Done) {
-		throw "Falha na conexão com o servidor";
-	}
+/*
+void inline connectToServer(unsigned short port) {
+	socketudp.bind(port);	
 }
 
-void inline sendData(Packet pacotinho) {
-	socket.send(pacotinho);
+void inline sendData(Packet pacotinho,IpAddress recebedorip,unsigned short recipientPort) {
+	socketudp.send(pacotinho,recebedorip,recipientPort);
 }
 
-void inline receiveData(Packet& pacotinho) {
-	socket.receive(pacotinho);
+void inline receiveData(Packet& pacotinho, IpAddress ip, unsigned short port) {
+	socketudp.receive(pacotinho,ip,port);
 }
 
-void teste(char* data) {
-
-	Packet pacotinho = inputToPacket(data);
-	sendData(pacotinho);
-	receiveData(pacotinho);
-	data = (char*)pacotinho.getData();
-}
 */
+
+
 #endif

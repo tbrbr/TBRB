@@ -13,7 +13,8 @@ namespace Rooster {
 		MENU_PRINCIPAL,
 		ISPATOTIME,
 		SELECTION,
-		INTRO
+		INTRO,
+		BOTAPRAARROCHAR
 	};
 
 	enum inputs {

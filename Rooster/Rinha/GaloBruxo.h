@@ -13,12 +13,11 @@ namespace Rooster {
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
-
+        Clock clockFatal;
 
 
     public:
         Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
-           
             // Stats
             this->name = "Bruxo";
 
@@ -47,8 +46,11 @@ namespace Rooster {
                 0, 0, Vector2f(0.25, 0.25)            
             );
 
-
-           
+            defense->setOriginCenter();
+            defense->isTrans = true;
+            Transform te;
+            te.scale(0.5, 0.75);
+            defense->setTransfrom(te);
             projectiles.push_back(*defense);
 
             Projectile* n2 = new Projectile(true);
@@ -86,11 +88,6 @@ namespace Rooster {
 
         }
 
-
-        void weatherAnim(int frames) {
-            model.at(CORPO)->angle += 0;
-            model.at(RABO)->angle = sin(frames / 200.f) * 20;
-        }
         void jumpAnim() {
 
 
@@ -162,6 +159,18 @@ namespace Rooster {
             hspeed = 0;
         }
 
+        void fatality() override {
+            if (estado != FATALITY) {
+                estado = FATALITY;
+                
+                clockFatal.restart();
+            }
+            
+        }
+        void nossasenhora() {
+            int time = clockFatal.getElapsedTime().asMilliseconds();
+
+        }
         void highKick() override {
             if (atacking == NOT_ATTACK) {
                 atacking = HIGH_KICK;
@@ -206,8 +215,6 @@ namespace Rooster {
             }
             else if (percentage < 2.f / 3.f) {
                 float thisPercentage = percentage * 3;
-
-
             }
             else if (percentage < 2.05f / 3.f) {
                 ultimateShot->playSound();
@@ -251,7 +258,7 @@ namespace Rooster {
 
             }
         }
-
+        
         void louKickAnim() {
             Time t = louKick->init.getElapsedTime();
 
@@ -331,7 +338,6 @@ namespace Rooster {
 
                 model.at("Body")->angle = 0;
             }
-
 
         }
 
@@ -421,20 +427,50 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
+                
+
+                static int angle = 0;
+                angle++;
+                
+                Transform trans;
+                trans.scale((float)SCREEN_WIDTH/3840,(float)SCREEN_HEIGHT/1440);
 
                 if (facingRight) {
-                    projectiles[0].setPosition(position.x + projectiles[0].getSize().x,position.y - projectiles[0].getSize().y);
+                                                     
                     projectiles[0].setImpulse(0, 0);
+                    projectiles[0].setSpriteAngle(angle);
                     
+                    projectiles[0].setTransfrom(trans);
+
+                    projectiles[0].setPosition(
+                        position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
+                        position.y/2 + (projectiles[0].getLocalSize().y)
+                    );
+                   // trans.scale(-0.75, 1);
+                    
+                                        
                 }
                 else {
-                    projectiles[0].setPosition(position.x - projectiles[0].getSize().x*2, position.y - projectiles[0].getSize().y);
-                    projectiles[0].setImpulse(0, 0);
+                    
+                    projectiles[0].setSpriteAngle(-angle);
+
+                    projectiles[0].setTransfrom(trans);
+
+                    
+                    projectiles[0].setPosition(
+                        position.x * 2 - (projectiles[0].getLocalSize().x * 1.25),
+                        position.y / 2 + (projectiles[0].getLocalSize().y)
+                                             
+                    );
+                    
+                    projectiles[0].setImpulse(0,0);
+                   // trans.scale(-0.75, 1);
+                    
                     
                 }
 
                 projectiles[0].setVisibility(true);
-               
+               // projectiles[0].update();
 
                 animations[0].update();
                 if (animations[0].playingFrame > 15) {
@@ -446,6 +482,9 @@ namespace Rooster {
             }
             else if (estado == STOPPED) {
                 runReset();
+            }
+            else if (estado == FATALITY) {
+                nossasenhora();
             }
 
             

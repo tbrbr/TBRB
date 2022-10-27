@@ -79,7 +79,7 @@ int main() {
 		keyboardState[i][2] = false;
 	}
 	
-	int option = INTRO;
+	int option = MENU_PRINCIPAL;
 
 	try {
 		//connectToServer("192.169.0.0", 59000);

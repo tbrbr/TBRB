@@ -79,6 +79,9 @@ namespace Rooster {
 		void setScale(float x, float y) {
 			setScale(Vector2f(x, y));
 		}
+		void setSpriteScale(float x, float y) {
+			sprite.setScale(x,y);
+		}
 		void setImpulse(float hSpeed, float vSpeed) {
 			this->hSpeed = hSpeed;
 			this->vSpeed = vSpeed;
@@ -120,7 +123,7 @@ namespace Rooster {
 		}
 		void update() {
 
-
+			println("chega aqui update");
 			position.x += hSpeed;
 			position.y += vSpeed;
 
@@ -129,6 +132,7 @@ namespace Rooster {
 
 		}
 		void draw(RenderWindow& window) {
+			println("chega aqui update");
 			if (isVisible) {
 				window.draw(sprite);
 				

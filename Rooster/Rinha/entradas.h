@@ -66,14 +66,8 @@ namespace Rooster {
 
 		// Rapaz me explique o que é isso porfavor
 		// Ahh to entendendo
-		//because i can´t get the Key enum in made a matrix containing the keys
-		/*
-		int board[3][6] = { {0,3,18,22,9,10},
-							{0,3,18,22,0,1},
-							{0,0,0,0,0,0} };// i don´t know how to implement joystick
-			*/
-
-
+	
+	
 		bool keyboardState[sf::Keyboard::KeyCount][3];
 		bool mouseState[sf::Mouse::ButtonCount][3];
 

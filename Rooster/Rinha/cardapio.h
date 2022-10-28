@@ -9,16 +9,34 @@ public:
 	RectangleShape bars[4];
 	RectangleShape outLines[4];
 
+	Texture t_icons[4];
+	RectangleShape icons[4];
+
 	StatusViewer() {
+
+
 
 		table.setFillColor(Color::White);
 		table.setSize(Vector2f(SCREEN_WIDTH * 0.15, SCREEN_HEIGHT * 0.15));
+
+
 		for (int i = 0; i < 4; i++) {
 			bars[i].setFillColor(Color::Blue);
 			bars[i].setSize(Vector2f(0, table.getSize().y * 0.15));
 			outLines[i].setFillColor(Color::Black);
 			outLines[i].setSize(Vector2f(SCREEN_WIDTH * 0.8 + 4, bars[i].getSize().y + 4));
 			allStatus[i] = 0;
+		}
+
+		t_icons[0].loadFromFile("icons/sword.png");
+		t_icons[1].loadFromFile("icons/shild.png");
+		t_icons[2].loadFromFile("icons/speed.png");
+		t_icons[3].loadFromFile("icons/book.png");
+
+
+		for (int i = 0; i < 4; i++) {
+			icons[i].setTexture(&t_icons[i]);
+			icons[i].setSize(Vector2f(table.getSize().y * 0.2, table.getSize().y * 0.15));
 		}
 
 
@@ -31,7 +49,7 @@ public:
 		for (int i = 0; i < 4; i++) {
 			window->draw(outLines[i]);
 			window->draw(bars[i]);
-
+			window->draw(icons[i]);
 
 		}
 	}
@@ -63,7 +81,10 @@ class SelectionSinglePlayer {
 	Sprite podiumP1;
 	Sprite podiumP2;
 
+
+
 	std::vector <Texture> roostersTextures;
+	std::vector <Sprite> roosterSpritesForPodium;
 	Texture sniperT;
 
 	std::vector <CircleShape> circlesLine;
@@ -98,6 +119,13 @@ class SelectionSinglePlayer {
 
 	StatusViewer statusPlayer1;
 	StatusViewer statusPlayer2;
+
+
+	RectangleShape confirmDiv;
+	RectangleShape OKbutton;
+	RectangleShape cancelButton;
+	Text t_ok;
+	Text t_x;
 
 public:
 	SelectionSinglePlayer() {
@@ -312,16 +340,54 @@ public:
 		statusPlayer1.table.setPosition(podiumP1.getPosition().x + podiumP1.getGlobalBounds().width, SCREEN_HEIGHT * 0.7);
 		statusPlayer2.table.setPosition(podiumP2.getPosition().x - statusPlayer2.table.getSize().x, SCREEN_HEIGHT * 0.7);
 
-		int spaceBetween = statusPlayer1.table.getSize().y * 0.1;
+		int spaceBetween = statusPlayer1.table.getSize().y * 0.11;
 		int ypos = statusPlayer1.table.getPosition().y + spaceBetween;
+		
+
 		for (int i = 0; i < 4; i++) {
-			statusPlayer1.bars[i].setPosition(statusPlayer1.table.getPosition().x + statusPlayer1.table.getSize().x * 0.1, ypos);
-			statusPlayer2.bars[i].setPosition(statusPlayer2.table.getPosition().x + statusPlayer2.table.getSize().x * 0.1, ypos);
+			statusPlayer2.bars[i].setScale(-1, 1);
+			statusPlayer2.icons[i].setScale(-1, 1);
+			statusPlayer2.outLines[i].setScale(-1, 1);
+		}
+
+		for (int i = 0; i < 4; i++) {
+			statusPlayer1.bars[i].setPosition(statusPlayer1.table.getPosition().x + statusPlayer1.icons[i].getSize().x, ypos);
+			statusPlayer2.bars[i].setPosition(statusPlayer2.table.getPosition().x + statusPlayer2.table.getSize().x - statusPlayer2.icons[i].getSize().x, ypos);
+
 			statusPlayer1.outLines[i].setPosition(statusPlayer1.bars[i].getPosition().x - 2, statusPlayer1.bars[i].getPosition().y - 2);
-			statusPlayer2.outLines[i].setPosition(statusPlayer2.bars[i].getPosition().x - 2, statusPlayer2.bars[i].getPosition().y - 2);
+			statusPlayer2.outLines[i].setPosition(statusPlayer2.bars[i].getPosition().x + 2, statusPlayer2.bars[i].getPosition().y - 2);
+
+			statusPlayer1.icons[i].setPosition(statusPlayer1.table.getPosition().x, statusPlayer1.bars[i].getPosition().y);
+			statusPlayer2.icons[i].setPosition(statusPlayer2.table.getPosition().x + statusPlayer2.table.getSize().x, statusPlayer2.bars[i].getPosition().y);
 			ypos += spaceBetween * 2;
 		}
 
+
+		confirmDiv.setSize(Vector2f(SCREEN_WIDTH * 0.23, SCREEN_HEIGHT * 0.08));
+		confirmDiv.setPosition(SCREEN_WIDTH / 2 - confirmDiv.getSize().x / 2, SCREEN_HEIGHT * 0.9);
+
+		OKbutton.setSize(Vector2f(confirmDiv.getSize().x * 0.45, confirmDiv.getSize().y));
+		cancelButton.setSize(Vector2f(confirmDiv.getSize().x * 0.45, confirmDiv.getSize().y));
+
+		OKbutton.setFillColor(Color::Green);
+		cancelButton.setFillColor(Color::Red);
+
+		OKbutton.setPosition(confirmDiv.getPosition());
+		cancelButton.setPosition(confirmDiv.getPosition().x + cancelButton.getSize().x + confirmDiv.getSize().x * 0.1, confirmDiv.getPosition().y);
+
+		t_x.setCharacterSize(confirmDiv.getSize().y * 0.85);
+		t_x.setString("X");
+		t_x.setFont(fontTitle);
+		t_x.setFillColor(Color::Black);
+
+		t_ok.setCharacterSize(confirmDiv.getSize().y * 0.85);
+		t_ok.setString("OK");
+		t_ok.setFont(fontTitle);
+		t_ok.setFillColor(Color::Black);
+
+		t_x.setPosition(cancelButton.getPosition().x + cancelButton.getSize().x / 2 - t_x.getGlobalBounds().width / 2, cancelButton.getPosition().y - 4 );
+		t_ok.setPosition(OKbutton.getPosition().x + OKbutton.getSize().x / 2 - t_ok.getGlobalBounds().width / 2, cancelButton.getPosition().y -4 );
+		
 
 	}
 
@@ -332,14 +398,10 @@ public:
 		int mousex = Mouse::getPosition(*window).x;
 		int mousey = Mouse::getPosition(*window).y;
 
-		statusPlayer1.visibility = !(p1 == -1);
-		statusPlayer2.visibility = false;
-
-
-		if (p2 != -1) {
-			option = Rooster::UMJOGADORES;
-		}
 		Event e;
+		statusPlayer1.visibility = (p1 != -1);
+		statusPlayer2.visibility = (p2 != -1);
+
 		while (window->pollEvent(e))
 		{
 			if (e.type == Event::Closed)
@@ -348,83 +410,106 @@ public:
 			}
 
 
-
 			if (e.type == Event::MouseButtonPressed) {
 				if (e.mouseButton.button == Mouse::Left) {
 
-					struct GaloStats sniperSt;
-					struct GaloStats kalsaSt;
-					struct GaloStats bruxoSt;
-					struct GaloStats pesteSt;
-					struct GaloStats botaSt;
+					if (p2 != -1) {
 
-					sniperSt = { 100, 10, 10, 10, 5 };
-					kalsaSt = { 100, 10, 10, 10, 5 };
-					bruxoSt = { 60, 10, 10, 10, 5 };
-					pesteSt = kalsaSt;
-					botaSt = bruxoSt;
+						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
+							galop1[0]->resetPosition();
+							galop2[0]->resetPosition();
+							option = Rooster::UMJOGADORES;
+							return;
+						}
+						
+						if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
+							
+							delete* galop1;
+							delete* galop2;
+							p1 = -1;
+							p2 = -1;
+							isp1Time = true;
+							return;
+						}
+
+					}
+					else {
+
+						struct GaloStats sniperSt;
+						struct GaloStats kalsaSt;
+						struct GaloStats bruxoSt;
+						struct GaloStats pesteSt;
+						struct GaloStats botaSt;
+
+						sniperSt = { 100, 10, 10, 10, 5 };
+						kalsaSt = { 100, 10, 10, 10, 5 };
+						bruxoSt = { 60, 10, 10, 10, 5 };
+						pesteSt = kalsaSt;
+						botaSt = bruxoSt;
 
 
 
-					for (int i = 0; i < 5; i++) {
-						if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey)) {
-							if (i == 0) {
+						for (int i = 0; i < 5; i++) {
+							if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey)) {
+								if (i == 0) {
+									if (isp1Time) {
+										*galop1 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
+
+									}
+									else {
+										*galop2 = new Sniper(sniperSt, Rooster::state::STOPPED, false);
+									}
+
+								}
+								else if (i == 1) {
+									if (isp1Time) {
+										*galop1 = new Peste(sniperSt, Rooster::state::STOPPED, true);
+
+									}
+									else {
+										*galop2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
+									}
+								}
+								else if (i == 2) {
+									if (isp1Time) {
+										*galop1 = new Kalsa(kalsaSt, Rooster::state::STOPPED, true);
+									}
+									else {
+										*galop2 = new Kalsa(kalsaSt, Rooster::state::STOPPED, false);
+									}
+
+								}
+								else if (i == 3) {
+									if (isp1Time) {
+										*galop1 = new Bruxo(bruxoSt, Rooster::state::STOPPED, true);
+									}
+									else {
+										*galop2 = new Bruxo(bruxoSt, Rooster::state::STOPPED, false);
+									}
+								}
+								else if (i == 4) {
+									if (isp1Time) {
+										*galop1 = new Bota(botaSt, Rooster::state::STOPPED, true);
+									}
+									else {
+										*galop2 = new Bota(botaSt, Rooster::state::STOPPED, false);
+									}
+
+								}
 
 
-
-
-								if (isp1Time) {
-									*galop1 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-
+								if (!isp1Time) {
+									galop2[0]->facingRight = false;
+									galop2[0]->setPosition(Vector2f(podiumP2.getGlobalBounds().width / 2 + podiumP2.getPosition().x, podiumP2.getPosition().y + podiumP2.getGlobalBounds().height * 0.3));
+									p2 = i;
 								}
 								else {
-									*galop2 = new Sniper(sniperSt, Rooster::state::STOPPED, false);
+									galop1[0]->facingRight = true;
+									galop1[0]->setPosition(Vector2f(podiumP1.getGlobalBounds().width / 2 + podiumP1.getPosition().x, podiumP1.getPosition().y + podiumP1.getGlobalBounds().height * 0.3));
+									p1 = i;
 								}
-
-
+								isp1Time = false;
 							}
-							else if (i == 1) {
-								if (isp1Time) {
-									*galop1 = new Peste(sniperSt, Rooster::state::STOPPED, true);
-
-								}
-								else {
-									*galop2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
-								}
-							}
-							else if (i == 2) {
-								if (isp1Time) {
-									*galop1 = new Kalsa(kalsaSt, Rooster::state::STOPPED, true);
-								}
-								else {
-									*galop2 = new Kalsa(kalsaSt, Rooster::state::STOPPED, false);
-								}
-
-							}
-							else if (i == 3) {
-								if (isp1Time) {
-									*galop1 = new Bruxo(bruxoSt, Rooster::state::STOPPED, true);
-								}
-								else {
-									*galop2 = new Bruxo(bruxoSt, Rooster::state::STOPPED, false);
-								}
-							}
-							else if (i == 4) {
-								if (isp1Time) {
-									*galop1 = new Bota(botaSt, Rooster::state::STOPPED, true);
-								}
-								else {
-									*galop2 = new Bota(botaSt, Rooster::state::STOPPED, false);
-								}
-
-							}
-
-							if (!isp1Time) {
-								p2 = i;
-							}
-							else
-								p1 = i;
-							isp1Time = false;
 						}
 					}
 
@@ -434,6 +519,21 @@ public:
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			window->close();
+		}
+
+
+		if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
+			OKbutton.setFillColor(Color::Yellow);
+		}
+		else {
+			OKbutton.setFillColor(Color::Green);
+		}
+
+		if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
+			cancelButton.setFillColor(Color::Yellow);
+		}
+		else {
+			cancelButton.setFillColor(Color::Red);
 		}
 
 		window->draw(sprFundo);
@@ -448,49 +548,49 @@ public:
 
 
 		int rooster = -1;
+		if(p2 == -1)
+			for (int i = 0; i < 5; i++) {
+				if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey))
+				{
+					if (isp1Time) {
+						borderP1.setPosition(circlesLine[i].getPosition());
+						P1.setPosition(
+							circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
+							circlesLine[i].getPosition().y
+						);
+						window->draw(borderP1);
+						window->draw(P1);
+						statusPlayer1.visibility = true;
+						//models[0].draw(*window);
 
-		for (int i = 0; i < 5; i++) {
+					}
+					else {
+						borderP2.setPosition(circlesLine[i].getPosition());
+						P2.setPosition(
+							circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
+							circlesLine[i].getPosition().y
+						);
+						window->draw(borderP2);
+						window->draw(P2);
+						statusPlayer2.visibility = true;
+						// models[0].update();
+						// models[0].draw(*window);
+					}
 
-			if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey))
-			{
-				if (isp1Time) {
-					borderP1.setPosition(circlesLine[i].getPosition());
-					P1.setPosition(
-						circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
-						circlesLine[i].getPosition().y
-					);
-					window->draw(borderP1);
-					window->draw(P1);
-					statusPlayer1.visibility = true;
-					//models[0].draw(*window);
+					rooster = i;
+
 
 				}
-				else {
-					borderP2.setPosition(circlesLine[i].getPosition());
-					P2.setPosition(
-						circlesLine[i].getPosition().x + SCREEN_WIDTH / 12,
-						circlesLine[i].getPosition().y
-					);
-					window->draw(borderP2);
-					window->draw(P2);
-					statusPlayer2.visibility = true;
-					// models[0].update();
-					// models[0].draw(*window);
-				}
-
-				rooster = i;
-
 
 			}
-
-		}
+	
 
 		if (isp1Time) {
 			if (rooster == 0) {
 				statusPlayer1.update(0.7, 0.5, 0.4, 0.9);
 			}
 			else if (rooster == 1) {
-				statusPlayer1.update(30, 0.7, 0.2, 15);
+				statusPlayer1.update(1, 1, 1, 1);
 			}
 			else if (rooster == 2) {
 				statusPlayer1.update(1, 0.5, 0.2, 0);
@@ -500,9 +600,6 @@ public:
 			}
 			else if (rooster == 4) {
 				statusPlayer1.update(0.7, 0.5, 0.4, 0.9);
-			}
-			else {
-				statusPlayer1.update(0, 0, 0, 0);
 			}
 		}
 		else {
@@ -521,9 +618,7 @@ public:
 			else if (rooster == 4) {
 				statusPlayer2.update(0.7, 0.5, 0.4, 0.9);
 			}
-			else {
-				statusPlayer2.update(0, 0, 0, 0);
-			}
+
 		}
 
 
@@ -531,42 +626,32 @@ public:
 
 
 		window->draw(podiumP1);
-
-
 		window->draw(podiumP2);
 		//models[0].update();
 		//models[0].draw(*window);
 
 		if (p1 != -1) {
-			Vector2f temp = circlesLine[p1].getPosition();
-			circlesLine[p1].setPosition(podiumP1.getPosition().x + podiumP1.getGlobalBounds().width / 2 - circlesLine[p1].getRadius(), podiumP1.getPosition().y);
-			window->draw(circlesLine[p1]);
 
-
-			Vector2f temp2 = roosters[p1].getPosition();
-			roosters[p1].setPosition(circlesLine[p1].getPosition());
-			window->draw(roosters[p1]);
-
-			roosters[p1].setPosition(temp2);
-			circlesLine[p1].setPosition(temp);
+			galop1[0]->update();
+			galop1[0]->show(*window);
+			
 		}
 
 		if (p2 != -1) {
-			Vector2f temp = circlesLine[p2].getPosition();
-			circlesLine[p2].setPosition(podiumP2.getPosition().x + podiumP2.getGlobalBounds().width / 2 - circlesLine[p2].getRadius(), podiumP2.getPosition().y);
-			window->draw(circlesLine[p2]);
-
-
-			Vector2f temp2 = roosters[p2].getPosition();
-			roosters[p2].setPosition(circlesLine[p2].getPosition());
-			window->draw(roosters[p2]);
-
-			roosters[p2].setPosition(temp2);
-			circlesLine[p2].setPosition(temp);
+			
+			galop2[0]->update();
+			galop2[0]->show(*window);
 		}
 
 		statusPlayer1.draw(window);
 		statusPlayer2.draw(window);
+
+		if (p2 != -1) {
+			window->draw(OKbutton);
+			window->draw(cancelButton);
+			window->draw(t_x);
+			window->draw(t_ok);
+		}
 
 		window->display();
 

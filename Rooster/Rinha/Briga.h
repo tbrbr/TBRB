@@ -1,5 +1,5 @@
 
-
+	
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
@@ -78,7 +78,7 @@
 				}
 
 			}
-
+			//galo.fatality(window,&galo2,fundo);
 
 			mainInput.update();
 
@@ -185,11 +185,7 @@
 				galo2.setState(Rooster::state::STOPPED);
 
 			}
-
-
-			
-
-
+		
 			for (int i = 0; i < galo.hurtBox.size(); i++) {
 
 				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {

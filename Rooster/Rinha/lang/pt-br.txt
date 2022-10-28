@@ -1,4 +1,4 @@
-menu principal
+MENU PRINCIPAL
 iniciar
 configuracoes
 sair

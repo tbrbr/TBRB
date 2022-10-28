@@ -156,6 +156,8 @@ namespace Rooster {
         int getLifeBarHeight() {
             return tam.y;
         }
+
+        
         
         void draw(RenderWindow *window) {
 
@@ -304,7 +306,7 @@ namespace Rooster {
         bool facingRight = false;
         bool estadoUpdate = false;
 
-
+        bool isp1;
         
 
         Galo(struct GaloStats stats, int _state, bool isp1) { 
@@ -333,7 +335,7 @@ namespace Rooster {
             this->jumpSpeed = (peso * (-8)) / 2;
 
             this->position = Vector2f(0, 0);
-
+            this->isp1 = isp1;
             if (isp1)
                 position.x = SCREEN_WIDTH / 4;
             else
@@ -350,6 +352,18 @@ namespace Rooster {
 
         }
 
+        void setPosition(Vector2f pos) {
+            this->position = pos;
+        }
+
+        void resetPosition() {
+            if (isp1)
+                position.x = SCREEN_WIDTH / 4;
+            else
+                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
+
+            position.y = floorY;
+        }
 
         // States
         void inline setState(state estado) {
@@ -527,17 +541,16 @@ namespace Rooster {
         void show(sf::RenderWindow& window) {
 
 
-            if (projectiles[0].isTrans)
-                projectiles[0].drawTrans(window);
-            else
-                projectiles[0].draw(window);
+           
 
-            /*
-            for (int i = 0; i < 2; i++) {
+            
+            for (int i = 0; i < projectiles.size(); i++) {
                 if(!projectiles[i].NULO)
-                    projectiles[i].draw(window);
-                println("é possivel");
-            }*/
+                    if (projectiles[i].isTrans)
+                        projectiles[i].drawTrans(window);
+                    else
+                        projectiles[i].draw(window);             
+            }
             
            
             model.draw(window);
@@ -655,7 +668,7 @@ namespace Rooster {
         virtual void updateAnimations() = 0;
 
         
-        virtual void fatality() {
+        virtual void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) {
 
         }
 

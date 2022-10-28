@@ -355,10 +355,14 @@ public:
 					struct GaloStats sniperSt;
 					struct GaloStats kalsaSt;
 					struct GaloStats bruxoSt;
+					struct GaloStats pesteSt;
+					struct GaloStats botaSt;
 
 					sniperSt = { 100, 10, 10, 10, 5 };
 					kalsaSt = { 100, 10, 10, 10, 5 };
 					bruxoSt = { 60, 10, 10, 10, 5 };
+					pesteSt = kalsaSt;
+					botaSt = bruxoSt;
 
 
 
@@ -406,7 +410,12 @@ public:
 								}
 							}
 							else if (i == 4) {
-								return;
+								if (isp1Time) {
+									*galop1 = new Bota(botaSt, Rooster::state::STOPPED, true);
+								}
+								else {
+									*galop2 = new Bota(botaSt, Rooster::state::STOPPED, false);
+								}
 
 							}
 

@@ -3,7 +3,7 @@
 
 
 
-void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, RectangleShape fundo) {
+void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, RectangleShape fundo) {
 
 	UdpSocket socket;
 	IpAddress ip = IpAddress::getLocalAddress();
@@ -23,8 +23,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 	}
 
 
-
-
+	sf::IpAddress recipient = "10.50.280.56";
+	
+	
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
@@ -86,15 +87,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 	int framesRound = 60;
 	int framesFight = 0;
 
-	socket.setBlocking(false);
-
-	char c = '0';
-
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
-
-
 
 		Event e;
 		while (window->pollEvent(e))
@@ -105,27 +100,8 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 			}
 
 		}
-		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
-
-			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
-
-			if (!keyboardState[i][0] && keyState) {
-				keyboardState[i][1] = true;
-			}
-			else {
-				keyboardState[i][1] = false;
-			}
-
-			if (keyboardState[i][0] && !keyState) {
-				keyboardState[i][2] = true;
-			}
-			else {
-				keyboardState[i][2] = false;
-			}
-
-			keyboardState[i][0] = keyState;
-
-		}
+		
+		mainInput.update();
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			window->close();
@@ -133,49 +109,50 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 
 		//options p1
 
-		if (keyboardState[Keyboard::W][1])
+
+		int player = 0;
+
+		if (mainInput.inputState[player][GOUP][1])
 		{
-			c = 'w';
 			galo.jump();
 		}
-		else if (keyboardState[Keyboard::F][1]) {
-			if (keyboardState[Keyboard::S][0]) {
-				galo.lowKick();
 
+		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+			if (mainInput.inputState[player][GODOWN][0]) {
+				galo.lowKick();
 			}
 
 			else
 				galo.highKick();
 
 		}
-		else if ((keyboardState[Keyboard::G][1])) {
+		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
 			galo.especial();
 		}
 
 
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		if (mainInput.inputState[player][GORIGHT][1])
 		{
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = true;
 			galo.run();
 
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		else if (mainInput.inputState[player][GOLEFT][1])
 		{
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = false;
 			galo.run();
 
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		else if (mainInput.inputState[player][GODOWN][1])
 		{
 			galo.defend();
 		}
 		else
 		{
 			galo.setState(Rooster::state::STOPPED);
-			//galo.setHspeed(0);
 
 		}
 
@@ -183,52 +160,31 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 
 		galo.update();
 
-		/*
-		Packet* p = inputToPacket(&galo);
-		sendData(*p,recipient,portaofmota);
 
-		receiveData(*p, recipient,myport);
-		*galo2 = (Galo*) p->getData();
-		*/
-
-
-
-		size_t asd;
-		char c2 = '0';
-
-		//c = 'w';
-		socket.send(&c, 1, ipwal, portofwal);
-		socket.receive(&c2, 1, asd, ipwal, portofwal);
-
-		if (c2 == 'w') {
-			galo2[0]->jump();
-		}
-
-		galo2[0]->update();
-
+		
 		if (galo.ultimateShot->getHitted) {
-			galo.apanharByKalsa(galo2[0], window);
+			galo.apanharByKalsa(galo2, window);
 		}
-		else if (galo2[0]->ultimateShot->getHitted) {
-			galo2[0]->apanharByKalsa(&galo, window);
+		else if (galo2->ultimateShot->getHitted) {
+			galo2->apanharByKalsa(&galo, window);
 		}
 
 		galo.bar->draw(window);
-		galo2[0]->bar->draw(window);
+		galo2->bar->draw(window);
 
 		galo.show(*window);
 
-		galo2[0]->show(*window);
+		galo2->show(*window);
 
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);
 
-		if (galo.gethp() < 0 || galo2[0]->gethp() < 0) {
+		if (galo.gethp() < 0 || galo2->gethp() < 0) {
 
 			rounds++;
 			framesRound = 60;
 			galo.sethp(galo.getMaxhp());
-			galo2[0]->sethp(galo.getMaxhp());
+			galo2->sethp(galo.getMaxhp());
 		}
 
 
@@ -251,7 +207,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo** galo2, int& option, Re
 
 
 		window->display();
-		c = '0';
 	}
 }
 

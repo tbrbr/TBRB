@@ -156,6 +156,8 @@ namespace Rooster {
         int getLifeBarHeight() {
             return tam.y;
         }
+
+        
         
         void draw(RenderWindow *window) {
 
@@ -301,7 +303,7 @@ namespace Rooster {
         bool facingRight = false;
         bool estadoUpdate = false;
 
-
+        bool isp1;
         
 
         Galo(struct GaloStats stats, int _state, bool isp1) { 
@@ -330,7 +332,7 @@ namespace Rooster {
             this->jumpSpeed = (peso * (-8)) / 2;
 
             this->position = Vector2f(0, 0);
-
+            this->isp1 = isp1;
             if (isp1)
                 position.x = SCREEN_WIDTH / 4;
             else
@@ -347,6 +349,18 @@ namespace Rooster {
 
         }
 
+        void setPosition(Vector2f pos) {
+            this->position = pos;
+        }
+
+        void resetPosition() {
+            if (isp1)
+                position.x = SCREEN_WIDTH / 4;
+            else
+                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
+
+            position.y = floorY;
+        }
 
         // States
         void inline setState(state estado) {

@@ -128,9 +128,6 @@ int main() {
 
 	while (window->isOpen())
 	{
-
-		
-			
 		
 		switch (option)
 		{

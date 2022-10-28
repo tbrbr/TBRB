@@ -30,5 +30,6 @@
     <ClInclude Include="introducoes.h" />
     <ClInclude Include="galoPeste.h" />
     <ClInclude Include="varios_idiomas.h" />
+    <ClInclude Include="GaloBota.h" />
   </ItemGroup>
 </Project>

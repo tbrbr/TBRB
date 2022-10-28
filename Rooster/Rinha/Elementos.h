@@ -715,6 +715,7 @@ struct Model {
     }
 
     Element* at(int id) {
+
         return allBones[id];
     }
 
@@ -735,61 +736,63 @@ struct Model {
 
         for (int i = 0; i < anim.timeline.size(); i++) {
 
+            if (allBones.size() > i) {
 
-            struct AnimationKeyFrame p;
-            p = anim.getPropertyValue(i, 0, fPos);
+                struct AnimationKeyFrame p;
+                p = anim.getPropertyValue(i, 0, fPos);
 
-            if (p.exists) {
-                allBones[i]->center.x = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->center.x = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 1, fPos);
+                p = anim.getPropertyValue(i, 1, fPos);
 
-            if (p.exists) {
-                allBones[i]->center.y = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->center.y = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 2, fPos);
+                p = anim.getPropertyValue(i, 2, fPos);
 
-            if (p.exists) {
-                allBones[i]->attach.x = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->attach.x = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 3, fPos);
+                p = anim.getPropertyValue(i, 3, fPos);
 
-            if (p.exists) {
-                allBones[i]->attach.y = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->attach.y = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 4, fPos);
+                p = anim.getPropertyValue(i, 4, fPos);
 
-            if (p.exists) {
-                allBones[i]->offset.x = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->offset.x = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 5, fPos);
+                p = anim.getPropertyValue(i, 5, fPos);
 
-            if (p.exists) {
-                allBones[i]->offset.y = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->offset.y = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 6, fPos);
+                p = anim.getPropertyValue(i, 6, fPos);
 
-            if (p.exists) {
-                allBones[i]->xScl = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->xScl = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 7, fPos);
+                p = anim.getPropertyValue(i, 7, fPos);
 
-            if (p.exists) {
-                allBones[i]->yScl = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->yScl = p.val;
+                }
 
 
-            p = anim.getPropertyValue(i, 8, fPos);
+                p = anim.getPropertyValue(i, 8, fPos);
 
-            if (p.exists) {
-                allBones[i]->angle = p.val;
+                if (p.exists) {
+                    allBones[i]->angle = p.val;
+                }
             }
 
 

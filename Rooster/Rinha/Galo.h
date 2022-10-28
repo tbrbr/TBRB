@@ -564,7 +564,7 @@ namespace Rooster {
             }
 
             if (ultimateShot->isAtacking) {
-                drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                //drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
             }
         }
 

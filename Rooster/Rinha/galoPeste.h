@@ -202,8 +202,7 @@ namespace Rooster {
 
             int angFix = (facingRight) ? 1 : -1;
             angFix = -1;
-
-            static float positionx = position.x;
+          
 
             if (percentage < 1.75f / 3.f) {
 
@@ -218,7 +217,7 @@ namespace Rooster {
                 
                 
                 projectiles[1].setPosition(
-                    positionx,
+                    position.x,
                     floorY
                 );
                     

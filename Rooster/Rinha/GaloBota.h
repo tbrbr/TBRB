@@ -94,6 +94,11 @@ namespace Rooster {
         }
 
 
+
+
+
+
+
         void weatherAnim(int frames) {
             model.at(CORPO)->angle += 0;
             model.at(RABO)->angle = sin(frames / 200.f) * 20;
@@ -101,22 +106,21 @@ namespace Rooster {
         void jumpAnim() {
 
 
-            ArmSpinAngFase = -(vspeed / 16) * 45;
-            Arm2SpinAngFase = -(vspeed / 16) * 45;
 
-
-            model.at("FrontLeg")->angle -= (vspeed) * 2;
-            model.at("BackLeg")->angle -= (vspeed) * 2;
 
             // mortal fodase?
 
-            model.at("Body")->angle += hspeed / 2;
+            model.at("Head")->offset.y += vspeed/2;
+            
+
+            model.at("Body")->angle += vspeed / 15;
+            model.at("Head")->angle = -model.at("Body")->angle/10;
 
         }
         void cairAnim() {
-            model.at("FrontLeg")->offset.y = 0;
-            model.at("BackLeg")->offset.y = 0;
 
+            model.at("Head")->offset.y = 0;
+            model.at("Head")->angle = 0;
             model.at("Body")->angle *= 0.7;
         }
         void runAnim() {
@@ -469,32 +473,23 @@ namespace Rooster {
             if (percentage < 1.f / 3.f) {
 
                 float thisPercentage = percentage * 3;
-                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
-                model.at("BackArm")->angle = 20 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = 20 * sin(thisPercentage * PI / 2);
+
                 model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
-                model.at("FrontEyebrow")->offset.y += 0.5;
-                model.at("BackEyebrow")->offset.y += 0.5;
-                model.at("FrontLeg")->offset.y = -20 * thisPercentage;
-                model.at("BackLeg")->offset.y = -20 * thisPercentage;
-                model.at("Biko")->offset.x = -2;
+
                 model.at("Body")->offset.y = -20 * thisPercentage;
                 model.at("Body")->angle = 45 * sin(thisPercentage * PI / 2);
             }
             else if (percentage < 2.f / 3.f) {
 
                 model.at("Body")->angle = -75;
-                model.at("FrontArm")->angle = -60;
-                model.at("BackArm")->angle = -60;
 
-                model.at("BackLeg")->angle = 20;
+
+
                 model.at("Head")->angle = 45;
                 model.at("Head")->offset.x = -15;
 
-                model.at("FrontLeg")->angle = 45;
-                model.at("BackLeg")->angle = 45;
-                louKick->hitbox.center = model.at("Biko")->drawPos;
-                louKick->hitbox.radius = model.at("Biko")->sprite.getGlobalBounds().width / 2;
+                louKick->hitbox.center = model.at("Head")->drawPos;
+                louKick->hitbox.radius = model.at("Head")->sprite.getGlobalBounds().width / 2;
                 louKick->isAtacking = true;
 
 
@@ -502,20 +497,8 @@ namespace Rooster {
             }
             else if (percentage < 2.9f / 3.f) {
 
-                model.at("FrontArm")->angle *= 0.9;
-                model.at("BackArm")->angle *= 0.9;
-
-                model.at("BackArm")->angle *= 0.9;
-                model.at("BackLeg")->angle *= 0.9;
-
                 model.at("Head")->angle *= 0.9;
                 model.at("Head")->offset.x *= 0.9;
-
-                model.at("FrontEyebrow")->offset.y *= 0.9;
-                model.at("BackEyebrow")->offset.y *= 0.9;
-
-                model.at("FrontLeg")->angle *= 0.9;
-                model.at("BackLeg")->offset.y *= 0.9;
 
                 model.at("Body")->angle *= 0.9;
                 louKick->isAtacking = false;
@@ -523,22 +506,12 @@ namespace Rooster {
             }
             else {
 
-                model.at("FrontArm")->angle = 0;
-                model.at("BackArm")->angle = 0;
-
-                model.at("BackArm")->angle = 0;
-                model.at("BackLeg")->angle = 0;
 
                 model.at("Head")->angle = 0;
                 model.at("Head")->offset.x = 0;
 
-                model.at("FrontEyebrow")->offset.y = 0;
-                model.at("BackEyebrow")->offset.y = 0;
-
-                model.at("FrontLeg")->angle = 0;
-                model.at("BackLeg")->offset.y = 0;
-
                 model.at("Body")->angle = 0;
+                louKick->isAtacking = false;
             }
 
 
@@ -620,10 +593,13 @@ namespace Rooster {
         void updateAnimations() override {
             // Abaixo temos
             // CA OS TO TAL
-            if (estadoUpdate) {
-                model.resetToBase();
+
+            //if (estadoUpdate) {
+               //model.resetToBase();
                 ///animations[0].playingFrame = 0;
-            }
+            //}
+
+
 
 
             //model.at("FrontArm")->angle = ArmSpinAngFase;
@@ -632,11 +608,12 @@ namespace Rooster {
             if (stunFrames <= 0) {
 
 
-                if (estado != RUNNING) {
-                    hspeed = 0;
+                if (air) {
+                    jumpAnim();
                 }
-
-
+                else {
+                    cairAnim();
+                }
 
 
 
@@ -645,7 +622,7 @@ namespace Rooster {
                     //highAtackAnim();
                 }
                 else if (atacking == LOW_KICK) {
-                    //louKickAnim();
+                    louKickAnim();
                 }
                 else if (atacking == SPECIAL) {
                     //especialAnim();

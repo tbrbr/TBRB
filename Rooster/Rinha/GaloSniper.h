@@ -460,6 +460,9 @@ namespace Rooster {
 
 
 		void updateAnimations() override {
+
+
+
 			if (estadoUpdate) {
 				model.resetToBase();
 				animations[0].playingFrame = 0;
@@ -468,46 +471,56 @@ namespace Rooster {
 			weatherAnim(frames);
 
 
-			if (air) {
-				jumpAnim();
-			}
-			else {
-				cairAnim();
-			}
+
 
 
 			model.at("FrontArm")->angle = ArmSpinAngFase;
 			model.at("BackArm")->angle = Arm2SpinAngFase;
 
-			if (estado == RUNNING) {
-				runAnim();
-			} else if (estado == DEFENDING) {
-				animations[0].update();
-				if (animations[0].playingFrame > 15) {
-					animations[0].playingFrame = 15;
+
+			if (!stunned) {
+
+
+				if (air) {
+					jumpAnim();
 				}
-				model.updateWithAnimation(animations[0]);
+				else {
+					cairAnim();
+				}
 
-			} else if (estado == STOPPED) {
-				runReset();
+
+
+				if (estado == RUNNING) {
+					runAnim();
+				}
+				else if (estado == DEFENDING) {
+					animations[0].update();
+					if (animations[0].playingFrame > 15) {
+						animations[0].playingFrame = 15;
+					}
+					model.updateWithAnimation(animations[0]);
+
+				}
+				else if (estado == STOPPED) {
+					runReset();
+				}
+
+
+				if (atacking == HIGH_KICK) {
+					highKickAnim();
+				}
+				else if (atacking == LOW_KICK) {
+					lowKickAnim();
+				}
+				else if (atacking == SPECIAL) {
+					especialAnim();
+				}
+
+				projectiles[0].update();
+
+				ultimateShot->hitbox.center = projectiles[0].getPosition();
+				ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
 			}
-
-
-			if (atacking == HIGH_KICK) {
-				highKickAnim();
-			}
-			else if (atacking == LOW_KICK) {
-				lowKickAnim();
-			}
-			else if (atacking == SPECIAL) {
-				especialAnim();
-			}
-
-			projectiles[0].update();
-
-			ultimateShot->hitbox.center = projectiles[0].getPosition();
-			ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
-
 		}
 
 

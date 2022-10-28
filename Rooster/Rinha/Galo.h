@@ -255,7 +255,6 @@ namespace Rooster {
         float vspeedLimit;
         float jumpSpeed;
         
-        Vector2f position;
 
         bool air;
 
@@ -271,6 +270,8 @@ namespace Rooster {
         
 
     public:
+
+        Vector2f position;
 
         // Attacks and Hitboxes
         int atacking;
@@ -413,7 +414,7 @@ namespace Rooster {
                 }
 
                 // Tempo de perda de controle sobre o Rooster
-                stunFrames = atk.Stun;
+                stunFrames = atk.Stun*2;
                 stunned = true;
 
                 // Tempo de invulnerabilidade
@@ -474,21 +475,30 @@ namespace Rooster {
                 //int add = 20*(0.7-perc)*sin(toRadiAnus(frames*2));
                 int add = 45;
                 g2->model.at("Head")->angle += add;
-                g2->model.at("FrontArm")->angle += add;
-                g2->model.at("BackArm")->angle += add;
+
+                // Previnindo Crash
+                if (g2->name != "Bota") {
+                    g2->model.at("FrontArm")->angle += add;
+                    g2->model.at("BackArm")->angle += add;
+                }
                
             }
             else {
                 g2->model.at("Head")->angle = 0;
-                g2->model.at("FrontArm")->angle = 0;
-                g2->model.at("BackArm")->angle = 0;
+
+                // Previnindo Crash
+                if (g2->name != "Bota") {
+                    g2->model.at("FrontArm")->angle = 0;
+                    g2->model.at("BackArm")->angle = 0;
+                }
             }
             
          
         }
         void jump() {
 
-            if (!stunned) {
+            if (!stunned || stunFrames < 0) {
+                stunned = false;
                 if (!air) {
                     vspeed += jumpSpeed;
                     air = true;
@@ -498,7 +508,8 @@ namespace Rooster {
         
         void run() {
 
-            if (!stunned) {
+            if (!stunned || stunFrames < 0) {
+                stunned = false;
                 float acc = hAcc * ((facingRight) ? 1:-1);
 
                 hspeed = constrain(hspeed + acc, -hspeedLimit, hspeedLimit);
@@ -535,12 +546,12 @@ namespace Rooster {
             for (int i = 0; i < hurtBox.size(); i++) {
 
 
-                //drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+               // drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 
             if (ultimateShot->isAtacking) {
-               // drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
             }
         }
 
@@ -566,15 +577,13 @@ namespace Rooster {
                 invunerable = false;
             }
             else {
-                invunerable = true;
                 invFrames--;
             }
 
-            if (stunFrames <= 0) {
+            if (stunFrames <= -400) {
                 stunned = false;
             }
             else {
-                stunned = true;
                 stunFrames--;
             }
 
@@ -627,8 +636,8 @@ namespace Rooster {
                 hspeed = 0;
             }
 
-            if (stunned && stunFrames < 20) {
-                hspeed *= 0.98;
+            if (stunned && stunFrames < 30) {
+                hspeed *= 0.95;
                 vspeed *= 0.98;
             }
             

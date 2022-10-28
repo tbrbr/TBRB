@@ -720,7 +720,11 @@ struct Model {
     }
 
     Element* at(std::string name) {
+
+
+
         int id = boneMap.at(name);
+        
         return allBones[id];
     }
 

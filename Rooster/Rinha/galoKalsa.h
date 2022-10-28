@@ -628,7 +628,7 @@ namespace Rooster {
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
 
-            if (stunFrames <= 0) {
+            if (!stunned) {
                 if (estado == RUNNING) {
                     runAnim();
                 }
@@ -644,9 +644,6 @@ namespace Rooster {
                     runReset();
                 }
 
-                if (estado != RUNNING) {
-                    hspeed = 0;
-                }
 
                 if (air) {
                     jumpAnim();
@@ -654,16 +651,6 @@ namespace Rooster {
                 else {
                     cairAnim();
                 }
-
-                if (air) {
-                    jumpAnim();
-                }
-                else {
-                    cairAnim();
-                }
-
-
-          
 
 
                 // Attack Animation

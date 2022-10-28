@@ -159,7 +159,7 @@ namespace Rooster {
             hspeed = 0;
         }
 
-        void fatality() override {
+        void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
             if (estado != FATALITY) {
                 estado = FATALITY;
                 

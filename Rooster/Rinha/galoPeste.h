@@ -9,7 +9,9 @@ namespace Rooster {
 
     class Peste : public Galo {
 
-        Texture t;
+        Texture textura;
+
+      
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
@@ -37,31 +39,37 @@ namespace Rooster {
 
             this->ultimateShot = new Ataques(8,
                 0.9, 0.5, HitBox{ Vector2f(0, 0), 0 },
-                10, 3, 0, milliseconds(2000),
+                10, 3, 0, milliseconds(1500),
                 "sounds\\awp.ogg"
             );
 
-            Projectile* cinto = new Projectile(
+            Projectile* rato = new Projectile(
                 Vector2f(0, 0),
-                "sprites\\Cinto.png",
+                "sprites\\rato.png",
                 0, 0, Vector2f(1, 1),
-                IntRect(0, 0, 603, 100)
+                IntRect(0, 0, 865, 606)
             );
 
 
             atacking = NOT_ATTACK;
-            projectiles.push_back(*cinto);
+            projectiles.push_back(*rato);
 
-            Projectile* n2 = new Projectile(true);
+            Projectile* n2 = new Projectile(
+                Vector2f(0, 0),
+                "sprites/pestepower.png",
+                0, 0, Vector2f(1, 1)            
+            );
+
+            n2->setOriginCenter();
             projectiles.push_back(*n2);
 
 
 
 
 
-            t.loadFromFile("sprites/galoPeste.png");
+            textura.loadFromFile("sprites/galoPeste.png");
 
-            model.tex = &t;
+            model.tex = &textura;
             model.loadModel("pesteModel.txt");
             model.autoSetBounds(model.at("Body"), model.at("BackLeg"), model.at("Head"));
 
@@ -84,6 +92,8 @@ namespace Rooster {
 
 
             bar = new LifeBar(maxHp, isp1, name.c_str());
+
+           
 
         }
 
@@ -182,6 +192,7 @@ namespace Rooster {
         }
         void especialAnim() {
             Time t = ultimateShot->init.getElapsedTime();
+            int time = t.asMilliseconds();
 
             if (t > ultimateShot->timeLapse) {
                 atacking = NOT_ATTACK;
@@ -192,65 +203,126 @@ namespace Rooster {
             int angFix = (facingRight) ? 1 : -1;
             angFix = -1;
 
+            static float positionx = position.x;
 
-            if (percentage < 0.5f / 3.f) {
+            if (percentage < 1.75f / 3.f) {
 
+                float thisPercentage = (percentage * 3)/1.75;
+        
+                projectiles[1].setImpulse(0, 0);
+                    
+                projectiles[1].setSpriteScale(
+                    0.5 * thisPercentage,
+                    0.25 * thisPercentage
+                );
+                
+                
+                projectiles[1].setPosition(
+                    positionx,
+                    floorY
+                );
+                    
+                projectiles[1].setVisibility(true);
+            }
+            else if (percentage < 2.5f / 3.f) {
+                float thisPercentage = (percentage * 3) / 2.5;
 
+                projectiles[1].setSpriteScale(
+                    0.5 - 0.5 * thisPercentage,
+                    0.25 - 0.25 * thisPercentage
+                );
+            }else
+                projectiles[1].setVisibility(false);
+           
+
+            if (percentage < 1.f / 3.f) {
+             
                 float thisPercentage = percentage * 3;
 
+
+                model.at("Body")->angle = 45 * sin(thisPercentage * PI / 2);
+                model.at("FrontArm")->angle = -30 * sin(thisPercentage * PI / 2);
+                model.at("BackLeg")->angle = -90 * sin(thisPercentage * PI / 2);          
+                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);;
+                model.at("FrontLeg")->offset.x = -5 * sin(thisPercentage * PI / 2);
+                model.at("BackLeg")->offset.y = 5 * sin(thisPercentage * PI / 2);
+                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = 90 * sin(thisPercentage * PI / 2);
 
             }
             else if (percentage < 2.f / 3.f) {
                 float thisPercentage = percentage * 3;
 
-
+                model.at("Body")->angle = 45;
+                model.at("FrontArm")->angle = -30;
+                model.at("BackLeg")->angle = -90;
+                model.at("FrontLeg")->angle = 0;
+                model.at("Head")->angle = -20;
+                model.at("FrontLeg")->offset.x = -5;
+                model.at("BackLeg")->offset.y = 5;
+                model.at("FrontArm")->angle = 45;
+                model.at("BackArm")->angle = 90;
+                
             }
             else if (percentage < 2.05f / 3.f) {
-                ultimateShot->playSound();
+                //ultimateShot->playSound();
             }
             else if (percentage < 2.2f / 3.f) {
 
 
 
                 projectiles[0].setVisibility(true);
-
+                projectiles[0].setScale(Vector2f(1, 1));
 
                 projectiles[0].setPosition(
                     Vector2f(model.at("BackArm")->drawPos.x,
-                        (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 2)
+                        (floorY - projectiles[0].getSize().y)
                     )
                 );
-
+                
+              
+                                   
                 if (facingRight) {
-                    projectiles[0].setImpulse(20, 0);
-                    projectiles[0].setScale(Vector2f(0.5, 0.5));
+                    projectiles[0].setImpulse(3, 0);
+                    projectiles[0].setScale(Vector2f(-0.2, 0.2));
                 }
 
                 else {
-                    projectiles[0].setImpulse(-20, 0);
-                    projectiles[0].setScale(Vector2f(-0.5, 0.5));
+                    projectiles[0].setImpulse(-3, 0);
+                    projectiles[0].setScale(Vector2f(0.2, 0.2));
                 }
 
 
                 ultimateShot->isAtacking = true;
             }
             else if (percentage < 2.5f / 3.f) {
-
-
-
-
+                
+               
             }
             else if (percentage < 2.9 / 3.f) {
-
+                
+                model.at("Body")->angle *= 0.9;
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackLeg")->angle *= 0.9;
+                model.at("FrontLeg")->angle *= 0.9;
+                model.at("Head")->angle *= 0.9;
+                model.at("FrontLeg")->offset.x *= 0.9;
+                model.at("BackLeg")->offset.y *= 0.9;
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackArm")->angle *= 0.9;
             }
             else {
-
+                model.at("Body")->angle = 0;
+                model.at("FrontArm")->angle = 0;
+                model.at("BackArm")->angle = 0;
+                model.at("Head")->angle = 0;
             }
         }
 
+
         void louKickAnim() {
             Time t = louKick->init.getElapsedTime();
-
+            int time = t.asMilliseconds();
             if (t > louKick->timeLapse) {
                 atacking = STOPPED;
             }
@@ -340,68 +412,70 @@ namespace Rooster {
 
             float percentage = (float)t.asMilliseconds() / (hiKick->timeLapse.asMilliseconds());
 
-            if (percentage < 0.5 / 3.f) {
+            if (percentage < 1 / 3.f) {
 
                 float thisPercentage = percentage * 6;
 
-                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
-                model.at("BackArm")->angle = -90 * sin(thisPercentage * PI / 2);
+                model.at("FrontArm")->angle = -90 * sin(thisPercentage * PI / 2);
+
+                model.at("BackArm")->angle = 60 * sin(thisPercentage * PI / 2);
+
+                model.at("Head")->angle = 20 * sin(thisPercentage * PI / 2);
+             
+                model.at("Body")->angle = 20 * sin(thisPercentage * PI / 2);
+
                 model.at("BackLeg")->angle = 15 * sin(thisPercentage * PI / 2);
-                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
-                model.at("FrontEyebrow")->offset.y += 1;
-                model.at("BackEyebrow")->offset.y += 1;
-                model.at("FrontLeg")->offset.y = -20 * sin(thisPercentage * PI / 2);
+                model.at("FrontLeg")->angle = -20 * sin(thisPercentage * PI / 2);
 
-            }
-            else if (percentage < 1.f / 3.f) {
-                float thisPercentage = percentage * 3;
-
-                model.at("Body")->angle = -60 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = 50 * sin(thisPercentage * PI / 2);
-
+          
             }
             else if (percentage < 2.f / 3.f) {
+                float thisPercentage = (percentage/2 * 3);
 
-                model.at("Body")->angle = 60;
-                model.at("BackLeg")->angle = 50;
-                model.at("FrontLeg")->angle = -45;
-                model.at("BackLeg")->offset.x -= 1;
-                model.at("BackLeg")->offset.y -= 1;
-                model.at("FrontArm")->angle = -45;
-                model.at("BackArm")->angle = 90;
+                model.at("Body")->angle = 1 * sin(thisPercentage * PI / 2);;
+                model.at("FrontArm")->angle = -10 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = -45 * sin(thisPercentage * PI / 2);
+                model.at("Head")->angle = -10 * sin(thisPercentage * PI / 2);
+
+                model.at("FrontLeg")->angle = -15 * sin(thisPercentage * PI / 2);
+                model.at("BackLeg")->angle = 20 * sin(thisPercentage * PI / 2);
+                if(facingRight)
+                    hiKick->hitbox.center.x = model.at("BackArm")->drawPos.x + model.at("BackArm")->sprite.getGlobalBounds().width - 20;
+                else 
+                    hiKick->hitbox.center.x = model.at("BackArm")->drawPos.x - model.at("BackArm")->sprite.getGlobalBounds().width + 20;
+
+                hiKick->hitbox.center.y = model.at("BackArm")->drawPos.y - model.at("BackArm")->sprite.getGlobalBounds().height/4;
+
+                hiKick->hitbox.radius = 40;
+                hiKick->isAtacking = true;
+                
             }
             else if (percentage < 2.9f / 3.f) {
 
                 model.at("Body")->angle *= 0.9;
-                model.at("BackLeg")->angle *= 0.9;
-                model.at("BackLeg")->offset.x *= 0.9;
-                model.at("BackLeg")->offset.y *= 0.9;
+                model.at("BackLeg")->angle *= 0.9;               
                 model.at("FrontArm")->angle *= 0.9;
-                model.at("BackArm")->angle *= 0.9;
-                model.at("FrontLeg")->offset.y *= 0.9;
+                model.at("BackArm")->angle *= 0.9;               
                 model.at("Head")->angle *= 0.9;
+                hiKick->isAtacking = false;
             }
             else {
                 model.at("Body")->angle = 0;
                 model.at("BackLeg")->angle = 0;
-                model.at("BackLeg")->offset.x = 0;
-                model.at("BackLeg")->offset.y = 0;
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
-                model.at("FrontLeg")->offset.y = 0;
                 model.at("Head")->angle *= 0;
-                model.at("FrontEyebrow")->offset.y = 0;
-                model.at("BackEyebrow")->offset.y = 0;
             }
         }
 
         void updateAnimations() override {
             if (estadoUpdate) {
-               // model.resetToBase();
-              // animations[0].playingFrame = 0;
+                model.resetToBase();
+                animations[0].playingFrame = 0;
             }
 
-          
+            //weatherAnim(frames);
+
 
             if (air) {
                 jumpAnim();
@@ -409,6 +483,8 @@ namespace Rooster {
             else {
                 cairAnim();
             }
+
+
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
 
@@ -416,34 +492,71 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
-                /*
-                animations[0].update();
-                if (animations[0].playingFrame > 15) {
+               animations[0].update();
+               if (animations[0].playingFrame > 15) {
                     animations[0].playingFrame = 15;
-                }
-                model.updateWithAnimation(animations[0]);
-                */
+               }
+               // model.updateWithAnimation(animations[0]);
+
             }
             else if (estado == STOPPED) {
                 runReset();
             }
 
 
-
             if (atacking == HIGH_KICK) {
-                // highAtackAnim();
+                highAtackAnim();
             }
             else if (atacking == LOW_KICK) {
-                // louKickAnim();
+                //lowKickAnim();
             }
             else if (atacking == SPECIAL) {
-                // especialAnim();
+                especialAnim();
             }
 
             projectiles[0].update();
+            if (projectiles[0].getVisibility()) {
+
+                int i = (frames % 30) / 10;
+
+                projectiles[0].setTextureRec(IntRect(864 * i, 0, 864, 606));
+              
+                ultimateShot->hitbox.center.x = projectiles[0].getPosition().x - projectiles[0].getSize().y / 2;
+                ultimateShot->hitbox.center.y = projectiles[0].getPosition().y;
+                ultimateShot->hitbox.radius = projectiles[0].getSize().y/2;
+            }
+            
         }
 
+        void fatality(RenderWindow* window,Galo* galo2, RectangleShape fundo)override {
 
+            Clock Timer;
+            Timer.restart();
+            
+            while (window->isOpen()) {
+
+                int time = Timer.getElapsedTime().asMilliseconds();
+
+                window->clear();
+                window->draw(fundo);
+
+                Event e;
+                while (window->pollEvent(e))
+                {
+                    if (e.type == Event::Closed)
+                    {
+                        window->close();
+                    }
+
+                }
+                if (time < 2000) {
+                    fundo.setFillColor(Color((2000 - time) / 255, (2000 - time) / 255, (2000 - time) / 255));
+
+                }
+
+                window->display();
+            }
+        }
         
     };
 

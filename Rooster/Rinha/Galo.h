@@ -514,17 +514,16 @@ namespace Rooster {
         void show(sf::RenderWindow& window) {
 
 
-            if (projectiles[0].isTrans)
-                projectiles[0].drawTrans(window);
-            else
-                projectiles[0].draw(window);
+           
 
-            /*
-            for (int i = 0; i < 2; i++) {
+            
+            for (int i = 0; i < projectiles.size(); i++) {
                 if(!projectiles[i].NULO)
-                    projectiles[i].draw(window);
-                println("é possivel");
-            }*/
+                    if (projectiles[i].isTrans)
+                        projectiles[i].drawTrans(window);
+                    else
+                        projectiles[i].draw(window);             
+            }
             
            
             model.draw(window);
@@ -540,7 +539,7 @@ namespace Rooster {
             }
 
             if (ultimateShot->isAtacking) {
-               // drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
             }
         }
 
@@ -644,7 +643,7 @@ namespace Rooster {
         virtual void updateAnimations() = 0;
 
         
-        virtual void fatality() {
+        virtual void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) {
 
         }
 

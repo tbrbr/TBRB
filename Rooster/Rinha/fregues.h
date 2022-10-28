@@ -17,7 +17,7 @@ Packet* inputToPacket(void* input) {
 }
 
 void inline connectToServer(unsigned short port) {
-	socketudp.bind(54000);	
+	socketudp.bind(port);	
 }
 
 void inline sendData(Packet pacotinho,IpAddress recebedorip,unsigned short recipientPort) {

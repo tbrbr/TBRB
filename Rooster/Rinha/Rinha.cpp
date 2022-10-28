@@ -65,6 +65,8 @@ using namespace Rooster;
 
 int main() {
 
+
+
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -107,7 +109,7 @@ int main() {
 	bruxoSt = { 60, 10, 10, 10, 5 };
 
 	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-	Galo* galo2 = NULL;
+	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 
 
 	Pato *miniGame1 = new Pato((*window));

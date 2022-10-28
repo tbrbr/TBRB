@@ -64,7 +64,27 @@ namespace Rooster {
 
             model.tex = &t;
             model.loadModel("bruxoModel.txt");
+
+            println("BRUXO CARREGOU");
+
+            // Testando adicionar partes extras
+            
+            model.addElement(*model.at("FrontArm"), "FrontArm2");
+            model.at("FrontArm2")->setBaseAlpha(0);
+
+
+            model.addElement(*model.at("FrontArm"), "FrontArm3");
+            model.at("FrontArm3")->setBaseAngle(20);
+            model.at("FrontArm3")->setBaseAlpha(0);
+            
+
+            model.addElement(*model.at("FrontArm"), "FrontArm4");
+            model.at("FrontArm4")->setBaseAngle(40);
+            model.at("FrontArm4")->setBaseAlpha(0);
+            
+
             model.autoSetBounds(model.at("Body"), model.at("BackShoe"), model.at("Head"));
+        
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
@@ -74,6 +94,8 @@ namespace Rooster {
 
                 hurtBox.push_back(*hit);
             }
+
+
 
             delete hit;
 

@@ -281,6 +281,8 @@ namespace Rooster {
         std::vector<HitBox> hurtBox;
         std::vector<Projectile> projectiles;
 
+        bool attackStart = false;
+
         Ataques* hiKick;
         Ataques* louKick;
         Ataques* ultimateShot;

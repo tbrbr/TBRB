@@ -5,22 +5,27 @@
 
 void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, RectangleShape fundo) {
 
-	UdpSocket socketudp;
-	unsigned short myport = 59001;
-	unsigned short portaofmota = 59000;
+	UdpSocket socket;
+	IpAddress ip = IpAddress::getLocalAddress();
 
-	cout << IpAddress::getLocalAddress();
-	sf::IpAddress recipient = "10.50.208.56";
 
-	if (socketudp.bind(myport) != Socket::Done) {
-		cout << "nao bindou";
-		return;
+	IpAddress ipwal = "10.50.203.95";
+
+	unsigned short port = 59000;
+	unsigned short portofwal = 59001;
+	socket.setBlocking(false);
+
+	if (socket.bind(port) != Socket::Done) {
+		cout << "ERAIOEIURPOAIERU";
+	}
+	else {
+		cout << "\nBindou\n";
 	}
 
-	socketudp.setBlocking(false);
 
-		
-
+	sf::IpAddress recipient = "10.50.280.56";
+	
+	
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
@@ -82,12 +87,10 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 	int framesRound = 60;
 	int framesFight = 0;
 
-	char c = '0';
-
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
-		
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -111,7 +114,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 
 		if (mainInput.inputState[player][GOUP][1])
 		{
-			c = 'W';
 			galo.jump();
 		}
 
@@ -157,19 +159,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 		
 
 		galo.update();
-;
-		
-		char c2 = '0';
-		size_t meta;
 
 
-		socketudp.receive(&c2,1, meta, recipient, portaofmota);
-		socketudp.send(&c, 1, recipient, portaofmota);
 		
-		if (c2 == 'w') {
-			galo2->jump();
-		}
-		galo2->update();
 		if (galo.ultimateShot->getHitted) {
 			galo.apanharByKalsa(galo2, window);
 		}
@@ -215,7 +207,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 
 
 		window->display();
-		c = '0';
 	}
 }
 

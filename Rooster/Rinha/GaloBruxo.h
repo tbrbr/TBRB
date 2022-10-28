@@ -416,12 +416,15 @@ namespace Rooster {
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
 
+
             if (air) {
                 jumpAnim();
             }
             else {
                 cairAnim();
             }
+
+
 
             if (estado == RUNNING) {
                 runAnim();

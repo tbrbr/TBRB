@@ -56,6 +56,7 @@ Rooster::ParticleSystem mainPartSystem;
 #include "galoKalsa.h"
 #include "GaloBruxo.h"
 #include "galoPeste.h"
+#include "galoBota.h"
 using namespace Rooster;
 
 #include "Briga.h"
@@ -67,7 +68,7 @@ using namespace Rooster;
 
 int main() {
 
-	
+
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -127,9 +128,6 @@ int main() {
 
 	while (window->isOpen())
 	{
-
-		
-			
 		
 		switch (option)
 		{

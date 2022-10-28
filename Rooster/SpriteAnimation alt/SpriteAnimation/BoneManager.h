@@ -98,6 +98,14 @@ struct BoneManager{
     struct ValBox xWholeSclBox;
     struct ValBox yWholeSclBox;
 
+    int selectedBox = 0;
+    bool loading = false;
+    bool saving = false;
+    bool usingPathBox = false;
+
+    struct ValBox pathBox;
+
+
 
     void init(Texture& t, Texture& toolbar, struct engineInfo& info){
 
@@ -146,6 +154,13 @@ struct BoneManager{
         xWholeSclBox.label = "XScl";
         yWholeSclBox.init(0, 120, info.GUI.uBar.hei/2 - 30/2, 40, 30, 1);
         yWholeSclBox.label = "YScl";
+
+        float pathBoxWid = 300;
+        float pathBoxHei = 40;
+        pathBox.init(2, info.screenWidth/2 - pathBoxWid/2, info.screenHeight/2 - pathBoxHei/2, pathBoxWid, pathBoxHei, "");
+        pathBox.confirmOutOfFocus = false;
+        pathBox.label = "Nothing";
+
 
 
 
@@ -366,6 +381,12 @@ struct BoneManager{
         }
 
 
+        if(usingPathBox){
+
+            pathBox.draw(window);
+
+        }
+
 
     }
 
@@ -450,49 +471,182 @@ struct BoneManager{
         }
 
 
-       // if(info.typing == false){
+ // if(info.typing == false){
             if(info.keyboardState[sf::Keyboard::LControl][0]){
                 if(info.keyboardState[sf::Keyboard::N][2]){
-                    int index = 0;
-                    std::ifstream file("bruxoModel.txt");
-                    while(file.good()){
 
-                        file.close();
-                        index++;
 
-                        std::string str = "bruxoModel";
-                        str += std::to_string(index);
-                        str += ".txt";
-                        file.open(str);
+                    if(usingPathBox && selectedBox == 0){
+
+
+                        /// This is for safety
+                        std::string saveName = pathBox.sVal;
+
+                        std::string savePath = saveName;
+                        savePath += ".txt";
+
+                        std::ifstream file( savePath );
+
+                        int index = 0;
+                        while(file.good()){
+
+                            file.close();
+
+                            index++;
+
+                            std::string str = saveName;
+                            str += std::to_string(index);
+                            str += ".txt";
+                            file.open(str);
+                        }
+
+                        if(index != 0){
+                            std::string str = saveName;
+                            str += std::to_string(index);
+                            str += ".txt";
+
+                            saveModel(str);
+
+                        }else {
+                            saveModel(savePath);
+                        }
+
+                        selectedBox = -1;
+                        usingPathBox = false;
+
+
+
+                    } else {
+
+                        pathBox.setValue("model");
+                        pathBox.label = "Saving Model - Name";
+
+                        selectedBox = 0;
+                        usingPathBox = true;
                     }
-                    if(index != 0){
-                        std::string str = "bruxoModel";
-                        str += std::to_string(index);
-                        str += ".txt";
 
-                        saveModel(str);
-                    }else {
-                        saveModel("bruxoModel.txt");
-                    }
-                    //println("Nice creation");
+
+
                 }
 
                 if(info.keyboardState[sf::Keyboard::O][1]){
-                    loadAnimation("kalsaAnim.txt", info);
+
+
+                    if(usingPathBox && selectedBox == 2){
+
+
+                        std::string loadName = pathBox.sVal;
+
+                        std::string loadPath = loadName;
+                        loadPath += ".txt";
+
+
+                        loadAnimation(loadPath, info);
+
+                        selectedBox = -1;
+                        usingPathBox = false;
+
+
+                    }else {
+
+                        pathBox.setValue("animation");
+                        pathBox.label = "Load Animation - Name";
+
+                        selectedBox = 2;
+                        usingPathBox = true;
+                    }
+
+
+
+
+
                 }
 
                 if(info.keyboardState[sf::Keyboard::L][2]){
-                    loadModel("kalsaModel.txt", info);
-                   // println("Nice load");
+
+
+                    if(usingPathBox && selectedBox == 1){
+
+
+                        std::string loadName = pathBox.sVal;
+
+                        std::string loadPath = loadName;
+                        loadPath += ".txt";
+
+
+                        loadModel(loadPath, info);
+
+                        selectedBox = -1;
+                        usingPathBox = false;
+
+
+                    }else {
+
+                        pathBox.setValue("model");
+                        pathBox.label = "Load Model - Name";
+
+                        selectedBox = 1;
+                        usingPathBox = true;
+                    }
+
+
+
                 }
 
                 if(info.keyboardState[sf::Keyboard::P][1]){
-                    saveAnimation("kalsaAnim.txt");
-                    //println("Nice Anim creation");
+
+                    if(usingPathBox && selectedBox == 3){
+
+
+                        /// This is for safety
+                        std::string saveName = pathBox.sVal;
+
+                        std::string savePath = saveName;
+                        savePath += ".txt";
+
+                        std::ifstream file( savePath );
+
+                        int index = 0;
+                        while(file.good()){
+
+                            file.close();
+
+                            index++;
+
+                            std::string str = saveName;
+                            str += std::to_string(index);
+                            str += ".txt";
+                            file.open(str);
+                        }
+
+                        if(index != 0){
+                            std::string str = saveName;
+                            str += std::to_string(index);
+                            str += ".txt";
+
+                            saveAnimation(str);
+
+                        }else {
+                            saveAnimation(savePath);
+                        }
+
+                        selectedBox = -1;
+                        usingPathBox = false;
+
+
+
+                    } else {
+
+                        pathBox.setValue("animation");
+                        pathBox.label = "Saving Animation - Name";
+
+                        selectedBox = 3;
+                        usingPathBox = true;
+                    }
+
                 }
             }
        // }
-
 
 
 
@@ -996,6 +1150,14 @@ struct BoneManager{
             }
             timeManager.updatePosStuff(info);
         //}
+
+
+
+        if(usingPathBox){
+            pathBox.update(info);
+        }
+
+
 
 
 

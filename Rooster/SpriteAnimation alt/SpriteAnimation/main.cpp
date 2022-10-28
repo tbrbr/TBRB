@@ -920,7 +920,7 @@ int main(){
 
     Rooster::HitBox hb;
     Texture t;
-    t.loadFromFile("sprites/galoPeste.png");
+    t.loadFromFile("sprites/galoBota.png");
 
     Texture texToolbar;
     texToolbar.loadFromFile("sprites/toolbar.png");

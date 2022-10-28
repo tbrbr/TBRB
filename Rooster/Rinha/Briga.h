@@ -198,19 +198,13 @@
 				}
 				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
 					if (galo2.ultimateShot->id == 5) {
-
-						if (galo2.ultimateShot->id == 5) {
-
-							if (!galo2.ultimateShot->getHitted) {
-								galo2.ultimateShot->getHitted = true;
-								galo2.ultimateShot->init2.restart();
-							}
-
-
-
-						}
-						else
-							galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+						if (!galo2.ultimateShot->getHitted) {
+							galo2.ultimateShot->getHitted = true;
+							galo2.ultimateShot->init2.restart();
+						}	
+					}
+					else {
+						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
 					}
 				}
 			}

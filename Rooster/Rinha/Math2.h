@@ -19,13 +19,7 @@ int sign(float val) {
 	}
 	return 0;
 }
-//minimo
-float MIN(float x, float y) {
-	return x > y ? y : x;
-}
-float MAX(float x, float y) {
-	return x > y ? x : y;
-}
+
 void drawFibonacci(int a,RenderWindow * window) {
 	CircleShape b(a);
 	b.setFillColor(Color::Blue);
@@ -43,24 +37,21 @@ void drawFibonacci(int a,RenderWindow * window) {
 
 
 // Maximo Minimo e Constrain que e os dois juntos
-float maximum(float val, float max) {
-	if (val > max) {
-		return val;
-	}
-	return max;
+float maximum(float x, float y) {
+	return x > y ? y : x;
 }
 
-float minimum(float val, float min) {
-	if (val < min) {
-		return val;
-	}
-	return min;
+float minimum(float x, float y) {
+	return x > y ? x : y;
 }
 
 
 float constrain(float val, float min, float max) {
 	return maximum(minimum(val, max), min);
 }
+
+
+
 
 
 

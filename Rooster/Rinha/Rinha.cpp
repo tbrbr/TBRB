@@ -82,8 +82,8 @@ int main() {
 
 
 	int option = INTRO;
-	option = MENU_PRINCIPAL;
 	option = BOTAPRAARROCHAR;
+	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 

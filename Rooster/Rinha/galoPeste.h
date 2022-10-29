@@ -532,6 +532,60 @@ namespace Rooster {
             Clock Timer;
             Timer.restart();
             
+            
+
+            class corvo {
+                Texture Corvo;
+                Sprite sprite;
+                float hspd;
+                float vspd;
+                Vector2f position;
+                Vector2f scl;
+            public:
+                corvo(float hspd,float vspd,Vector2f position, Vector2f scl) {
+                    this->hspd = hspd;
+                    this->vspd = vspd;
+                    this->position = position;
+                    Corvo.loadFromFile("sprites/corvo.png");
+                    sprite.setTexture(Corvo);
+                    
+                }
+                void update() {
+                   
+                    int sizeCorvo[3] = {500,748,643};
+                    if (hspd < 0)
+                        if(scl.x > 0)
+                            scl.x *= -1;
+                    
+                    position.x += hspd;
+                    position.y += vspd;
+
+                    sprite.setScale(scl);
+                    //sprite.setRotation()
+                    static int Frames = 0;
+                    Frames++;
+                    int sprSelected = (Frames/60) % 3;
+                    int sprx;
+
+                    if (sprSelected == 0) {
+                        sprx = 0;
+                    }
+                    else if (sprSelected == 1) {
+                        sprx = 500;
+                    }
+                    else if (sprSelected == 2) {
+                        sprx = 500 + 748;
+                    }
+                   
+                    sprite.setTextureRect(IntRect(sprx,0,sizeCorvo[sprSelected],829));
+                    sprite.setPosition(position);
+                }
+                void draw(RenderWindow * window) {
+                    window->draw(sprite);
+                }
+            };
+
+
             while (window->isOpen()) {
 
                 int time = Timer.getElapsedTime().asMilliseconds();
@@ -548,8 +602,10 @@ namespace Rooster {
                     }
 
                 }
-                if (time < 2000) {
-                    fundo.setFillColor(Color((2000 - time) / 255, (2000 - time) / 255, (2000 - time) / 255));
+                if (time < 3500) {
+                    static int color = 255;                    
+                    color--;
+                    fundo.setFillColor(Color(color,color,color));
 
                 }
 

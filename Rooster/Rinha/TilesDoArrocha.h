@@ -1,39 +1,93 @@
-/*agora sim*/
-/*
-#define  TECLAS  4
-#define  TECLASPRETAS  3
 
-void setup(RectangleShape teclas[],int sizex,int sizey) {
+struct musica {
+	Music music;
+	//mapa de teclas que eu vou implementar nstt
+};
+class nota {
 
-	for (int i = 0; i < TECLAS; i++) {
-		teclas[i].setSize(Vector2f(sizex, sizey));
-		teclas[i].setPosition(SCREEN_WIDTH / 2 - sizex * 2 + sizex * i, SCREEN_HEIGHT / 2 - sizey / 2);
-		teclas[i].setFillColor(Color::White);
-		teclas[i].setOutlineThickness(SCREEN_WIDTH / 150);
-		teclas[i].setOutlineColor(Color::Black);
+	int vAcc = 1;
+	Vector2f position;
+	ConvexShape trapezio;
+public:
+	nota(int coluna) {
+		this->position.x = coluna;
+
+		
+		trapezio.setPointCount(4);
+
+		float baseMenor = 5 * SCREEN_WIDTH/60;
+		//float baseMaior = 30;
+		float altura = 2 * SCREEN_HEIGHT / 25;
+
+		trapezio.setPoint(0, Vector2f(0,0));
+		trapezio.setPoint(1, Vector2f(baseMenor, 0));
+		trapezio.setPoint(2, Vector2f(baseMenor, altura));
+		trapezio.setPoint(3, Vector2f(0, altura));
+
+		trapezio.setFillColor(Color::Red);
+
+
+		// eu queria deixar eles na posicao inicial
+		// ai voce tems sla x teclas
+		//elas comecam la em cima no y = 0;
+		int x = coluna - 2;
+		trapezio.setPosition(SCREEN_WIDTH/ 2  + (x * baseMenor),0);
 	}
-}
-void setupBlack(RectangleShape teclasPretas[], int sizepretax, int sizepretay,int sizex) {
-	for (int i = 0; i < TECLASPRETAS; i++) {
-		teclasPretas[i].setSize(Vector2f(sizepretax, sizepretay));
-		teclasPretas[i].setPosition(
-			SCREEN_WIDTH / 2 - sizex * 2 + sizex * i + sizepretax * 1.5 - SCREEN_WIDTH / 300,
-			SCREEN_HEIGHT * 0.3
-		);
-		teclasPretas[i].setFillColor(Color::Black);
+
+	void update() {
+		int baseMenor = 5 * SCREEN_WIDTH / 60;
+		position.y += vAcc;
+		trapezio.setPosition(SCREEN_WIDTH / 2 + ((position.x - 2) * baseMenor), position.y);
 	}
-}
-*/
+	void draw(RenderWindow* window) {
+		// Nicer
+		window->draw(trapezio);
+	}
+	bool checkCollision() {
+		// Nice
+	}
+	
+	
+};
 
-Vector2f coordCertas(Vector2f vec, float baseMenor, float baseMaior, float altura) {
 
+class Yamaha {
 
+	std::vector<nota> notas;
 
+	int bpm = 100;//ui UUUIII
 
+	Vector2f position; //x = Barra 0, 1, 2, 3 y = Altura que a nota ta
+	
+public:
+	Yamaha() {
+		
+		nota a(rand() % 4);
+		notas.push_back(a);
+		
+	}
 
-}
+	void update() {
+		static int frames = 0;
+		frames++;
+		if (frames % bpm == 0) {
+			nota a(rand() % 4);
+			notas.push_back(a);
+		}
+			
+		for (int i = 0; i < notas.size(); i++) {
+			notas[i].update();
+		}
+	}
 
+	void draw(RenderWindow* window) {
+		for (int i = 0; i < notas.size(); i++) {
+			notas[i].draw(window);
+		}
 
+	}
+
+};
 
 bool pianoTiles(RenderWindow* window) {
 
@@ -109,7 +163,6 @@ bool pianoTiles(RenderWindow* window) {
 
 	 
 
-	ConvexShape notas;
 	teclado.loadFromFile("sprites/teclas.png");
 
 	for (int i = 0; i < 4; i++) {
@@ -121,11 +174,7 @@ bool pianoTiles(RenderWindow* window) {
 	}
 
 
-	 
-
-	//std::Vector <ConvexShape> notas;
-
-	
+	Yamaha alcides;
 
 
 	Clock timer;
@@ -160,6 +209,8 @@ bool pianoTiles(RenderWindow* window) {
 		for (int i = 0; i < 4; i++) {
 			window->draw(teclas[i]);
 		}
+		alcides.update();
+		alcides.draw(window);
 		window->display();
 	}
 

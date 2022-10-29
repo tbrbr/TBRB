@@ -19,8 +19,13 @@ int sign(float val) {
 	}
 	return 0;
 }
-
-
+//minimo
+float MIN(float x, float y) {
+	return x > y ? y : x;
+}
+float MAX(float x, float y) {
+	return x > y ? x : y;
+}
 void drawFibonacci(int a,RenderWindow * window) {
 	CircleShape b(a);
 	b.setFillColor(Color::Blue);

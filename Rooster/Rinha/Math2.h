@@ -37,12 +37,18 @@ void drawFibonacci(int a,RenderWindow * window) {
 
 
 // Maximo Minimo e Constrain que e os dois juntos
-float maximum(float x, float y) {
-	return x > y ? y : x;
+float maximum(float val, float val2) {
+	if (val > val2) {
+		return val;
+	}
+	return val2;
 }
 
-float minimum(float x, float y) {
-	return x > y ? x : y;
+float minimum(float val, float val2) {
+	if (val < val2) {
+		return val;
+	}
+	return val2;
 }
 
 

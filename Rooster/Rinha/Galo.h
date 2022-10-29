@@ -526,9 +526,11 @@ namespace Rooster {
 
             if (!stunned || stunFrames < 0) {
                 stunned = false;
+
                 float acc = hAcc * ((facingRight) ? 1:-1);
 
                 hspeed = constrain(hspeed + acc, -hspeedLimit, hspeedLimit);
+
             }
         } 
 

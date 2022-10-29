@@ -561,11 +561,11 @@ namespace Rooster {
                     position.y += vspd;
 
                     sprite.setScale(scl);
-                    //sprite.setRotation()
+                    sprite.setRotation(-sin(vspd));
                     static int Frames = 0;
                     Frames++;
                     int sprSelected = (Frames/60) % 3;
-                    int sprx;
+                    int sprx = 0;
 
                     if (sprSelected == 0) {
                         sprx = 0;
@@ -581,10 +581,11 @@ namespace Rooster {
                     sprite.setPosition(position);
                 }
                 void draw(RenderWindow * window) {
+                    println("chega aqui");
                     window->draw(sprite);
                 }
             };
-
+            std::vector <corvo> corvos;
 
             while (window->isOpen()) {
 
@@ -608,7 +609,28 @@ namespace Rooster {
                     fundo.setFillColor(Color(color,color,color));
 
                 }
-
+                else if (time < 6500) {
+                    corvo a(
+                        rand() % 10 - 5,
+                        rand() % 10 - 5,
+                        Vector2f(
+                            rand() % SCREEN_WIDTH,
+                            rand() % SCREEN_HEIGHT
+                        ),
+                        Vector2f(
+                            1,//rand() % 5/10,
+                            1//rand() % 5/10
+                        )
+                    );
+                    corvos.push_back(a);
+                    for (int i = 0; i < corvos.size(); i++) {
+                        corvos[i].update();
+                        corvos[i].draw(window);
+                    }
+                }
+                
+                galo2->show(*window);
+                show(*window);
                 window->display();
             }
         }

@@ -78,7 +78,7 @@ int introducao(RenderWindow* window) {
 	texto8.setFillColor(Color(255, 255, 255, 204));
 	texto8.setCharacterSize(SCREEN_WIDTH / 35);
 	texto8.setFont(price);
-	texto8.setString("DURANTE  O   DESENVOLVIMENTO  DA  THE  BEST ROOSTER\nBRASIL NENHUM  GALO  SOFREU NENHUM TIPOS  DE   DANO\nFÍSICO,  MENTAL   OU   MAUS  TRATOS, A  TBRB  DEFENDE\nOS  DIREITOS DOS  ANIMAIS.\n\n         DIGA  NÃO  AOS  MAUS  TRATOS  AOS  ANIMAIS		\n                    DIGA  SIM  A  PL  N°  1037 / 2020");
+	texto8.setString("DURANTE  O   DESENVOLVIMENTO  DA  THE  BEST ROOSTER\nBRASIL NENHUM  GALO  SOFREU NENHUM TIPO  DE   DANO\nFÍSICO,  MENTAL   OU   MAUS  TRATOS, A  TBRB  DEFENDE\nOS  DIREITOS DOS  ANIMAIS.\n\n         DIGA  NÃO  AOS  MAUS  TRATOS  AOS  ANIMAIS		\n                    DIGA  SIM  A  PL  N°  1037 / 2020");
 	texto8.setPosition((SCREEN_WIDTH - texto8.getGlobalBounds().width) / 2, SCREEN_HEIGHT / 3);
 
 	for (int i = 0; i < 52; i++) {
@@ -308,19 +308,19 @@ int introducao(RenderWindow* window) {
 			window->draw(texto5);
 			window->draw(texto6);
 		}
-		else if (timer > 89000 && timer < 94000) {
-			if (timer > 89000 && timer < 93000) {
+		else if (timer > 89000 && timer < 100000) {
+			if (timer > 89000 && timer < 99000) {
 				texto7.setFillColor(Color(193, 0, 0, 204));
 				texto8.setFillColor(Color(255, 255, 255, 204));
 			}
 			else {
-				texto7.setFillColor(Color(193, 0, 0, (204 - (204 * (timer - 93000)) / 1000)));
-				texto8.setFillColor(Color(255, 255, 255, (204 - (204 * (timer - 93000)) / 1000)));
+				texto7.setFillColor(Color(193, 0, 0, (204 - (204 * (timer - 99000)) / 1000)));
+				texto8.setFillColor(Color(255, 255, 255, (204 - (204 * (timer - 99000)) / 1000)));
 			}
 			window->draw(texto7);
 			window->draw(texto8);
 		}
-		else if (timer > 89000) {
+		else if (timer > 100000) {
 			return 2;
 
 		}

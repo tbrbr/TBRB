@@ -55,7 +55,9 @@ float ruleOfThree(float val, float valMin, float valMax, float outMin, float out
 	float perc = (val - valMin) / (valMax - valMin);
 	return outMin + (outMax - outMin) * perc;
 }
-
+float ruleOfThree(float val, float valMax, float val2Max) {
+	return (val / valMax) * val2Max;
+}
 
 
 

@@ -5,8 +5,15 @@ struct musica {
 };
 
 
-float fixCoord(float baseMenor, float baseMaior, float altura, Vector2f vec) {
+Vector2f fixCoord(float baseMenor, float baseMaior, float altura, Vector2f vec) {
+	
 
+
+
+	float y = vec.y;
+	float x = vec.x * (baseMaior - baseMenor) * (vec.y / altura);
+			
+	//return 
 	
 
 }
@@ -24,7 +31,7 @@ public:
 		
 		trapezio.setPointCount(4);
 
-		float baseMenor = 2.5 * SCREEN_WIDTH/60;
+		float baseMenor = 1.25 * SCREEN_WIDTH/60;
 		//float baseMaior = 30;
 		float altura = 2 * SCREEN_HEIGHT / 25;
 
@@ -44,7 +51,7 @@ public:
 	}
 
 	void update() {
-		int baseMenor = 2.5 * SCREEN_WIDTH / 60;
+		int baseMenor = 1.25 * SCREEN_WIDTH / 60;
 		position.y += vAcc;
 		trapezio.setPosition(SCREEN_WIDTH / 2 + ((position.x - 2) * baseMenor), position.y);
 	}
@@ -136,16 +143,10 @@ public:
 				trapezio.getPosition().y + altura * yScl / 2)
 			);
 		}
-
-
-		clickLine[0] = Vertex(Vector2f(trapX - clickBase * xScl / 2, trapY - altura * yScl / 2 + clickAltura * yScl));
-		clickLine[1] = Vertex(Vector2f(trapX + clickBase * xScl / 2, trapY - altura * yScl / 2 + clickAltura * yScl));
-		
-
+	
 
 		teclado.loadFromFile("sprites/teclas.png");
 
-		teclado.loadFromFile("sprites/teclas.png");	
 
 		for (int i = 0; i < 4; i++) {
 			teclas[i].setTexture(teclado);
@@ -162,6 +163,9 @@ public:
 			teclas[i].setPosition(trapX - (baseMaior * xScl) / 2 + (i * baseMaior * xScl) / 4, altura * yScl);
 			teclas[i].setScale(Vector2f((float)SCREEN_WIDTH / 3840, (float)SCREEN_HEIGHT / 2160));
 		}
+
+		clickLine[0] = Vertex(Vector2f(trapX - clickBase * xScl / 2, trapY - altura * yScl / 2 + clickAltura * yScl));
+		clickLine[1] = Vertex(Vector2f(trapX + clickBase * xScl / 2, trapY - altura * yScl / 2 + clickAltura * yScl));
 
 	}
 

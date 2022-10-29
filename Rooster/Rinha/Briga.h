@@ -97,7 +97,6 @@
 			{
 				galo.jump();
 			}
-
 			else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
 				if (mainInput.inputState[player][GODOWN][0]) {
 					galo.lowKick();

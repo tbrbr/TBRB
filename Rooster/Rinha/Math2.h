@@ -63,6 +63,13 @@ float constrain(float val, float min, float max) {
 }
 
 
+float ruleOfThree(float val, float valMin, float valMax, float outMin, float outMax) {
+	float perc = (val - valMin) / (valMax - valMin);
+	return outMin + (outMax - outMin) * perc;
+}
+
+
+
 
 // Random
 int randInt(int max) {

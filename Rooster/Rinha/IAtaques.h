@@ -167,6 +167,7 @@ namespace Rooster {
 		Time timeLapse;
 		Clock init2;
 		Time timeLapse2;
+
 		
 
 		Vector2f colPos;

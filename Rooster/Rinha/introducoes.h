@@ -169,6 +169,8 @@ int introducao(RenderWindow* window) {
 
 			}
 		}
+
+
 		if (timer < 2000) {
 			load.rotate(6.f);
 			if (timer > 1000) {

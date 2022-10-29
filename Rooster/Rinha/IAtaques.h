@@ -123,7 +123,6 @@ namespace Rooster {
 		}
 		void update() {
 
-			println("chega aqui update");
 			position.x += hSpeed;
 			position.y += vSpeed;
 
@@ -132,7 +131,6 @@ namespace Rooster {
 
 		}
 		void draw(RenderWindow& window) {
-			println("chega aqui update");
 			if (isVisible) {
 				window.draw(sprite);
 				

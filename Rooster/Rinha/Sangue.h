@@ -242,6 +242,86 @@ namespace Rooster {
 
 
 
+	class AreaEffect : public Effect {
+		FloatRect area;
+
+		Color color;
+
+	public:
+
+		AreaEffect(FloatRect area, Color cor) {
+			this->area = area;
+
+			color = cor;
+		}
+
+		void createParticle(){
+
+			int diameter = randFloatRange(1, 3);
+
+			life = 250;
+
+			gravity.x = 0;
+			gravity.y = Gravity / 40;
+
+			Particle p(color);
+
+
+			float pX = randIntRange(area.left, area.left + area.width);
+			float pY = randIntRange(area.top, area.top + area.height);
+
+			float pAngle = randFloatRange(0, 180);
+			float pSpd = randFloatRange(2, 6);
+
+			float pHspd = pSpd*cos(toRadiAnus(pAngle));
+			float pVspd = -pSpd*sin(toRadiAnus(pAngle));
+
+			p.setPosition(pX, pY);
+
+			p.vAcc = gravity.y;
+			p.hAcc = gravity.x;
+
+			p.fadeOutAlpha = false;
+			p.fadeInAlpha = true;
+
+			p.mortal = true;
+
+			p.life = randIntRange(100, 250);
+			p.maxLife = p.life;
+
+			p.maxHspd = 40;
+			p.maxVspd = 40;
+
+			p.radius = randFloatRange(1, 10);
+
+			
+
+			p.setImpulse(pHspd, pVspd);
+
+
+			gotas.push_back(p);
+			
+
+		}
+
+
+
+		void update() override {
+			for (int i = 0; i < gotas.size(); i++) {
+				gotas[i].update();
+			}
+
+		}
+
+		void draw(RenderWindow& window) override {
+			for (int i = 0; i < gotas.size(); i++) {
+				gotas[i].draw(window);
+			}
+		}
+
+	};
+
+
 
 
 
@@ -251,42 +331,7 @@ namespace Rooster {
 		Vector2f impact;
 
 	public:
-		/*
-		ExplosionEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
-			int diameter = radius * 2;
 
-			life = 100;
-
-			for (int i = 0; i < 500; i++) {
-
-
-				Particle p(Color::Red);
-
-				p.setPosition(center);
-				p.vAcc = Gravity/80;
-				p.mortal = true;
-				p.life = randIntRange(50, 150);
-				p.maxLife = p.life;
-				p.maxHspd = 40;
-				p.maxVspd = 40;
-				p.radius = randIntRange(1, 10);
-
-				float ang = toRadiAnus(randFloatRangeNormal(angle-180,angle+180, angleFocus));
-
-
-				float impact = randFloat(explosionForce);
-
-				p.setImpulse(
-					(cos(ang) * impact) + impactForce.x,
-					(sin(ang) * impact) + impactForce.y
-				);
-
-
-				gotas.push_back(p);
-			}
-
-		}
-		*/
 
 		ExplosionEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
 			int diameter = radius * 2;

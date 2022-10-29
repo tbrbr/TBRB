@@ -25,11 +25,17 @@ using namespace sf;
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
+
+#include "Math2.h"
 #include "entradas.h"
 
 Rooster::input mainInput;
 
 LANGUAGE LANG;
+
+
+#include "Sangue.h"
+Rooster::ParticleSystem mainPartSystem;
 
 #include "fregues.h"
 #include "introducoes.h"
@@ -40,13 +46,12 @@ LANGUAGE LANG;
 #include "TilesDoArrocha.h"
 
 
-#include "Math2.h"
+
 
 //#include "jogador_de_video.h"
 
 
-#include "Sangue.h"
-Rooster::ParticleSystem mainPartSystem;
+
 
 
 #include "entradas.h"
@@ -82,7 +87,7 @@ int main() {
 
 
 	int option = INTRO;
-	//option = BOTAPRAARROCHAR;
+	option = BOTAPRAARROCHAR;
 	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);

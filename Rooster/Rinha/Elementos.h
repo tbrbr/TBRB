@@ -368,6 +368,8 @@ private:
     float baseYScl;
     float baseAngle;
     int baseAttachId = -1;
+    
+    float baseAlpha = 1;
 
     struct SpriteArea baseSprArea;
 
@@ -381,6 +383,8 @@ public:
     float xScl;
     float yScl;
     float angle = 0;
+
+    float alpha = 1;
 
     int attachId = -1;
 
@@ -442,6 +446,40 @@ public:
         return baseAngle;
     }
 
+    float getBaseAlpha() {
+        return baseAlpha;
+    }
+
+
+
+    void setBaseArea(struct SpriteArea spArea) {
+        baseSprArea = spArea;
+    }
+
+    void setBaseCenter(Vector2i vec) {
+        baseCenter = vec;
+    }
+
+    void setBaseAttach(Vector2f vec) {
+        baseAttach = vec;
+    }
+
+    void setBaseOffset(Vector2f vec) {
+        baseOffset = vec;
+    }
+
+    void setBaseScale(Vector2f vec) {
+        baseXScl = vec.x;
+        baseYScl = vec.y;
+    }
+
+    void setBaseAngle(float _ang) {
+        baseAngle = _ang;
+    }
+
+    void setBaseAlpha(float _alpha) {
+        baseAlpha = _alpha;
+    }
 
 
 
@@ -485,6 +523,7 @@ public:
         angle = baseAngle;
         sprArea = baseSprArea;
         attachId = baseAttachId;
+        alpha = baseAlpha;
     }
 
 
@@ -502,7 +541,6 @@ public:
     struct Element* bone;
 
     ~ElementHandle() {
-        allBones.clear();
         delete bone;
     }
 
@@ -512,7 +550,7 @@ public:
     }
 
 
-    void draw(sf::RenderWindow& window) {
+    void draw(sf::RenderWindow& window, float alpha = 1) {
 
 
         bone->sprite.setTextureRect(bone->sprArea.texRect);
@@ -531,6 +569,11 @@ public:
 
         bone->sprite.setScale(bone->finalXScl, bone->finalYScl);
         bone->sprite.setRotation(sclFixAng);
+
+        Color col = Color::White;
+        col.a =255*( alpha * bone->alpha);
+
+        bone->sprite.setColor(col);
 
         window.draw(bone->sprite);
     }
@@ -624,6 +667,8 @@ struct Model {
     float xScl = 1;
     float yScl = 1;
 
+    float alpha = 1;
+
     bool valid = false;
 
     std::map<std::string, int> boneMap;
@@ -639,10 +684,13 @@ struct Model {
 
     void autoSetBounds(Element* mainBody, Element* floorPart, Element* ceilingPart) {
 
+
         if (valid) {
 
             resetToBase();
+
             update();
+
 
             float centerX = mainBody->drawPos.x;
             float centerY = mainBody->drawPos.y;
@@ -672,8 +720,8 @@ struct Model {
     void draw(sf::RenderWindow& window) {
         /// Bones Drawing
         if (valid) {
-            for (int i = 0; i < drawOrder.size(); i++) {
-                allHandles[drawOrder[i]]->draw(window);
+            for (int i = 0; i < drawOrder.size()-1; i++) {
+                allHandles[drawOrder[i]]->draw(window, alpha);
             }
 
             drawBounds(window);
@@ -699,7 +747,7 @@ struct Model {
     void update() {
         /// Bones Update
         if (valid) {
-            for (int i = 0; i < executeOrder.size(); i++) {
+            for (int i = 0; i < executeOrder.size()-1; i++) {
                 allHandles[executeOrder[i]]->bone->xWholeScl = xScl;
                 allHandles[executeOrder[i]]->bone->yWholeScl = yScl;
                 allHandles[executeOrder[i]]->bone->xWhole = pos.x;
@@ -715,16 +763,30 @@ struct Model {
     }
 
     Element* at(int id) {
+
+        if (id > allBones.size() - 1) {
+            return allBones[allBones.size() - 1];
+        }
+
+
         return allBones[id];
     }
 
     Element* at(std::string name) {
-        int id = boneMap.at(name);
-        return allBones[id];
+
+
+        if (boneMap.count(name) != 0) {
+            int id = boneMap.at(name);
+
+            return allBones[id];
+        }
+
+
+        return allBones[allBones.size() - 1];
     }
 
     void resetToBase() {
-        for (int i = 0; i < allBones.size(); i++) {
+        for (int i = 0; i < allBones.size()-1; i++) {
             allBones[i]->resetToBase();
         }
     }
@@ -735,65 +797,81 @@ struct Model {
 
         for (int i = 0; i < anim.timeline.size(); i++) {
 
+            if (allBones.size() > i) {
 
-            struct AnimationKeyFrame p;
-            p = anim.getPropertyValue(i, 0, fPos);
+                struct AnimationKeyFrame p;
+                p = anim.getPropertyValue(i, 0, fPos);
 
-            if (p.exists) {
-                allBones[i]->center.x = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->center.x = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 1, fPos);
+                p = anim.getPropertyValue(i, 1, fPos);
 
-            if (p.exists) {
-                allBones[i]->center.y = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->center.y = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 2, fPos);
+                p = anim.getPropertyValue(i, 2, fPos);
 
-            if (p.exists) {
-                allBones[i]->attach.x = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->attach.x = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 3, fPos);
+                p = anim.getPropertyValue(i, 3, fPos);
 
-            if (p.exists) {
-                allBones[i]->attach.y = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->attach.y = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 4, fPos);
+                p = anim.getPropertyValue(i, 4, fPos);
 
-            if (p.exists) {
-                allBones[i]->offset.x = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->offset.x = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 5, fPos);
+                p = anim.getPropertyValue(i, 5, fPos);
 
-            if (p.exists) {
-                allBones[i]->offset.y = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->offset.y = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 6, fPos);
+                p = anim.getPropertyValue(i, 6, fPos);
 
-            if (p.exists) {
-                allBones[i]->xScl = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->xScl = p.val;
+                }
 
-            p = anim.getPropertyValue(i, 7, fPos);
+                p = anim.getPropertyValue(i, 7, fPos);
 
-            if (p.exists) {
-                allBones[i]->yScl = p.val;
-            }
+                if (p.exists) {
+                    allBones[i]->yScl = p.val;
+                }
 
 
-            p = anim.getPropertyValue(i, 8, fPos);
+                p = anim.getPropertyValue(i, 8, fPos);
 
-            if (p.exists) {
-                allBones[i]->angle = p.val;
+                if (p.exists) {
+                    allBones[i]->angle = p.val;
+                }
             }
 
 
         }
+
+    }
+
+
+    void clearModel() {
+        for (int i = 0; i < allBones.size(); i++) {
+            delete allBones[i];
+            delete allHandles[i];
+        }
+        allBones.clear();
+        allHandles.clear();
+        drawOrder.clear();
+        executeOrder.clear();
+        boneMap.clear();
 
     }
 
@@ -802,6 +880,7 @@ struct Model {
 
         println("Loading Model");
         if (file.is_open()) {
+
 
 
             std::string line;
@@ -813,11 +892,11 @@ struct Model {
             println("Checking Version");
 
             if (version == 1) {
+
+                clearModel();
+
                 println("Model Version " << version);
-                allBones.clear();
-                allHandles.clear();
-                drawOrder.clear();
-                executeOrder.clear();
+
 
                 std::getline(file, line);
 
@@ -995,8 +1074,14 @@ struct Model {
                     allHandles.push_back(newBoneHandle);
                 }
 
+                addNullElement();
+                valid = true;
+
 
                 std::cout << "Sucesso" << std::endl;
+
+
+
 
             }
             else {
@@ -1009,8 +1094,81 @@ struct Model {
 
 
 
-        valid = true;
     }
+
+
+
+    void addElement(Element elem, string name, int _drawOrder = -1, int _executeOrder = -1) {
+
+
+
+
+        removeNullElement();
+
+
+        int id = allBones.size();
+
+        int dOrder = (_drawOrder != -1) ? _drawOrder : drawOrder.size();
+        int eOrder = (_executeOrder != -1) ? _executeOrder : executeOrder.size();
+        
+
+
+
+
+        struct Element* newBone = new struct Element;
+        *newBone = elem;
+        newBone->name = name;
+
+        allBones.push_back(newBone);
+
+        ElementHandle* newBoneHandle = new ElementHandle(allBones, id);
+        allHandles.push_back(newBoneHandle);
+
+        drawOrder.insert(drawOrder.begin() + dOrder, id);
+        executeOrder.insert(executeOrder.begin() + eOrder, id);
+
+        boneMap[name] = id;
+
+        addNullElement();
+
+    }
+
+
+
+
+    private:
+        void addNullElement() {
+            struct Element* newBone = new struct Element;
+
+            newBone->name = "Invalido";
+            newBone->valid = false;
+
+            allBones.push_back(newBone);
+            ElementHandle* newBoneHandle = new ElementHandle(allBones, allBones.size()-1);
+            allHandles.push_back(newBoneHandle);
+            drawOrder.push_back(allBones.size() - 1);
+            executeOrder.push_back(allBones.size() - 1);
+        }
+
+        void removeNullElement() {
+
+            int id = allBones.size()-1;
+
+            delete allHandles[id];
+
+
+            allBones.pop_back();
+            allHandles.pop_back();
+            drawOrder.pop_back();
+            executeOrder.pop_back();
+
+
+            
+
+        }
+
+
+    
 
 };
 

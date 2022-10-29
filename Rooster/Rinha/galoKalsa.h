@@ -613,36 +613,7 @@ namespace Rooster {
             }
         }
 
-        void apanhar(Ataques atk, bool direction) override {
-            if (invFrames <= 0) {
 
-                hp -= atk.Damage;
-
-
-                // Calculando os impulsos
-
-                vspeed += sin(atk.angle) * atk.KnockBack;
-                hspeed += cos(atk.angle) * atk.KnockBack;
-
-                if (vspeed < 0) {
-                    air = true;
-                }
-                if (!direction) {
-                    hspeed *= -1;
-                }
-
-                // Tempo de perda de controle sobre o Rooster
-                stunFrames = atk.Stun;
-
-                // Tempo de invulnerabilidade
-                invFrames = 100;
-
-                bar->update(hp);
-
-                atk.playSound();
-
-            }
-        }
        
         
         void updateAnimations() override {
@@ -657,25 +628,22 @@ namespace Rooster {
             model.at("FrontArm")->angle = ArmSpinAngFase;
             model.at("BackArm")->angle = Arm2SpinAngFase;
 
-            if (stunFrames <= 0) {
+            if (!stunned) {
                 if (estado == RUNNING) {
                     runAnim();
                 }
                 else if (estado == DEFENDING) {
-                    //animations[1].update();
-                    //if (animations[1].playingFrame > 15) {
-                       // animations[1].playingFrame = 15;
-                    //}
-                    //model.updateWithAnimation(animations[1]);
+                    animations[0].update();
+                    if (animations[0].playingFrame > 15) {
+                        animations[0].playingFrame = 15;
+                    }
+                    model.updateWithAnimation(animations[0]);
 
                 }
                 else if (estado == STOPPED) {
                     runReset();
                 }
 
-                if (estado != RUNNING) {
-                    hspeed = 0;
-                }
 
                 if (air) {
                     jumpAnim();
@@ -683,16 +651,6 @@ namespace Rooster {
                 else {
                     cairAnim();
                 }
-
-                if (air) {
-                    jumpAnim();
-                }
-                else {
-                    cairAnim();
-                }
-
-
-          
 
 
                 // Attack Animation

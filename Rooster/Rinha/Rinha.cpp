@@ -25,7 +25,9 @@ using namespace sf;
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
-bool keyboardState[sf::Keyboard::KeyCount][3];
+#include "entradas.h"
+
+Rooster::input mainInput;
 
 LANGUAGE LANG;
 
@@ -54,6 +56,7 @@ Rooster::ParticleSystem mainPartSystem;
 #include "galoKalsa.h"
 #include "GaloBruxo.h"
 #include "galoPeste.h"
+#include "galoBota.h"
 using namespace Rooster;
 
 #include "Briga.h"
@@ -65,7 +68,7 @@ using namespace Rooster;
 
 int main() {
 
-	
+
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -77,14 +80,10 @@ int main() {
 
 	LANG.startAllTexts(lang);
 
-	for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
-		keyboardState[i][0] = false;
-		keyboardState[i][1] = false;
-		keyboardState[i][2] = false;
-	}
-	
-	int option = INTRO;
 
+	int option = INTRO;
+	option = MENU_PRINCIPAL;
+	option = BOTAPRAARROCHAR;
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
@@ -129,29 +128,6 @@ int main() {
 
 	while (window->isOpen())
 	{
-
-		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
-
-			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
-
-			if (!keyboardState[i][0] && keyState) {
-				keyboardState[i][1] = true;
-			}
-			else {
-				keyboardState[i][1] = false;
-			}
-
-			if (keyboardState[i][0] && !keyState) {
-				keyboardState[i][2] = true;
-			}
-			else {
-				keyboardState[i][2] = false;
-			}
-
-			keyboardState[i][0] = keyState;
-
-		}
-			
 		
 		switch (option)
 		{

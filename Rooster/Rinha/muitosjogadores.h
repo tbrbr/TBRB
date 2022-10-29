@@ -5,22 +5,27 @@
 
 void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, RectangleShape fundo) {
 
-	UdpSocket socketudp;
-	unsigned short myport = 59001;
-	unsigned short portaofmota = 59000;
+	UdpSocket socket;
+	IpAddress ip = IpAddress::getLocalAddress();
 
-	cout << IpAddress::getLocalAddress();
-	sf::IpAddress recipient = "10.50.208.56";
 
-	if (socketudp.bind(myport) != Socket::Done) {
-		cout << "nao bindou";
-		return;
+	IpAddress ipwal = "10.50.203.95";
+
+	unsigned short port = 59000;
+	unsigned short portofwal = 59001;
+	socket.setBlocking(false);
+
+	if (socket.bind(port) != Socket::Done) {
+		cout << "ERAIOEIURPOAIERU";
+	}
+	else {
+		cout << "\nBindou\n";
 	}
 
-	socketudp.setBlocking(false);
 
-		
-
+	sf::IpAddress recipient = "10.50.280.56";
+	
+	
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
@@ -82,12 +87,10 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 	int framesRound = 60;
 	int framesFight = 0;
 
-	char c = '0';
-
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
-		
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -97,27 +100,8 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 			}
 
 		}
-		for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
-
-			bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
-
-			if (!keyboardState[i][0] && keyState) {
-				keyboardState[i][1] = true;
-			}
-			else {
-				keyboardState[i][1] = false;
-			}
-
-			if (keyboardState[i][0] && !keyState) {
-				keyboardState[i][2] = true;
-			}
-			else {
-				keyboardState[i][2] = false;
-			}
-
-			keyboardState[i][0] = keyState;
-
-		}
+		
+		mainInput.update();
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			window->close();
@@ -125,68 +109,59 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 
 		//options p1
 
-		if (keyboardState[Keyboard::W][1])
+
+		int player = 0;
+
+		if (mainInput.inputState[player][GOUP][1])
 		{
-			c = 'w';
 			galo.jump();
 		}
-		else if (keyboardState[Keyboard::F][1]) {
-			if (keyboardState[Keyboard::S][0]) {
-				galo.lowKick();
 
+		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+			if (mainInput.inputState[player][GODOWN][0]) {
+				galo.lowKick();
 			}
 
 			else
 				galo.highKick();
 
 		}
-		else if ((keyboardState[Keyboard::G][1])) {
+		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
 			galo.especial();
 		}
 
 
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		if (mainInput.inputState[player][GORIGHT][1])
 		{
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = true;
 			galo.run();
 
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		else if (mainInput.inputState[player][GOLEFT][1])
 		{
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = false;
 			galo.run();
 
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		else if (mainInput.inputState[player][GODOWN][1])
 		{
 			galo.defend();
 		}
 		else
 		{
 			galo.setState(Rooster::state::STOPPED);
-			//galo.setHspeed(0);
 
 		}
 
 		
 
 		galo.update();
-;
-		
-		char c2 = '0';
-		size_t meta;
 
 
-		socketudp.receive(&c2,1, meta, recipient, portaofmota);
-		socketudp.send(&c, 1, recipient, portaofmota);
 		
-		if (c2 == 'w') {
-			galo2->jump();
-		}
-		galo2->update();
 		if (galo.ultimateShot->getHitted) {
 			galo.apanharByKalsa(galo2, window);
 		}
@@ -232,7 +207,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 
 
 		window->display();
-		c = '0';
 	}
 }
 

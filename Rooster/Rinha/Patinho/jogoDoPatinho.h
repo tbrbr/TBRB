@@ -370,7 +370,6 @@ class Pato {
                     int i = ButtonCheck::checkButtonHover(rec, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
 
                     if (i == 0 || i == 2) {
-                        window->setMouseCursorGrabbed(true);
                         window->setMouseCursorVisible(false);
                         for (int i = 0; i < 3; i++) {
                             delete t[i];

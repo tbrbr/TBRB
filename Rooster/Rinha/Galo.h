@@ -156,6 +156,8 @@ namespace Rooster {
         int getLifeBarHeight() {
             return tam.y;
         }
+
+        
         
         void draw(RenderWindow *window) {
 
@@ -255,7 +257,6 @@ namespace Rooster {
         float vspeedLimit;
         float jumpSpeed;
         
-        Vector2f position;
 
         bool air;
 
@@ -272,11 +273,15 @@ namespace Rooster {
 
     public:
 
+        Vector2f position;
+
         // Attacks and Hitboxes
         int atacking;
         HitBox hitbox;
         std::vector<HitBox> hurtBox;
         std::vector<Projectile> projectiles;
+
+        bool attackStart = false;
 
         Ataques* hiKick;
         Ataques* louKick;
@@ -301,7 +306,7 @@ namespace Rooster {
         bool facingRight = false;
         bool estadoUpdate = false;
 
-
+        bool isp1;
         
 
         Galo(struct GaloStats stats, int _state, bool isp1) { 
@@ -330,7 +335,7 @@ namespace Rooster {
             this->jumpSpeed = (peso * (-8)) / 2;
 
             this->position = Vector2f(0, 0);
-
+            this->isp1 = isp1;
             if (isp1)
                 position.x = SCREEN_WIDTH / 4;
             else
@@ -347,6 +352,18 @@ namespace Rooster {
 
         }
 
+        void setPosition(Vector2f pos) {
+            this->position = pos;
+        }
+
+        void resetPosition() {
+            if (isp1)
+                position.x = SCREEN_WIDTH / 4;
+            else
+                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
+
+            position.y = floorY;
+        }
 
         // States
         void inline setState(state estado) {
@@ -413,7 +430,7 @@ namespace Rooster {
                 }
 
                 // Tempo de perda de controle sobre o Rooster
-                stunFrames = atk.Stun;
+                stunFrames = atk.Stun*2;
                 stunned = true;
 
                 // Tempo de invulnerabilidade
@@ -440,35 +457,64 @@ namespace Rooster {
             
 
             Vector2f nextPosition = position;
+
+
+
+            float perc = (float)frames / maxFrames;
             
-            if ((float)frames/maxFrames < 0.4) {
+            if (perc < 0.4) {
                 
-                g2->facingRight = !g2->facingRight;
+                // Tava na busca de entender pq o tiro do sniper n funciona como player 2
+                // Permite?
+                if(((int)frames)%3 == 0) {
+                    g2->facingRight = !g2->facingRight;
+                }
+
+                // Permite?
+                // Na verdade eu n sei o que to fazendo perdao
+                /*
+                int add = 7 * sin(toRadiAnus(frames * 2));
+                g2->model.at("Head")->angle += add;
+                g2->model.at("FrontArm")->angle += add;
+                g2->model.at("BackArm")->angle += add;
+                */
+
 
                 g2->position.x += facingRight?
-                    ((position.x - g2->position.x + 200) * frames * 2) / maxFrames:
+                    ((position.x - g2->position.x + 200) * frames * 2)/maxFrames:
                     ((position.x - g2->position.x - 200) * frames * 2)/maxFrames;
                 
                 
             }
-            else if ((float)frames / maxFrames < 0.7) {
+            else if (perc < 0.7) {
                 drawEstrelinhas(af,g2->position);
-                g2->model.at("Head")->angle += 90 ;
-                g2->model.at("FrontArm")->angle += 90;
-                g2->model.at("BackArm")->angle += 90;
+                //int add = 20*(0.7-perc)*sin(toRadiAnus(frames*2));
+                int add = 45;
+                g2->model.at("Head")->angle += add;
+
+                // Previnindo Crash
+                if (g2->name != "Bota") {
+                    g2->model.at("FrontArm")->angle += add;
+                    g2->model.at("BackArm")->angle += add;
+                }
                
             }
             else {
                 g2->model.at("Head")->angle = 0;
-                g2->model.at("FrontArm")->angle = 0;
-                g2->model.at("BackArm")->angle = 0;
+
+                // Previnindo Crash
+                if (g2->name != "Bota") {
+                    g2->model.at("FrontArm")->angle = 0;
+                    g2->model.at("BackArm")->angle = 0;
+                }
             }
             
          
         }
         void jump() {
 
-            if (!stunned) {
+            if (!stunned || stunFrames < 0) {
+                stunned = false;
                 if (!air) {
                     vspeed += jumpSpeed;
                     air = true;
@@ -478,7 +524,8 @@ namespace Rooster {
         
         void run() {
 
-            if (!stunned) {
+            if (!stunned || stunFrames < 0) {
+                stunned = false;
                 float acc = hAcc * ((facingRight) ? 1:-1);
 
                 hspeed = constrain(hspeed + acc, -hspeedLimit, hspeedLimit);
@@ -494,17 +541,16 @@ namespace Rooster {
         void show(sf::RenderWindow& window) {
 
 
-            if (projectiles[0].isTrans)
-                projectiles[0].drawTrans(window);
-            else
-                projectiles[0].draw(window);
+           
 
-            /*
-            for (int i = 0; i < 2; i++) {
+            
+            for (int i = 0; i < projectiles.size(); i++) {
                 if(!projectiles[i].NULO)
-                    projectiles[i].draw(window);
-                println("é possivel");
-            }*/
+                    if (projectiles[i].isTrans)
+                        projectiles[i].drawTrans(window);
+                    else
+                        projectiles[i].draw(window);             
+            }
             
            
             model.draw(window);
@@ -515,12 +561,12 @@ namespace Rooster {
             for (int i = 0; i < hurtBox.size(); i++) {
 
 
-                //drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+               // drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
             }
 
             if (ultimateShot->isAtacking) {
-               // drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                //drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
             }
         }
 
@@ -546,15 +592,13 @@ namespace Rooster {
                 invunerable = false;
             }
             else {
-                invunerable = true;
                 invFrames--;
             }
 
-            if (stunFrames <= 0) {
+            if (stunFrames <= -400) {
                 stunned = false;
             }
             else {
-                stunned = true;
                 stunFrames--;
             }
 
@@ -607,8 +651,8 @@ namespace Rooster {
                 hspeed = 0;
             }
 
-            if (stunned && stunFrames < 20) {
-                hspeed *= 0.98;
+            if (stunned && stunFrames < 30) {
+                hspeed *= 0.95;
                 vspeed *= 0.98;
             }
             
@@ -624,7 +668,7 @@ namespace Rooster {
         virtual void updateAnimations() = 0;
 
         
-        virtual void fatality() {
+        virtual void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) {
 
         }
 
@@ -645,6 +689,7 @@ namespace Rooster {
 
 
             // Projectiles
+            // KEKEKEKEKEEKEEKEKKEKEKKEKEKKEKEKEKEEKEKKEKEKEKEKEKEKEKEKKEKEKEKEKEKEKKEK
             /*pare de tentar ajudar e destruir o restp da miinhda vdasidnbhasvgy
             for (int i = 0; i < projectiles.size(); i++) {
                 projectiles[i].update();

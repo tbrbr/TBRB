@@ -1,5 +1,5 @@
 
-
+	
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
@@ -78,127 +78,114 @@
 				}
 
 			}
-			for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
+			//galo.fatality(window,&galo2,fundo);
 
-				bool keyState = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+			mainInput.update();
 
-				if (!keyboardState[i][0] && keyState) {
-					keyboardState[i][1] = true;
-				}
-				else {
-					keyboardState[i][1] = false;
-				}
-
-				if (keyboardState[i][0] && !keyState) {
-					keyboardState[i][2] = true;
-				}
-				else {
-					keyboardState[i][2] = false;
-				}
-
-				keyboardState[i][0] = keyState;
-
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
 				window->close();
 			}
 
-			//options p1
 
-			if (keyboardState[Keyboard::W][1])
+
+
+			//PLAYER 1 CONTROLES
+
+			int player = 0;
+
+			if (mainInput.inputState[player][GOUP][1])
 			{
 				galo.jump();
 			}
-			else if (keyboardState[Keyboard::F][1]) {
-				if (keyboardState[Keyboard::S][0]) {
-					galo.lowKick();
 
+			else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+				if (mainInput.inputState[player][GODOWN][0]) {
+					galo.lowKick();
 				}
 
 				else
 					galo.highKick();
 
 			}
-			else if ((keyboardState[Keyboard::G][1])) {
+			else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
 				galo.especial();
 			}
 
 
 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			if (mainInput.inputState[player][GORIGHT][0])
 			{
 				galo.setState(Rooster::state::RUNNING);
 				galo.facingRight = true;
 				galo.run();
 
 			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			else if (mainInput.inputState[player][GOLEFT][0])
 			{
 				galo.setState(Rooster::state::RUNNING);
 				galo.facingRight = false;
 				galo.run();
 
 			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			else if (mainInput.inputState[player][GODOWN][0])
 			{
 				galo.defend();
 			}
 			else
 			{
 				galo.setState(Rooster::state::STOPPED);
-				//galo.setHspeed(0);
 
 			}
 
 
-			//options p2
+			//PLAYER 2 CONTROLES
+			
+			player = 1;
 
-			if (keyboardState[Keyboard::Up][1])
+			if (mainInput.inputState[player][GOUP][1])
 			{
 				galo2.jump();
 			}
-			else if (keyboardState[Keyboard::K][1]) {
-				if (keyboardState[Keyboard::Down][0]) {
-					galo2.lowKick();
 
+			else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+				if (mainInput.inputState[player][GODOWN][0]) {
+					galo2.lowKick();
 				}
+
 				else
 					galo2.highKick();
 
 			}
-			else if ((keyboardState[Keyboard::L][1])) {
+			else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
 				galo2.especial();
 			}
 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+
+
+			if (mainInput.inputState[player][GORIGHT][0])
 			{
 				galo2.setState(Rooster::state::RUNNING);
 				galo2.facingRight = true;
 				galo2.run();
 
 			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			else if (mainInput.inputState[player][GOLEFT][0])
 			{
 				galo2.setState(Rooster::state::RUNNING);
 				galo2.facingRight = false;
 				galo2.run();
 
 			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			else if (mainInput.inputState[player][GODOWN][0])
 			{
-
 				galo2.defend();
-
 			}
 			else
 			{
 				galo2.setState(Rooster::state::STOPPED);
-				//galo2.setHspeed(0);
 
 			}
-
-
+		
 			for (int i = 0; i < galo.hurtBox.size(); i++) {
 
 				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
@@ -211,19 +198,13 @@
 				}
 				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
 					if (galo2.ultimateShot->id == 5) {
-
-						if (galo2.ultimateShot->id == 5) {
-
-							if (!galo2.ultimateShot->getHitted) {
-								galo2.ultimateShot->getHitted = true;
-								galo2.ultimateShot->init2.restart();
-							}
-
-
-
-						}
-						else
-							galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+						if (!galo2.ultimateShot->getHitted) {
+							galo2.ultimateShot->getHitted = true;
+							galo2.ultimateShot->init2.restart();
+						}	
+					}
+					else {
+						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
 					}
 				}
 			}

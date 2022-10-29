@@ -251,43 +251,7 @@ namespace Rooster {
 		Vector2f impact;
 
 	public:
-		/*
-		ExplosionEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
-			int diameter = radius * 2;
-
-			life = 100;
-
-			for (int i = 0; i < 500; i++) {
-
-
-				Particle p(Color::Red);
-
-				p.setPosition(center);
-				p.vAcc = Gravity/80;
-				p.mortal = true;
-				p.life = randIntRange(50, 150);
-				p.maxLife = p.life;
-				p.maxHspd = 40;
-				p.maxVspd = 40;
-				p.radius = randIntRange(1, 10);
-
-				float ang = toRadiAnus(randFloatRangeNormal(angle-180,angle+180, angleFocus));
-
-
-				float impact = randFloat(explosionForce);
-
-				p.setImpulse(
-					(cos(ang) * impact) + impactForce.x,
-					(sin(ang) * impact) + impactForce.y
-				);
-
-
-				gotas.push_back(p);
-			}
-
-		}
-		*/
-
+		
 		ExplosionEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
 			int diameter = radius * 2;
 
@@ -353,16 +317,11 @@ namespace Rooster {
 		}
 	};
 
-
-
-
 	class ParticleSystem {
 
 
 	public:
 		std::vector<Effect*> effects;
-
-
 
 		ParticleSystem() {
 
@@ -381,10 +340,6 @@ namespace Rooster {
 			}
 
 		}
-
-
-
-
 
 
 		void draw(RenderWindow& window) {
@@ -409,4 +364,116 @@ namespace Rooster {
 
 
 	};
+
+	class corvo {
+		Texture Corvo;
+		Sprite sprite;
+		float hspd;
+		float vspd;
+		Vector2f position;
+		Vector2f scl;
+	public:
+		corvo(float hspd, float vspd, Vector2f position, Vector2f scl) {
+			this->hspd = hspd;
+			this->vspd = vspd;
+			this->position = position;
+			this->scl = scl;
+			Corvo.loadFromFile("sprites/corvo.png");
+			sprite.setTexture(Corvo);
+
+		}
+		void update() {
+
+			int sizeCorvo[3] = { 500,748,643 };
+			position.x += hspd;
+			position.y += vspd;
+
+			static int Frames = 0;
+			Frames++;
+			int sprSelected = (Frames / 600) % 3;
+			int sprx = 0;
+
+			if (sprSelected == 0) {
+				sprx = 0;
+			}
+			else if (sprSelected == 1) {
+				sprx = 500;
+			}
+			else if (sprSelected == 2) {
+				sprx = 500 + 748;
+			}
+
+			sprite.setTextureRect(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
+			if (hspd > 0) {
+				if (scl.x > 0) {
+					scl.x *= -1;
+				}
+			}
+			sprite.setScale(scl);
+			sprite.setRotation(-sin(vspd));
+
+			sprite.setPosition(position);
+		}
+		void draw(RenderWindow* window) {
+
+			window->draw(sprite);
+		}
+	};
+
+	class chuva {
+		CircleShape gota;
+		float hspd;
+		float vspd;
+		
+	public:
+		Vector2f position;
+		chuva() {
+			this->hspd = randFloatRange(0, 2);
+			this->vspd = randFloatRange(1, 10);
+			position.x = rand() % SCREEN_WIDTH;
+			position.y = -10;
+			gota.setRadius(1);
+			gota.setFillColor(Color::Blue);
+
+		}
+		void update() {
+
+			position.x += hspd;
+			position.y += vspd;
+			if (position.y > SCREEN_HEIGHT + 50) {
+				position.y = -10;
+			}
+			else if (position.x > SCREEN_WIDTH + 50) {
+				position.x = rand() % SCREEN_WIDTH;
+			}
+			gota.setPosition(position);
+
+		}
+		void draw(RenderWindow* window) {
+
+			window->draw(gota);
+		}
+		
+	};
+	class effectsChuva {
+		std::vector <chuva> chuvinha;
+	public:
+		effectsChuva() {
+			for (int i = 0; i < 500; i++) {
+				chuva *a = new chuva;
+				chuvinha.push_back(*a);
+			}
+		}
+		void update() {
+			for (int i = 0; i < chuvinha.size(); i++) {
+				chuvinha[i].update();			
+			}
+		}
+		void draw(RenderWindow* window) {
+			for (int i = 0; i < chuvinha.size(); i++) {
+				chuvinha[i].draw(window);
+			}
+		}
+	};
+
 }

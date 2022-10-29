@@ -22,8 +22,6 @@ namespace Rooster {
 
             bar = new LifeBar(maxHp, isp1, name.c_str());
 
-            this->peso = 4;
-
 
             this->hiKick = new Ataques(
                 3,
@@ -35,31 +33,15 @@ namespace Rooster {
                 20, 10, PI, milliseconds(1000), ""
             );
 
-            this->ultimateShot = new Ataques(5,
-                0.9, 160, HitBox{ Vector2f(0, 0), 0 },
-                10, 3, 0, milliseconds(1000),
-                "sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
+            this->ultimateShot = new Ataques(7,
+                10, 200, HitBox{ Vector2f(0, 0), 0 },
+                10, 10, PI/2, milliseconds(1000),
+                "", milliseconds(2000)
             );
 
-            Projectile* cinto = new Projectile(
-                Vector2f(0, 0),
-                "sprites\\Cinto.png",
-                0, 0, Vector2f(1, 1),
-                IntRect(0, 0, 603, 100)
-            );
 
-            Projectile* cintoAmarrado = new Projectile(true);
 
             atacking = NOT_ATTACK;
-            projectiles.push_back(*cinto);
-            projectiles.push_back(*cintoAmarrado);
-
-            if (isp1)
-                position.x = SCREEN_WIDTH / 4;
-            else
-                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
-
-            position.y = floorY;
 
 
 
@@ -72,6 +54,8 @@ namespace Rooster {
             model.loadModel("botaModel.txt");
             model.autoSetBounds(model.at("Body"),  model.at("Body"), model.at("Head"));
 
+
+
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
 
@@ -80,7 +64,6 @@ namespace Rooster {
 
                 hurtBox.push_back(*hit);
             }
-
             delete hit;
 
 
@@ -100,13 +83,11 @@ namespace Rooster {
 
 
         void weatherAnim(int frames) {
-            model.at(CORPO)->angle += 0;
-            model.at(RABO)->angle = sin(frames / 200.f) * 20;
+            model.at("Body")->yScl = model.at("Body")->getBaseScale().y * ruleOfThree(sin((float)frames/20), -1, 1, 0.95, 1.05);   
+            model.at("Body")->xScl = model.at("Body")->getBaseScale().x * ruleOfThree(sin((float)frames/20), -1, 1, 1.05, 0.95);
         }
+
         void jumpAnim() {
-
-
-
 
             // mortal fodase?
 
@@ -121,6 +102,7 @@ namespace Rooster {
             model.at("Body")->xScl += vspeed / 10000;
 
         }
+
         void cairAnim() {
 
             model.at("Head")->offset.y = 0;
@@ -176,66 +158,97 @@ namespace Rooster {
             if (atacking == NOT_ATTACK) {
                 atacking = SPECIAL;
                 ultimateShot->init.restart();
-                ultimateShot->playSound();
+                vspeed = 0;
             }
 
         }
         void especialAnim() {
+
             Time t = ultimateShot->init.getElapsedTime();
 
             if (t > ultimateShot->timeLapse) {
                 atacking = NOT_ATTACK;
+                ultimateShot->isAtacking = false;
+            }
 
+            if (ultimateShot->getHitted) {
+                atacking = NOT_ATTACK;
+                ultimateShot->isAtacking = false;
             }
 
 
             float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
 
-            int angFix = (facingRight) ? 1 : -1;
-            angFix = -1;
 
             if (!ultimateShot->getHitted) {
                 if (percentage < 1.f / 3.f) {
 
                     float thisPercentage = percentage * 3;
+
+                    model.at("Head")->offset.y *= 0.5;
+
+                    float oPerc = ((percentage / 2) + 1);
+                    model.at("Body")->xScl = model.at("Body")->getBaseScale().x * oPerc;
+                    model.at("Body")->yScl = model.at("Body")->getBaseScale().y * oPerc;
+
                     
 
                 }
                 else if (percentage < 2.f / 3.f) {
 
-                    float thisPercentage = (percentage * 3) / 2;
+                    float thisPercentage = ruleOfThree(percentage, float(2/3), float (2.5/3), 0, 1);
                    
 
+
+                    model.at("Head")->offset.y = 0;
+
+                    float oPerc = ((float(1/3) / 2) + 1);
+
+                    model.at("Body")->xScl = model.at("Body")->getBaseScale().x * oPerc;
+                    model.at("Body")->yScl = model.at("Body")->getBaseScale().y * oPerc;
+
+
+                    vspeed = 10;
+
                     ultimateShot->isAtacking = true;
-                    ultimateShot->hitbox.center.y = projectiles[0].getPosition().y + projectiles[0].getSize().y / 2;
-                    ultimateShot->hitbox.radius = projectiles[0].getSize().x / 10;
+                    ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
+                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20*model.yScl;
+
+                    ultimateShot->hitbox.radius = 5 * model.xScl;
+
 
 
                 }
                 else if (percentage < 2.5f / 3.f) {
 
                     float thisPercentage = (percentage * 3) / 2.5;
-                   
+
                     ultimateShot->isAtacking = true;
-                    ultimateShot->hitbox.center.y = projectiles[0].getPosition().y + projectiles[0].getSize().y / 2;
-                    ultimateShot->hitbox.radius = projectiles[0].getSize().x / 10;
+                    ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
+                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20 * model.yScl;
+
+                    ultimateShot->hitbox.radius = 5 * model.xScl;
+
+
+
                 }
                 else if (percentage < 2.9 / 3.f) {
                     float thisPercentage = (percentage * 3) / 2.9;
 
-                   
-                    if (facingRight) {
-                        projectiles[0].setScale(Vector2f(0.1 / thisPercentage, 0.5));
-                    }
-                    else {
-                        projectiles[0].setScale(Vector2f(-0.1 / thisPercentage, 0.5));
-                    }
+                    println("chego aquyi");
+
+
+                    ultimateShot->isAtacking = true;
+                    ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
+                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20 * model.yScl;
+
+                    ultimateShot->hitbox.radius = 5 * model.xScl;
                     ultimateShot->isAtacking = false;
 
 
                 }
                 else {
-                    projectiles[0].setVisibility(false);
+
 
                 }
             }
@@ -247,8 +260,7 @@ namespace Rooster {
 
 
                     ultimateShot->isAtacking = true;
-                    ultimateShot->hitbox.center.y = projectiles[0].getPosition().y + projectiles[0].getSize().y / 2;
-                    ultimateShot->hitbox.radius = projectiles[0].getSize().x / 10;
+
 
 
                 }
@@ -266,11 +278,7 @@ namespace Rooster {
 
                 }
                 else {
-                    projectiles[0].setVisibility(false);
-                    model.at("FrontEyebrow")->offset.y = 0;
-                    model.at("BackEyebrow")->offset.y = 0;
-                    model.at("FrontArm")->angle = 0;
-                    model.at("BackArm")->angle = 0;
+
                 }
             }
         }
@@ -394,10 +402,17 @@ namespace Rooster {
             //}
 
 
+            
 
 
             //model.at("FrontArm")->angle = ArmSpinAngFase;
             //model.at("BackArm")->angle = Arm2SpinAngFase;
+
+
+            
+
+           
+
 
             if (stunFrames <= 0) {
 
@@ -417,9 +432,16 @@ namespace Rooster {
 
                 }
 
-            if (estado == STOPPED) {
-                runReset();
-            }
+
+
+                
+
+                if (estado == STOPPED) {
+                    runReset();
+                    if (!atacking) {
+                        weatherAnim(frames);
+                    }
+                }
 
 
 
@@ -438,10 +460,9 @@ namespace Rooster {
 
 
 
-
             }
 
-            //projectiles[0].update();
+
 
 
         }

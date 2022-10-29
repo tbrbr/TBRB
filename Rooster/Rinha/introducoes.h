@@ -12,6 +12,10 @@ int introducao(RenderWindow* window) {
 	Sprite pichada[4];
 	Texture logoT;
 	Sprite logo;
+	Texture classificationT;
+	Sprite classification;
+	Texture loadT;
+	Sprite load;
 	RectangleShape fundo;
 	Clock time;
 
@@ -109,11 +113,21 @@ int introducao(RenderWindow* window) {
 		pichada[i].setPosition(SCREEN_WIDTH / 2 - pichada[i].getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - pichada[i].getGlobalBounds().height / 2);
 	}
 
+	classificationT.loadFromFile("IntroFiles\\classe.png");
+	classification.setTexture(classificationT);
+	classification.setScale((float)SCREEN_WIDTH / 1920, (float)SCREEN_WIDTH / 1920);
+
+	int sizel = 12;
+	loadT.loadFromFile("IntroFiles\\load.png");
+	load.setTexture(loadT);
+	load.setScale((float)SCREEN_WIDTH / (1920 * sizel), (float)SCREEN_WIDTH / (1920 * sizel));
+	load.setOrigin(540.f, 540.f);
+	load.setPosition(SCREEN_WIDTH - load.getGlobalBounds().width * 1.4, SCREEN_HEIGHT - load.getGlobalBounds().height * 1.2);
+
+
 	logoT.loadFromFile("IntroFiles\\logo.png");
 	logo.setTexture(logoT);
 	logo.setScale((float)SCREEN_WIDTH / 1920, (float)SCREEN_WIDTH / 1920);
-	logo.setPosition(SCREEN_WIDTH / 2 - logo.getGlobalBounds().width / 2,
-		SCREEN_HEIGHT / 2 - logo.getGlobalBounds().height / 2);
 
 	fundo.setFillColor(Color::Black);
 	fundo.setPosition(0, 0);
@@ -155,7 +169,17 @@ int introducao(RenderWindow* window) {
 
 			}
 		}
-		if (timer > 2000 && timer < 3800) {
+		if (timer < 2000) {
+			load.rotate(6.f);
+			if (timer > 1000) {
+				int fx = 255 - (255 * (timer - 1000)) / 1000;
+				classification.setColor(Color(fx, fx, fx));
+				load.setColor(Color(fx, fx, fx));
+			}
+			window->draw(classification);
+			window->draw(load);
+		}
+		else if (timer > 2000 && timer < 3800) {
 			int i = (timer - 2000) / 450;
 			window->draw(pichada[i]);
 		}

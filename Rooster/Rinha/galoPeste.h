@@ -565,6 +565,12 @@ namespace Rooster {
 
             bright.setFillColor(Color(255, 255, 255, 0));
 
+            std::vector <Projectile> infestacao;
+
+            for (int i = 0; i < 100; i++) {
+             
+            }
+
             while (window->isOpen()) {
 
                 int time = Timer.getElapsedTime().asMilliseconds();
@@ -600,6 +606,10 @@ namespace Rooster {
                         bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
                     }else if (time < 5750) {
                         window->draw(lightning);
+                        for (int i = 0; i < corvos.size(); i++) {
+                            corvos[i].update();
+                            corvos[i].draw(window);
+                        }
                     }
                     else if (time < 6000) {
                         bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
@@ -609,6 +619,10 @@ namespace Rooster {
                     }
                     else if (time < 6500) {
                         lightning.setPosition(SCREEN_WIDTH/4, 0);
+                        for (int i = 0; i < corvos.size(); i++) {
+                            corvos[i].update();
+                            corvos[i].draw(window);
+                        }
                         window->draw(lightning);
                     }
                     else if (time < 6750) {
@@ -621,12 +635,27 @@ namespace Rooster {
                             corvos[i].update();
                             corvos[i].draw(window);
                         }
+                        /*
+                        float p = rand() % 2;
+                        Projectile* rato = new Projectile(
+                            Vector2f(p * SCREEN_WIDTH, floorY),
+                            "sprites\\rato.png",
+                            (rand() % 10 - p * 20), 0, Vector2f(0.2 - p * 0.4, 0.2),
+                            IntRect(0, 0, 865, 606)
+                        );
+                        infestacao.push_back(*rato);
+                        
+                        for (int i = 0; i < infestacao.size(); i++) {
+                            infestacao[i].setVisibility(true);
+                            infestacao[i].update();
+                            infestacao[i].draw(*window);
+                        }*/
+
                     }
-                    
-                    
+                                      
                 }
                 
-                if (position.x < galo2->position.x - model.getBounds().width * abs(model.xScl)) {
+                if (position.x - model.getBounds().width * abs(model.xScl) < galo2->position.x ) {
                     estado = RUNNING;
                     run();
                 }

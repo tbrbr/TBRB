@@ -74,8 +74,6 @@ class Yamaha {
 	vector<Rooster::AreaEffect*> coisa;
 
 	
-
-	
 public:
 	Yamaha() {
 

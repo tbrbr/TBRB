@@ -51,8 +51,9 @@ namespace Rooster {
             t.loadFromFile("sprites/galoBota.png");
 
             model.tex = &t;
-            model.loadModel("botaModel.txt");
+            model.loadModel("models/botaModel.txt");
             model.autoSetBounds(model.at("Body"),  model.at("Body"), model.at("Head"));
+            println("Bota Carregou");
 
 
 
@@ -69,7 +70,7 @@ namespace Rooster {
 
 
             struct Animation agacharAnim;
-            agacharAnim.init("SecondAnim.txt");
+            agacharAnim.init("animations/SecondAnim.txt");
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);

@@ -56,9 +56,11 @@ namespace Rooster {
 			t.loadFromFile("sprites/galoSniper.png");
 
 			model.tex = &t;
-			model.loadModel("SniperModel.txt");
+			model.loadModel("models/SniperModel.txt");
 
 			model.autoSetBounds(model.at("Body"), model.at("BackShoe"), model.at("Head"));
+
+			println("Sniper Carregou");
 
 			HitBox* hit = new HitBox;
 			for (int i = 0; i < model.allBones.size(); i++) {
@@ -74,7 +76,7 @@ namespace Rooster {
 			delete hit;
 
 			struct Animation agacharAnim;
-			agacharAnim.init("SecondAnim.txt");
+			agacharAnim.init("animations/SecondAnim.txt");
 			agacharAnim.playingSpeed = 1;
 			agacharAnim.connectLoop = false;
 			animations.push_back(agacharAnim);

@@ -68,8 +68,10 @@ namespace Rooster {
             t.loadFromFile("sprites/galoKalsa.png");
 
             model.tex = &t;
-            model.loadModel("kalsaModel.txt");
+            model.loadModel("models/kalsaModel.txt");
             model.autoSetBounds(model.at("Body"), model.at("BackLeg"), model.at("Head"));
+
+            println("Kalsa Carregou");
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
@@ -85,7 +87,7 @@ namespace Rooster {
 
 
             struct Animation agacharAnim;
-            agacharAnim.init("SecondAnim.txt");
+            agacharAnim.init("animations/SecondAnim.txt");
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
 

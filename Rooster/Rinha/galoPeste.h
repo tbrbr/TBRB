@@ -10,7 +10,7 @@ namespace Rooster {
     class Peste : public Galo {
 
         Texture textura;
-
+        
       
         float legWalkAngFase = 0;
         float ArmSpinAngFase = 0;
@@ -92,8 +92,6 @@ namespace Rooster {
 
 
             bar = new LifeBar(maxHp, isp1, name.c_str());
-
-           
 
         }
 
@@ -199,58 +197,24 @@ namespace Rooster {
             }
 
             float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
-
-            int angFix = (facingRight) ? 1 : -1;
-            angFix = -1;
-          
-
-            if (percentage < 1.75f / 3.f) {
-
-                float thisPercentage = (percentage * 3)/1.75;
-        
-                projectiles[1].setImpulse(0, 0);
-                    
-                projectiles[1].setSpriteScale(
-                    0.5 * thisPercentage,
-                    0.25 * thisPercentage
-                );
-                
-                
-                projectiles[1].setPosition(
-                    position.x,
-                    floorY
-                );
-                    
-                projectiles[1].setVisibility(true);
-            }
-            else if (percentage < 2.5f / 3.f) {
-                float thisPercentage = (percentage * 3) / 2.5;
-
-                projectiles[1].setSpriteScale(
-                    0.5 - 0.5 * thisPercentage,
-                    0.25 - 0.25 * thisPercentage
-                );
-            }else
-                projectiles[1].setVisibility(false);
-           
+            
 
             if (percentage < 1.f / 3.f) {
-             
+
                 float thisPercentage = percentage * 3;
-
-
+                
                 model.at("Body")->angle = 45 * sin(thisPercentage * PI / 2);
                 model.at("FrontArm")->angle = -30 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = -90 * sin(thisPercentage * PI / 2);          
+                model.at("BackLeg")->angle = -90 * sin(thisPercentage * PI / 2);
                 model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);;
                 model.at("FrontLeg")->offset.x = -5 * sin(thisPercentage * PI / 2);
                 model.at("BackLeg")->offset.y = 5 * sin(thisPercentage * PI / 2);
                 model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
                 model.at("BackArm")->angle = 90 * sin(thisPercentage * PI / 2);
-
+                
             }
             else if (percentage < 2.f / 3.f) {
-                float thisPercentage = percentage * 3;
+                float thisPercentage = (percentage * 3)/2;
 
                 model.at("Body")->angle = 45;
                 model.at("FrontArm")->angle = -30;
@@ -261,54 +225,58 @@ namespace Rooster {
                 model.at("BackLeg")->offset.y = 5;
                 model.at("FrontArm")->angle = 45;
                 model.at("BackArm")->angle = 90;
-                
+
+               
+
             }
             else if (percentage < 2.05f / 3.f) {
-                //ultimateShot->playSound();
+                ultimateShot->playSound();
             }
             else if (percentage < 2.2f / 3.f) {
 
 
 
-                projectiles[0].setVisibility(true);
-                projectiles[0].setScale(Vector2f(1, 1));
+                projectiles[1].setVisibility(true);
+                projectiles[1].setScale(Vector2f(1, 1));
 
-                projectiles[0].setPosition(
-                    Vector2f(model.at("BackArm")->drawPos.x,
-                        (floorY - projectiles[0].getSize().y)
+                projectiles[1].setPosition(
+                    Vector2f(model.at("BackArm")->drawPos.x,//- SCREEN_WIDTH/300 * model.xScl,
+                        (model.at("BackArm")->drawPos.y - model.at("BackArm")->sprite.getGlobalBounds().height 
+                         + projectiles[1].getSize().y / 2)
                     )
                 );
-                
-              
-                                   
+
                 if (facingRight) {
-                    projectiles[0].setImpulse(3, 0);
-                    projectiles[0].setScale(Vector2f(-0.2, 0.2));
+                    projectiles[1].setImpulse(25, 10);
+                    projectiles[1].setScale(Vector2f(0.1, 0.1));
                 }
 
                 else {
-                    projectiles[0].setImpulse(-3, 0);
-                    projectiles[0].setScale(Vector2f(0.2, 0.2));
+                    projectiles[1].setImpulse(-25, 10);
+                    projectiles[1].setScale(Vector2f(-0.1, 0.1));
                 }
 
 
                 ultimateShot->isAtacking = true;
             }
             else if (percentage < 2.5f / 3.f) {
-                
+
+                model.at("Body")->angle -= 5;
+                model.at("BackArm")->angle -= 5;
+                model.at("FrontArm")->angle -= 5;
+                model.at("Head")->angle -= 5;
                
+                if (facingRight)
+                    position.x += 2;
+                else
+                    position.x -= 2;
             }
             else if (percentage < 2.9 / 3.f) {
-                
                 model.at("Body")->angle *= 0.9;
                 model.at("FrontArm")->angle *= 0.9;
-                model.at("BackLeg")->angle *= 0.9;
-                model.at("FrontLeg")->angle *= 0.9;
-                model.at("Head")->angle *= 0.9;
-                model.at("FrontLeg")->offset.x *= 0.9;
-                model.at("BackLeg")->offset.y *= 0.9;
-                model.at("FrontArm")->angle *= 0.9;
                 model.at("BackArm")->angle *= 0.9;
+               
+                model.at("Head")->angle *= 0.9;
             }
             else {
                 model.at("Body")->angle = 0;
@@ -329,76 +297,123 @@ namespace Rooster {
             float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
 
 
+
+            if (percentage < 1.75f / 3.f) {
+
+                float thisPercentage = (percentage * 3) / 1.75;
+
+
+
+                projectiles[1].setImpulse(0, 0);
+
+                projectiles[1].setScale(
+                    0.5 * thisPercentage,
+                    0.25 * thisPercentage
+                );
+
+
+                projectiles[1].setPosition(
+                    position.x,
+                    floorY
+                );
+
+                projectiles[1].setVisibility(true);
+            }
+            else if (percentage < 2.5f / 3.f) {
+                float thisPercentage = (percentage * 3) / 2.5;
+
+                projectiles[1].setScale(
+                    0.5 - 0.5 * thisPercentage,
+                    0.25 - 0.25 * thisPercentage
+                );
+            }
+            else
+                projectiles[1].setVisibility(false);
+
+
             if (percentage < 1.f / 3.f) {
 
                 float thisPercentage = percentage * 3;
-                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
-                model.at("BackArm")->angle = 20 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = 20 * sin(thisPercentage * PI / 2);
-                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
-                model.at("FrontEyebrow")->offset.y += 0.5;
-                model.at("BackEyebrow")->offset.y += 0.5;
-                model.at("FrontLeg")->offset.y = -20 * thisPercentage;
-                model.at("BackLeg")->offset.y = -20 * thisPercentage;
-                model.at("Biko")->offset.x = -2;
-                model.at("Body")->offset.y = -20 * thisPercentage;
-                model.at("Body")->angle = 45 * sin(thisPercentage * PI / 2);
-            }
-            else if (percentage < 2.f / 3.f) {
 
-                model.at("Body")->angle = -75;
-                model.at("FrontArm")->angle = -60;
-                model.at("BackArm")->angle = -60;
-
-                model.at("BackLeg")->angle = 20;
-                model.at("Head")->angle = 45;
-                model.at("Head")->offset.x = -15;
-
-                model.at("FrontLeg")->angle = 45;
-                model.at("BackLeg")->angle = 45;
-
-
-            }
-            else if (percentage < 2.9f / 3.f) {
-
-                model.at("FrontArm")->angle *= 0.9;
-                model.at("BackArm")->angle *= 0.9;
-
-                model.at("BackArm")->angle *= 0.9;
-                model.at("BackLeg")->angle *= 0.9;
-
-                model.at("Head")->angle *= 0.9;
-                model.at("Head")->offset.x *= 0.9;
-
-                model.at("FrontEyebrow")->offset.y *= 0.9;
-                model.at("BackEyebrow")->offset.y *= 0.9;
-
-                model.at("FrontLeg")->angle *= 0.9;
-                model.at("BackLeg")->offset.y *= 0.9;
-
-                model.at("Body")->angle *= 0.9;
-
-            }
-            else {
-
-                model.at("FrontArm")->angle = 0;
-                model.at("BackArm")->angle = 0;
-
-                model.at("BackArm")->angle = 0;
-                model.at("BackLeg")->angle = 0;
-
-                model.at("Head")->angle = 0;
-                model.at("Head")->offset.x = 0;
-
-                model.at("FrontEyebrow")->offset.y = 0;
-                model.at("BackEyebrow")->offset.y = 0;
-
-                model.at("FrontLeg")->angle = 0;
-                model.at("BackLeg")->offset.y = 0;
 
                 model.at("Body")->angle = 0;
-            }
+                model.at("BackArm")->angle = -70 + sin(2 * PI * time / 360) * 20;
+                model.at("FrontArm")->angle = 0;
+                model.at("Head")->angle = -10;
+                model.at("BackLeg")->offset.y = -10;
+                model.at("FrontLeg")->offset.y = -10;
+                model.at("BackLeg")->angle = -10;
+                model.at("FrontLeg")->angle = -10;
 
+                position.y += 10;
+
+            }
+            else if (percentage < 2.f / 3.f) {
+                float thisPercentage = percentage * 3;
+
+                model.at("Body")->angle = 0;
+                model.at("BackArm")->angle = -70 + sin(2 * PI * time / 360) * 20;
+                model.at("FrontArm")->angle = 0;
+                model.at("Head")->angle = -10;
+                model.at("BackLeg")->offset.y = -10;
+                model.at("FrontLeg")->offset.y = -10;
+                model.at("BackLeg")->angle = -10;
+                model.at("FrontLeg")->angle = -10;
+                
+            }
+            else if (percentage < 2.05f / 3.f) {
+                //ultimateShot->playSound();
+            }
+            else if (percentage < 2.2f / 3.f) {
+
+
+
+                projectiles[0].setVisibility(true);
+                projectiles[0].setScale(Vector2f(1, 1));
+
+                projectiles[0].setPosition(
+                    Vector2f(model.at("BackArm")->drawPos.x,
+                        (floorY - projectiles[0].getSize().y)
+                    )
+                );
+
+
+
+                if (facingRight) {
+                    projectiles[0].setImpulse(3, 0);
+                    projectiles[0].setScale(Vector2f(-0.2, 0.2));
+                }
+
+                else {
+                    projectiles[0].setImpulse(-3, 0);
+                    projectiles[0].setScale(Vector2f(0.2, 0.2));
+                }
+
+
+                ultimateShot->isAtacking = true;
+            }
+            else if (percentage < 2.5f / 3.f) {
+
+
+            }
+            else if (percentage < 2.9 / 3.f) {
+
+                model.at("Body")->angle *= 0.9;
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackLeg")->angle *= 0.9;
+                model.at("FrontLeg")->angle *= 0.9;
+                model.at("Head")->angle *= 0.9;
+                model.at("FrontLeg")->offset.x *= 0.9;
+                model.at("BackLeg")->offset.y *= 0.9;
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackArm")->angle *= 0.9;
+            }
+            else {
+                model.at("Body")->angle = 0;
+                model.at("FrontArm")->angle = 0;
+                model.at("BackArm")->angle = 0;
+                model.at("Head")->angle = 0;
+            }
 
         }
 
@@ -491,12 +506,14 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
+                estado == STOPPED;
+                /*
                animations[0].update();
                if (animations[0].playingFrame > 15) {
                     animations[0].playingFrame = 15;
                }
                // model.updateWithAnimation(animations[0]);
-
+               */
             }
             else if (estado == STOPPED) {
                 runReset();
@@ -507,13 +524,14 @@ namespace Rooster {
                 highAtackAnim();
             }
             else if (atacking == LOW_KICK) {
-                //lowKickAnim();
+                louKickAnim();
             }
             else if (atacking == SPECIAL) {
                 especialAnim();
             }
 
             projectiles[0].update();
+            projectiles[1].update();
             if (projectiles[0].getVisibility()) {
 
                 int i = (frames % 30) / 10;
@@ -531,61 +549,21 @@ namespace Rooster {
 
             Clock Timer;
             Timer.restart();
-            
-            
-
-            class corvo {
-                Texture Corvo;
-                Sprite sprite;
-                float hspd;
-                float vspd;
-                Vector2f position;
-                Vector2f scl;
-            public:
-                corvo(float hspd,float vspd,Vector2f position, Vector2f scl) {
-                    this->hspd = hspd;
-                    this->vspd = vspd;
-                    this->position = position;
-                    Corvo.loadFromFile("sprites/corvo.png");
-                    sprite.setTexture(Corvo);
-                    
-                }
-                void update() {
-                   
-                    int sizeCorvo[3] = {500,748,643};
-                    if (hspd < 0)
-                        if(scl.x > 0)
-                            scl.x *= -1;
-                    
-                    position.x += hspd;
-                    position.y += vspd;
-
-                    sprite.setScale(scl);
-                    sprite.setRotation(-sin(vspd));
-                    static int Frames = 0;
-                    Frames++;
-                    int sprSelected = (Frames/60) % 3;
-                    int sprx = 0;
-
-                    if (sprSelected == 0) {
-                        sprx = 0;
-                    }
-                    else if (sprSelected == 1) {
-                        sprx = 500;
-                    }
-                    else if (sprSelected == 2) {
-                        sprx = 500 + 748;
-                    }
-                   
-                    sprite.setTextureRect(IntRect(sprx,0,sizeCorvo[sprSelected],829));
-                    sprite.setPosition(position);
-                }
-                void draw(RenderWindow * window) {
-                    println("chega aqui");
-                    window->draw(sprite);
-                }
-            };
+            galo2->position.x = SCREEN_WIDTH / 2;
+                        
             std::vector <corvo> corvos;
+
+            effectsChuva chuva;
+
+            Texture raio;
+            raio.loadFromFile("sprites/lightning.png");
+            Sprite lightning;
+            lightning.setTexture(raio);
+            lightning.setPosition(SCREEN_WIDTH/2,0);
+
+            RectangleShape bright;
+
+            bright.setFillColor(Color(255, 255, 255, 0));
 
             while (window->isOpen()) {
 
@@ -609,28 +587,60 @@ namespace Rooster {
                     fundo.setFillColor(Color(color,color,color));
 
                 }
-                else if (time < 6500) {
-                    corvo a(
-                        rand() % 10 - 5,
-                        rand() % 10 - 5,
-                        Vector2f(
-                            rand() % SCREEN_WIDTH,
-                            rand() % SCREEN_HEIGHT
-                        ),
-                        Vector2f(
-                            1,//rand() % 5/10,
-                            1//rand() % 5/10
-                        )
-                    );
-                    corvos.push_back(a);
-                    for (int i = 0; i < corvos.size(); i++) {
-                        corvos[i].update();
-                        corvos[i].draw(window);
+                else if (time > 3500) {
+                    if (time < 4500) {
+                        corvo *a= new corvo(rand() % 10,rand() % 10 - 5,Vector2f(0,randFloatRangeNormal(0, SCREEN_HEIGHT, SCREEN_HEIGHT)), Vector2f(0.2,0.2));
+                        corvos.push_back(*a);
+                        for (int i = 0; i < corvos.size(); i++) {
+                            corvos[i].update();
+                            corvos[i].draw(window);
+                        }                     
                     }
+                    else if (time < 5500) {                       
+                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                    }else if (time < 5750) {
+                        window->draw(lightning);
+                    }
+                    else if (time < 6000) {
+                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                    }
+                    else if (time < 6250) {
+                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                    }
+                    else if (time < 6500) {
+                        lightning.setPosition(SCREEN_WIDTH/4, 0);
+                        window->draw(lightning);
+                    }
+                    else if (time < 6750) {
+                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                    }
+                    else{
+                        chuva.update();
+                        chuva.draw(window);
+                        for (int i = 0; i < corvos.size(); i++) {
+                            corvos[i].update();
+                            corvos[i].draw(window);
+                        }
+                    }
+                    
+                    
                 }
                 
+                if (position.x < galo2->position.x - model.getBounds().width * abs(model.xScl)) {
+                    estado = RUNNING;
+                    run();
+                }
+                else {
+                    estado = STOPPED;
+                }
+                
+             
+                update();
+                galo2->update();
                 galo2->show(*window);
+
                 show(*window);
+                window->draw(bright);
                 window->display();
             }
         }

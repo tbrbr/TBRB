@@ -238,7 +238,7 @@ namespace Rooster {
 
         // Stats
         int maxHp;
-        int hp;
+        float hp;
         int atk;
         int def;
         int speed;
@@ -259,7 +259,8 @@ namespace Rooster {
         
 
         bool air;
-
+        // im still trying
+        bool isPoisoned = false;
 
         // Frames for Animation
         int frames = 0;
@@ -658,7 +659,9 @@ namespace Rooster {
                 vspeed *= 0.98;
             }
             
-
+            if (isPoisoned) {
+                hp -= 0.5;
+            }
 
 
 

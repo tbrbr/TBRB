@@ -41,6 +41,14 @@ Rooster::ParticleSystem mainPartSystem;
 #include "introducoes.h"
 #include "checador_de_posicao.h"
 
+#include "Elementos.h"
+#include "Galo.h"
+#include "GaloSniper.h"
+#include "galoKalsa.h"
+#include "GaloBruxo.h"
+#include "galoPeste.h"
+#include "galoBota.h"
+
 #include "Patinho/Patinho.h"
 #include "Patinho/jogoDoPatinho.h"
 #include "TilesDoArrocha.h"
@@ -55,13 +63,7 @@ Rooster::ParticleSystem mainPartSystem;
 
 
 #include "entradas.h"
-#include "Elementos.h"
-#include "Galo.h"
-#include "GaloSniper.h"
-#include "galoKalsa.h"
-#include "GaloBruxo.h"
-#include "galoPeste.h"
-#include "galoBota.h"
+
 using namespace Rooster;
 
 #include "Briga.h"

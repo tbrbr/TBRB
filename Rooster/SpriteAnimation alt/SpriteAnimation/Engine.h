@@ -136,7 +136,15 @@ struct engineInfo{
     struct GUIInfo GUI;
 
 
+    std::string usingModel;
+    std::string usingAnim;
+
+
     void init(){
+
+        usingModel = "pesteModel.txt";
+        usingAnim = "pesteAgacha.txt";
+
         for(int i = 0; i < sf::Keyboard::KeyCount; i++){
             keyboardState[i][0] = false;
             keyboardState[i][1] = false;

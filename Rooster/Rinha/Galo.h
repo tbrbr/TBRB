@@ -22,7 +22,8 @@ namespace Rooster {
         HIGH_KICK,
         JUMP_KICK,
         SPECIAL,
-        FATALITY,      
+        FATALITY,  
+        DANCING
     };
     
     enum roosters {

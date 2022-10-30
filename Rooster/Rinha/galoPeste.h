@@ -85,10 +85,18 @@ namespace Rooster {
             delete hit;
 
             struct Animation agacharAnim;
-            agacharAnim.init("SecondAnim.txt");
-            agacharAnim.playingSpeed = 1;
+            agacharAnim.init("pesteAgacha.txt");
+            agacharAnim.playingSpeed = 0.5;
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);
+
+            struct Animation danceAnim;
+            danceAnim.init("pesteDance.txt");
+            danceAnim.playingSpeed = 0.1;
+            danceAnim.connectLoop = true;
+            animations.push_back(danceAnim);
+
+
 
 
             bar = new LifeBar(maxHp, isp1, name.c_str());
@@ -506,14 +514,14 @@ namespace Rooster {
                 runAnim();
             }
             else if (estado == DEFENDING) {
-                estado == STOPPED;
-                /*
+               estado == STOPPED;
+                
                animations[0].update();
                if (animations[0].playingFrame > 15) {
                     animations[0].playingFrame = 15;
                }
-               // model.updateWithAnimation(animations[0]);
-               */
+               model.updateWithAnimation(animations[0]);
+               
             }
             else if (estado == STOPPED) {
                 runReset();
@@ -529,6 +537,12 @@ namespace Rooster {
             else if (atacking == SPECIAL) {
                 especialAnim();
             }
+            else if (estado == DANCING) {
+                animations[1].update();
+                model.updateWithAnimation(animations[1]);
+            }
+
+
 
             projectiles[0].update();
             projectiles[1].update();
@@ -542,6 +556,8 @@ namespace Rooster {
                 ultimateShot->hitbox.center.y = projectiles[0].getPosition().y;
                 ultimateShot->hitbox.radius = projectiles[0].getSize().y/2;
             }
+
+
             
         }
 

@@ -237,18 +237,31 @@ struct ValBox{
             if(input.length() == 0){
                 fVal = 0;
             } else {
-                fVal = std::stof(input);
 
-                int thing = pow(10, decimalPrecision);
 
-                fVal = (float)((int)(fVal*thing))/thing;
+                try{
+
+                    fVal = std::stof(input);
+
+                    int thing = pow(10, decimalPrecision);
+
+                    fVal = (float)((int)(fVal*thing))/thing;
+                } catch(...){
+                    fVal = 0;
+                    input.clear();
+                }
 
             }
         } else if(type == 1){
             if(input.length() == 0){
                 iVal = 0;
             } else{
-                iVal = std::stoi(input);
+                try{
+                    iVal = std::stoi(input);
+                } catch(...){
+                    iVal = 0;
+                    input.clear();
+                }
             }
         } else if(type == 2){
             sVal = input;

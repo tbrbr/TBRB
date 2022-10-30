@@ -574,6 +574,10 @@ bool pianoTiles(RenderWindow* window) {
 
 	int frames = 0;
 
+	struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
+
+	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+
 	while (window->isOpen()) {
 
 		
@@ -615,6 +619,13 @@ bool pianoTiles(RenderWindow* window) {
 			
 		alcides.update(frames);
 		alcides.draw(window, frames);
+
+		galoPeste->update();
+		galoPeste->show(*window);
+
+
+
+
 		window->display();
 	}
 

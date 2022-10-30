@@ -221,7 +221,9 @@
 						}	
 					}
 					else {
+						println("A");
 						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+						galo2.ultimateShot->getHitted = true;
 					}
 				}
 			}
@@ -244,18 +246,21 @@
 							galo.ultimateShot->init2.restart();
 						}
 					}
-					else
+					else {
+						println("A");
 						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+						galo.ultimateShot->getHitted = true;
+					}
 
 
 				}
 
 			}
 
-			if (galo.ultimateShot->getHitted) {
+			if (galo.ultimateShot->getHitted && galo.ultimateShot->id==5) {
 				galo.apanharByKalsa(&galo2, window);
 			}
-			else if (galo2.ultimateShot->getHitted) {
+			else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
 				galo2.apanharByKalsa(&galo, window);
 			}
 
@@ -321,6 +326,10 @@
 			if (framesWin > 0) {
 				return;
 			}
+
+
+			//exp->update();
+			//exp->draw(*window);
 
 
 			window->display();

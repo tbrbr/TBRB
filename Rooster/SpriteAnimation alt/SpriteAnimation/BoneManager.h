@@ -507,8 +507,10 @@ struct BoneManager{
 
                             saveModel(str);
 
+                            info.usingModel = str;
                         }else {
                             saveModel(savePath);
+                            info.usingAnim = savePath;
                         }
 
                         selectedBox = -1;
@@ -541,7 +543,11 @@ struct BoneManager{
                         loadPath += ".txt";
 
 
+
+
                         loadAnimation(loadPath, info);
+
+                        info.usingAnim = loadPath;
 
                         selectedBox = -1;
                         usingPathBox = false;
@@ -575,6 +581,8 @@ struct BoneManager{
 
 
                         loadModel(loadPath, info);
+
+                        info.usingModel  = loadPath;
 
                         selectedBox = -1;
                         usingPathBox = false;
@@ -626,8 +634,11 @@ struct BoneManager{
 
                             saveAnimation(str);
 
+                            info.usingAnim = str;
+
                         }else {
                             saveAnimation(savePath);
+                            info.usingAnim = savePath;
                         }
 
                         selectedBox = -1;

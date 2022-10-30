@@ -22,7 +22,8 @@ namespace Rooster {
         HIGH_KICK,
         JUMP_KICK,
         SPECIAL,
-        FATALITY,      
+        FATALITY,  
+        DANCING
     };
     
     enum roosters {
@@ -288,6 +289,8 @@ namespace Rooster {
         Ataques* louKick;
         Ataques* ultimateShot;
 
+        bool noGravity = true;
+
 
         // Lifebar
         LifeBar* bar;
@@ -413,7 +416,7 @@ namespace Rooster {
 
             if (!invunerable) {
 
-                hp -= atk.Damage;
+                hp -= atk.Damage/stats.def;
 
 
                 // Calculando os impulsos
@@ -423,9 +426,7 @@ namespace Rooster {
                 vspeed += sin(atk.angle) * atk.KnockBack;
                 hspeed += cos(atk.angle) * atk.KnockBack;
 
-                if (vspeed < 0) {
-                    air = true;
-                }
+
                 if (!direction) {
                     hspeed *= -1;
                 }
@@ -493,21 +494,16 @@ namespace Rooster {
                 int add = 45;
                 g2->model.at("Head")->angle += add;
 
-                // Previnindo Crash
-                if (g2->name != "Bota") {
-                    g2->model.at("FrontArm")->angle += add;
-                    g2->model.at("BackArm")->angle += add;
-                }
+                g2->model.at("FrontArm")->angle += add;
+                g2->model.at("BackArm")->angle += add;
+                
                
             }
             else {
                 g2->model.at("Head")->angle = 0;
+                g2->model.at("FrontArm")->angle = 0;
+                g2->model.at("BackArm")->angle = 0;
 
-                // Previnindo Crash
-                if (g2->name != "Bota") {
-                    g2->model.at("FrontArm")->angle = 0;
-                    g2->model.at("BackArm")->angle = 0;
-                }
             }
             
          
@@ -608,7 +604,15 @@ namespace Rooster {
             
 
             // Gravity
-            if (air) {
+
+
+            if (position.y < floorY) {
+                air = true;
+            }
+
+
+
+            if (air && !noGravity) {
                 vspeed += peso * Gravity / 100;
             }
 

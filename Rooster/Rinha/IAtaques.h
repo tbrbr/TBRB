@@ -190,6 +190,12 @@ namespace Rooster {
 			this->angle = angle;
 			bufferCollision.loadFromFile(txt);
 			soundCollision.setBuffer(bufferCollision);
+
+			colPos.x = 0;
+			colPos.y = 0;
+
+			colDif.x = 0;
+			colDif.y = 0;
 		}
 		Ataques(int id, float Stun, float CoolDown, HitBox hitbox, int Damage, float KnockBack,
 			float angle, Time timelapse,const char* txt, Time timelapse2) {
@@ -236,7 +242,7 @@ namespace Rooster {
 		}
 
 		void createBlood(ParticleSystem& partSys) {
-			ExplosionEffect* exp = new ExplosionEffect(10, colPos, Color::Red, Vector2f(colDif.x * Damage, colDif.y * Damage), 10, colAngle, 60);
+			ExplosionEffect* exp = new ExplosionEffect(10, colPos, Color::Red, Vector2f(colDif.x * ((float)Damage/4), colDif.y * ((float)Damage / 4)), 10, colAngle, 60);
 			partSys.effects.push_back(exp);
 		}
 

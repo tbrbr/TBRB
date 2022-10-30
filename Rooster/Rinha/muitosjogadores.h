@@ -87,6 +87,10 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, Rec
 	int framesRound = 60;
 	int framesFight = 0;
 
+
+
+
+
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);

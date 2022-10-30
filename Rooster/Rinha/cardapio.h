@@ -418,6 +418,10 @@ public:
 						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
 							galop1[0]->resetPosition();
 							galop2[0]->resetPosition();
+
+							galop1[0]->noGravity = false;
+							galop2[0]->noGravity = false;
+
 							option = Rooster::UMJOGADORES;
 							return;
 						}

@@ -32,6 +32,10 @@ struct Animation {
 
     std::vector<std::string> propertyName;
 
+
+    std::vector<int> animateParts;
+
+
     int framesTotal = 50;
     bool playing = true;
     float playingFrame = 0;
@@ -44,6 +48,7 @@ struct Animation {
     }
 
     void init(std::string filename) {
+
         std::ifstream file(filename);
         timeline.clear();
 
@@ -128,6 +133,10 @@ struct Animation {
                             playingSpeed = std::stof(str);
                         }
 
+                        for (int i = 0; i < timeline.size(); i++) {
+                            animateParts.push_back(i);
+                        }
+
                     }
                 }
                 else {
@@ -142,6 +151,15 @@ struct Animation {
 
         }
 
+    }
+
+    void removeAnimatePart(int id) {
+        for (int i = 0; i < animateParts.size(); i++) {
+            if (animateParts[i] == id) {
+                animateParts.erase(animateParts.begin() + i);
+                return;
+            }
+        }
     }
 
     void update() {
@@ -795,64 +813,66 @@ struct Model {
 
         float fPos = anim.playingFrame;
 
-        for (int i = 0; i < anim.timeline.size(); i++) {
+        for (int i = 0; i < anim.animateParts.size(); i++) {
 
-            if (allBones.size() > i) {
+            int part = anim.animateParts[i];
+
+            if (allBones.size() > part) {
 
                 struct AnimationKeyFrame p;
-                p = anim.getPropertyValue(i, 0, fPos);
+                p = anim.getPropertyValue(part, 0, fPos);
 
                 if (p.exists) {
-                    allBones[i]->center.x = p.val;
+                    allBones[part]->center.x = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 1, fPos);
+                p = anim.getPropertyValue(part, 1, fPos);
 
                 if (p.exists) {
-                    allBones[i]->center.y = p.val;
+                    allBones[part]->center.y = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 2, fPos);
+                p = anim.getPropertyValue(part, 2, fPos);
 
                 if (p.exists) {
-                    allBones[i]->attach.x = p.val;
+                    allBones[part]->attach.x = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 3, fPos);
+                p = anim.getPropertyValue(part, 3, fPos);
 
                 if (p.exists) {
-                    allBones[i]->attach.y = p.val;
+                    allBones[part]->attach.y = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 4, fPos);
+                p = anim.getPropertyValue(part, 4, fPos);
 
                 if (p.exists) {
-                    allBones[i]->offset.x = p.val;
+                    allBones[part]->offset.x = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 5, fPos);
+                p = anim.getPropertyValue(part, 5, fPos);
 
                 if (p.exists) {
-                    allBones[i]->offset.y = p.val;
+                    allBones[part]->offset.y = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 6, fPos);
+                p = anim.getPropertyValue(part, 6, fPos);
 
                 if (p.exists) {
-                    allBones[i]->xScl = p.val;
+                    allBones[part]->xScl = p.val;
                 }
 
-                p = anim.getPropertyValue(i, 7, fPos);
+                p = anim.getPropertyValue(part, 7, fPos);
 
                 if (p.exists) {
-                    allBones[i]->yScl = p.val;
+                    allBones[part]->yScl = p.val;
                 }
 
 
-                p = anim.getPropertyValue(i, 8, fPos);
+                p = anim.getPropertyValue(part, 8, fPos);
 
                 if (p.exists) {
-                    allBones[i]->angle = p.val;
+                    allBones[part]->angle = p.val;
                 }
             }
 

@@ -79,6 +79,8 @@ namespace Rooster {
 			agacharAnim.connectLoop = false;
 			animations.push_back(agacharAnim);
 
+			
+
 		}
 
 

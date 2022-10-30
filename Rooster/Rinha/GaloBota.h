@@ -30,7 +30,7 @@ namespace Rooster {
             );
             this->louKick = new Ataques(4,
                 5, 0.5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI, milliseconds(1000), ""
+                20, 10, -PI/3, milliseconds(1000), ""
             );
 
             this->ultimateShot = new Ataques(7,
@@ -166,15 +166,32 @@ namespace Rooster {
 
             Time t = ultimateShot->init.getElapsedTime();
 
-            if (t > ultimateShot->timeLapse) {
-                atacking = NOT_ATTACK;
-                ultimateShot->isAtacking = false;
+            if (atacking != NOT_ATTACK) {
+                if (t > ultimateShot->timeLapse) {
+                    atacking = NOT_ATTACK;
+                    ultimateShot->isAtacking = false;
+                    ultimateShot->getHitted = false;
+                    return;
+                }
+                
+
+                if (ultimateShot->getHitted || !air) {
+                    atacking = NOT_ATTACK;
+
+                    vspeed = 30;
+
+                    vspeed *= -0.5;
+
+
+                    ultimateShot->isAtacking = false;
+                    ultimateShot->getHitted = false;
+                    return;
+
+
+                }
+               
             }
 
-            if (ultimateShot->getHitted) {
-                atacking = NOT_ATTACK;
-                ultimateShot->isAtacking = false;
-            }
 
 
             float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
@@ -187,7 +204,7 @@ namespace Rooster {
 
                     model.at("Head")->offset.y *= 0.5;
 
-                    float oPerc = ((percentage / 2) + 1);
+                    float oPerc = ((thisPercentage / 2) + 1);
                     model.at("Body")->xScl = model.at("Body")->getBaseScale().x * oPerc;
                     model.at("Body")->yScl = model.at("Body")->getBaseScale().y * oPerc;
 
@@ -196,19 +213,19 @@ namespace Rooster {
                 }
                 else if (percentage < 2.f / 3.f) {
 
-                    float thisPercentage = ruleOfThree(percentage, float(2/3), float (2.5/3), 0, 1);
                    
+                    float thisPercentage = ruleOfThree(percentage, float(1 / 3), float(2 / 3), 0, 1);
 
 
                     model.at("Head")->offset.y = 0;
 
-                    float oPerc = ((float(1/3) / 2) + 1);
+                    float oPerc = 1.5;
 
                     model.at("Body")->xScl = model.at("Body")->getBaseScale().x * oPerc;
                     model.at("Body")->yScl = model.at("Body")->getBaseScale().y * oPerc;
 
 
-                    vspeed = 10;
+                    vspeed = 30;
 
                     ultimateShot->isAtacking = true;
                     ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
@@ -219,67 +236,29 @@ namespace Rooster {
 
 
                 }
-                else if (percentage < 2.5f / 3.f) {
+                else if (percentage < 2.9f / 3.f) {
 
-                    float thisPercentage = (percentage * 3) / 2.5;
+                    float thisPercentage = ruleOfThree(percentage, float(2 / 3), float(2.9 / 3), 0, 1);
 
-                    ultimateShot->isAtacking = true;
-                    ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
-                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20 * model.yScl;
-
-                    ultimateShot->hitbox.radius = 5 * model.xScl;
-
-
-
-                }
-                else if (percentage < 2.9 / 3.f) {
-                    float thisPercentage = (percentage * 3) / 2.9;
-
-                    println("chego aquyi");
-
+                    vspeed = 30;
 
                     ultimateShot->isAtacking = true;
                     ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
                     ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20 * model.yScl;
 
                     ultimateShot->hitbox.radius = 5 * model.xScl;
-                    ultimateShot->isAtacking = false;
+
 
 
                 }
                 else {
+                    ultimateShot->isAtacking = false;
 
 
                 }
             }
             else {
-
-                if (percentage < 2.f / 3.f) {
-
-                    float thisPercentage = (percentage * 3) / 2;
-
-
-                    ultimateShot->isAtacking = true;
-
-
-
-                }
-                else if (percentage < 2.5f / 3.f) {
-
-                    float thisPercentage = (percentage * 3) / 2.5;
-                  
-                }
-                else if (percentage < 2.9 / 3.f) {
-                    float thisPercentage = (percentage * 3) / 2.9;
-
-                    
-                    ultimateShot->isAtacking = false;
-
-
-                }
-                else {
-
-                }
+                ultimateShot->isAtacking = false;
             }
         }
 

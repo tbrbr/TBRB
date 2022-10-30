@@ -920,7 +920,7 @@ int main(){
 
     Rooster::HitBox hb;
     Texture t;
-    t.loadFromFile("sprites/galoBota.png");
+    t.loadFromFile("sprites/galoPeste.png");
 
     Texture texToolbar;
     texToolbar.loadFromFile("sprites/toolbar.png");
@@ -947,12 +947,12 @@ int main(){
     struct Model modelo;
 
     modelo.tex = &t;
-    modelo.loadModel("SniperModel1.txt");
+    modelo.loadModel(info.usingModel);
 
     modelo.xScl = 1;
 
     struct Animation anima;
-    anima.init("SecondAnim.txt");
+    anima.init(info.usingAnim);
     anima.connectLoop = true;
 
 
@@ -999,7 +999,9 @@ int main(){
 
                     info.confirmInput = true;
                 }else if(e.key.code == Keyboard::Equal){
-                    anima.init("SecondAnim.txt");
+                    modelo.loadModel(info.usingModel);
+                    anima.init(info.usingAnim);
+
                 } else if(e.key.control){
 
 

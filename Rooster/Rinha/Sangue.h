@@ -740,8 +740,8 @@ namespace Rooster {
 		class effectsInfestacaoDeRatos(){
 			for (int i = 0; i < 100; i++) {
 				int right = rand() % 2;
-				rato* a = new rato(randIntRange(5,10) - right*15,0,Vector2f(right*SCREEN_WIDTH,floorY),Vector2f(0.2,0.2));
-				ratos.push_back(*a);
+//				rato* a = new rato(randIntRange(5,10) - right*15,0,Vector2f(right*SCREEN_WIDTH,floorY),Vector2f(0.2,0.2));
+				//ratos.push_back(*a);
 			}
 		}
 		void update() {

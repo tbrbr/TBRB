@@ -380,7 +380,7 @@ public:
 
 
 
-			bar.setFillColor(Color::Blue);
+			bar.setFillColor(Color(0,0,255,10));
 			bar.setScale(xScl, yScl);
 			bar.setPosition(pos);
 
@@ -567,8 +567,7 @@ bool pianoTiles(RenderWindow* window) {
 
 	Yamaha alcides;
 
-
-
+	
 	Clock timer;
 	timer.restart();
 
@@ -578,13 +577,21 @@ bool pianoTiles(RenderWindow* window) {
 
 	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
 
+	Texture fundao;
+	fundao.loadFromFile("sprites/chorao.png");
+
+	RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	rect.setTexture(&fundao);
+	rect.setFillColor(Color(255, 0, 255, 255));
+
+
+
 	while (window->isOpen()) {
 
 		
 		int time = timer.getElapsedTime().asMilliseconds();
 
-
-
+		
 		
 
 		Event e;
@@ -610,8 +617,7 @@ bool pianoTiles(RenderWindow* window) {
 
 		frames++;
 
-		RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-		rect.setFillColor(Color::Black);
+		
 
 
 		window->draw(rect);

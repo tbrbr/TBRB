@@ -2,8 +2,9 @@
 
 #define SFML_STATIC
 
-#include "varios_idiomas.h"
-#include "efeitos_fodas.h"
+
+
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <windows.h>
@@ -22,8 +23,14 @@ using namespace std;
 using namespace sf;
 
 
+
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+
+#define SHOWDEBUG false
+
+#include "varios_idiomas.h"
+#include "efeitos_fodas.h"
 
 
 #include "Math2.h"
@@ -89,7 +96,7 @@ int main() {
 
 
 	int option = MENU_PRINCIPAL;
-	//option = BOTAPRAARROCHAR;
+	option = BOTAPRAARROCHAR;
 	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
@@ -146,7 +153,7 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
-			println("singleplay");
+
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:

@@ -36,6 +36,8 @@ namespace Rooster {
 
     #define NUMGALOS 5
 
+    
+
     const float floorY = (float)SCREEN_HEIGHT / 1.1;
 
     
@@ -560,16 +562,26 @@ namespace Rooster {
 
             
 
+            if (SHOWDEBUG) {
+                for (int i = 0; i < hurtBox.size(); i++) {
 
-            for (int i = 0; i < hurtBox.size(); i++) {
 
+                    drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
-               // drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+                }
 
-            }
+                if (ultimateShot->isAtacking) {
+                    drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                }
 
-            if (ultimateShot->isAtacking) {
-                //drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                if (louKick->isAtacking) {
+                    drawHitBox(window, louKick->hitbox, sf::Color::Red);
+                }
+
+                if (hiKick->isAtacking) {
+                    drawHitBox(window, hiKick->hitbox, sf::Color::Red);
+                }
+
             }
         }
 

@@ -70,8 +70,10 @@ namespace Rooster {
             textura.loadFromFile("sprites/galoPeste.png");
 
             model.tex = &textura;
-            model.loadModel("pesteModel.txt");
+            model.loadModel("models/pesteModel.txt");
             model.autoSetBounds(model.at("Body"), model.at("BackLeg"), model.at("Head"));
+
+            println("A Peste Carregou");
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
@@ -85,13 +87,13 @@ namespace Rooster {
             delete hit;
 
             struct Animation agacharAnim;
-            agacharAnim.init("pesteAgacha.txt");
+            agacharAnim.init("animations/pesteAgacha.txt");
             agacharAnim.playingSpeed = 0.5;
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);
 
             struct Animation danceAnim;
-            danceAnim.init("pesteDance.txt");
+            danceAnim.init("animations/pesteDance.txt");
             danceAnim.playingSpeed = 0.1;
             danceAnim.connectLoop = true;
             animations.push_back(danceAnim);

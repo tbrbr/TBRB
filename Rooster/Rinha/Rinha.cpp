@@ -97,7 +97,7 @@ int main() {
 
 
 	int option = INTRO;
-	//option = BOTAPRAARROCHAR;
+
 	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
@@ -126,6 +126,8 @@ int main() {
 	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 
+	println("Carregarou");
+
 
 	Pato *miniGame1 = new Pato((*window));
 
@@ -148,6 +150,9 @@ int main() {
 				return 1;
 			}
 			fundo.setTexture(mapSelector->getSelectedMap());
+
+			println("singleplay");
+
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:

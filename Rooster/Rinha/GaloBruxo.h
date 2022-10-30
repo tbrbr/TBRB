@@ -63,7 +63,7 @@ namespace Rooster {
             t.loadFromFile("sprites/galoBruxo.png");
 
             model.tex = &t;
-            model.loadModel("bruxoModel.txt");
+            model.loadModel("models/bruxoModel.txt");
 
             println("BRUXO CARREGOU");
 
@@ -100,7 +100,7 @@ namespace Rooster {
             delete hit;
 
             struct Animation agacharAnim;
-            agacharAnim.init("SecondAnim.txt");
+            agacharAnim.init("animations/SecondAnim.txt");
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);

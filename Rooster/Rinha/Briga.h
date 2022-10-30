@@ -65,6 +65,17 @@
 		int framesFight = 0;
 		int framesWin = 0;
 
+
+
+
+
+		//Explosion3DEffect* exp = new Explosion3DEffect(10, Vector2f(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), Color::Red, Vector2f(2, 2), 10, 10, 360);
+
+
+
+
+
+
 		while (window->isOpen()) {
 			window->clear();
 			window->draw(fundo);
@@ -203,7 +214,9 @@
 						}	
 					}
 					else {
+						println("A");
 						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+						galo2.ultimateShot->getHitted = true;
 					}
 				}
 			}
@@ -226,18 +239,21 @@
 							galo.ultimateShot->init2.restart();
 						}
 					}
-					else
+					else {
+						println("A");
 						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+						galo.ultimateShot->getHitted = true;
+					}
 
 
 				}
 
 			}
 
-			if (galo.ultimateShot->getHitted) {
+			if (galo.ultimateShot->getHitted && galo.ultimateShot->id==5) {
 				galo.apanharByKalsa(&galo2, window);
 			}
-			else if (galo2.ultimateShot->getHitted) {
+			else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
 				galo2.apanharByKalsa(&galo, window);
 			}
 
@@ -303,6 +319,10 @@
 			if (framesWin > 0) {
 				return;
 			}
+
+
+			//exp->update();
+			//exp->draw(*window);
 
 
 			window->display();

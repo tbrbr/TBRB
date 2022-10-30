@@ -62,7 +62,7 @@ namespace Rooster {
 		hud hudselected;
 
 		int p1Hud = 0;
-		int p2Hud = 1;
+		int p2Hud = 0;
 
 		// Rapaz me explique o que é isso porfavor
 		// Ahh to entendendo
@@ -79,6 +79,10 @@ namespace Rooster {
 		bool inputState[2][INPUTSTOTAL][HUDTOTAL];
 
 		input() {
+
+			if (Joystick::isConnected(0)) {
+				p2Hud = 2;
+			}
 
 
 			for (int i = 0; i < sf::Keyboard::KeyCount; i++) {

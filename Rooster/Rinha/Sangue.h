@@ -36,6 +36,13 @@ namespace Rooster {
 
 	public:
 		Vector2f position;
+
+		float depthStart = 100;
+		float depth = 100;
+		float depthSpd = 0;
+
+		float depthChange = 0.5;
+
 		float hSpeed = 0;
 		float vSpeed = 0;
 		float vAcc = 0;
@@ -52,6 +59,8 @@ namespace Rooster {
 		float angFriction = 0.999;
 
 		float friction = 0.999;
+
+		bool fixed = false;
 
 		int maxLife = 500;
 		int life = 500;
@@ -122,20 +131,37 @@ namespace Rooster {
 		void update() {
 
 			if (active) {
-				hSpeed += hAcc;
-				vSpeed += vAcc;
-				ang += angSpeed;
 
-				hSpeed *= friction;
-				vSpeed *= friction;
-				angSpeed *= angFriction;
+				if (!fixed) {
+					hSpeed += hAcc;
+					vSpeed += vAcc;
+					ang += angSpeed;
 
-				hSpeed = constrain(hSpeed, -maxHspd, maxHspd);
-				vSpeed = constrain(vSpeed, -maxVspd, maxVspd);
+					hSpeed *= friction;
+					vSpeed *= friction;
+					angSpeed *= angFriction;
 
-				position.x += hSpeed;
-				position.y += vSpeed;
-				ang += angSpeed;
+
+					hSpeed = constrain(hSpeed, -maxHspd, maxHspd);
+					vSpeed = constrain(vSpeed, -maxVspd, maxVspd);
+
+					position.x += hSpeed;
+					position.y += vSpeed;
+					ang += angSpeed;
+
+
+					depth -= depthSpd;
+
+					if (depth <= 0) {
+						depth = 0;
+						fixed = true;
+					} 
+
+				}
+
+
+
+
 
 				if (fadeInAlpha && life < maxLife/3) {
 					alpha = minimum((float)life / ((float)maxLife / 3), 1);
@@ -157,11 +183,13 @@ namespace Rooster {
 					sprite.setScale(sprScl, sprScl);
 				}
 				else {
+
+					float rad = radius *( 1+(depthChange * (1 - (depth / depthStart))));
 					
 					point.setFillColor(col);
 					point.setPosition(position.x, position.y);
-					point.setOrigin(radius, radius);
-					point.setRadius(radius);
+					point.setOrigin(rad, rad);
+					point.setRadius(rad);
 				}
 
 				life -= mortal;
@@ -397,6 +425,96 @@ namespace Rooster {
 			}
 		}
 	};
+
+
+	class Explosion3DEffect : public Effect {
+		float radius;
+		Vector2f center;
+		Vector2f impact;
+
+	public:
+
+
+		Explosion3DEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
+			int diameter = radius * 2;
+
+			life = 100;
+
+			gravity.x = 0;
+			gravity.y = Gravity / 80;
+
+			for (int i = 0; i < 500; i++) {
+
+
+				Particle p(Color::Red);
+
+				p.setPosition(center);
+
+				p.vAcc = gravity.y;
+				p.hAcc = gravity.x;
+
+				p.fadeOutAlpha = false;
+				p.fadeInAlpha = true;
+
+				p.mortal = true;
+
+				p.life = randIntRange(300, 600);
+				p.maxLife = p.life;
+
+				p.maxHspd = 40;
+				p.maxVspd = 40;
+
+				p.depthSpd = randFloatRange(-1, 4);
+
+				p.radius = randIntRange(1, 10);
+
+				float ang = toRadiAnus(randFloatRangeNormal(angle - 180, angle + 180, angleFocus));
+
+
+				float impact = randFloat(explosionForce);
+
+				p.setImpulse(
+					(cos(ang) * impact) + impactForce.x,
+					(sin(ang) * impact) + impactForce.y
+				);
+
+
+				gotas.push_back(p);
+			}
+
+		}
+
+
+		void setRadius(float radius) {
+			this->radius = radius;
+		}
+
+		void update() override {
+			for (int i = 0; i < gotas.size(); i++) {
+				gotas[i].update();
+			}
+
+		}
+
+		void draw(RenderWindow& window) override {
+			for (int i = 0; i < gotas.size(); i++) {
+				gotas[i].draw(window);
+			}
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class ParticleSystem {
 

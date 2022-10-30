@@ -88,7 +88,20 @@ namespace Rooster {
             agacharAnim.init("SecondAnim.txt");
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
+
+
+            println(model.boneMap.at("FrontEyebrow"));
+
+            println(model.boneMap.at("BackEyebrow"));
+
+            agacharAnim.removeAnimatePart(model.boneMap.at("FrontEyebrow"));
+            agacharAnim.removeAnimatePart(model.boneMap.at("BackEyebrow"));
+            agacharAnim.removeAnimatePart(model.boneMap.at("Biko"));
+
+
             animations.push_back(agacharAnim);
+
+            
 
         }
 
@@ -189,8 +202,8 @@ namespace Rooster {
 
             float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
 
-            int angFix = (facingRight) ? 1 : -1;
-            angFix = -1;
+          
+            int angFix = -1;
 
             if (!ultimateShot->getHitted) {
                 if (percentage < 1.f / 3.f) {

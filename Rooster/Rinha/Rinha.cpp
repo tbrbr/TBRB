@@ -86,8 +86,8 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
-	int option = INTRO;
-	//option = BOTAPRAARROCHAR;
+	int option = MENU_PRINCIPAL;
+	option = BOTAPRAARROCHAR;
 	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);

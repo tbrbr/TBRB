@@ -161,6 +161,7 @@
     <ClInclude Include="Patinho\Patinho.h" />
     <ClInclude Include="Patinho\RoosterPato.h" />
     <ClInclude Include="Sangue.h" />
+    <ClInclude Include="selecao_de_mapa_falida.h" />
     <ClInclude Include="TilesDoArrocha.h" />
     <ClInclude Include="varios_idiomas.h" />
   </ItemGroup>

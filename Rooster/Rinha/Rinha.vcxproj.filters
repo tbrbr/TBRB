@@ -31,5 +31,6 @@
     <ClInclude Include="galoPeste.h" />
     <ClInclude Include="varios_idiomas.h" />
     <ClInclude Include="GaloBota.h" />
+    <ClInclude Include="selecao_de_mapa_falida.h" />
   </ItemGroup>
 </Project>

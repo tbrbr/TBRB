@@ -635,21 +635,7 @@ namespace Rooster {
                             corvos[i].update();
                             corvos[i].draw(window);
                         }
-                        /*
-                        float p = rand() % 2;
-                        Projectile* rato = new Projectile(
-                            Vector2f(p * SCREEN_WIDTH, floorY),
-                            "sprites\\rato.png",
-                            (rand() % 10 - p * 20), 0, Vector2f(0.2 - p * 0.4, 0.2),
-                            IntRect(0, 0, 865, 606)
-                        );
-                        infestacao.push_back(*rato);
-                        
-                        for (int i = 0; i < infestacao.size(); i++) {
-                            infestacao[i].setVisibility(true);
-                            infestacao[i].update();
-                            infestacao[i].draw(*window);
-                        }*/
+                  
 
                     }
                                       

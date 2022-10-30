@@ -559,5 +559,83 @@ namespace Rooster {
 			}
 		}
 	};
+	class rato {
+		Texture ratinho;
+		Sprite sprite;
+		float hspd;
+		float vspd;
+		Vector2f position;
+		Vector2f scl;
+	public:
+		rato(float hspd, float vspd, Vector2f position, Vector2f scl) {
+			this->hspd = hspd;
+			this->vspd = vspd;
+			this->position = position;
+			this->scl = scl;
+			ratinho.loadFromFile("sprites/rato.png");
+			sprite.setTexture(ratinho);
 
+		}
+		void update() {
+
+			int sizeRato[3] = {858,858,877 };
+			position.x += hspd;
+			position.y += vspd;
+
+			static int Frames = 0;
+			Frames++;
+			int sprSelected = (Frames / 600) % 3;
+			int sprx = 0;
+
+			if (sprSelected == 0) {
+				sprx = 0;
+			}
+			else if (sprSelected == 1) {
+				sprx = 858;
+			}
+			else if (sprSelected == 2) {
+				sprx = 858 + 858;
+			}
+
+			sprite.setTextureRect(IntRect(sprx, 0, sizeRato[sprSelected], 606));
+			if (hspd > 0) {
+				if (scl.x > 0) {
+					scl.x *= -1;
+				}
+			}
+			sprite.setScale(scl);
+			sprite.setRotation(-sin(vspd));
+
+			sprite.setPosition(position);
+		}
+		void setColor(Color cor) {
+			sprite.setColor(cor);
+		}
+		void draw(RenderWindow* window) {
+
+			window->draw(sprite);
+		}
+	};
+	class effectsInfestacaoDeRatos {
+		std::vector <rato> ratos;
+	public:
+		class effectsInfestacaoDeRatos(){
+			for (int i = 0; i < 100; i++) {
+				int right = rand() % 2;
+				rato* a = new rato(randIntRange(5,10) - right*15,0,Vector2f(right*SCREEN_WIDTH,floorY),Vector2f(0.2,0.2));
+				ratos.push_back(*a);
+			}
+		}
+		void update() {
+			for (int i = 0; i < ratos.size(); i++) {
+				ratos[i].update();
+			}
+		}
+		void draw(RenderWindow* window) {
+			for (int i = 0; i < ratos.size(); i++) {
+				ratos[i].draw(window);
+			}
+		}
+	};
+	
 }

@@ -96,7 +96,7 @@
 				}
 
 			}
-			galo.fatality(window,&galo2,fundo);
+			//galo.fatality(window,&galo2,fundo);
 
 			mainInput.update();
 

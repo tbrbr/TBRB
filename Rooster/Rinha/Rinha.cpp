@@ -21,9 +21,16 @@
 using namespace std;
 using namespace sf;
 
+#define ISMOTADESKTOP 0
 
+#if  ISMOTADESKTOP
+const int SCREEN_WIDTH = 1366;
+const int SCREEN_HEIGHT = 768;
+#else
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+#endif
+
 
 
 #include "Math2.h"
@@ -71,6 +78,7 @@ using namespace Rooster;
 
 #include "cardapio.h"
 #include "menu_inicial.h"
+#include "selecao_de_mapa_falida.h"
 
 
 int main() {
@@ -88,18 +96,18 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
-	int option = MENU_PRINCIPAL;
-	option = BOTAPRAARROCHAR;
+	int option = INTRO;
+	//option = BOTAPRAARROCHAR;
 	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
-
 	window->setFramerateLimit(FRAMERATE_LIMIT);
+	window->setMouseCursorGrabbed(true);
 
-	window->setMouseCursorGrabbed(false);
+
 	Cursor cursor;
 	Image c;
 	c.loadFromFile("sprites/cursor_teste.png");
@@ -120,20 +128,15 @@ int main() {
 
 
 	Pato *miniGame1 = new Pato((*window));
-	
-	Texture mapa;
-	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	mapa.loadFromFile("sprites/ceasa.png");
 
-	fundo.setPosition(0, 0);
-	fundo.setTexture(&mapa);
-
-	
+	RectangleShape fundo;
+	fundo.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
-	
+	MapSelector* mapSelector = new MapSelector();
 
-	
+	window->setMouseCursorVisible(true);
+	window->setMouseCursorGrabbed(false);
 
 	while (window->isOpen())
 	{
@@ -144,6 +147,7 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
+			fundo.setTexture(mapSelector->getSelectedMap());
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case MENU_PRINCIPAL:
@@ -157,7 +161,6 @@ int main() {
 			break;
 		case INTRO: {
 			option = introducao(window);
-
 			break;
 		}
 		case BOTAPRAARROCHAR:
@@ -169,7 +172,9 @@ int main() {
 			}
 			multiPlayer(window, *galo, galo2, option, fundo);
 			break;
-			
+		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
+			mapSelector->draw(window, option, true);
+			break;
 		default:
 			break;
 		}

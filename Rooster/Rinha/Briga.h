@@ -65,21 +65,28 @@
 		int framesFight = 0;
 		int framesWin = 0;
 
+		
+		Music musicas[8];
+		musicas[0].openFromFile("sounds/Braces and Boots.ogg");
+		musicas[1].openFromFile("sounds/Coloured Candles.ogg");
+		musicas[2].openFromFile("sounds/Copper On The Beat.ogg");
+		musicas[3].openFromFile("sounds/Happy Whistler.ogg");
+		musicas[4].openFromFile("sounds/In A Hurry.ogg");
+		musicas[5].openFromFile("sounds/John Charles Fiddy.ogg");
+		musicas[6].openFromFile("sounds/Running Away.ogg");
+		musicas[7].openFromFile("sounds/Walking The Dog.ogg");
 
-
-
-
-		//Explosion3DEffect* exp = new Explosion3DEffect(10, Vector2f(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), Color::Red, Vector2f(2, 2), 10, 10, 360);
-
-
-
-
-
-
+		int index = rand() % 8;
+		musicas[index].play();
+		
 		while (window->isOpen()) {
 			window->clear();
 			window->draw(fundo);
-
+			
+			if (musicas[index].Stopped) {
+				index = rand() % 8;
+				musicas[index].play();
+			}
 			Event e;
 			while (window->pollEvent(e))
 			{
@@ -89,7 +96,7 @@
 				}
 
 			}
-			//galo.fatality(window,&galo2,fundo);
+			galo.fatality(window,&galo2,fundo);
 
 			mainInput.update();
 

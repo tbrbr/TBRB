@@ -613,6 +613,9 @@ namespace Rooster {
 
 			sprite.setPosition(position);
 		}
+		void setColor(Color cor) {
+			sprite.setColor(cor);
+		}
 		void draw(RenderWindow* window) {
 
 			window->draw(sprite);

@@ -5,9 +5,9 @@ struct musica {
 };
 
 
-float fixCoord(float baseMenor, float baseMaior, float altura, Vector2f vec) {
-
+Vector2f fixCoord(float baseMenor, float baseMaior, float altura, Vector2f vec) {
 	
+
 
 }
 

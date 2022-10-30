@@ -141,18 +141,21 @@ int introducao(RenderWindow* window) {
 
 	Music music;
 	music.openFromFile("IntroFiles\\fulerage.ogg");
-	music.play();
-	time.restart();
+	
 	int memoryTime = 0;
 	int lastind = 0;
-
+	Clock aviso;
+	aviso.restart();
+	bool isTime = false;
 
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
-
-		int timer = time.getElapsedTime().asMilliseconds();
-
+		
+		int timer = 0;
+		if(isTime)
+			timer = time.getElapsedTime().asMilliseconds();
+		
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -171,17 +174,26 @@ int introducao(RenderWindow* window) {
 		}
 
 
-		if (timer < 2000) {
+		if (aviso.getElapsedTime().asMilliseconds() < 3000) {
 			load.rotate(6.f);
-			if (timer > 1000) {
-				int fx = 255 - (255 * (timer - 1000)) / 1000;
+
+			if (aviso.getElapsedTime().asMilliseconds() > 1000) {
+				int fx = 255 - (255 * (aviso.getElapsedTime().asMilliseconds() - 1000)) / 1000;
 				classification.setColor(Color(fx, fx, fx));
 				load.setColor(Color(fx, fx, fx));
 			}
 			window->draw(classification);
 			window->draw(load);
 		}
-		else if (timer > 2000 && timer < 3800) {
+		else if (!isTime) {
+			isTime = true;
+			music.play();
+			time.restart();
+		}
+		
+
+		if(isTime)
+		if (timer > 2000 && timer < 3800) {
 			int i = (timer - 2000) / 450;
 			window->draw(pichada[i]);
 		}

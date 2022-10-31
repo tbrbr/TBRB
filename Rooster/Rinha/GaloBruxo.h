@@ -360,6 +360,10 @@ namespace Rooster {
             }
             else if (percentage < 2.5f / 3.f) {
 
+                static bool go = true;
+                if (go) {
+                    ultimateShot->playSound();
+                }
                 model.at("FrontArm")->angle = percentage * 90;
 
                 model.at("Head")->angle = percentage * 30;
@@ -423,16 +427,10 @@ namespace Rooster {
 
                 float thisPercentage = percentage * 3;
                 model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
-                model.at("BackArm")->angle = 20 * sin(thisPercentage * PI / 2);
+                model.at("BackArm")->angle = -20 * sin(thisPercentage * PI / 2);
                 model.at("BackLeg")->angle = 20 * sin(thisPercentage * PI / 2);
-                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
-                model.at("FrontEyebrow")->offset.y += 0.5;
-                model.at("BackEyebrow")->offset.y += 0.5;
-                model.at("FrontLeg")->offset.y = -20 * thisPercentage;
-                model.at("BackLeg")->offset.y = -20 * thisPercentage;
-                model.at("Biko")->offset.x = -2;
-                model.at("Body")->offset.y = -20 * thisPercentage;
-                model.at("Body")->angle = 45 * sin(thisPercentage * PI / 2);
+                
+                
             }
             else if (percentage < 2.f / 3.f) {
 

@@ -165,9 +165,6 @@ namespace Rooster {
 
             model.at("FrontBigode")->angle += vspeed / 2;
             model.at("BackBigode")->angle += vspeed / 2;
-            
-
-   
         }
         void cairAnim() {
             model.at("Hat")->offset.y = 0;

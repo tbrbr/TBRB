@@ -475,11 +475,11 @@ public:
 								}
 								else if (i == 1) {
 									if (isp1Time) {
-										*galop1 = new Peste(sniperSt, Rooster::state::STOPPED, true);
+										*galop1 = new Peste(pesteSt, Rooster::state::STOPPED, true);
 
 									}
 									else {
-										*galop2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
+										*galop2 = new Peste(pesteSt, Rooster::state::STOPPED, false);
 									}
 								}
 								else if (i == 2) {

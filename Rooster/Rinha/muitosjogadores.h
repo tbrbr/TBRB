@@ -9,7 +9,6 @@ void galo2move(Galo* galo, char* data) {
 
 	if (data[0] == 'w')
 	{
-		cout << data << endl;
 		galo->jump();
 	}
 	else if (data[0] == 'f') {
@@ -55,7 +54,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
-
 	Font fonte;
 	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
 
@@ -149,6 +147,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 	size_t size;
 
 	//=================================================================
+	
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
@@ -181,7 +180,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 		if (mainInput.inputState[player][GOUP][1])
 		{
-			strcpy(data, "w");
+			data[0] = 'w';
 			galo.jump();
 		}
 		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
@@ -227,19 +226,22 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		}
 		else
 		{
-			data[0] = '\0';
+			data[5] = '\0';
 			galo.setState(Rooster::state::STOPPED);
 		}
 
 		//===============================
 
 		if (socket.send(data, 10) != Socket::Done) {
-			cout << "Erro\n";
+			data[0] = '\0';
+			data[5] = '\0';
+			data[1] = '\0';
 		}
-		data[0] = '\0';
-		socket.receive(data, 10, size);
+		
+		if (socket.receive(data, 10, size) == Socket::Done) {
+			galo2move(&galo2, data);
+		}
 
-		galo2move(&galo2, data);
 		//==============================
 		
 		

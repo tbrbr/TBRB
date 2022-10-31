@@ -1,7 +1,6 @@
 
-#ifndef  __entradas
-#define __entradas
-
+#ifndef  __calvo
+#define __calvo
 
 namespace Rooster {
 
@@ -63,7 +62,7 @@ namespace Rooster {
 		hud hudselected;
 
 		int p1Hud = 0;
-		int p2Hud = 0;
+		int p2Hud =2;
 
 		// Rapaz me explique o que é isso porfavor
 		// Ahh to entendendo
@@ -103,8 +102,7 @@ namespace Rooster {
 				joystickState[i][1] = false;
 				joystickState[i][2] = false;
 			}
-
-			
+		
 			for (int i = 0; i < 2; i++) {
 				struct inputInfo inpInf;
 				for (int j = 0; j < INPUTSTOTAL; j++) {
@@ -349,4 +347,4 @@ namespace Rooster {
 
 };
 
-#endif // ! __entradas
+#endif // ! __calvo

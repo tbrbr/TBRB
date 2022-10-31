@@ -118,8 +118,8 @@ namespace Rooster {
         }
 
         Vector2f getBackHandPos() {
-            float coordXPaint = 550;
-            float coordYPaint = 900;
+            float coordXPaint = 17;
+            float coordYPaint = 600;
 
             float ax = coordXPaint - model.at("BackArm")->sprArea.texRect.left;
             float ay = coordYPaint - model.at("BackArm")->sprArea.texRect.top;
@@ -137,7 +137,6 @@ namespace Rooster {
             float roty = sin(ang) * difx + cos(ang) * dify;
 
             rotx *= xScl;
-
             roty *= yScl;
 
             Vector2f mao;
@@ -252,20 +251,21 @@ namespace Rooster {
             int angFix = (facingRight) ? 1 : -1;
             angFix = -1;
 
+            static int angle = 0;
+            angle++;
 
             if (percentage < 0.5f / 3.f) {
 
                 float thisPercentage = percentage * 6;
-
-                
-
-                static int angle = 0;
-                angle++;
-
+            
                 model.at("FrontArm")->angle = percentage * -90;
-                model.at("BackArm")->angle = percentage * -90;
-
+                model.at("BackArm")->angle = percentage * 90;
+                model.at("Head")->angle = percentage * 30;
+                model.at("Body")->angle = percentage * 30;
+                model.at("FrontBigode")->angle = percentage * - 30;
+                model.at("BackBigode")->angle = percentage * -30;
                 projectiles[0].isTrans = false;
+
                 projectiles[0].setImpulse(0, 0);
                 projectiles[0].setSpriteAngle(angle);
 
@@ -280,7 +280,7 @@ namespace Rooster {
                 projectiles[1].setImpulse(0, 0);
                 projectiles[1].setSpriteAngle(angle);
 
-                projectiles[1].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+                projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
 
                 projectiles[1].setPosition(getFrontHandPos());
 
@@ -290,52 +290,119 @@ namespace Rooster {
 
 
             }
-            else if (percentage < 2.f / 3.f) {
-                float thisPercentage = percentage * 3;
+            else if (percentage < 1.5f / 3.f) {
+                float thisPercentage = (percentage * 3)/1.5;
 
                 model.at("FrontArm")->angle = percentage * -90;
-                model.at("BackArm")->angle = percentage * -90;
+                model.at("BackArm")->angle = percentage * 90;
+
+                model.at("Head")->angle = percentage * 30;
+                model.at("Body")->angle = percentage * 30;
+                model.at("FrontBigode")->angle = percentage * -30;
+                model.at("BackBigode")->angle = percentage * -30;
+
+                projectiles[0].isTrans = false;
+                projectiles[0].setImpulse(0, 0);
+                projectiles[0].setSpriteAngle(angle);
+
+                projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+
+                projectiles[0].setPosition(getBackHandPos());
+
+                projectiles[0].setVisibility(true);
+                projectiles[0].update();
+
+                projectiles[1].isTrans = false;
+                projectiles[1].setImpulse(0, 0);
+                projectiles[1].setSpriteAngle(angle);
+
+                projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+
+                projectiles[1].setPosition(getFrontHandPos());
+
+                projectiles[1].setVisibility(true);
+                projectiles[1].update();
+
+
             }
-            else if (percentage < 2.05f / 3.f) {
+            else if (percentage < 1.55f / 3.f) {
                 ultimateShot->playSound();
             }
-            else if (percentage < 2.2f / 3.f) {
+            else if (percentage < 2.f / 3.f) {
 
+                float thisPercentage = (percentage * 3) / 2;
 
+                model.at("BackArm")->angle = percentage * -90;
+
+                model.at("Head")->angle = percentage * -30;
+                model.at("Body")->angle = percentage * -30;
+                model.at("FrontBigode")->angle = percentage * 30;
+                model.at("BackBigode")->angle = percentage * 30;
 
                 projectiles[0].setVisibility(true);
 
-
-                projectiles[0].setPosition(
-                    Vector2f(model.at("BackArm")->drawPos.x,
-                        (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 2)
-                    )
-                );
-
                 if (facingRight) {
                     projectiles[0].setImpulse(20, 0);
-                    projectiles[0].setScale(Vector2f(0.5, 0.5));
+                    projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
                 }
 
                 else {
                     projectiles[0].setImpulse(-20, 0);
-                    projectiles[0].setScale(Vector2f(-0.5, 0.5));
+                    projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
                 }
 
+                projectiles[0].update();
 
                 ultimateShot->isAtacking = true;
             }
             else if (percentage < 2.5f / 3.f) {
 
+                model.at("FrontArm")->angle = percentage * 90;
 
+                model.at("Head")->angle = percentage * 30;
+                model.at("Body")->angle = percentage * 30;
+                model.at("FrontBigode")->angle = percentage * -30;
+                model.at("BackBigode")->angle = percentage * -30;
 
+                projectiles[1].setVisibility(true);
+
+                if (facingRight) {
+                    projectiles[1].setImpulse(20, 0);
+                    projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+                }
+
+                else {
+                    projectiles[1].setImpulse(-20, 0);
+                    projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+                }
+
+                projectiles[1].update();
+
+                ultimateShot->isAtacking = true;
 
             }
             else if (percentage < 2.9 / 3.f) {
 
+                model.at("FrontArm")->angle *= 0.9;
+                model.at("BackArm")->angle *= 0.9;
+
+                model.at("Head")->angle *= 0.9;
+                model.at("Body")->angle *= 0.9;
+                model.at("FrontBigode")->angle *= 0.9;
+                model.at("BackBigode")->angle *= 0.9;
+
             }
             else {
+                projectiles[0].setVisibility(false);
+                projectiles[1].setVisibility(false);
 
+                model.at("FrontArm")->angle = 0;
+                model.at("BackArm")->angle = 0;
+
+                model.at("Head")->angle = 0;
+                model.at("Body")->angle = 0;
+                model.at("FrontBigode")->angle = 0;
+                model.at("BackBigode")->angle = 0;
             }
         }
         

@@ -129,9 +129,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 	//=================================================================
 
 	TcpSocket socket;
-	socket.setBlocking(true);
+	socket.setBlocking(false);
 	TcpListener listener;
-	IpAddress ip = IpAddress::getLocalAddress();
+	IpAddress ip = "10.50.208.56";
 
 	if (ishost) {
 		listener.listen(59000);

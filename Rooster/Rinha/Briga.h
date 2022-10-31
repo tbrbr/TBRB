@@ -96,7 +96,12 @@
 				}
 
 			}
-			//galo.fatality(window,&galo2,fundo);
+			if (true) {
+				musicas[index].stop();
+				galo.fatality(window, &galo2, fundo);
+
+			}
+			
 
 			mainInput.update();
 

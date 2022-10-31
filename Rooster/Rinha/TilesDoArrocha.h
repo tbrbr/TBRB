@@ -20,8 +20,15 @@ public:
 	int length = 1;
 	int y = -1;
 
+	float slided = 0;
+
 	bool hitted = false;
 	bool missed = false;
+	bool holded = false;
+
+	bool hovered = false;
+
+	bool loose = false;
 
 
 	Nota(int c, int l, int yy) {
@@ -43,7 +50,7 @@ class Yamaha {
 	float notasPorYamaha = 4;
 	float notaSize = 200;
 
-	float xScl = 0.5;
+	float xScl = 1;
 	float yScl = 1;
 
 	Vector2f pos;
@@ -58,11 +65,12 @@ class Yamaha {
 	ConvexShape bars[4];
 
 	Texture teclado;
+	Texture trapezioTexture;
 	Sprite teclas[4];
 
 
-	int maxLife = 1000;
-	int life = 1000;
+	int maxLife = 300;
+	int life = 300;
 
 	
 
@@ -70,17 +78,25 @@ class Yamaha {
 	float teclaYScl = 1;
 
 	bool teclaPressed[4];
+	bool teclaState[4];
+
+
+public:
+	int combo = 0;
+
+	int comboMax = 100;
+
 
 	vector<Rooster::AreaEffect*> coisa;
 
 	
-public:
+
 	Yamaha() {
 
 
 
-		base = 800;
-		altura = 800;
+		base = 400;
+		altura = 600;
 
 		notaSize = altura / notasPorYamaha;
 
@@ -122,7 +138,7 @@ public:
 
 
 		teclado.loadFromFile("sprites/teclas.png");
-
+		trapezioTexture.loadFromFile("");
 
 		
 
@@ -183,8 +199,8 @@ public:
 
 			int insertInd = 0;
 
-			for (int j = 0; j < 100; j++) {
-				if (randInt(6) == 0) {
+			for (int j = 0; j < 200; j++) {
+				if (randInt(8) == 0) {
 
 					int notaLen = randIntRange(1, 4);
 
@@ -286,10 +302,17 @@ public:
 		scrollY += scrollSpd;
 
 
-		teclaPressed[0] = mainInput.keyboardState[sf::Keyboard::A][0];
-		teclaPressed[1] = mainInput.keyboardState[sf::Keyboard::S][0];
-		teclaPressed[2] = mainInput.keyboardState[sf::Keyboard::D][0];
-		teclaPressed[3] = mainInput.keyboardState[sf::Keyboard::F][0];
+		teclaPressed[0] = mainInput.keyboardState[sf::Keyboard::A][1];
+		teclaPressed[1] = mainInput.keyboardState[sf::Keyboard::S][1];
+		teclaPressed[2] = mainInput.keyboardState[sf::Keyboard::D][1];
+		teclaPressed[3] = mainInput.keyboardState[sf::Keyboard::F][1];
+
+
+
+		teclaState[0] = mainInput.keyboardState[sf::Keyboard::A][0];
+		teclaState[1] = mainInput.keyboardState[sf::Keyboard::S][0];
+		teclaState[2] = mainInput.keyboardState[sf::Keyboard::D][0];
+		teclaState[3] = mainInput.keyboardState[sf::Keyboard::F][0];
 
 
 
@@ -299,29 +322,86 @@ public:
 		for (int j = 0; j < notas.size(); j++) {
 			float notaY = notas[j]->y + scrollY;
 
+			notas[j]->hovered = false;
+			if (notaY < altura && notaY + notas[j]->length * notaSize * yScl > altura) {
+
+				notas[j]->hovered = true;
+
+			}
+
 			for (int i = 0; i < 4; i++) {
-				if (teclaPressed[i]) {
-					//println("TEclou " << i);
-					if (notas[j]->coluna == i && !notas[j]->missed) {
-						//println("Tentou");
-						if (notaY < altura && notaY + notas[j]->length*notaSize*yScl > altura) {
-
-							coisa[i]->createParticle();
 
 
-							notas[j]->hitted = true;
-							//println("Coinseguiu");
-							teclaMissed[i] = false;
+
+
+
+
+				if (notas[j]->coluna == i && !notas[j]->missed) {
+
+
+
+
+
+					
+
+
+					if (notas[j]->hovered) {
+
+						if (teclaState[i] && !notas[j]->loose){
+
+							if (notas[j]->hitted) {
+								if (notas[j]->length != 1) {
+									notas[j]->slided = 1 - constrain((altura - notaY) / (yScl*notaSize * (notas[j]->length - 1)), 0, 1);
+									
+									for (int k = 0; k < (notas[j]->slided*10)/5; k++) {
+										coisa[i]->createParticle();
+									}
+
+								}
+
+								coisa[i]->createParticle();
+							}
 						}
+						else {
+							if (notas[j]->hitted) {
+								notas[j]->loose = true;
+							}
+						}
+
+						if (teclaPressed[i]) {
+							if (!notas[j]->hitted) {
+								notas[j]->hitted = true;
+								if (notas[j]->length > 1) {
+									notas[j]->holded = true;
+								}
+								teclaMissed[i] = false;
+
+								combo++;
+							}
+						}
+
+					
+
+						
 					}
+
+
+
+
 					
 				}
+					
+				
 			}
+
+
+
 
 			if (notaY + (notas[j]->length-1)*notaSize > altura) {
 				if (!notas[j]->missed && !notas[j]->hitted) {
 					notas[j]->missed = true;
 					life -= 5;
+					combo = 0;
 				}
 			}
 		}
@@ -330,6 +410,7 @@ public:
 			if (teclaPressed[i]) {
 				if (teclaMissed[i]) {
 					life -= 5;
+					combo = 0;
 				}
 			}
 
@@ -349,7 +430,6 @@ public:
 
 	void draw(RenderWindow* window, int frames) {
 
-		//baseMenor = base*(ruleOfThree(sin((float)frames/20), -1, 1, 0, 1.5));
 
 
 		ConvexShape trap;
@@ -365,6 +445,7 @@ public:
 		trap.setFillColor(Color::Blue);
 		trap.setScale(xScl, yScl);
 		trap.setPosition(pos);
+
 		window->draw(trap);
 
 
@@ -416,14 +497,6 @@ public:
 			convertNoteToTrap(noteShape, baseMenor);
 
 
-
-
-			/*
-			for (int i = 0; i < 4; i++) {
-				noteShape.setPoint(i, convertToTrap(noteShape.getPoint(i), baseMenor));
-			}
-			*/
-
 			noteShape.setPosition(pos);
 			noteShape.setScale(xScl, yScl);
 
@@ -432,7 +505,11 @@ public:
 			}
 			else if (notas[i]->missed) {
 				noteShape.setFillColor(Color::Red);
-			} else {
+			}
+			else if (notas[i]->hovered) {
+				noteShape.setFillColor(Color(100, 100, 200));
+			}
+			else {
 				noteShape.setFillColor(Color::Black);
 			}
 
@@ -445,21 +522,20 @@ public:
 			if (notas[i]->length > 1) {
 				ConvexShape lineShape;
 
+				
+
 				lineShape.setPointCount(4);
+
 
 				float lineWid = baseQuart / 4;
 				float lineX = noteX + baseQuart / 2 - lineWid / 2;
-
-
 
 				lineShape.setPoint(0, Vector2f(lineX, noteY + 0));
 				lineShape.setPoint(1, Vector2f(lineX + lineWid, noteY));
 				lineShape.setPoint(2, Vector2f(lineX + lineWid, noteY - notaSize + noteLen));
 				lineShape.setPoint(3, Vector2f(lineX, noteY - notaSize + noteLen));
 
-
 				convertNoteToTrap(lineShape, baseMenor);
-
 
 
 
@@ -467,19 +543,59 @@ public:
 				lineShape.setScale(xScl, yScl);
 
 				if (notas[i]->hitted) {
-					lineShape.setFillColor(Color::Green);
+					lineShape.setFillColor(Color(0, 100, 0));
 				}
 				else if (notas[i]->missed) {
 					lineShape.setFillColor(Color::Red);
 				}
 				else {
-					lineShape.setFillColor(Color::Black);
+					lineShape.setFillColor(Color(20, 20, 20));
 				}
 
 				lineShape.setOutlineColor(Color::White);
 				lineShape.setOutlineThickness(2);
 
 				window->draw(lineShape);
+
+
+
+				ConvexShape sliderShape;
+				sliderShape.setPointCount(4);
+				float sliderWid = baseQuart / 3;
+				float sliderX = noteX + baseQuart / 2 - sliderWid / 2;
+
+				float sliderHei = sliderWid;
+				float sliderY = noteY - (sliderHei / 2) + (noteLen-notaSize) * (1 - notas[i]->slided);
+
+
+				sliderShape.setPoint(0, Vector2f(sliderX, sliderY));
+				sliderShape.setPoint(1, Vector2f(sliderX + sliderWid, sliderY));
+				sliderShape.setPoint(2, Vector2f(sliderX + sliderWid, sliderY + sliderHei));
+				sliderShape.setPoint(3, Vector2f(sliderX, sliderY + sliderHei));
+
+				convertNoteToTrap(sliderShape, baseMenor);
+
+				sliderShape.setPosition(pos);
+				sliderShape.setScale(xScl, yScl);
+
+				if (notas[i]->hitted) {
+					sliderShape.setFillColor(Color(100, 200, 100));
+				}
+				else if (notas[i]->missed) {
+					sliderShape.setFillColor(Color::Red);
+				}
+				else {
+					sliderShape.setFillColor(Color(230, 230, 230));
+				}
+
+				sliderShape.setOutlineColor(Color::White);
+				sliderShape.setOutlineThickness(2);
+
+				window->draw(sliderShape);
+
+
+
+
 			}
 
 
@@ -498,59 +614,82 @@ public:
 			int texWid = teclas[i].getTexture()->getSize().x / 4;
 			int texHei = teclas[i].getTexture()->getSize().y / 2;
 
-			teclas[i].setTextureRect(IntRect(texWid * i, teclaPressed[i] * texHei, texWid, texHei));
+			teclas[i].setTextureRect(IntRect(texWid * i, teclaState[i] * texHei, texWid, texHei));
 
 			window->draw(teclas[i]);
-			float baseQuart = base / 4;
-			float noteX = (baseQuart * (i - 2))*xScl;
-			c.setPosition(noteX + (baseQuart / 2), altura);
-			window->draw(c);
+
+			if (SHOWDEBUG) {
+				float baseQuart = base / 4;
+				float noteX = (baseQuart * (i - 2)) * xScl;
+				c.setPosition(noteX + (baseQuart / 2), altura);
+				window->draw(c);
+			}
 
 		}
 
 
 
 
+		if (SHOWDEBUG) {
+			RectangleShape r;
+			r.setFillColor(Color(250, 200, 0, 100));
 
-		RectangleShape r;
-		r.setFillColor(Color(250, 200, 0, 100));
+			for (int i = 0; i < notas.size(); i++) {
 
-		for (int i = 0; i < notas.size(); i++) {
+				float baseQuart = base / 4;
+				float noteX = (baseQuart * (notas[i]->coluna - 2)) * xScl;
 
-			float baseQuart = base / 4;
-			float noteX = (baseQuart * (notas[i]->coluna - 2))*xScl;
+				r.setSize(Vector2f(baseQuart / 2, notas[i]->length * notaSize * yScl));
+				c.setPosition(noteX + (baseQuart / 2), notas[i]->y + scrollY);
+				r.setPosition(noteX + ((baseQuart / 2) - (baseQuart / 4)) * xScl, notas[i]->y + scrollY);
 
-			r.setSize(Vector2f(baseQuart/2, notas[i]->length * notaSize * yScl));
-			c.setPosition(noteX +(baseQuart / 2), notas[i]->y + scrollY);
-			r.setPosition(noteX + ((baseQuart/2) -( baseQuart / 4))*xScl, notas[i]->y + scrollY);
+				window->draw(c);
+				window->draw(r);
 
-			window->draw(c);
-			window->draw(r);
-
+			}
 		}
 
 
 		RectangleShape rect;
+
+
+
+
+
+		int outLine = 4;
+		int offSet = 4;
+
+		int x = 0;
+		int y = 0;
+
+		int wid = SCREEN_WIDTH;
+		int hei = 40;
+
 		rect.setFillColor(Color(250, 250 ,250, 255));
-		rect.setSize(Vector2f(SCREEN_WIDTH, 40));
-		rect.setPosition(0, 0);
+		rect.setSize(Vector2f(wid - 2*outLine, hei- 2*outLine));
+		rect.setPosition(x+outLine, y+outLine);
 		rect.setFillColor(Color(0, 0, 0, 0));
 		rect.setOutlineColor(Color::White);
-		rect.setOutlineThickness(4);
+		rect.setOutlineThickness(outLine);
+
+
+
 
 		window->draw(rect);
 
 		rect.setOutlineThickness(0);
 		rect.setFillColor(Color::Green);
-		rect.setPosition(0, 5);
-		rect.setSize(Vector2f(SCREEN_WIDTH * (float)life/maxLife, 30));
+		rect.setPosition(x + outLine + offSet, y + outLine + offSet);
+		rect.setSize(Vector2f((wid - 2*(outLine + offSet)) * (float)life/maxLife, hei - 2*(outLine+offSet)));
 		window->draw(rect);
 
 
 
+		
 		for (int i = 0; i < 4; i++) {
 			coisa[i]->draw(*window);
 		}
+		
 
 
 
@@ -575,7 +714,7 @@ bool pianoTiles(RenderWindow* window) {
 
 	struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
 
-	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING,false);
 
 	Texture fundao;
 	fundao.loadFromFile("sprites/chorao.png");
@@ -583,6 +722,32 @@ bool pianoTiles(RenderWindow* window) {
 	RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	rect.setTexture(&fundao);
 	rect.setFillColor(Color(255, 0, 255, 255));
+
+
+	Texture bregaMeterTex;
+	bregaMeterTex.loadFromFile("sprites/medidorBrega.png");
+
+	Sprite bregaMeter;
+	bregaMeter.setTexture(bregaMeterTex);
+
+
+
+	float bregaSprWid = bregaMeterTex.getSize().x /2;
+	float bregaSprHei = bregaMeterTex.getSize().y ;
+
+	float bregaWid = SCREEN_WIDTH / 5;
+
+	bregaMeter.setTextureRect(IntRect(0, 0, bregaSprWid, bregaSprHei));
+	
+
+	float bregaXScl = bregaWid / bregaSprWid;
+	bregaMeter.setScale(bregaXScl, bregaXScl);
+
+
+	float bregaX = SCREEN_WIDTH - bregaWid;
+	float bregaY = SCREEN_HEIGHT - (bregaSprHei * bregaXScl);
+
+	bregaMeter.setPosition(bregaX, bregaY);
 
 
 
@@ -628,6 +793,22 @@ bool pianoTiles(RenderWindow* window) {
 
 		galoPeste->update();
 		galoPeste->show(*window);
+
+
+
+
+		window->draw(bregaMeter);
+
+
+
+
+		RectangleShape ponteiro(Vector2f(bregaWid*0.4, bregaXScl*20));
+		ponteiro.setFillColor(Color(0, 0, 0));
+		ponteiro.setPosition(bregaX + bregaWid/2  + bregaXScl*18, bregaY + (bregaSprHei-112)*bregaXScl);
+		ponteiro.setOrigin(bregaWid*0.4, bregaXScl*10);
+		ponteiro.setRotation(-5 + 185*((float)alcides.combo/alcides.comboMax));
+
+		window->draw(ponteiro);
 
 
 

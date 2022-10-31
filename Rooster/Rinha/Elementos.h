@@ -742,7 +742,9 @@ struct Model {
                 allHandles[drawOrder[i]]->draw(window, alpha);
             }
 
-            drawBounds(window);
+            if (SHOWDEBUG) {
+                drawBounds(window);
+            }
         }
     }
 

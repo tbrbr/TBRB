@@ -2,8 +2,9 @@
 
 #define SFML_STATIC
 
-#include "varios_idiomas.h"
-#include "efeitos_fodas.h"
+
+
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <windows.h>
@@ -31,6 +32,10 @@ const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
+#define SHOWDEBUG false
+
+#include "varios_idiomas.h"
+#include "efeitos_fodas.h"
 
 
 #include "Math2.h"
@@ -99,8 +104,10 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
-	int option = DOISJODADOR;
 
+	int option = MENU_PRINCIPAL;
+	//option = BOTAPRAARROCHAR;
+	
 	
 	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
@@ -156,6 +163,7 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
+
 			fundo.setTexture(mapSelector->getSelectedMap());
 
 			println("singleplay");

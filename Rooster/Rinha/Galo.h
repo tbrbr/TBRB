@@ -547,7 +547,7 @@ namespace Rooster {
 
 
            
-
+            model.draw(window);
             
             for (int i = 0; i < projectiles.size(); i++) {
                 if(!projectiles[i].NULO)
@@ -558,11 +558,11 @@ namespace Rooster {
             }
             
            
-            model.draw(window);
+            
 
             
 
-            if (SHOWDEBUG) {
+            if (SHOWDEBUG || true) {
                 for (int i = 0; i < hurtBox.size(); i++) {
 
 

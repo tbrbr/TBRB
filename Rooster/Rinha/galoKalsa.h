@@ -231,7 +231,7 @@ namespace Rooster {
 
 
                     projectiles[0].setPosition(
-                        Vector2f(model.at("BackArm")->drawPos.x,
+                        Vector2f(model.at("BackArm")->drawPos.x + projectiles[0].getSize().x/4,
                             (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4)
                         )
                     );
@@ -360,7 +360,7 @@ namespace Rooster {
 
 
                     projectiles[0].setPosition(
-                        Vector2f(model.at("BackArm")->drawPos.x,
+                        Vector2f(model.at("BackArm")->drawPos.x + projectiles[0].getSize().x / 4,
                             (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4)
                         )
                     );

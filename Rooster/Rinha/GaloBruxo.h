@@ -11,8 +11,6 @@ namespace Rooster {
 
         Texture t;
         float legWalkAngFase = 0;
-        float ArmSpinAngFase = 0;
-        float Arm2SpinAngFase = 0;
         Clock clockFatal;
 
 
@@ -20,9 +18,7 @@ namespace Rooster {
         Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
             // Stats
             this->name = "Bruxo";
-
-
-
+            
             // Creating Attacks
             this->hiKick = new Ataques(6,
                 8, 0.5, HitBox{ Vector2f(0, 0), 0 },
@@ -52,9 +48,7 @@ namespace Rooster {
             te.scale(0.5, 0.75);
             defense->setTransfrom(te);
             projectiles.push_back(*defense);
-
-            Projectile* n2 = new Projectile(true);
-            projectiles.push_back(*n2);
+            projectiles.push_back(*defense);
 
             atacking = NOT_ATTACK;
 
@@ -95,11 +89,71 @@ namespace Rooster {
 
         }
 
+        Vector2f getFrontHandPos() {
+            float coordXPaint = 550;
+            float coordYPaint = 900;
+
+            float ax = coordXPaint - model.at("FrontArm")->sprArea.texRect.left;
+            float ay = coordYPaint - model.at("FrontArm")->sprArea.texRect.top;
+
+            float difx = ax - model.at("FrontArm")->center.x;
+            float dify = ay - model.at("FrontArm")->center.y;
+
+            float ang = toRadiAnus(model.at("FrontArm")->finalAngle);
+
+            float xScl = model.at("FrontArm")->finalXScl;
+            float yScl = model.at("FrontArm")->finalYScl;
+
+            float rotx = cos(ang) * difx - sin(ang) * dify;
+            float roty = sin(ang) * difx + cos(ang) * dify;
+
+            rotx *= xScl;
+            roty *= yScl;
+
+            Vector2f mao;
+            mao.y = model.at("FrontArm")->drawPos.y + roty;
+            mao.x = model.at("FrontArm")->drawPos.x + rotx;
+            return mao;
+
+        }
+
+        Vector2f getBackHandPos() {
+            float coordXPaint = 550;
+            float coordYPaint = 900;
+
+            float ax = coordXPaint - model.at("BackArm")->sprArea.texRect.left;
+            float ay = coordYPaint - model.at("BackArm")->sprArea.texRect.top;
+            float difx = ax - model.at("BackArm")->center.x;
+
+            float dify = ay - model.at("BackArm")->center.y;
+
+            float ang = toRadiAnus(model.at("BackArm")->finalAngle);
+
+            float xScl = model.at("BackArm")->finalXScl;
+
+            float yScl = model.at("BackArm")->finalYScl;
+
+            float rotx = cos(ang) * difx - sin(ang) * dify;
+            float roty = sin(ang) * difx + cos(ang) * dify;
+
+            rotx *= xScl;
+
+            roty *= yScl;
+
+            Vector2f mao;
+            mao.y = model.at("BackArm")->drawPos.y + roty;
+            mao.x = model.at("BackArm")->drawPos.x + rotx;
+
+            return mao;
+
+        }
+
+
         void jumpAnim() {
 
 
-            ArmSpinAngFase = -(vspeed / 8) * 45;
-            Arm2SpinAngFase = -(vspeed / 8) * 45;
+            model.at("FrontArm")->angle = (vspeed / 8) * 45;
+            model.at("BackArm")->angle = (vspeed / 8) * 45;
 
             model.at("Hat")->offset.y += vspeed/8;
 
@@ -132,8 +186,8 @@ namespace Rooster {
             model.at("FrontBigode")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
             model.at("BackBigode")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
 
-            model.at("FrontArm")->angle += sin(2 * PI * legWalkAngFase / 360) * 60;
-            model.at("BackArm")->angle += -sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("FrontArm")->angle = sin(2 * PI * legWalkAngFase / 360) * 60;
+            model.at("BackArm")->angle = -sin(2 * PI * legWalkAngFase / 360) * 60;
 
             model.at("Hat")->angle += -sin(2 * PI * legWalkAngFase / 360);
            
@@ -205,28 +259,45 @@ namespace Rooster {
             if (percentage < 0.5f / 3.f) {
 
                 float thisPercentage = percentage * 6;
-                ArmSpinAngFase = -45;
-                Arm2SpinAngFase = 90;
+
+                
 
                 static int angle = 0;
                 angle++;
+
+                model.at("FrontArm")->angle = percentage * -90;
+                model.at("BackArm")->angle = percentage * -90;
+
                 projectiles[0].isTrans = false;
                 projectiles[0].setImpulse(0, 0);
                 projectiles[0].setSpriteAngle(angle);
 
                 projectiles[0].setScale((float)SCREEN_WIDTH/7680 * percentage,(float) SCREEN_WIDTH / 7680 * percentage);
 
-                projectiles[0].setPosition(
-                    position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
-                    position.y / 2 + (projectiles[0].getLocalSize().y)
-                );
+                projectiles[0].setPosition(getBackHandPos());
                     
-
                 projectiles[0].setVisibility(true);
                 projectiles[0].update();
+
+                projectiles[1].isTrans = false;
+                projectiles[1].setImpulse(0, 0);
+                projectiles[1].setSpriteAngle(angle);
+
+                projectiles[1].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+
+                projectiles[1].setPosition(getFrontHandPos());
+
+                projectiles[1].setVisibility(true);
+                projectiles[1].update();
+
+
+
             }
             else if (percentage < 2.f / 3.f) {
                 float thisPercentage = percentage * 3;
+
+                model.at("FrontArm")->angle = percentage * -90;
+                model.at("BackArm")->angle = percentage * -90;
             }
             else if (percentage < 2.05f / 3.f) {
                 ultimateShot->playSound();
@@ -420,21 +491,11 @@ namespace Rooster {
         void updateAnimations() override {
             if (estadoUpdate) {
                 model.resetToBase();
-                animations[0].playingFrame = 0;
-                
+                animations[0].playingFrame = 0;               
             }
+          
+
             
-
-            model.at("FrontArm")->angle = ArmSpinAngFase;
-            model.at("BackArm")->angle = Arm2SpinAngFase;
-
-
-            if (air) {
-                jumpAnim();
-            }
-            else {
-                cairAnim();
-            }
 
 
 
@@ -447,6 +508,8 @@ namespace Rooster {
                 static int angle = 0;
                 angle++;
                 
+                projectiles[0].isTrans = true;
+
                 Transform trans;
                 trans.scale((float)SCREEN_WIDTH/3840,(float)SCREEN_HEIGHT/1440);
 
@@ -499,7 +562,12 @@ namespace Rooster {
                 runReset();
             }
            
-                    
+            if (air) {
+                jumpAnim();
+            }
+            else {
+                cairAnim();
+            }
 
             if (atacking == HIGH_KICK) {
                 // highAtackAnim();
@@ -633,7 +701,7 @@ namespace Rooster {
                     red--;
                     fundo.setFillColor(Color(red, green, blue));
 
-                    Arm2SpinAngFase = 90;
+                    
                     model.at("Head")->angle = sin(time);
                     model.at("Corpo")->angle = sin(time);
                     

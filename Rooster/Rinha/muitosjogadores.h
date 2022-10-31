@@ -5,28 +5,50 @@
 
 bool ishost = false;
 
-void galo2control(Galo** galo, TcpSocket * socket) {
+void galo2move(Galo* galo, char* data) {
 
-	char data[10];
-	size_t size;
-
-	IpAddress ip;
-	unsigned short port;
-	socket->setBlocking(false);
-
-	while (1) {
-
-
-		//socket->receive(data, sizeof(data), size, ip, port);
-
+	if (data[0] == 'w')
+	{
 		cout << data << endl;
-		if (data[0] == 'w') {
-			galo[0]->jump();
+		galo->jump();
+	}
+	else if (data[0] == 'f') {
+		if (data[1] == 's') {
+			galo->lowKick();
+			data[1] = '\0';
 		}
+		else {
+			galo->highKick();
+		}
+	}
+	else if (data[0] == 'g') {
+		galo->especial();
+	}
+
+	if (data[5] == 'd')
+	{
+		galo->setState(Rooster::state::RUNNING);
+		galo->facingRight = true;
+		galo->run();
+
+	}
+	else if (data[5] == 'a')
+	{
+		galo->setState(Rooster::state::RUNNING);
+		galo->facingRight = false;
+		galo->run();
+
+	}
+	else if (data[5] == 's')
+	{
+		galo->defend();
+	}
+	else
+	{
+		galo->setState(Rooster::state::STOPPED);
 	}
 
 }
-
 
 
 void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, RectangleShape fundo) {
@@ -121,12 +143,12 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		socket.connect(ip, 59000);
 	}
 
-	
-	char data[10] = "";
+
+	char* data = (char*)malloc(10);
+	data[0] = '\0';
 	size_t size;
 
 	//=================================================================
-
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
@@ -153,28 +175,30 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		}
 
 
-
-
 		//PLAYER 1 CONTROLES
 
 		int player = 0;
 
 		if (mainInput.inputState[player][GOUP][1])
 		{
-			strcpy_s(data, "w");
+			strcpy(data, "w");
 			galo.jump();
 		}
 		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
 			if (mainInput.inputState[player][GODOWN][0]) {
-				strcpy_s(data, "j");
+				strcpy(data, "fs\0");
 				galo.lowKick();
 			}
 
-			else
-				galo.highKick();
+			else {
+				strcpy(data, "f");
 
+
+				galo.highKick();
+			}
 		}
 		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
+			strcpy(data, "g");
 			galo.especial();
 		}
 
@@ -182,7 +206,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 		if (mainInput.inputState[player][GORIGHT][0])
 		{
-			strcpy_s(data, "d");
+			strcpy(data + 5, "d");
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = true;
 			galo.run();
@@ -190,7 +214,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		}
 		else if (mainInput.inputState[player][GOLEFT][0])
 		{
-			strcpy_s(data, "a");
+			strcpy(data + 5, "a");
 			galo.setState(Rooster::state::RUNNING);
 			galo.facingRight = false;
 			galo.run();
@@ -198,65 +222,31 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		}
 		else if (mainInput.inputState[player][GODOWN][0])
 		{
+			strcpy(data + 5, "s");
 			galo.defend();
 		}
 		else
 		{
+			data[0] = '\0';
 			galo.setState(Rooster::state::STOPPED);
-
 		}
 
 		//===============================
 
-		socket.send(data, 10);
+		if (socket.send(data, 10) != Socket::Done) {
+			cout << "Erro\n";
+		}
 		data[0] = '\0';
 		socket.receive(data, 10, size);
 
+		galo2move(&galo2, data);
 		//==============================
+		
 		
 		//PLAYER 2 CONTROLES
 
 		player = 1;
 
-		if (data[0] == 'w')
-		{
-			cout << data << endl;
-			galo2.jump();
-		}
-
-		else if (data[0] == 'j') {
-			galo2.lowKick();
-
-		}
-		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
-			galo2.especial();
-		}
-
-
-
-		if (data[0] == 'd')
-		{
-			galo2.setState(Rooster::state::RUNNING);
-			galo2.facingRight = true;
-			galo2.run();
-
-		}
-		else if (data[0] == 'a')
-		{
-			galo2.setState(Rooster::state::RUNNING);
-			galo2.facingRight = false;
-			galo2.run();
-
-		}
-		else if (mainInput.inputState[player][GODOWN][0])
-		{
-			galo2.defend();
-		}
-		else
-		{
-			galo2.setState(Rooster::state::STOPPED);
-
-		}
 
 		for (int i = 0; i < galo.hurtBox.size(); i++) {
 
@@ -385,214 +375,14 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		//exp->draw(*window);
 
 		data[0] = '\0';
+		data[5] = '\0';
 		window->display();
 	}
+
+
+
 }
-void multiPlayer(RenderWindow* window, Galo& galo, Galo* galo2, int& option, RectangleShape fundo) {
 
-	int rounds = 0;
-	int p1Rounds = 0;
-	int p2Rounds = 0;
-
-	Font fonte;
-	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
-
-	Text round[3];
-
-	for (int i = 0; i < 3; i++) {
-		string name = "Round";
-		name += to_string(i + 1);
-		round[i].setString(name);
-		round[i].setFont(fonte);
-		round[i].setCharacterSize(SCREEN_WIDTH / 30);
-
-		round[i].setFillColor(Color::Yellow);
-		round[i].setOutlineColor(Color::Black);
-		round[i].setOutlineThickness(SCREEN_WIDTH / 1000);
-
-		round[i].setPosition(
-			SCREEN_WIDTH / 2 - round[i].getGlobalBounds().width / 2,
-			SCREEN_HEIGHT / 2 - round[i].getGlobalBounds().height / 2
-		);
-	}
-
-	Text fight("Fight !!!", fonte, SCREEN_WIDTH / 20);
-	fight.setFillColor(Color::Red);
-	fight.setOutlineColor(Color::Black);
-	fight.setOutlineThickness(SCREEN_WIDTH / 1000);
-
-	fight.setPosition(
-		SCREEN_WIDTH / 2 - fight.getGlobalBounds().width / 2,
-		SCREEN_HEIGHT / 2 - fight.getGlobalBounds().height / 2
-	);
-
-
-	SoundBuffer player1winsbuf;
-	player1winsbuf.loadFromFile("sounds/Player_1_Wins.wav");
-	SoundBuffer player2winsbuf;
-	player1winsbuf.loadFromFile("sounds/Player_2_Wins.wav");
-
-	SoundBuffer roundBuf[3];
-	Sound soundRound[3];
-
-	SoundBuffer fightb;
-	fightb.loadFromFile("sounds/Fight.wav");
-	Sound s;
-	s.setBuffer(fightb);
-
-	for (int i = 0; i < 3; i++) {
-		string name = "sounds/Round_";
-		name += to_string(i + 1);
-		name += ".wav";
-		roundBuf[i].loadFromFile(name);
-		soundRound[i].setBuffer(roundBuf[i]);
-	}
-
-	int framesRound = 60;
-	int framesFight = 0;
-
-	//=================================================================
-
-	UdpSocket socket;
-	unsigned short port = 59000;
-	IpAddress ip = IpAddress::getLocalAddress();
-
-	socket.bind(port);
-	socket.setBlocking(false);
-	char data[10];
-	size_t size;
-
-	//=================================================================
-	while (window->isOpen()) {
-		window->clear();
-		window->draw(fundo);
-
-		Event e;
-		while (window->pollEvent(e))
-		{
-			if (e.type == Event::Closed)
-			{
-				window->close();
-			}
-
-		}
-		
-		mainInput.update();
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-			window->close();
-		}
-
-		//options p1
-
-
-		int player = 0;
-
-		if (mainInput.inputState[player][GOUP][1])
-		{
-			strcpy_s(data, "w");
-			galo.jump();
-			
-		}
-
-		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
-			if (mainInput.inputState[player][GODOWN][0]) {
-				galo.lowKick();
-			}
-
-			else
-				galo.highKick();
-
-		}
-		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
-			galo.especial();
-		}
-
-
-
-		if (mainInput.inputState[player][GORIGHT][1])
-		{
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = true;
-			galo.run();
-
-		}
-		else if (mainInput.inputState[player][GOLEFT][1])
-		{
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = false;
-			galo.run();
-
-		}
-		else if (mainInput.inputState[player][GODOWN][1])
-		{
-			galo.defend();
-		}
-		else
-		{
-			galo.setState(Rooster::state::STOPPED);
-
-		}
-
-		socket.send(data, 10, ip, port);
-		unsigned short port2;
-		socket.receive(data, 10, size, ip, port2);
-
-		if (data[0] == 'w') {
-			galo2->jump();
-		}
-
-		galo.update();
-
-		if (galo.ultimateShot->getHitted) {
-			galo.apanharByKalsa(galo2, window);
-		}
-		else if (galo2->ultimateShot->getHitted) {
-			galo2->apanharByKalsa(&galo, window);
-		}
-
-		galo.bar->draw(window);
-		galo2->bar->draw(window);
-
-		galo.show(*window);
-
-		galo2->show(*window);
-
-		mainPartSystem.update();
-		mainPartSystem.draw(*window);
-
-		if (galo.gethp() < 0 || galo2->gethp() < 0) {
-
-			rounds++;
-			framesRound = 60;
-			galo.sethp(galo.getMaxhp());
-			galo2->sethp(galo.getMaxhp());
-		}
-
-
-		if (framesRound > 0) {
-			if (framesRound == 60) {
-				soundRound[rounds].play();
-			}
-			framesRound--;
-			if (framesRound == 0) {
-				s.play();
-				framesFight = 60;
-			}
-			window->draw(round[rounds]);
-
-		}
-		if (framesFight > 0) {
-			framesFight--;
-			window->draw(fight);
-		}
-
-
-		window->display();
-	}
-	
-	
-}
 
 
 #endif

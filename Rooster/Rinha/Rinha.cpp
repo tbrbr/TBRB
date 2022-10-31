@@ -88,7 +88,7 @@ using namespace Rooster;
 
 int main() {
 
-
+	cout << IpAddress::getLocalAddress();
 	cout << "Server?";
 	cin >> ishost;
 
@@ -133,8 +133,8 @@ int main() {
 	kalsaSt = { 100, 10, 10, 10, 5 };
 	bruxoSt = { 60, 10, 10, 10, 5 };
 
-	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-	Galo* galo2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
+	Galo* galo = new Kalsa(sniperSt, Rooster::state::STOPPED, true);
+	Galo* galo2 = new Bruxo(sniperSt, Rooster::state::STOPPED, false);
 
 	println("Carregarou");
 

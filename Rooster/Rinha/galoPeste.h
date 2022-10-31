@@ -565,8 +565,10 @@ namespace Rooster {
 
             Clock Timer;
             Timer.restart();
-            galo2->position.x = SCREEN_WIDTH / 2;
-                        
+            galo2->position.x = SCREEN_WIDTH / 4;
+            position.x = SCREEN_WIDTH / 4 + model.getBounds().width * abs(model.xScl);
+            Texture Corvo;
+            Corvo.loadFromFile("sprites/corvo.png");
             std::vector <corvo> corvos;
 
             effectsChuva chuva;
@@ -578,15 +580,64 @@ namespace Rooster {
             lightning.setPosition(SCREEN_WIDTH/2,0);
 
             RectangleShape bright;
-
+            bright.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
             bright.setFillColor(Color(255, 255, 255, 0));
 
-            std::vector <Projectile> infestacao;
+           
+            effectsInfestacaoDeRatos socorro;
 
-            for (int i = 0; i < 100; i++) {
-             
-            }
+            hiKick->setTimeLapse(milliseconds(750));
 
+            Font mortal;
+            mortal.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
+            Text fatal("FATALITY", mortal, SCREEN_WIDTH/10);
+            fatal.setPosition(SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2);
+            fatal.setFillColor(Color(100, 0, 0));
+            fatal.setOutlineThickness(SCREEN_WIDTH / 700);
+            fatal.setOutlineColor(Color(255, 10, 10));
+            Texture garrinha;
+            garrinha.loadFromFile("sprites/garrinhaDoFatality.png");
+            Sprite garra1;
+            Sprite garra2;
+            garra1.setTexture(garrinha);
+            garra2.setTexture(garrinha);
+            garra1.setScale(-0.5, 0.5);
+            garra2.setScale(0.5, 0.5);
+            garra1.setPosition(
+                SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+                SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+            );
+            
+            garra2.setPosition(
+                SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+                SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+            );
+            RectangleShape opening;
+            opening.setFillColor(Color(255,255,0));
+            opening.setOutlineColor(Color::Yellow);
+            opening.setSize(Vector2f(0,SCREEN_HEIGHT/100));
+
+            Text peste("Peste Wins", mortal, SCREEN_WIDTH / 50);
+
+            peste.setPosition(
+                SCREEN_WIDTH / 2 - peste.getGlobalBounds().width / 2,
+                garra2.getPosition().y - peste.getGlobalBounds().height
+            );
+            peste.setFillColor(Color(250, 250, 250));
+            peste.setOutlineThickness(SCREEN_WIDTH / 700);
+            peste.setOutlineColor(Color(255, 255, 10));
+
+            SoundBuffer bufferRaio;
+            bufferRaio.loadFromFile("sounds/raio.ogg");
+            Sound trovao;
+            trovao.setBuffer(bufferRaio);
+            Music somdechuva;
+            somdechuva.openFromFile("sounds/chuva.ogg");
+            somdechuva.setVolume(80);
+            Music grito;
+            grito.openFromFile("sounds/man-screaming-01.wav");
+            grito.setLoop(false);
+            
             while (window->isOpen()) {
 
                 int time = Timer.getElapsedTime().asMilliseconds();
@@ -611,16 +662,23 @@ namespace Rooster {
                 }
                 else if (time > 3500) {
                     if (time < 4500) {
-                        corvo *a= new corvo(rand() % 10,rand() % 10 - 5,Vector2f(0,randFloatRangeNormal(0, SCREEN_HEIGHT, SCREEN_HEIGHT)), Vector2f(0.2,0.2));
+                        corvo *a= new corvo(
+                            rand() % 10,rand() % 10 - 5,
+                            Vector2f(0,randFloatRangeNormal(0, SCREEN_HEIGHT, SCREEN_HEIGHT)),
+                            Vector2f(0.2,0.2),Corvo
+                        );
                         corvos.push_back(*a);
                         for (int i = 0; i < corvos.size(); i++) {
                             corvos[i].update();
                             corvos[i].draw(window);
                         }                     
                     }
-                    else if (time < 5500) {                       
-                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                    else if (time < 5500) {   
+                        trovao.play();
+                        bright.setFillColor(Color(255, 255, 255,255));
+
                     }else if (time < 5750) {
+                        bright.setFillColor(Color(255, 255, 255, 0));
                         window->draw(lightning);
                         for (int i = 0; i < corvos.size(); i++) {
                             corvos[i].update();
@@ -628,12 +686,15 @@ namespace Rooster {
                         }
                     }
                     else if (time < 6000) {
-                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
-                    }
-                    else if (time < 6250) {
-                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                        trovao.play();
+                        bright.setFillColor(Color(255, 255, 255, 255));
+                        galo2->facingRight = true;
+                        galo2->setState(Rooster::state::RUNNING); 
+                        galo2->run();
                     }
                     else if (time < 6500) {
+                        bright.setFillColor(Color(255, 255, 255, 0));
+
                         lightning.setPosition(SCREEN_WIDTH/4, 0);
                         for (int i = 0; i < corvos.size(); i++) {
                             corvos[i].update();
@@ -642,22 +703,47 @@ namespace Rooster {
                         window->draw(lightning);
                     }
                     else if (time < 6750) {
-                        bright.setFillColor(Color(255, 255, 255, 255 - ((time - 5500) / 250) * 255));
+                        bright.setFillColor(Color(255, 255, 255, 255));
+                        somdechuva.play();
+                        grito.play();
                     }
-                    else{
+                    else {
+                        bright.setFillColor(Color(255, 255, 255, 0));
                         chuva.update();
                         chuva.draw(window);
                         for (int i = 0; i < corvos.size(); i++) {
                             corvos[i].update();
                             corvos[i].draw(window);
                         }
-                  
-
-                    }
-                                      
+                        socorro.update();
+                        socorro.draw(window);
+                        highKick();
+                        
+                        if (time > 8000) {
+                            window->draw(fatal);
+                            if (time > 10000) {
+                                if (time < 12000) {
+                                    opening.setSize(Vector2f(ruleOfThree(time, 12000, SCREEN_WIDTH / 10), (float)SCREEN_HEIGHT / 100));
+                                }                                   
+                                else {
+                                    opening.setSize(Vector2f((float)SCREEN_WIDTH / 10, (float)SCREEN_HEIGHT / 100));
+                                }
+                                garra1.setPosition(opening.getPosition().x, garra1.getPosition().y);
+                                garra2.setPosition(opening.getPosition().x + opening.getSize().x, garra1.getPosition().y);
+                                opening.setPosition(
+                                    SCREEN_WIDTH/2 - opening.getSize().x/2,
+                                    garra2.getPosition().y + garra2.getGlobalBounds().height/1.5);                                
+                                
+                                window->draw(opening);
+                                window->draw(garra1);
+                                window->draw(garra2);
+                                window->draw(peste);
+                            }
+                        }
+                    }                                    
                 }
                 
-                if (position.x - model.getBounds().width * abs(model.xScl) < galo2->position.x ) {
+                if (position.x - (model.getBounds().width * abs(model.xScl))/1.5 < galo2->position.x ) {
                     estado = RUNNING;
                     run();
                 }

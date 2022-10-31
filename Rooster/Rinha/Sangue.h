@@ -565,19 +565,19 @@ namespace Rooster {
 	};
 
 	class corvo {
-		Texture Corvo;
+		
 		Sprite sprite;
 		float hspd;
 		float vspd;
 		Vector2f position;
 		Vector2f scl;
 	public:
-		corvo(float hspd, float vspd, Vector2f position, Vector2f scl) {
+		corvo(float hspd, float vspd, Vector2f position, Vector2f scl,Texture &Corvo) {
 			this->hspd = hspd;
 			this->vspd = vspd;
 			this->position = position;
 			this->scl = scl;
-			Corvo.loadFromFile("sprites/corvo.png");
+			
 			sprite.setTexture(Corvo);
 
 		}
@@ -677,23 +677,25 @@ namespace Rooster {
 			}
 		}
 	};
+
 	class rato {
-		Texture ratinho;
+		
 		Sprite sprite;
 		float hspd;
 		float vspd;
 		Vector2f position;
 		Vector2f scl;
 	public:
-		rato(float hspd, float vspd, Vector2f position, Vector2f scl) {
+		rato(float hspd, float vspd, Vector2f position, Vector2f scl,Texture *t) {
 			this->hspd = hspd;
 			this->vspd = vspd;
 			this->position = position;
 			this->scl = scl;
-			ratinho.loadFromFile("sprites/rato.png");
-			sprite.setTexture(ratinho);
+			
+			sprite.setTexture(*t);
 
 		}
+		
 		void update() {
 
 			int sizeRato[3] = {858,858,877 };
@@ -721,6 +723,13 @@ namespace Rooster {
 					scl.x *= -1;
 				}
 			}
+			if (position.x > SCREEN_WIDTH + 100) {
+				position.x = -10;
+			}
+			else if (position.x < -100) {
+				position.x = SCREEN_WIDTH + 10;
+			}
+			
 			sprite.setScale(scl);
 			sprite.setRotation(-sin(vspd));
 
@@ -734,14 +743,24 @@ namespace Rooster {
 			window->draw(sprite);
 		}
 	};
+
 	class effectsInfestacaoDeRatos {
 		std::vector <rato> ratos;
+		Texture *ratinho = new Texture;
 	public:
 		class effectsInfestacaoDeRatos(){
+			ratinho->loadFromFile("sprites/rato.png");
+
 			for (int i = 0; i < 100; i++) {
 				int right = rand() % 2;
-//				rato* a = new rato(randIntRange(5,10) - right*15,0,Vector2f(right*SCREEN_WIDTH,floorY),Vector2f(0.2,0.2));
-				//ratos.push_back(*a);
+				rato* a = new rato(					
+					randIntRange(5,10) - right*15,
+					0,
+					Vector2f(right*SCREEN_WIDTH, (float)SCREEN_HEIGHT / 1.1),
+					Vector2f(0.2,0.2),
+					ratinho
+				);
+				ratos.push_back(*a);
 			}
 		}
 		void update() {

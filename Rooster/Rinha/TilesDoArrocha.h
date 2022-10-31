@@ -575,7 +575,7 @@ bool pianoTiles(RenderWindow* window) {
 
 	struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
 
-	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING,false);
 
 	Texture fundao;
 	fundao.loadFromFile("sprites/chorao.png");

@@ -221,7 +221,9 @@ namespace Rooster {
 		void playSound() {
 			soundCollision.play();
 		}
-		
+		void setTimeLapse(Time timeLapse) {
+			this->timeLapse = timeLapse;
+		}
 		
 		bool CheckCollision(HitBox galo) {
 			if (isAtacking) {

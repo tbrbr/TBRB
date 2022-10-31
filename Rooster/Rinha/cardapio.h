@@ -314,7 +314,7 @@ public:
 
 		sniperT.loadFromFile("sprites/galoSniper.png");
 		Sniper.tex = &sniperT;
-		Sniper.loadModel("SniperModel.txt");
+		Sniper.loadModel("models/SniperModel.txt");
 
 
 		Sniper.autoSetBounds(Sniper.at("Body"), Sniper.at("BackShoe"), Sniper.at("Head"));
@@ -422,7 +422,7 @@ public:
 							galop1[0]->noGravity = false;
 							galop2[0]->noGravity = false;
 
-							option = Rooster::UMJOGADORES;
+							option = Rooster::MAPA_FALIDO_E_ACHE_RUIM_WALTER;
 							return;
 						}
 						
@@ -445,11 +445,19 @@ public:
 						struct GaloStats pesteSt;
 						struct GaloStats botaSt;
 
-						sniperSt = { 100, 10, 10, 10, 5 };
-						kalsaSt = { 100, 10, 10, 10, 5 };
-						bruxoSt = { 60, 10, 10, 10, 5 };
-						pesteSt = kalsaSt;
-						botaSt = bruxoSt;
+						/*
+						int hp;
+						int speed;
+						int atk;
+						int def;
+						int peso;
+						*/
+					
+						sniperSt = { 100, 10, 15, 9, 5 , 15};
+						kalsaSt = { 100, 12, 12, 10, 6 , 15};
+						bruxoSt = { 60, 15, 12, 9, 5   , 15};
+						pesteSt = { 120, 12, 10, 11, 6 , 12};
+						botaSt = { 80, 13, 10, 12, 4   , 20};
 
 
 

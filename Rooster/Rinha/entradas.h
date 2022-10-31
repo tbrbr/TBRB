@@ -14,7 +14,8 @@ namespace Rooster {
 		ISPATOTIME,
 		SELECTION,
 		INTRO,
-		BOTAPRAARROCHAR
+		BOTAPRAARROCHAR,
+		MAPA_FALIDO_E_ACHE_RUIM_WALTER
 	};
 
 	enum JoystickKeys {

@@ -34,7 +34,9 @@ namespace Rooster {
         BRUXO,
     };
 
-#define NUMGALOS 5
+    #define NUMGALOS 5
+
+    
 
     const float floorY = (float)SCREEN_HEIGHT / 1.1;
 
@@ -225,6 +227,7 @@ namespace Rooster {
         int atk;
         int def;
         int peso;
+        int jumpSpd;
     };
 
 
@@ -324,6 +327,7 @@ namespace Rooster {
             this->def = stats.def;
             this->speed = stats.speed;
             this->peso = stats.peso;
+            this->jumpSpeed = -stats.jumpSpd;
 
 
             // States
@@ -333,10 +337,12 @@ namespace Rooster {
             // Physics
             this->hspeed = 0;
             this->vspeed = 0;
-            this->hspeedLimit = 10;
+            this->hspeedLimit = this->speed;
             this->vspeedLimit = 10;
             this->hAcc = 0.5;
-            this->jumpSpeed = (peso * (-8)) / 2;
+
+            
+            
 
             this->position = Vector2f(0, 0);
             this->isp1 = isp1;
@@ -556,16 +562,26 @@ namespace Rooster {
 
             
 
+            if (SHOWDEBUG) {
+                for (int i = 0; i < hurtBox.size(); i++) {
 
-            for (int i = 0; i < hurtBox.size(); i++) {
 
+                    drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
 
-               // drawHitBox(window, hurtBox[i], sf::Color(255, 255, 255, 100));
+                }
 
-            }
+                if (ultimateShot->isAtacking) {
+                    drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                }
 
-            if (ultimateShot->isAtacking) {
-                //drawHitBox(window, ultimateShot->hitbox, sf::Color::Red);
+                if (louKick->isAtacking) {
+                    drawHitBox(window, louKick->hitbox, sf::Color::Red);
+                }
+
+                if (hiKick->isAtacking) {
+                    drawHitBox(window, hiKick->hitbox, sf::Color::Red);
+                }
+
             }
         }
 

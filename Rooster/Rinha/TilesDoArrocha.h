@@ -65,6 +65,7 @@ class Yamaha {
 	ConvexShape bars[4];
 
 	Texture teclado;
+	Texture trapezioTexture;
 	Sprite teclas[4];
 
 
@@ -137,7 +138,7 @@ public:
 
 
 		teclado.loadFromFile("sprites/teclas.png");
-
+		trapezioTexture.loadFromFile("");
 
 		
 
@@ -444,6 +445,7 @@ public:
 		trap.setFillColor(Color::Blue);
 		trap.setScale(xScl, yScl);
 		trap.setPosition(pos);
+
 		window->draw(trap);
 
 

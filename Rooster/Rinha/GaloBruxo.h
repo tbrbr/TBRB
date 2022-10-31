@@ -64,23 +64,8 @@ namespace Rooster {
 
             model.tex = &t;
             model.loadModel("models/bruxoModel.txt");
+         
 
-            println("BRUXO CARREGOU");
-
-            // Testando adicionar partes extras
-            
-            model.addElement(*model.at("FrontArm"), "FrontArm2");
-            model.at("FrontArm2")->setBaseAlpha(0);
-
-
-            model.addElement(*model.at("FrontArm"), "FrontArm3");
-            model.at("FrontArm3")->setBaseAngle(20);
-            model.at("FrontArm3")->setBaseAlpha(0);
-            
-
-            model.addElement(*model.at("FrontArm"), "FrontArm4");
-            model.at("FrontArm4")->setBaseAngle(40);
-            model.at("FrontArm4")->setBaseAlpha(0);
             
 
             model.autoSetBounds(model.at("Body"), model.at("BackShoe"), model.at("Head"));
@@ -181,18 +166,7 @@ namespace Rooster {
             hspeed = 0;
         }
 
-        void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
-            if (estado != FATALITY) {
-                estado = FATALITY;
-                
-                clockFatal.restart();
-            }
-            
-        }
-        void nossasenhora() {
-            int time = clockFatal.getElapsedTime().asMilliseconds();
-
-        }
+       
         void highKick() override {
             if (atacking == NOT_ATTACK) {
                 atacking = HIGH_KICK;
@@ -230,10 +204,26 @@ namespace Rooster {
 
             if (percentage < 0.5f / 3.f) {
 
+                float thisPercentage = percentage * 6;
+                ArmSpinAngFase = -45;
+                Arm2SpinAngFase = 90;
 
-                float thisPercentage = percentage * 3;
+                static int angle = 0;
+                angle++;
+                projectiles[0].isTrans = false;
+                projectiles[0].setImpulse(0, 0);
+                projectiles[0].setSpriteAngle(angle);
 
+                projectiles[0].setScale((float)SCREEN_WIDTH/7680 * percentage,(float) SCREEN_WIDTH / 7680 * percentage);
 
+                projectiles[0].setPosition(
+                    position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
+                    position.y / 2 + (projectiles[0].getLocalSize().y)
+                );
+                    
+
+                projectiles[0].setVisibility(true);
+                projectiles[0].update();
             }
             else if (percentage < 2.f / 3.f) {
                 float thisPercentage = percentage * 3;
@@ -508,12 +498,8 @@ namespace Rooster {
             else if (estado == STOPPED) {
                 runReset();
             }
-            else if (estado == FATALITY) {
-                nossasenhora();
-            }
-
-            
-             
+           
+                    
 
             if (atacking == HIGH_KICK) {
                 // highAtackAnim();
@@ -522,14 +508,149 @@ namespace Rooster {
                 // louKickAnim();
             }
             else if (atacking == SPECIAL) {
-                // especialAnim();
+                 especialAnim();
             }
 
            // projectiles[0].update();
 
         }
 
+        void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
 
+            Clock Timer;
+            Timer.restart();
+
+            estado = FATALITY;
+            galo2->position.x = SCREEN_WIDTH / 2;
+            position.x = SCREEN_WIDTH / 4 + model.getBounds().width * abs(model.xScl);
+           
+            Font mortal;
+            mortal.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
+
+            Text fatal("FATALITY", mortal, SCREEN_WIDTH / 10);
+            fatal.setPosition(SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2);
+            fatal.setFillColor(Color(100, 0, 0));
+            fatal.setOutlineThickness(SCREEN_WIDTH / 700);
+            fatal.setOutlineColor(Color(255, 10, 10));
+
+            Texture garrinha;
+            garrinha.loadFromFile("sprites/garrinhaDoFatality.png");
+            Sprite garra1;
+            Sprite garra2;
+            garra1.setTexture(garrinha);
+            garra2.setTexture(garrinha);
+            garra1.setScale(-0.5, 0.5);
+            garra2.setScale(0.5, 0.5);
+
+            garra1.setPosition(
+                SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+                SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+            );
+
+            garra2.setPosition(
+                SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+                SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+            );
+            RectangleShape opening;
+
+            opening.setFillColor(Color(255, 255, 0));
+            opening.setOutlineColor(Color::Yellow);
+            opening.setSize(Vector2f(0, SCREEN_HEIGHT / 100));
+
+            Text bruxowins("Bruxo Wins", mortal, SCREEN_WIDTH / 50);
+
+            bruxowins.setPosition(
+                SCREEN_WIDTH / 2 - bruxowins.getGlobalBounds().width / 2,
+                garra2.getPosition().y - bruxowins.getGlobalBounds().height
+            );
+            bruxowins.setFillColor(Color(250, 250, 250));
+            bruxowins.setOutlineThickness(SCREEN_WIDTH / 700);
+            bruxowins.setOutlineColor(Color(255, 255, 10));
+
+           
+            Music grito;
+            grito.openFromFile("sounds/man-screaming-01.wav");
+            grito.setLoop(false);
+
+
+            model.resetToBase();
+
+            // Testando adicionar partes extras
+            
+            
+            model.addElement(*model.at("FrontArm"), "FrontArm2",0);
+            model.at("FrontArm2")->setBaseAlpha(0);
+
+
+            model.addElement(*model.at("FrontArm"), "FrontArm3",model.allBones.size() - 1);
+            model.at("FrontArm3")->setBaseAngle(0);
+            model.at("FrontArm3")->setBaseAlpha(0);
+
+
+            model.addElement(*model.at("FrontArm"), "FrontArm4",0);
+            model.at("FrontArm4")->setBaseAngle(0);
+            model.at("FrontArm4")->setBaseAlpha(0);
+
+            model.addElement(*model.at("FrontArm"), "FrontArm5", 0);
+            model.at("FrontArm5")->setBaseAngle(0);
+            model.at("FrontArm5")->setBaseAlpha(0);
+
+            model.addElement(*model.at("BackArm"), "FrontArm6", model.allBones.size() - 1);
+            model.at("FrontArm6")->sprite = model.at("BackArm")->sprite;
+           
+            model.at("FrontArm6")->setBaseAngle(0);
+            model.at("FrontArm6")->setBaseAlpha(0);
+            model.at("FrontArm6")->setBaseAttach(model.at("FrontArm")->getBaseAttach());
+            
+            
+            
+
+            while (window->isOpen()) {
+                
+                int time = Timer.getElapsedTime().asMilliseconds();
+
+                window->clear();
+                window->draw(fundo);
+
+                Event e;
+                while (window->pollEvent(e))
+                {
+                    if (e.type == Event::Closed)
+                    {
+                        window->close();
+                    }
+
+                }
+                if (time < 3500) {
+                    static int blue = 255;
+                    static int red = 255;
+                    static int green = 255;
+                    if (green > 0)
+                        green -= 2;
+                    else
+                        green = 0;
+                    blue--;
+                    red--;
+                    fundo.setFillColor(Color(red, green, blue));
+
+                    Arm2SpinAngFase = 90;
+                    model.at("Head")->angle = sin(time);
+                    model.at("Corpo")->angle = sin(time);
+                    
+                }
+                
+
+              
+
+
+                update();
+                galo2->update();
+                galo2->show(*window);
+
+                show(*window);               
+                window->display();
+            }
+        }
         
     };
 

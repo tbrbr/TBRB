@@ -564,7 +564,7 @@ namespace Rooster {
         }
 
         void fatality(RenderWindow* window,Galo* galo2, RectangleShape fundo)override {
-
+            
             Clock Timer;
             Timer.restart();
             galo2->position.x = SCREEN_WIDTH / 4;
@@ -640,6 +640,28 @@ namespace Rooster {
             grito.openFromFile("sounds/man-screaming-01.wav");
             grito.setLoop(false);
             
+
+            SoundBuffer fatalityBuffer;
+            fatalityBuffer.loadFromFile("sounds/fatality.ogg");
+            Sound fatalitysound;
+            fatalitysound.setBuffer(fatalityBuffer);
+            fatalitysound.setLoop(false);
+            
+            SoundBuffer whowinsBuf;
+            if (isp1) {
+                whowinsBuf.loadFromFile("sounds/Player_1_Wins.wav");
+            }
+            else {
+                whowinsBuf.loadFromFile("sounds/Player_2_Wins.wav");
+            }
+            Sound whowins;
+            whowins.setBuffer(whowinsBuf);
+
+            Music fatalpeste;
+            fatalpeste.openFromFile("sounds/fatalpeste.ogg");
+            fatalpeste.setVolume(60);
+            //SoundBuffer 
+            fatalpeste.play();
             while (window->isOpen()) {
 
                 int time = Timer.getElapsedTime().asMilliseconds();
@@ -722,13 +744,22 @@ namespace Rooster {
                         highKick();
                         
                         if (time > 8000) {
+                            static bool lets = true;
+                            if(lets)
+                                fatalitysound.play();
+                            lets = false;
                             window->draw(fatal);
                             if (time > 10000) {
                                 if (time < 12000) {
+                                    static bool letsgo = true;
+                                    if (letsgo)
+                                        whowins.play();
+                                    letsgo = false;
                                     opening.setSize(Vector2f(ruleOfThree(time, 12000, SCREEN_WIDTH / 10), (float)SCREEN_HEIGHT / 100));
                                 }                                   
                                 else {
                                     opening.setSize(Vector2f((float)SCREEN_WIDTH / 10, (float)SCREEN_HEIGHT / 100));
+                                    
                                 }
                                 garra1.setPosition(opening.getPosition().x, garra1.getPosition().y);
                                 garra2.setPosition(opening.getPosition().x + opening.getSize().x, garra1.getPosition().y);

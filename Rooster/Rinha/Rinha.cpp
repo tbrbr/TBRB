@@ -21,7 +21,7 @@
 using namespace std;
 using namespace sf;
 
-#define ISMOTADESKTOP 0
+#define ISMOTADESKTOP 1
 
 #if  ISMOTADESKTOP
 const int SCREEN_WIDTH = 1366;
@@ -84,6 +84,9 @@ using namespace Rooster;
 int main() {
 
 
+	cout << "Server?";
+	cin >> ishost;
+
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -96,11 +99,11 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
-	int option = INTRO;
+	int option = DOISJODADOR;
 
 	
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
@@ -124,7 +127,7 @@ int main() {
 	bruxoSt = { 60, 10, 10, 10, 5 };
 
 	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
+	Galo* galo2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
 
 	println("Carregarou");
 
@@ -132,10 +135,14 @@ int main() {
 	Pato *miniGame1 = new Pato((*window));
 
 	RectangleShape fundo;
+
 	fundo.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	MapSelector* mapSelector = new MapSelector();
+
+
+	fundo.setTexture(mapSelector->getTexture());
 
 	window->setMouseCursorVisible(true);
 	window->setMouseCursorGrabbed(false);
@@ -175,7 +182,7 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
-			multiPlayer(window, *galo, galo2, option, fundo);
+			multiPlayer(window, *galo, *galo2, option, fundo);
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			mapSelector->draw(window, option, true);

@@ -88,7 +88,7 @@ using namespace Rooster;
 
 int main() {
 
-
+	cout << IpAddress::getLocalAddress();
 	cout << "Server?";
 	cin >> ishost;
 

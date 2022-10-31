@@ -24,7 +24,7 @@ using namespace sf;
 
 #define ISMOTADESKTOP 1
 
-#if  ISMOTADESKTOP
+#if  1
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
 #else
@@ -133,8 +133,8 @@ int main() {
 	kalsaSt = { 100, 10, 10, 10, 5 };
 	bruxoSt = { 60, 10, 10, 10, 5 };
 
-	Galo* galo = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-	Galo* galo2 = new Peste(sniperSt, Rooster::state::STOPPED, false);
+	Galo* galo = new Peste(sniperSt, Rooster::state::STOPPED, false);
+	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 
 	println("Carregarou");
 

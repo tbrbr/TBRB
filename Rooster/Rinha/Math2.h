@@ -65,11 +65,6 @@ float ruleOfThree(float val, float valMax, float val2Max) {
 	return (val / valMax) * val2Max;
 }
 
-
-
-
-
-
 // Random
 int randInt(int max) {
 	return rand() % max;
@@ -96,12 +91,6 @@ float randFloatRangeNormal(float min, float max, float desvio) {
 
 }
 
-
-
-
-
-
-
 float pitagoras(float cateto1, float cateto2) {
 	return sqrt(pow(cateto1, 2) + pow(cateto2, 2));
 }
@@ -116,10 +105,6 @@ float pointDistance(Vector2f point1, Vector2f point2){
 float toRadiAnus(int angle) {
 	return (angle * PI) / 180;
 }
-
-
-
-
 
 Vector2f normalizar(Vector2f vec) {
 	float dist = pitagoras(vec);

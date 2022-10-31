@@ -562,7 +562,7 @@ namespace Rooster {
 
             
 
-            if (SHOWDEBUG || true) {
+            if (SHOWDEBUG || false) {
                 for (int i = 0; i < hurtBox.size(); i++) {
 
 

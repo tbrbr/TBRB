@@ -292,7 +292,7 @@ namespace Rooster {
         Ataques* louKick;
         Ataques* ultimateShot;
 
-        bool noGravity = true;
+        bool noGravity = false;
 
 
         // Lifebar

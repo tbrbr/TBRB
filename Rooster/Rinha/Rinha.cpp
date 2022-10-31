@@ -128,13 +128,18 @@ int main() {
 	struct GaloStats sniperSt;
 	struct GaloStats kalsaSt;
 	struct GaloStats bruxoSt;
+	struct GaloStats pesteSt;
+	struct GaloStats botaSt;
+	sniperSt = { 100, 10, 15, 9, 5 , 15 };
+	kalsaSt = { 100, 12, 12, 10, 6 , 20 };
+	bruxoSt = { 60, 15, 12, 9, 5   , 20 };
+	pesteSt = { 120, 12, 10, 11, 6 , 12 };
+	botaSt = { 80, 13, 10, 12, 4   , 20 };
 
-	sniperSt = { 100, 10, 10, 10, 5 };
-	kalsaSt = { 100, 10, 10, 10, 5 };
-	bruxoSt = { 60, 10, 10, 10, 5 };
 
 	Galo* galo = new Peste(sniperSt, Rooster::state::STOPPED, false);
 	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
+
 
 	println("Carregarou");
 

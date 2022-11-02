@@ -22,7 +22,7 @@
 using namespace std;
 using namespace sf;
 
-#define ISMOTADESKTOP 1
+#define ISMOTADESKTOP 0
 
 #if  ISMOTADESKTOP
 const int SCREEN_WIDTH = 1366;
@@ -108,8 +108,8 @@ int main() {
 
 
 
-	int option = MULTI_MODE;
-	//option = BOTAPRAARROCHAR;
+
+	int option = MENU_PRINCIPAL;
 	
 	
 #if ISMOTADESKTOP

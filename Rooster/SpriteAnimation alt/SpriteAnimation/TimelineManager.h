@@ -62,6 +62,12 @@ struct TimelineManager{
     Vector2i frameSelected;
     Vector2i frameHovered;
 
+    bool active = false;
+
+
+    bool hasCopy;
+    struct Properties copiedProp;
+
     bool hovered = false;
     bool clicked = false;
 
@@ -304,11 +310,36 @@ struct TimelineManager{
         return true;
     }
 
+    void copyFrame(){
+
+        if(boneSelected != -1){
+
+            struct Properties p = getProperty(boneSelected, frameSelected.y, frameSelected.x);
+            if(p.exists){
+                copiedProp = p;
+                hasCopy = true;
+            } else {
+                hasCopy = false;
+            }
+        } else {
+            hasCopy = false;
+        }
+    }
+
+    void pasteFrame(){
+        if(boneSelected != -1){
+            if(hasCopy && copiedProp.propertyId == frameSelected.y){
+                createKeyFrameHere(boneSelected, frameSelected.y, copiedProp);
+            }
+        }
+    }
+
+
 
     void draw(RenderWindow& window, struct engineInfo& info){
 
 
-        if(boneSelected != -1){
+        if(boneSelected != -1 && active){
 
             RectangleShape playBut(Vector2f(playButton.wid, playButton.hei));
             playBut.setPosition(playButton.x + x, playButton.y + y);
@@ -402,45 +433,6 @@ struct TimelineManager{
                                     str += " ";
 
                                     float val = 0;
-                                    /*
-                                    switch(p.propertyId){
-                                        case 0:
-                                            val = p.centerX;
-                                            break;
-
-                                        case 1:
-                                            val = p.centerY;
-                                            break;
-
-                                        case 2:
-                                            val = p.attachX;
-                                            break;
-
-                                        case 3:
-                                            val = p.attachY;
-                                            break;
-
-                                        case 4:
-                                            val = p.offsetX;
-                                            break;
-
-                                        case 5:
-                                            val = p.offsetY;
-                                            break;
-
-                                        case 6:
-                                            val = p.xScl;
-                                            break;
-
-                                        case 7:
-                                            val = p.yScl;
-                                            break;
-
-                                        case 8:
-                                            val = p.angle;
-                                            break;
-                                    }
-                                    */
 
                                     val = p.val;
 
@@ -466,7 +458,9 @@ struct TimelineManager{
                             }else if (p.progressionType == 2){
                                 rect.setFillColor(Color(200, 200 , 250));
                             }else if (p.progressionType == 3){
-                                rect.setFillColor(Color(250, 160 , 250));
+                                rect.setFillColor(Color(200, 250 , 200));
+                            }else if (p.progressionType == 4){
+                                rect.setFillColor(Color(250, 150 , 250));
                             }
                             rect.setOutlineThickness(2);
                             rect.setOutlineColor(Color(200));
@@ -770,7 +764,7 @@ struct TimelineManager{
                         float w1 = 1 - ((1-perc)*(1-perc));
                         return weightedPropertyMean(pPrev, p, w1);
 
-                    } else {
+                    } else if (pPrev.progressionType == 3) {
                         float w1 = 1;
                         return weightedPropertyMean(pPrev, p, w1);
                     }else {

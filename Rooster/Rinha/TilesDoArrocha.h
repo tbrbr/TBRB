@@ -353,7 +353,7 @@ public:
 								if (notas[j]->length != 1) {
 									notas[j]->slided = 1 - constrain((altura - notaY) / (yScl*notaSize * (notas[j]->length - 1)), 0, 1);
 									
-									for (int k = 0; k < (notas[j]->slided*10)/5; k++) {
+									for (int k = 0; k < (notas[j]->slided*10)*notas[j]->length / 5; k++) {
 										coisa[i]->createParticle();
 									}
 

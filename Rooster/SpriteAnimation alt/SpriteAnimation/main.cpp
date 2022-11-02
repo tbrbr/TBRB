@@ -920,7 +920,7 @@ int main(){
 
     Rooster::HitBox hb;
     Texture t;
-    t.loadFromFile("sprites/galoPeste.png");
+    t.loadFromFile("sprites/galoSniper.png");
 
     Texture texToolbar;
     texToolbar.loadFromFile("sprites/toolbar.png");
@@ -1004,14 +1004,6 @@ int main(){
 
                 } else if(e.key.control){
 
-
-                    if(e.key.code == Keyboard::Num1){
-                        bManager.toolSelected = 0;
-                    } else if(e.key.code == Keyboard::Num2){
-                        bManager.toolSelected = 1;
-                    } else if(e.key.code == Keyboard::Num3){
-                        bManager.toolSelected = 2;
-                    }
 
 
                 }

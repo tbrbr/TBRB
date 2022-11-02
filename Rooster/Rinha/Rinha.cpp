@@ -108,7 +108,7 @@ int main() {
 
 
 	int option = MENU_PRINCIPAL;
-	//option = BOTAPRAARROCHAR;
+	option = BOTAPRAARROCHAR;
 	
 	
 	

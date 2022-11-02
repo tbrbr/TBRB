@@ -96,7 +96,7 @@
 				}
 
 			}
-			if (false) {
+			if (true) {
 				musicas[index].stop();
 				galo.fatality(window, &galo2, fundo);
 
@@ -305,7 +305,7 @@
 				else {
 					framesRound = 60;
 					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
 					p2Rounds++;
 				}
 			}
@@ -317,7 +317,7 @@
 				else {
 					framesRound = 60;
 					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
 					p1Rounds++;
 				}
 				

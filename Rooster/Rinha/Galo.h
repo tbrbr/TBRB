@@ -282,7 +282,8 @@ namespace Rooster {
 
         // Attacks and Hitboxes
         int atacking;
-        HitBox hitbox;
+        bool isDefending = false;
+        HitBox defense;
         std::vector<HitBox> hurtBox;
         std::vector<Projectile> projectiles;
 
@@ -353,13 +354,6 @@ namespace Rooster {
 
             position.y = floorY;
 
-
-
-
-
-
-
-
         }
 
         void setPosition(Vector2f pos) {
@@ -420,10 +414,10 @@ namespace Rooster {
 
         virtual void apanhar(Ataques atk, bool direction){
 
+
             if (!invunerable) {
-
+              
                 hp -= atk.Damage/stats.def;
-
 
                 // Calculando os impulsos
                 atk.createBlood(mainPartSystem);
@@ -516,7 +510,7 @@ namespace Rooster {
         }
         void jump() {
 
-            if (!stunned || stunFrames < 0) {
+            if ((!stunned || stunFrames < 0) && atacking == NOT_ATTACK) {
                 stunned = false;
                 if (!air) {
                     vspeed += jumpSpeed;
@@ -525,9 +519,13 @@ namespace Rooster {
             }
         }
         
-        void run() {
+        void run(bool facingRight) {
 
-            if (!stunned || stunFrames < 0) {
+            if ((!stunned || stunFrames < 0) && atacking == NOT_ATTACK) {
+
+                estado = RUNNING;
+                this->facingRight = facingRight;
+
                 stunned = false;
 
                 float acc = hAcc * ((facingRight) ? 1:-1);
@@ -539,6 +537,14 @@ namespace Rooster {
 
 
         virtual void defend() = 0; 
+
+        virtual void defended(Galo& galo2,Ataques * atk,bool facingRight) {
+            Ataques* ataque = new Ataques(*atk);
+            ataque->Damage *= 0.25;
+            ataque->KnockBack *= 0.25;
+            apanhar(*ataque, facingRight);
+        }
+
         virtual void highKick() = 0;
         virtual void lowKick() = 0;
         virtual void especial() = 0;
@@ -557,12 +563,8 @@ namespace Rooster {
                         projectiles[i].draw(window);             
             }
             
-           
-            
-
-            
-
-            if (SHOWDEBUG || false) {
+                
+            if (SHOWDEBUG || true) {
                 for (int i = 0; i < hurtBox.size(); i++) {
 
 
@@ -581,6 +583,9 @@ namespace Rooster {
                 if (hiKick->isAtacking) {
                     drawHitBox(window, hiKick->hitbox, sf::Color::Red);
                 }
+                if (isDefending) {
+                    drawHitBox(window, defense, sf::Color::Green);
+                }
 
             }
         }
@@ -597,7 +602,7 @@ namespace Rooster {
             window.draw(circle);
         }
 
-
+        
         virtual void updatePhysics() {
 
             // Timers

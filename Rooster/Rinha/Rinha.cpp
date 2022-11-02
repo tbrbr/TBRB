@@ -24,7 +24,7 @@ using namespace sf;
 
 #define ISMOTADESKTOP 1
 
-#if  1
+#if  0
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
 #else
@@ -88,10 +88,12 @@ using namespace Rooster;
 
 int main() {
 
+	/*
 	cout << IpAddress::getLocalAddress();
 	cout << "Server?";
 	cin >> ishost;
-
+	*/
+	//mota va tomar no seu cu por favor.
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -110,7 +112,7 @@ int main() {
 	
 	
 	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
@@ -130,6 +132,7 @@ int main() {
 	struct GaloStats bruxoSt;
 	struct GaloStats pesteSt;
 	struct GaloStats botaSt;
+
 	sniperSt = { 100, 10, 15, 9, 5 , 15 };
 	kalsaSt = { 100, 12, 12, 10, 6 , 20 };
 	bruxoSt = { 60, 15, 12, 9, 5   , 20 };

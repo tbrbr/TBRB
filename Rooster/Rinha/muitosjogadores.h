@@ -26,16 +26,14 @@ void galo2move(Galo* galo, char* data) {
 
 	if (data[5] == 'd')
 	{
-		galo->setState(Rooster::state::RUNNING);
-		galo->facingRight = true;
-		galo->run();
+	
+		galo->run(true);
 
 	}
 	else if (data[5] == 'a')
 	{
-		galo->setState(Rooster::state::RUNNING);
-		galo->facingRight = false;
-		galo->run();
+	
+		galo->run(false);
 
 	}
 	else if (data[5] == 's')
@@ -206,17 +204,15 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		if (mainInput.inputState[player][GORIGHT][0])
 		{
 			strcpy(data + 5, "d");
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = true;
-			galo.run();
+			
+			galo.run(true);
 
 		}
 		else if (mainInput.inputState[player][GOLEFT][0])
 		{
 			strcpy(data + 5, "a");
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = false;
-			galo.run();
+			
+			galo.run(false);
 
 		}
 		else if (mainInput.inputState[player][GODOWN][0])

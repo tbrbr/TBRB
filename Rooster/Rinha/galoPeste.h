@@ -27,18 +27,18 @@ namespace Rooster {
 
 
             // Creating Attacks
-            this->hiKick = new Ataques(6,
-                8, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->hiKick = new Ataques(
+                6, 8, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(1200), ""
             );
 
-            this->louKick = new Ataques(7,
-                5, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->louKick = new Ataques(
+                7, 5, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, PI / 4, milliseconds(1000), ""
             );
 
-            this->ultimateShot = new Ataques(8,
-                0.9, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->ultimateShot = new Ataques(
+                8, 0.9, HitBox{ Vector2f(0, 0), 0 },
                 10, 3, 0, milliseconds(1500),
                 "sounds\\awp.ogg"
             );
@@ -544,10 +544,13 @@ namespace Rooster {
                 model.updateWithAnimation(animations[1]);
             }
 
-
-
             projectiles[0].update();
             projectiles[1].update();
+
+            ultimateShot->hitbox.center = projectiles[0].getPosition();
+            ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
+
+            
             if (projectiles[0].getVisibility()) {
 
                 int i = (frames % 30) / 10;
@@ -712,9 +715,9 @@ namespace Rooster {
                     else if (time < 6000) {
                         trovao.play();
                         bright.setFillColor(Color(255, 255, 255, 255));
-                        galo2->facingRight = true;
-                        galo2->setState(Rooster::state::RUNNING); 
-                        galo2->run();
+                        
+                        
+                        galo2->run(true);
                     }
                     else if (time < 6500) {
                         bright.setFillColor(Color(255, 255, 255, 0));
@@ -778,7 +781,7 @@ namespace Rooster {
                 
                 if (position.x - (model.getBounds().width * abs(model.xScl))/1.5 < galo2->position.x ) {
                     estado = RUNNING;
-                    run();
+                    run(true);
                 }
                 else {
                     estado = STOPPED;

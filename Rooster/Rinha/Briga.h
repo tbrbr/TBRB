@@ -137,16 +137,14 @@
 
 			if (mainInput.inputState[player][GORIGHT][0])
 			{
-				galo.setState(Rooster::state::RUNNING);
-				galo.facingRight = true;
-				galo.run();
+				
+				galo.run(true);
 
 			}
 			else if (mainInput.inputState[player][GOLEFT][0])
 			{
-				galo.setState(Rooster::state::RUNNING);
-				galo.facingRight = false;
-				galo.run();
+				
+				galo.run(false);
 
 			}
 			else if (mainInput.inputState[player][GODOWN][0])
@@ -186,16 +184,14 @@
 
 			if (mainInput.inputState[player][GORIGHT][0])
 			{
-				galo2.setState(Rooster::state::RUNNING);
-				galo2.facingRight = true;
-				galo2.run();
+				
+				galo2.run(true);
 
 			}
 			else if (mainInput.inputState[player][GOLEFT][0])
 			{
-				galo2.setState(Rooster::state::RUNNING);
-				galo2.facingRight = false;
-				galo2.run();
+				
+				galo2.run(false);
 
 			}
 			else if (mainInput.inputState[player][GODOWN][0])
@@ -207,32 +203,48 @@
 				galo2.setState(Rooster::state::STOPPED);
 
 			}
-		
+						
 			for (int i = 0; i < galo.hurtBox.size(); i++) {
 
+				
+				
+				
 				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
-					galo.apanhar(*galo2.hiKick, galo2.facingRight);
+					if (galo.isDefending) {
+						if (galo2.hiKick->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.hiKick, galo2.facingRight);
+						}else 
+							galo.apanhar(*galo2.hiKick, galo2.facingRight);
+					}else 
+						galo.apanhar(*galo2.hiKick, galo2.facingRight);
 
 				}
 				if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
-					galo.apanhar(*galo2.louKick, galo2.facingRight);
+					if (galo.isDefending) {
+						if (galo2.louKick->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.louKick, galo2.facingRight);
+						}
+						else
+							galo.apanhar(*galo2.louKick, galo2.facingRight);
+					}
+					else
+						galo.apanhar(*galo2.louKick, galo2.facingRight);
 
 				}
 				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
+
 					if (galo2.ultimateShot->id == 5) {
 						if (!galo2.ultimateShot->getHitted) {
 							galo2.ultimateShot->getHitted = true;
 							galo2.ultimateShot->init2.restart();
-						}	
+						}
 					}
 					else {
-						println("A");
 						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
 						galo2.ultimateShot->getHitted = true;
 					}
 				}
 			}
-
 
 			for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
@@ -252,7 +264,7 @@
 						}
 					}
 					else {
-						println("A");
+						
 						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
 						galo.ultimateShot->getHitted = true;
 					}

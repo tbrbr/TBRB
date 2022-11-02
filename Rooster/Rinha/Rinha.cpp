@@ -24,7 +24,7 @@ using namespace sf;
 
 #define ISMOTADESKTOP 1
 
-#if  1
+#if  ISMOTADESKTOP
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
 #else
@@ -80,7 +80,7 @@ using namespace Rooster;
 
 #include "Briga.h"
 #include "muitosjogadores.h"
-
+#include "server_connect.h"
 #include "cardapio.h"
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
@@ -88,10 +88,13 @@ using namespace Rooster;
 
 int main() {
 
-	cout << IpAddress::getLocalAddress() << endl;
+	/*
+	cout << IpAddress::getLocalAddress();
+>>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
 	cout << "Server?";
 	cin >> ishost;
-
+	*/
+	//mota va tomar no seu cu por favor.
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -105,12 +108,15 @@ int main() {
 
 
 
-	int option = MENU_PRINCIPAL;
+	int option = MULTI_MODE;
 	//option = BOTAPRAARROCHAR;
 	
 	
-	
+#if ISMOTADESKTOP
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
+#else
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+#endif
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
@@ -130,6 +136,7 @@ int main() {
 	struct GaloStats bruxoSt;
 	struct GaloStats pesteSt;
 	struct GaloStats botaSt;
+
 	sniperSt = { 100, 10, 15, 9, 5 , 15 };
 	kalsaSt = { 100, 12, 12, 10, 6 , 20 };
 	bruxoSt = { 60, 15, 12, 9, 5   , 20 };
@@ -152,12 +159,20 @@ int main() {
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	MapSelector* mapSelector = new MapSelector();
+	Texture background_t;
+	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	background.setPosition(0, 0);
+	background_t.loadFromFile("sprites/background_menu.png");
+	background.setTexture(&background_t);
 
 
 	fundo.setTexture(mapSelector->getTexture());
 
 	window->setMouseCursorVisible(true);
 	window->setMouseCursorGrabbed(false);
+
+	TcpSocket* socket = new TcpSocket();
+	TcpListener* listener = new TcpListener();
 
 	while (window->isOpen())
 	{
@@ -174,9 +189,6 @@ int main() {
 			println("singleplay");
 
 			singlePlayer(window,*galo,*galo2,option,fundo);
-			break;
-		case MENU_PRINCIPAL:
-			option = MenuPrincipal(window);
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
@@ -199,6 +211,35 @@ int main() {
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			mapSelector->draw(window, option, true);
+			break;
+		case JOIN:
+			option = join(window, background, socket);
+			break;
+
+		case CREATE:
+			option = create(window, background, socket, listener);
+			break;
+
+		case MULTI: 
+			option = muitoJogadores(window, background);
+			break;
+		case MULTI_MODE:
+			option = multoJogadoresMode(window, background);
+			break;
+
+		case MENU_PRINCIPAL:
+			option = MenuPrincipal(window, background);
+			break;
+
+		case GAMEMODE:
+			option = selecionarModo(window, background);
+			break;
+		case CONFIG:
+			option = configScreen(window, background);
+			break;
+
+		case MINIGAME:
+			option = minigame(window, background);
 			break;
 		default:
 			break;

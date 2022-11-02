@@ -25,18 +25,17 @@ namespace Rooster {
 
     
             this->hiKick = new Ataques(
-                3,
-                8, 0.5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, -PI / 4, milliseconds(1200), ""
+                3,30, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, -PI / 4, milliseconds(1200), "sounds\\fist-punch-or-kick-7171.ogg"
             );
-            this->louKick = new Ataques(4,
-                5, 0.5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI / 4, milliseconds(1000), ""
+            this->louKick = new Ataques(
+                4,30, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, PI / 4, milliseconds(1000), "sounds\\rooster-crowing-80322.ogg"
             );
 
-            this->ultimateShot = new Ataques(5,
-                0.9, 160, HitBox{ Vector2f(0, 0), 0 },
-                10, 3, 0, milliseconds(1000),
+            this->ultimateShot = new Ataques(
+                5 ,160, HitBox{ Vector2f(0, 0),0},
+                10, 3, 0, milliseconds(1500),
                 "sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
             );
 
@@ -102,8 +101,6 @@ namespace Rooster {
 
 
             animations.push_back(agacharAnim);
-
-            
 
         }
 

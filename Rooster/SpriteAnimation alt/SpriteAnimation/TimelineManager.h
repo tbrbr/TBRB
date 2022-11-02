@@ -642,18 +642,6 @@ struct TimelineManager{
 
         float w2 = 1 - w1;
 
-        /*
-        p.angle = p1.angle*w1 + p2.angle*w2;
-        p.attachX = p1.attachX*w1 + p2.attachX*w2;
-        p.attachY = p1.attachY*w1 + p2.attachY*w2;
-        p.offsetX = p1.offsetX*w1 + p2.offsetX*w2;
-        p.offsetY = p1.offsetY*w1 + p2.offsetY*w2;
-        p.centerX = p1.centerX*w1 + p2.centerX*w2;
-        p.centerY = p1.centerY*w1 + p2.centerY*w2;
-        p.xScl = p1.xScl*w1 + p2.xScl*w2;
-        p.yScl = p1.yScl*w1 + p2.yScl*w2;
-        */
-
         p.val = p1.val * w1 + p2.val * w2;
 
         return p;
@@ -725,8 +713,11 @@ struct TimelineManager{
                     float w1 = 1 - ((1-perc)*(1-perc));
                     return weightedPropertyMean(pPrev, p, w1);
 
-                } else {
+                } else if(pPrev.progressionType == 3) {
                     float w1 = 1;
+                    return weightedPropertyMean(pPrev, p, w1);
+                } else {
+                    float w1 = -(cos(PI * perc) - 1) / 2;
                     return weightedPropertyMean(pPrev, p, w1);
                 }
 
@@ -782,7 +773,11 @@ struct TimelineManager{
                     } else {
                         float w1 = 1;
                         return weightedPropertyMean(pPrev, p, w1);
+                    }else {
+                        float w1 = -(cos(PI * perc) - 1) / 2;
+                        return weightedPropertyMean(pPrev, p, w1);
                     }
+
                 }
 
                 return timeline[boneId][propertyId][framesNum];

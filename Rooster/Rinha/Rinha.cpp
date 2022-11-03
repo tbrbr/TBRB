@@ -23,7 +23,7 @@ using namespace std;
 using namespace sf;
 
 #define ISMOTADESKTOP 1
-
+//va se arrombar nao
 #if  0
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
@@ -32,7 +32,7 @@ const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
-#define SHOWDEBUG false
+#define SHOWDEBUG true
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
@@ -144,9 +144,6 @@ int main() {
 	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
 
 
-	println("Carregarou");
-
-
 	Pato *miniGame1 = new Pato((*window));
 
 	RectangleShape fundo;
@@ -173,8 +170,6 @@ int main() {
 			}
 
 			fundo.setTexture(mapSelector->getSelectedMap());
-
-			println("singleplay");
 
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;

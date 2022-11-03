@@ -1,36 +1,7 @@
 
 namespace Rooster {
 
-	
-		Texture star;
-		Sprite estrelinha;
-			
-		
-		void drawEstrelinhas(RenderWindow * window,Vector2f position) {
-			star.loadFromFile("sprites\\estrelinhas.png");
-			estrelinha.setTexture(star);
-						
-			static int frames = 0;
-			frames++;
-			if (frames > 60) {
-				frames = 0;
-			}
-			int frameTime = frames % 11 - 5;
-			if (frames == 5) {
-				estrelinha.setScale(-10, 10);
-				
-			}
-			else if(frames == -5) {
-				estrelinha.setScale(10, 10);
-			}
-			
-			estrelinha.setPosition(0, 0);
-			window->draw(estrelinha);
-			
-			
-		}
-		
-	
+
 	class Particle {
 
 

@@ -550,7 +550,7 @@ namespace Rooster {
             ultimateShot->hitbox.center = projectiles[0].getPosition();
             ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
 
-            
+
             if (projectiles[0].getVisibility()) {
 
                 int i = (frames % 30) / 10;
@@ -665,10 +665,22 @@ namespace Rooster {
             fatalpeste.setVolume(60);
             //SoundBuffer 
             fatalpeste.play();
+
+
+
+            Explosion3DEffect* exp = new Explosion3DEffect();
+            exp->mortal = false;
+
+
+            int timeFrames = 0;
+            galo2->update();
+
+
             while (window->isOpen()) {
 
                 int time = Timer.getElapsedTime().asMilliseconds();
 
+                
                 window->clear();
                 window->draw(fundo);
 
@@ -745,6 +757,15 @@ namespace Rooster {
                         socorro.update();
                         socorro.draw(window);
                         highKick();
+
+
+                        // Falido
+                        if (timeFrames  % 20 == 0) {
+                            exp->createParticles(10, galo2->position, Color::Red, Vector2f(0, -4), 10, 0, 360);
+                        }
+                        timeFrames++;
+
+
                         
                         if (time > 8000) {
                             static bool lets = true;
@@ -787,6 +808,8 @@ namespace Rooster {
                     estado = STOPPED;
                 }
                 
+
+                
              
                 update();
                 galo2->update();
@@ -794,7 +817,15 @@ namespace Rooster {
 
                 show(*window);
                 window->draw(bright);
+
+                exp->update();
+                exp->draw(*window); 
+
                 window->display();
+
+
+               
+
             }
         }
         

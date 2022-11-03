@@ -270,14 +270,16 @@ namespace Rooster {
         int frames = 0;
 
 
-        // Models and Animations
-        struct Model model;
+     
         std::vector<struct Animation> animations;
 
         Texture star;
         Sprite estrelinha;
 
     public:
+
+        // Models and Animations
+        struct Model model;
 
         Vector2f position;
 

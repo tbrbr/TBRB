@@ -127,9 +127,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 	//=================================================================
 
 	TcpSocket socket;
-	socket.setBlocking(false);
+	socket.setBlocking(ishost);
 	TcpListener listener;
-	IpAddress ip = "10.50.208.56";
+	IpAddress ip = IpAddress::getLocalAddress();
 
 	if (ishost) {
 		listener.listen(59000);
@@ -146,6 +146,9 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 	//=================================================================
 	
+		window->setFramerateLimit(1000);
+
+
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
@@ -189,8 +192,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 			else {
 				strcpy(data, "f");
-
-
 				galo.highKick();
 			}
 		}

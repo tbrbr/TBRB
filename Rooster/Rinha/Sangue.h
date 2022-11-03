@@ -209,17 +209,19 @@ namespace Rooster {
 	class Effect {
 	protected:
 		std::vector <Particle> gotas;
+
 		Vector2f position;
+		Vector2f velocity;
 		Vector2f gravity;
+
 		bool fadeOutAlpha = true;
 		bool fadeInAlpha = false;
-		
-
 
 	public:
 
 		bool active = true;
-		int life = 100;
+		int life = 600;
+		bool mortal = true;
 		float depth = 0;
 
 		~Effect() {
@@ -234,8 +236,36 @@ namespace Rooster {
 			this->position.y = y;
 		}
 
-		virtual void update() = 0;
-		virtual void draw(RenderWindow& window) = 0;
+
+		virtual void addParticle(struct Particle p) {
+			gotas.push_back(p);
+		}
+
+		virtual void update(){
+			for (int i = gotas.size()-1; i > -1; i--) {
+				if (gotas[i].active) {
+					gotas[i].update();
+				}
+				else {
+					gotas.erase(gotas.begin() + i);
+				}
+				
+			}
+
+			if (mortal) {
+				life--;
+				if (life <= 0) {
+					active = false;
+				}
+			}
+
+		}
+
+		virtual void draw(RenderWindow& window) {
+			for (int i = 0; i < gotas.size(); i++) {
+				gotas[i].draw(window);
+			}
+		}
 
 	};
 
@@ -243,8 +273,8 @@ namespace Rooster {
 
 	class AreaEffect : public Effect {
 		FloatRect area;
-
 		Color color;
+
 
 	public:
 
@@ -269,7 +299,7 @@ namespace Rooster {
 			float pX = randIntRange(area.left, area.left + area.width);
 			float pY = randIntRange(area.top, area.top + area.height);
 
-			float pAngle = randFloatRange(0, 180);
+			float pAngle = randFloatRange(0, 360);
 			float pSpd = randFloatRange(2, 6);
 
 			float pHspd = pSpd*cos(toRadiAnus(pAngle));
@@ -299,24 +329,10 @@ namespace Rooster {
 
 
 			gotas.push_back(p);
-			
-
 		}
 
 
 
-		void update() override {
-			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].update();
-			}
-
-		}
-
-		void draw(RenderWindow& window) override {
-			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].draw(window);
-			}
-		}
 
 	};
 
@@ -383,18 +399,6 @@ namespace Rooster {
 		void setRadius(float radius) {
 			this->radius = radius;
 		}
-
-		void update() override {
-			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].update();			}
-
-		}
-
-		void draw(RenderWindow& window) override {
-			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].draw(window);
-			}
-		}
 	};
 
 
@@ -406,13 +410,15 @@ namespace Rooster {
 	public:
 
 
-		Explosion3DEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
-			int diameter = radius * 2;
-
+		Explosion3DEffect() {
 			life = 100;
 
 			gravity.x = 0;
 			gravity.y = Gravity / 80;
+		}
+
+		void createParticles(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
+
 
 			for (int i = 0; i < 500; i++) {
 
@@ -437,7 +443,7 @@ namespace Rooster {
 
 				p.depthSpd = randFloatRange(-1, 4);
 
-				p.radius = randIntRange(1, 10);
+				p.radius = randIntRange(radius/2, radius);
 
 				float ang = toRadiAnus(randFloatRangeNormal(angle - 180, angle + 180, angleFocus));
 
@@ -452,7 +458,6 @@ namespace Rooster {
 
 				gotas.push_back(p);
 			}
-
 		}
 
 
@@ -460,18 +465,6 @@ namespace Rooster {
 			this->radius = radius;
 		}
 
-		void update() override {
-			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].update();
-			}
-
-		}
-
-		void draw(RenderWindow& window) override {
-			for (int i = 0; i < gotas.size(); i++) {
-				gotas[i].draw(window);
-			}
-		}
 	};
 
 
@@ -518,6 +511,15 @@ namespace Rooster {
 			}
 		}
 
+		void sortDepth() {
+
+		}
+
+		void addEffect(Effect* effect) {
+			effects.push_back(effect);
+			sortDepth();
+		}
+
 
 		void removeEffect(int effectId) {
 			delete effects[effectId];
@@ -534,6 +536,9 @@ namespace Rooster {
 
 
 	};
+
+
+
 
 	class corvo {
 		

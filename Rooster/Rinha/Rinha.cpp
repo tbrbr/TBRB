@@ -80,7 +80,7 @@ using namespace Rooster;
 
 #include "Briga.h"
 #include "muitosjogadores.h"
-
+#include "server_connect.h"
 #include "cardapio.h"
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
@@ -90,6 +90,7 @@ int main() {
 
 	/*
 	cout << IpAddress::getLocalAddress();
+>>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
 	cout << "Server?";
 	cin >> ishost;
 	*/
@@ -107,12 +108,15 @@ int main() {
 
 
 
+
 	int option = MENU_PRINCIPAL;
-	//option = BOTAPRAARROCHAR;
 	
 	
-	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+#if ISMOTADESKTOP
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
+#else
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+#endif
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
@@ -140,8 +144,8 @@ int main() {
 	botaSt = { 80, 13, 10, 12, 4   , 20 };
 
 
-	Galo* galo = new Peste(sniperSt, Rooster::state::STOPPED, false);
-	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
+	Galo* galo = new Sniper(kalsaSt, Rooster::state::STOPPED, true);
+	Galo* galo2 = new Peste(pesteSt, Rooster::state::STOPPED, false);
 
 
 	Pato *miniGame1 = new Pato((*window));
@@ -152,12 +156,20 @@ int main() {
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 	MapSelector* mapSelector = new MapSelector();
+	Texture background_t;
+	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	background.setPosition(0, 0);
+	background_t.loadFromFile("sprites/background_menu.png");
+	background.setTexture(&background_t);
 
 
 	fundo.setTexture(mapSelector->getTexture());
 
 	window->setMouseCursorVisible(true);
 	window->setMouseCursorGrabbed(false);
+
+	TcpSocket* socket = new TcpSocket();
+	TcpListener* listener = new TcpListener();
 
 	while (window->isOpen())
 	{
@@ -172,9 +184,6 @@ int main() {
 			fundo.setTexture(mapSelector->getSelectedMap());
 
 			singlePlayer(window,*galo,*galo2,option,fundo);
-			break;
-		case MENU_PRINCIPAL:
-			option = MenuPrincipal(window);
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
@@ -197,6 +206,35 @@ int main() {
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			mapSelector->draw(window, option, true);
+			break;
+		case JOIN:
+			option = join(window, background, socket);
+			break;
+
+		case CREATE:
+			option = create(window, background, socket, listener);
+			break;
+
+		case MULTI: 
+			option = muitoJogadores(window, background);
+			break;
+		case MULTI_MODE:
+			option = multoJogadoresMode(window, background);
+			break;
+
+		case MENU_PRINCIPAL:
+			option = MenuPrincipal(window, background);
+			break;
+
+		case GAMEMODE:
+			option = selecionarModo(window, background);
+			break;
+		case CONFIG:
+			option = configScreen(window, background);
+			break;
+
+		case MINIGAME:
+			option = minigame(window, background);
 			break;
 		default:
 			break;

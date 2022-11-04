@@ -19,19 +19,17 @@
 using namespace std;
 using namespace sf;
 
-<<<<<<< HEAD
 #define ISMOTADESKTOP 1
 
 #if  0
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
-=======
 #define deixe_de_coisa 0
 //va se arrombar nao
 #if  deixe_de_coisa
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
->>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
+
 #else
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;

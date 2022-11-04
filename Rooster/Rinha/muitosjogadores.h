@@ -321,7 +321,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		if (galo.gethp() < 0) {
 
 			rounds++;
-			if (rounds == 3 || p2Rounds) {
+			if (rounds == 3 || p2Rounds == 2) {
 				framesWin = 60;
 			}
 			else {

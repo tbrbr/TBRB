@@ -29,7 +29,7 @@ const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
-#define SHOWDEBUG true
+#define SHOWDEBUG false
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
@@ -105,7 +105,7 @@ int main() {
 
 
 
-	int option = MULTI_MODE;
+	int option = MENU_PRINCIPAL;
 	
 	
 #if deixe_de_coisa

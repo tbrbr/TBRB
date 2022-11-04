@@ -32,7 +32,7 @@ const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
-#define SHOWDEBUG true
+#define SHOWDEBUG false
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
@@ -109,10 +109,10 @@ int main() {
 
 
 
-	int option = MULTI_MODE;
+	int option = MENU_PRINCIPAL;
 	
 	
-#if 1
+#if 0
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
 #else
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
@@ -122,6 +122,7 @@ int main() {
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(true);
+	
 
 
 	Cursor cursor;

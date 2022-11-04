@@ -135,6 +135,7 @@
 
 
 
+
 			if (mainInput.inputState[player][GORIGHT][0])
 			{
 				
@@ -151,10 +152,11 @@
 			{
 				galo.defend();
 			}
-			else
-			{
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo.setState(Rooster::state::DANCING);
+			}
+			else{		
 				galo.setState(Rooster::state::STOPPED);
-
 			}
 
 
@@ -197,6 +199,9 @@
 			else if (mainInput.inputState[player][GODOWN][0])
 			{
 				galo2.defend();
+			}
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo2.setState(Rooster::state::DANCING);
 			}
 			else
 			{

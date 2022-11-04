@@ -19,11 +19,11 @@
 using namespace std;
 using namespace sf;
 
-#define deixe_de_coisa 0
 //va se arrombar nao
 #if  deixe_de_coisa
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
+
 #else
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
@@ -84,9 +84,12 @@ using namespace Rooster;
 
 int main() {
 
+	/*cout << IpAddress::getLocalAddress();
+=======
 	/*
 	cout << IpAddress::getLocalAddress();
 >>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
+>>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
 	cout << "Server?";
 	cin >> ishost;
 	*/
@@ -103,11 +106,10 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
+	int option = INTRO;
+	//option = BOTAPRAARROCHAR;
+		
 
-
-	int option = MENU_PRINCIPAL;
-	
-	
 #if deixe_de_coisa
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
 #else
@@ -118,6 +120,7 @@ int main() {
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(true);
+	
 
 
 	Cursor cursor;

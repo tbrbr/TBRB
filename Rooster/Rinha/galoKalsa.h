@@ -86,16 +86,18 @@ namespace Rooster {
 
 
             struct Animation agacharAnim;
-            agacharAnim.init("animations/SecondAnim.txt");
+            agacharAnim.init("animations/kalsaDefend.txt");
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
 
-            agacharAnim.removeAnimatePart(model.boneMap.at("FrontEyebrow"));
-            agacharAnim.removeAnimatePart(model.boneMap.at("BackEyebrow"));
-            agacharAnim.removeAnimatePart(model.boneMap.at("Biko"));
-
-
             animations.push_back(agacharAnim);
+
+            struct Animation danceAnim;
+            danceAnim.init("animations/kalsaDance3.txt");
+            danceAnim.playingSpeed = 0.2;
+            danceAnim.connectLoop = true;
+
+            animations.push_back(danceAnim);
 
         }
 
@@ -688,6 +690,10 @@ namespace Rooster {
                 }
                 else if (atacking == SPECIAL) {
                     especialAnim();
+                }
+                else if (estado == DANCING) {
+                    animations[1].update();
+                    model.updateWithAnimation(animations[1]);
                 }
             }
             

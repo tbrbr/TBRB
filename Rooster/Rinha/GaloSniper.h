@@ -77,6 +77,14 @@ namespace Rooster {
 			agacharAnim.connectLoop = false;
 			animations.push_back(agacharAnim);
 
+			struct Animation danceAnim;
+			danceAnim.init("animations/sniperDance4.txt");
+			danceAnim.playingSpeed = 0.2;
+			danceAnim.connectLoop = true;
+			animations.push_back(danceAnim);
+
+			
+
 			defenseBuffer.loadFromFile("sounds\\block-6839.ogg");
 			defenseSound.setBuffer(defenseBuffer);
 
@@ -498,6 +506,10 @@ namespace Rooster {
 				else if (atacking == SPECIAL) {
 					especialAnim();
 					isDefending = false;
+				}
+				else if (estado == DANCING) {
+					animations[1].update();
+					model.updateWithAnimation(animations[1]);
 				}
 
 				projectiles[0].update();

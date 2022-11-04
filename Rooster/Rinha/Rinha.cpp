@@ -24,7 +24,7 @@ using namespace sf;
 
 #define ISMOTADESKTOP 1
 
-#if  1
+#if  0
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
 #else
@@ -88,7 +88,7 @@ using namespace Rooster;
 
 int main() {
 
-	cout << IpAddress::getLocalAddress();
+	/*cout << IpAddress::getLocalAddress();
 	cout << "Server?";
 	cin >> ishost;
 
@@ -101,11 +101,11 @@ int main() {
 		}
 	}
 
-	LANG.startAllTexts(lang);
+	LANG.startAllTexts(lang);*/
 
 
 
-	int option = MENU_PRINCIPAL;
+	int option = INTRO;
 	//option = BOTAPRAARROCHAR;
 	
 	

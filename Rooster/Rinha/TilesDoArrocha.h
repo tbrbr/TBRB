@@ -717,7 +717,7 @@ bool pianoTiles(RenderWindow* window) {
 	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING,false);
 
 	Texture fundao;
-	fundao.loadFromFile("sprites/chorao.png");
+	fundao.loadFromFile("sprites/tiringa.png");
 
 	RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	rect.setTexture(&fundao);

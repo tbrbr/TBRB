@@ -2,9 +2,6 @@
 
 #define SFML_STATIC
 
-
-
-
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <windows.h>
@@ -24,7 +21,7 @@ using namespace sf;
 
 #define ISMOTADESKTOP 1
 //va se arrombar nao
-#if  0
+#if  ISMOTADESKTOP
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
 #else
@@ -36,7 +33,6 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
-
 
 #include "Math2.h"
 #include "entradas.h"

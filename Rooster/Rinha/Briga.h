@@ -1,5 +1,4 @@
 
-	
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
@@ -96,7 +95,7 @@
 				}
 
 			}
-			if (true) {
+			if (false) {
 				musicas[index].stop();
 				galo.fatality(window, &galo2, fundo);
 
@@ -348,7 +347,7 @@
 			if (galo.gethp() < 0 ) {
 
 				rounds++;
-				if (rounds == 3 || p2Rounds) {
+				if (rounds == 3 || p2Rounds == 2) {
 					framesWin = 60;
 				}
 				else {
@@ -382,9 +381,9 @@
 					s.play();
 					framesFight = 60;
 				}
-				window->draw(round[rounds]);
-				
+				window->draw(round[rounds]);				
 			}
+
 			if (framesFight > 0) {				
 				framesFight--;				
 				window->draw(fight);

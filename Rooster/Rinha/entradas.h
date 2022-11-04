@@ -75,7 +75,6 @@ namespace Rooster {
 		// Rapaz me explique o que é isso porfavor
 		// Ahh to entendendo
 	
-	
 		bool keyboardState[sf::Keyboard::KeyCount][3];
 		bool mouseState[sf::Mouse::ButtonCount][3];
 
@@ -120,8 +119,6 @@ namespace Rooster {
 					}
 				}
 			}
-
-
 
 
 

@@ -12,7 +12,8 @@ namespace Rooster {
         Texture t;
         float legWalkAngFase = 0;
         Clock clockFatal;
-
+        SoundBuffer defenseBuffer;
+        Sound defenseSound;
 
     public:
         Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
@@ -27,13 +28,13 @@ namespace Rooster {
 
             this->louKick = new Ataques(
                 9,5,  HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI / 4, milliseconds(1000), ""
+                20, 10, PI / 4, milliseconds(1000), "sounds\\smoke-bomb-6761.ogg"
             );
 
             this->ultimateShot = new Ataques(
                 10, 0.9,  HitBox{ Vector2f(0, 0), 0 },
                 10, 3, 0, milliseconds(2000),
-                "sounds\\awp.ogg"
+                "sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
             );
 
             Projectile* defense = new Projectile(
@@ -66,8 +67,8 @@ namespace Rooster {
             model.tex = &t;
             model.loadModel("models/bruxoModel.txt");
          
-
-            
+            defenseBuffer.loadFromFile("sounds\\shield-guard-6963.ogg");
+            defenseSound.setBuffer(defenseBuffer);
 
             model.autoSetBounds(model.at("Body"), model.at("BackShoe"), model.at("Head"));
         
@@ -219,46 +220,49 @@ namespace Rooster {
             estado = DEFENDING;
         }
 
-        void agachadinha() {          
+        void agachadinha() {     
+
+            hspeed = 0;
             static int angle = 0;
             angle++;
 
             projectiles[0].isTrans = true;
 
             projectiles[0].setScale(1, 1);
-
+            
             Transform trans;
 
-            trans.scale((float)SCREEN_WIDTH / 3840, (float)SCREEN_HEIGHT / 1440);
-
+      
             if (facingRight) {
 
                 projectiles[0].setSpriteAngle(angle);
 
+                trans.scale((float)SCREEN_WIDTH / 15360, (float)SCREEN_HEIGHT / 4320);
+                trans.translate(position);
+                projectiles[0].setPosition(position);
                 projectiles[0].setTransfrom(trans);
 
-                projectiles[0].setPosition(
-                    position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
-                    position.y / 2 + (projectiles[0].getLocalSize().y)
-                );
+                
             }
             else {
 
                 projectiles[0].setSpriteAngle(-angle);
 
+                trans.scale((float)-SCREEN_WIDTH / 15360, (float)SCREEN_HEIGHT / 4320);
+                trans.translate(1, 1);
+                projectiles[0].setPosition(position);               
                 projectiles[0].setTransfrom(trans);
 
-                projectiles[0].setPosition(
-                    position.x * 2 - (projectiles[0].getLocalSize().x * 1.25),
-                    position.y / 2 + (projectiles[0].getLocalSize().y)
+               
+               
 
-                );
-
-                projectiles[0].setImpulse(0, 0);
+                
+                
 
             }
+            projectiles[0].setImpulse(0, 0);
             projectiles[0].setVisibility(true);
-           
+            projectiles[0].update();
         }
 
        
@@ -500,6 +504,7 @@ namespace Rooster {
                     else if (position.x > SCREEN_WIDTH) {
                         position.x = SCREEN_WIDTH - SCREEN_WIDTH/300;
                     }
+                    louKick->playSound();
                     go = false;
                 }
                

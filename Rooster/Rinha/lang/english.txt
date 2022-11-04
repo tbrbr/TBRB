@@ -9,7 +9,7 @@ resume
 aim color
 sensibility 
 minigames
-game mode
+GAME MODE
 language
 EN
 restart game

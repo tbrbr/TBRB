@@ -3,7 +3,7 @@
 
 #include <functional> 
 
-bool ishost = false;
+#include "server_connect.h"
 
 void galo2move(Galo* galo, char* data) {
 
@@ -26,16 +26,14 @@ void galo2move(Galo* galo, char* data) {
 
 	if (data[5] == 'd')
 	{
-		galo->setState(Rooster::state::RUNNING);
-		galo->facingRight = true;
-		galo->run();
+	
+		galo->run(true);
 
 	}
 	else if (data[5] == 'a')
 	{
-		galo->setState(Rooster::state::RUNNING);
-		galo->facingRight = false;
-		galo->run();
+	
+		galo->run(false);
 
 	}
 	else if (data[5] == 's')
@@ -50,7 +48,18 @@ void galo2move(Galo* galo, char* data) {
 }
 
 
-void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, RectangleShape fundo) {
+void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, RectangleShape fundo, TcpSocket * socket) {
+
+	if (isHost) {
+		galo2.facingRight = false;
+		galo.facingRight = true;
+	}
+	else {
+		galo2.facingRight = true;
+		galo.facingRight = false;
+	}
+	
+
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
@@ -128,26 +137,15 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 	//=================================================================
 
-	TcpSocket socket;
-	socket.setBlocking(false);
-	TcpListener listener;
-	IpAddress ip = "10.50.208.56";
-
-	if (ishost) {
-		listener.listen(59000);
-		listener.accept(socket);
-	}
-	else {
-		socket.connect(ip, 59000);
-	}
-
-
 	char* data = (char*)malloc(10);
 	data[0] = '\0';
 	size_t size;
 
 	//=================================================================
 	
+		window->setFramerateLimit(1000);
+
+
 	while (window->isOpen()) {
 		window->clear();
 		window->draw(fundo);
@@ -191,8 +189,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 			else {
 				strcpy(data, "f");
-
-
 				galo.highKick();
 			}
 		}
@@ -206,17 +202,15 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		if (mainInput.inputState[player][GORIGHT][0])
 		{
 			strcpy(data + 5, "d");
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = true;
-			galo.run();
+			
+			galo.run(true);
 
 		}
 		else if (mainInput.inputState[player][GOLEFT][0])
 		{
 			strcpy(data + 5, "a");
-			galo.setState(Rooster::state::RUNNING);
-			galo.facingRight = false;
-			galo.run();
+			
+			galo.run(false);
 
 		}
 		else if (mainInput.inputState[player][GODOWN][0])
@@ -232,13 +226,13 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 		//===============================
 
-		if (socket.send(data, 10) != Socket::Done) {
+		if (socket->send(data, 10) != Socket::Done) {
 			data[0] = '\0';
 			data[5] = '\0';
 			data[1] = '\0';
 		}
 		
-		if (socket.receive(data, 10, size) == Socket::Done) {
+		if (socket->receive(data, 10, size) == Socket::Done) {
 			galo2move(&galo2, data);
 		}
 

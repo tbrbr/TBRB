@@ -310,8 +310,11 @@ struct Animation{
                         float w1 = 1 - ((1-perc)*(1-perc));
                         return weightedPropertyMean(pPrev, p, w1);
 
-                    } else {
+                    } else if(pPrev.progressionType == 3) {
                         float w1 = 1;
+                        return weightedPropertyMean(pPrev, p, w1);
+                    } else {
+                        float w1 = -(cos(PI * perc) - 1) / 2;
                         return weightedPropertyMean(pPrev, p, w1);
                     }
                 }
@@ -920,7 +923,7 @@ int main(){
 
     Rooster::HitBox hb;
     Texture t;
-    t.loadFromFile("sprites/galoPeste.png");
+    t.loadFromFile("sprites/galoKalsa.png");
 
     Texture texToolbar;
     texToolbar.loadFromFile("sprites/toolbar.png");
@@ -1004,14 +1007,6 @@ int main(){
 
                 } else if(e.key.control){
 
-
-                    if(e.key.code == Keyboard::Num1){
-                        bManager.toolSelected = 0;
-                    } else if(e.key.code == Keyboard::Num2){
-                        bManager.toolSelected = 1;
-                    } else if(e.key.code == Keyboard::Num3){
-                        bManager.toolSelected = 2;
-                    }
 
 
                 }

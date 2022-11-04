@@ -12,7 +12,8 @@ namespace Rooster {
         Texture t;
         float legWalkAngFase = 0;
         Clock clockFatal;
-
+        SoundBuffer defenseBuffer;
+        Sound defenseSound;
 
     public:
         Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
@@ -20,20 +21,20 @@ namespace Rooster {
             this->name = "Bruxo";
             
             // Creating Attacks
-            this->hiKick = new Ataques(6,
-                8, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->hiKick = new Ataques(
+                9, 8,  HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(1200), ""
             );
 
-            this->louKick = new Ataques(7,
-                5, 0.5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI / 4, milliseconds(1000), ""
+            this->louKick = new Ataques(
+                9,5,  HitBox{ Vector2f(0, 0), 0 },
+                20, 10, PI / 4, milliseconds(1000), "sounds\\smoke-bomb-6761.ogg"
             );
 
-            this->ultimateShot = new Ataques(8,
-                0.9, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->ultimateShot = new Ataques(
+                10, 0.9,  HitBox{ Vector2f(0, 0), 0 },
                 10, 3, 0, milliseconds(2000),
-                "sounds\\awp.ogg"
+                "sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
             );
 
             Projectile* defense = new Projectile(
@@ -47,11 +48,18 @@ namespace Rooster {
             Transform te;
             te.scale(0.5, 0.75);
             defense->setTransfrom(te);
+
             projectiles.push_back(*defense);
             projectiles.push_back(*defense);
+
+            Projectile* fumaca = new Projectile(
+                Vector2f(0, 0),
+                "sprites\\efeitoFumaca.png",
+                0, 0, Vector2f(0.25, 0.25)
+            );
 
             atacking = NOT_ATTACK;
-
+            projectiles.push_back(*fumaca);
 
 
             t.loadFromFile("sprites/galoBruxo.png");
@@ -59,8 +67,8 @@ namespace Rooster {
             model.tex = &t;
             model.loadModel("models/bruxoModel.txt");
          
-
-            
+            defenseBuffer.loadFromFile("sounds\\shield-guard-6963.ogg");
+            defenseSound.setBuffer(defenseBuffer);
 
             model.autoSetBounds(model.at("Body"), model.at("BackShoe"), model.at("Head"));
         
@@ -212,8 +220,49 @@ namespace Rooster {
             estado = DEFENDING;
         }
 
-        void agachadinha() {
+        void agachadinha() {     
+
             hspeed = 0;
+            static int angle = 0;
+            angle++;
+
+            projectiles[0].isTrans = true;
+
+            projectiles[0].setScale(1, 1);
+            
+            Transform trans;
+
+      
+            if (facingRight) {
+
+                projectiles[0].setSpriteAngle(angle);
+
+                trans.scale((float)SCREEN_WIDTH / 15360, (float)SCREEN_HEIGHT / 4320);
+                trans.translate(position);
+                projectiles[0].setPosition(position);
+                projectiles[0].setTransfrom(trans);
+
+                
+            }
+            else {
+
+                projectiles[0].setSpriteAngle(-angle);
+
+                trans.scale((float)-SCREEN_WIDTH / 15360, (float)SCREEN_HEIGHT / 4320);
+                trans.translate(1, 1);
+                projectiles[0].setPosition(position);               
+                projectiles[0].setTransfrom(trans);
+
+               
+               
+
+                
+                
+
+            }
+            projectiles[0].setImpulse(0, 0);
+            projectiles[0].setVisibility(true);
+            projectiles[0].update();
         }
 
        
@@ -287,8 +336,7 @@ namespace Rooster {
                 projectiles[1].setVisibility(true);
                 projectiles[1].update();
 
-
-
+                
             }
             else if (percentage < 1.5f / 3.f) {
                 float thisPercentage = (percentage * 3)/1.5;
@@ -354,6 +402,8 @@ namespace Rooster {
                 projectiles[0].update();
 
                 ultimateShot->isAtacking = true;
+                ultimateShot->hitbox.center = projectiles[0].getPosition();
+                ultimateShot->hitbox.radius = projectiles[0].getSize().x / 2;
             }
             else if (percentage < 2.5f / 3.f) {
 
@@ -368,37 +418,43 @@ namespace Rooster {
                 model.at("FrontBigode")->angle = percentage * -30;
                 model.at("BackBigode")->angle = percentage * -30;
 
+                projectiles[0].setVisibility(false);
                 projectiles[1].setVisibility(true);
 
-                if (facingRight) {
-                    projectiles[1].setImpulse(20, 0);
-                    projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
-                }
+                projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
 
+                if (facingRight) {
+                    projectiles[1].setImpulse(30, 0);                   
+                }
                 else {
-                    projectiles[1].setImpulse(-20, 0);
-                    projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+                    projectiles[1].setImpulse(-30, 0);                   
                 }
 
                 projectiles[1].update();
 
                 ultimateShot->isAtacking = true;
-
+                
+                ultimateShot->hitbox.center = projectiles[1].getPosition();
+                ultimateShot->hitbox.radius = projectiles[1].getSize().x / 2;
             }
             else if (percentage < 2.9 / 3.f) {
-
+                
+                projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+                projectiles[1].update();
                 model.at("FrontArm")->angle *= 0.9;
                 model.at("BackArm")->angle *= 0.9;
-
                 model.at("Head")->angle *= 0.9;
                 model.at("Body")->angle *= 0.9;
                 model.at("FrontBigode")->angle *= 0.9;
                 model.at("BackBigode")->angle *= 0.9;
 
+                ultimateShot->hitbox.center = projectiles[1].getPosition();
+                ultimateShot->hitbox.radius = projectiles[1].getSize().x / 2;
             }
             else {
-                projectiles[0].setVisibility(false);
+                
                 projectiles[1].setVisibility(false);
+                ultimateShot->isAtacking = false;
 
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
@@ -418,70 +474,72 @@ namespace Rooster {
             }
 
             float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
+            static bool go = true;
 
-
-            if (percentage < 1.f / 3.f) {
-
+            if (percentage < 0.25f / 3.f) {
+                model.resetToBase();
+            }
+            else if (percentage < 1.f / 3.f) {
+ 
                 float thisPercentage = percentage * 3;
-                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
-                model.at("BackArm")->angle = -20 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = 20 * sin(thisPercentage * PI / 2);
+
+                model.at("BackArm")->angle = 90 * thisPercentage;
+                projectiles[2].setVisibility(true);
                 
+                projectiles[2].setSpriteScale((SCREEN_WIDTH / 1920) * thisPercentage, -(SCREEN_HEIGHT / 1080) * thisPercentage * 2);
                 
+                projectiles[2].setPosition(position.x - projectiles[0].getSize().x/2,SCREEN_HEIGHT);
+                
+                position.x += (frames % 2) * - 8 + 4;
+            }
+            else if (percentage < 1.1f / 3.f) {
+
+                projectiles[2].setVisibility(false);
+                if (go) {
+                    int x = position.x - SCREEN_WIDTH / 2;
+                    position.x += sign(x) * - SCREEN_WIDTH / 2;
+                    if (position.x < 0) {
+                        position.x = 0;
+                    }
+                    else if (position.x > SCREEN_WIDTH) {
+                        position.x = SCREEN_WIDTH - SCREEN_WIDTH/300;
+                    }
+                    louKick->playSound();
+                    go = false;
+                }
+               
+
             }
             else if (percentage < 2.f / 3.f) {
+                float thisPercentage = (percentage * 3)/2;
+                
+                go = true;
 
-                model.at("Body")->angle = -75;
-                model.at("FrontArm")->angle = -60;
-                model.at("BackArm")->angle = -60;
-
-                model.at("BackLeg")->angle = 20;
-                model.at("Head")->angle = 45;
-                model.at("Head")->offset.x = -15;
-
-                model.at("FrontLeg")->angle = 45;
-                model.at("BackLeg")->angle = 45;
-
-
+                model.at("FrontArm")->angle = 45 * thisPercentage;
+                model.at("BackArm")->angle = -90 * thisPercentage;
+                model.at("Head")->angle = 20 * thisPercentage;
+                model.at("Body")->angle = 20 * thisPercentage;
+                model.at("Hat")->angle = 10 * thisPercentage;
+                louKick->isAtacking = true;
+                louKick->hitbox.center = getBackHandPos();
+                louKick->hitbox.radius = 100;
             }
             else if (percentage < 2.9f / 3.f) {
 
+                louKick->isAtacking = false;
                 model.at("FrontArm")->angle *= 0.9;
                 model.at("BackArm")->angle *= 0.9;
-
-                model.at("BackArm")->angle *= 0.9;
-                model.at("BackLeg")->angle *= 0.9;
-
                 model.at("Head")->angle *= 0.9;
-                model.at("Head")->offset.x *= 0.9;
-
-                model.at("FrontEyebrow")->offset.y *= 0.9;
-                model.at("BackEyebrow")->offset.y *= 0.9;
-
-                model.at("FrontLeg")->angle *= 0.9;
-                model.at("BackLeg")->offset.y *= 0.9;
-
                 model.at("Body")->angle *= 0.9;
-
+                          
             }
             else {
 
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
-
-                model.at("BackArm")->angle = 0;
-                model.at("BackLeg")->angle = 0;
-
                 model.at("Head")->angle = 0;
-                model.at("Head")->offset.x = 0;
-
-                model.at("FrontEyebrow")->offset.y = 0;
-                model.at("BackEyebrow")->offset.y = 0;
-
-                model.at("FrontLeg")->angle = 0;
-                model.at("BackLeg")->offset.y = 0;
-
                 model.at("Body")->angle = 0;
+                model.at("Hat")->angle = 0;
             }
 
         }
@@ -495,59 +553,74 @@ namespace Rooster {
 
             float percentage = (float)t.asMilliseconds() / (hiKick->timeLapse.asMilliseconds());
 
-            if (percentage < 0.5 / 3.f) {
+            
+            if (percentage < 1.f / 3.f) {
 
-                float thisPercentage = percentage * 6;
-
-                model.at("FrontArm")->angle = 45 * sin(thisPercentage * PI / 2);
-                model.at("BackArm")->angle = -90 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = 15 * sin(thisPercentage * PI / 2);
-                model.at("Head")->angle = -20 * sin(thisPercentage * PI / 2);
-                model.at("FrontEyebrow")->offset.y += 1;
-                model.at("BackEyebrow")->offset.y += 1;
-                model.at("FrontLeg")->offset.y = -20 * sin(thisPercentage * PI / 2);
-
-            }
-            else if (percentage < 1.f / 3.f) {
                 float thisPercentage = percentage * 3;
 
-                model.at("Body")->angle = -60 * sin(thisPercentage * PI / 2);
-                model.at("BackLeg")->angle = 50 * sin(thisPercentage * PI / 2);
+                model.at("FrontArm")->angle = 180 * thisPercentage;
+                model.at("FrontArm")->offset.y = -20 * thisPercentage;
+                model.at("BackArm")->angle = -90 * thisPercentage;
+                model.at("Head")->angle = -20 * thisPercentage;
+                model.at("Body")->angle = -10 * thisPercentage;
+                model.at("Hat")->angle = -10 * thisPercentage;
 
             }
             else if (percentage < 2.f / 3.f) {
 
-                model.at("Body")->angle = 60;
-                model.at("BackLeg")->angle = 50;
-                model.at("FrontLeg")->angle = -45;
-                model.at("BackLeg")->offset.x -= 1;
-                model.at("BackLeg")->offset.y -= 1;
-                model.at("FrontArm")->angle = -45;
-                model.at("BackArm")->angle = 90;
+                float thisPercentage = (percentage * 3) / 2;
+
+
+                static int hspeed = facingRight ? 20 : -20;
+                static int vspeed = 10;
+                
+
+                model.at("Hat")->offset.x -= hspeed;
+                model.at("Hat")->offset.y += vspeed;
+
+                if (frames % 4 == 0)
+                    model.at("Hat")->xScl *= -1;
+
+                model.at("FrontArm")->angle = -120 * thisPercentage;
+                model.at("BackArm")->angle = -80 * thisPercentage;
+                model.at("Head")->angle = -20 * thisPercentage;
+                model.at("Body")->angle = 10 * thisPercentage;
+                model.at("Hat")->angle = frames % 60;
+                louKick->isAtacking = true;
+                louKick->hitbox = hurtBox[2];
             }
             else if (percentage < 2.9f / 3.f) {
 
-                model.at("Body")->angle *= 0.9;
-                model.at("BackLeg")->angle *= 0.9;
-                model.at("BackLeg")->offset.x *= 0.9;
-                model.at("BackLeg")->offset.y *= 0.9;
                 model.at("FrontArm")->angle *= 0.9;
                 model.at("BackArm")->angle *= 0.9;
-                model.at("FrontLeg")->offset.y *= 0.9;
                 model.at("Head")->angle *= 0.9;
+                model.at("Body")->angle *= 0.9;
+                model.at("Hat")->angle = frames % 60;
+
+                if (frames % 4 == 0)
+                    model.at("Hat")->xScl *= -1;
+
+                model.at("Hat")->offset.x *= 0.99;
+                model.at("Hat")->offset.y *= 0.99;
+                louKick->isAtacking = true;
+                louKick->hitbox = hurtBox[2];
             }
             else {
-                model.at("Body")->angle = 0;
-                model.at("BackLeg")->angle = 0;
-                model.at("BackLeg")->offset.x = 0;
-                model.at("BackLeg")->offset.y = 0;
+                louKick->isAtacking = false;
+                
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
-                model.at("FrontLeg")->offset.y = 0;
-                model.at("Head")->angle *= 0;
-                model.at("FrontEyebrow")->offset.y = 0;
-                model.at("BackEyebrow")->offset.y = 0;
+                model.at("Head")->angle = 0;
+                model.at("Body")->angle = 0;
+                model.at("Hat")->angle = 0;
+
+
+                model.at("Hat")->xScl *= model.at("Hat")->xScl < 0 ? -1 : 1;
+
+                model.at("Hat")->offset.x *= 0;
+                model.at("Hat")->offset.y *= 0;
             }
+
         }
 
         void updateAnimations() override {
@@ -557,68 +630,22 @@ namespace Rooster {
             }
           
 
-            
-
-
-
             if (estado == RUNNING) {
                 runAnim();
             }
             else if (estado == DEFENDING) {
                 
+                if (atacking == NOT_ATTACK) {
+                   
+                    agachadinha();
 
-                static int angle = 0;
-                angle++;
+                    animations[0].update();
+                    if (animations[0].playingFrame > 15) {
+                        animations[0].playingFrame = 15;
+                    }
+                    model.updateWithAnimation(animations[0]);
+                }
                 
-                projectiles[0].isTrans = true;
-
-                Transform trans;
-                trans.scale((float)SCREEN_WIDTH/3840,(float)SCREEN_HEIGHT/1440);
-
-                if (facingRight) {
-                                                     
-                    projectiles[0].setImpulse(0, 0);
-                    projectiles[0].setSpriteAngle(angle);
-                    
-                    projectiles[0].setTransfrom(trans);
-
-                    projectiles[0].setPosition(
-                        position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
-                        position.y/2 + (projectiles[0].getLocalSize().y)
-                    );
-                   // trans.scale(-0.75, 1);
-                    
-                                        
-                }
-                else {
-                    
-                    projectiles[0].setSpriteAngle(-angle);
-
-                    projectiles[0].setTransfrom(trans);
-
-                    
-                    projectiles[0].setPosition(
-                        position.x * 2 - (projectiles[0].getLocalSize().x * 1.25),
-                        position.y / 2 + (projectiles[0].getLocalSize().y)
-                                             
-                    );
-                    
-                    projectiles[0].setImpulse(0,0);
-                   // trans.scale(-0.75, 1);
-                    
-                    
-                }
-
-                projectiles[0].setVisibility(true);
-               // projectiles[0].update();
-
-                animations[0].update();
-                if (animations[0].playingFrame > 15) {
-                    animations[0].playingFrame = 15;
-                }
-                model.updateWithAnimation(animations[0]);
-               
-
             }
             else if (estado == STOPPED) {
                 runReset();
@@ -632,10 +659,10 @@ namespace Rooster {
             }
 
             if (atacking == HIGH_KICK) {
-                // highAtackAnim();
+                 highAtackAnim();
             }
             else if (atacking == LOW_KICK) {
-                // louKickAnim();
+                 louKickAnim();
             }
             else if (atacking == SPECIAL) {
                  especialAnim();

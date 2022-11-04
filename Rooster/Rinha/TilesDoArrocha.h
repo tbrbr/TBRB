@@ -5,11 +5,39 @@ struct musica {
 };
 
 
-Vector2f fixCoord(float baseMenor, float baseMaior, float altura, Vector2f vec) {
-	
+// Função pra transformar retangulo em convexShape
+ConvexShape rectToConvexShape(RectangleShape rect) {
+	ConvexShape newShape(4);
 
+	for (int i = 0; i < 4; i++) {
+		newShape.setPoint(i, rect.getPoint(i));
+	}
 
+	return newShape;
 }
+
+ConvexShape rectToConvexShape(float x, float y, float wid, float hei) {
+	ConvexShape newShape(4);
+
+	newShape.setPoint(0, Vector2f(x, y));
+	newShape.setPoint(1, Vector2f(x+wid, y));
+	newShape.setPoint(2, Vector2f(x+wid, y+hei));
+	newShape.setPoint(3, Vector2f(x, y+hei));
+
+	return newShape;
+}
+
+ConvexShape rectToConvexShape(float wid, float hei) {
+	ConvexShape newShape(4);
+
+	newShape.setPoint(0, Vector2f(-wid/2, -hei/2));
+	newShape.setPoint(1, Vector2f(wid/2, -hei/2));
+	newShape.setPoint(2, Vector2f(wid/2, hei/2));
+	newShape.setPoint(3, Vector2f(-wid/2, hei/2));
+
+	return newShape;
+}
+
 
 
 
@@ -48,6 +76,7 @@ class Yamaha {
 
 	float bpm;
 	float notasPorYamaha = 4;
+
 	float notaSize = 200;
 
 	float xScl = 1;
@@ -109,14 +138,12 @@ public:
 
 
 
+	
+
+		rect = rectToConvexShape(-base/2, 0, base, altura);
 
 
-		rect.setPointCount(4);
 
-		rect.setPoint(0, Vector2f(  -base / 2, 0));
-		rect.setPoint(1, Vector2f(   base / 2, 0));
-		rect.setPoint(2, Vector2f(   base / 2, altura));
-		rect.setPoint(3, Vector2f(  -base / 2, altura));
 
 
 
@@ -124,15 +151,14 @@ public:
 
 		for (int i = 0; i < 4; i++) {
 			
-			bars[i].setPointCount(4);
+
 
 			float baseQuart = base / 4;
 			float baseAdd = (baseQuart * (i-2));
 
-			bars[i].setPoint(0, Vector2f(baseAdd, 0));
-			bars[i].setPoint(1, Vector2f(baseAdd + baseQuart, 0));
-			bars[i].setPoint(2, Vector2f(baseAdd + baseQuart, altura));
-			bars[i].setPoint(3, Vector2f(baseAdd , altura));
+			bars[i] = rectToConvexShape(baseAdd, 0, baseQuart, altura);
+
+
 		}
 
 
@@ -353,7 +379,7 @@ public:
 								if (notas[j]->length != 1) {
 									notas[j]->slided = 1 - constrain((altura - notaY) / (yScl*notaSize * (notas[j]->length - 1)), 0, 1);
 									
-									for (int k = 0; k < (notas[j]->slided*10)/5; k++) {
+									for (int k = 0; k < (notas[j]->slided*10)*notas[j]->length / 5; k++) {
 										coisa[i]->createParticle();
 									}
 
@@ -434,6 +460,8 @@ public:
 
 		ConvexShape trap;
 
+
+
 		trap.setPointCount(4);
 		for (int i = 0; i < 4; i++) {
 			trap.setPoint(i, convertToTrap(rect.getPoint(i), baseMenor));
@@ -488,11 +516,7 @@ public:
 			float noteLen = notaSize * notas[i]->length;
 
 			
-
-			noteShape.setPoint(0, Vector2f(noteX, noteY+0));
-			noteShape.setPoint(1, Vector2f(noteX + baseQuart, noteY));
-			noteShape.setPoint(2, Vector2f(noteX + baseQuart, noteY+noteLen));
-			noteShape.setPoint(3, Vector2f(noteX, noteY + noteLen));
+			noteShape = rectToConvexShape(noteX, noteY, baseQuart, noteLen);
 
 			convertNoteToTrap(noteShape, baseMenor);
 
@@ -530,10 +554,8 @@ public:
 				float lineWid = baseQuart / 4;
 				float lineX = noteX + baseQuart / 2 - lineWid / 2;
 
-				lineShape.setPoint(0, Vector2f(lineX, noteY + 0));
-				lineShape.setPoint(1, Vector2f(lineX + lineWid, noteY));
-				lineShape.setPoint(2, Vector2f(lineX + lineWid, noteY - notaSize + noteLen));
-				lineShape.setPoint(3, Vector2f(lineX, noteY - notaSize + noteLen));
+				lineShape = rectToConvexShape(lineX, noteY, lineWid, -notaSize + noteLen);
+
 
 				convertNoteToTrap(lineShape, baseMenor);
 
@@ -567,11 +589,9 @@ public:
 				float sliderHei = sliderWid;
 				float sliderY = noteY - (sliderHei / 2) + (noteLen-notaSize) * (1 - notas[i]->slided);
 
+				sliderShape = rectToConvexShape(sliderX, sliderY, sliderWid, sliderHei);
 
-				sliderShape.setPoint(0, Vector2f(sliderX, sliderY));
-				sliderShape.setPoint(1, Vector2f(sliderX + sliderWid, sliderY));
-				sliderShape.setPoint(2, Vector2f(sliderX + sliderWid, sliderY + sliderHei));
-				sliderShape.setPoint(3, Vector2f(sliderX, sliderY + sliderHei));
+
 
 				convertNoteToTrap(sliderShape, baseMenor);
 
@@ -698,6 +718,76 @@ public:
 
 };
 
+class BregaMeter {
+
+	Sprite sprite;
+
+	float x;
+	float y;
+	float wid;
+	float hei;
+
+	float xScl;
+	float yScl;
+
+public:
+	float percentage = 0;
+
+	BregaMeter(Texture& bregaMeterTex) {
+		
+		sprite.setTexture(bregaMeterTex);
+
+
+
+		float bregaSprWid = bregaMeterTex.getSize().x / 2;
+		float bregaSprHei = bregaMeterTex.getSize().y;
+
+		wid = SCREEN_WIDTH / 5;
+		
+
+		sprite.setTextureRect(IntRect(0, 0, bregaSprWid, bregaSprHei));
+
+
+		xScl = wid / bregaSprWid;
+		yScl = xScl;
+
+		sprite.setScale(xScl, yScl);
+
+
+		hei = bregaSprHei * yScl;
+
+		x = SCREEN_WIDTH - wid;
+		y = SCREEN_HEIGHT - (bregaSprHei * yScl);
+
+		
+	}
+
+	void draw(RenderWindow& window) {
+
+
+		sprite.setScale(xScl, yScl);
+		sprite.setPosition(x, y);
+		window.draw(sprite);
+
+
+
+
+
+		RectangleShape ponteiro(Vector2f(wid * 0.4, yScl * 20));
+		ponteiro.setFillColor(Color(0, 0, 0));
+		ponteiro.setPosition(x + wid / 2 + xScl * 18, y + (sprite.getLocalBounds().height - 112) * xScl);
+		ponteiro.setOrigin(wid * 0.4, xScl * 10);
+		ponteiro.setRotation(-5 + 185 * percentage);
+
+		window.draw(ponteiro);
+	}
+
+	
+
+
+};
+
+
 
 
 
@@ -714,7 +804,12 @@ bool pianoTiles(RenderWindow* window) {
 
 	struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
 
-	Rooster::Galo* galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING,false);
+	Rooster::Galo* galoPeste  = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+	Rooster::Galo* galoKalsa  = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true );
+	Rooster::Galo* galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
+
+	galoSniper->setPosition(Vector2f((float)SCREEN_WIDTH/1.05, Rooster::floorY));
+	galoKalsa->facingRight = true;
 
 	Texture fundao;
 	fundao.loadFromFile("sprites/tiringa.png");
@@ -727,27 +822,9 @@ bool pianoTiles(RenderWindow* window) {
 	Texture bregaMeterTex;
 	bregaMeterTex.loadFromFile("sprites/medidorBrega.png");
 
-	Sprite bregaMeter;
-	bregaMeter.setTexture(bregaMeterTex);
+	BregaMeter bregaMeter(bregaMeterTex);
 
-
-
-	float bregaSprWid = bregaMeterTex.getSize().x /2;
-	float bregaSprHei = bregaMeterTex.getSize().y ;
-
-	float bregaWid = SCREEN_WIDTH / 5;
-
-	bregaMeter.setTextureRect(IntRect(0, 0, bregaSprWid, bregaSprHei));
 	
-
-	float bregaXScl = bregaWid / bregaSprWid;
-	bregaMeter.setScale(bregaXScl, bregaXScl);
-
-
-	float bregaX = SCREEN_WIDTH - bregaWid;
-	float bregaY = SCREEN_HEIGHT - (bregaSprHei * bregaXScl);
-
-	bregaMeter.setPosition(bregaX, bregaY);
 
 
 
@@ -774,6 +851,36 @@ bool pianoTiles(RenderWindow* window) {
 				}
 
 			}
+
+			if (e.type == Event::Closed)
+			{
+				window->close();
+			}
+			if (e.type == sf::Event::Resized)
+			{
+				float wid = 1280;
+				float hei = 720;
+				float xScl = (float)e.size.width / wid;
+				float yScl = (float)e.size.height / hei;
+
+				if (xScl > yScl) {
+					wid *= yScl;
+					hei = e.size.height;
+				}
+				else {
+
+					hei *= xScl;
+					wid = e.size.width;
+				}
+
+				xScl = wid / (float)e.size.width;
+				yScl = hei/(float)e.size.height;
+
+				sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
+				sf::View view(visibleArea);
+				view.setViewport(FloatRect((1-xScl)/2,(1-yScl)/2, xScl, yScl));
+				window->setView(view);
+			}
 		}
 
 		mainInput.update();
@@ -791,25 +898,19 @@ bool pianoTiles(RenderWindow* window) {
 		alcides.update(frames);
 		alcides.draw(window, frames);
 
+		
 		galoPeste->update();
 		galoPeste->show(*window);
+		galoKalsa->update();
+		galoKalsa->show(*window);
+		galoSniper->update();
+		galoSniper->show(*window);
+		
 
 
 
-
-		window->draw(bregaMeter);
-
-
-
-
-		RectangleShape ponteiro(Vector2f(bregaWid*0.4, bregaXScl*20));
-		ponteiro.setFillColor(Color(0, 0, 0));
-		ponteiro.setPosition(bregaX + bregaWid/2  + bregaXScl*18, bregaY + (bregaSprHei-112)*bregaXScl);
-		ponteiro.setOrigin(bregaWid*0.4, bregaXScl*10);
-		ponteiro.setRotation(-5 + 185*((float)alcides.combo/alcides.comboMax));
-
-		window->draw(ponteiro);
-
+		bregaMeter.percentage = (float)alcides.combo / alcides.comboMax;
+		bregaMeter.draw(*window);
 
 
 

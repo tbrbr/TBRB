@@ -2,9 +2,6 @@
 
 #define SFML_STATIC
 
-
-
-
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <windows.h>
@@ -22,11 +19,19 @@
 using namespace std;
 using namespace sf;
 
+<<<<<<< HEAD
 #define ISMOTADESKTOP 1
 
 #if  0
 const int SCREEN_WIDTH = 1366;
 const int SCREEN_HEIGHT = 768;
+=======
+#define deixe_de_coisa 0
+//va se arrombar nao
+#if  deixe_de_coisa
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+>>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
 #else
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
@@ -36,7 +41,6 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
-
 
 #include "Math2.h"
 #include "entradas.h"
@@ -80,7 +84,7 @@ using namespace Rooster;
 
 #include "Briga.h"
 #include "muitosjogadores.h"
-
+#include "server_connect.h"
 #include "cardapio.h"
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
@@ -88,10 +92,17 @@ using namespace Rooster;
 
 int main() {
 
+<<<<<<< HEAD
 	/*cout << IpAddress::getLocalAddress();
+=======
+	/*
+	cout << IpAddress::getLocalAddress();
+>>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
+>>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
 	cout << "Server?";
 	cin >> ishost;
-
+	*/
+	//mota va tomar no seu cu por favor.
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -105,17 +116,27 @@ int main() {
 
 
 
+<<<<<<< HEAD
 	int option = INTRO;
 	//option = BOTAPRAARROCHAR;
 	
+=======
+
+	int option = MENU_PRINCIPAL;
+>>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
 	
 	
+#if deixe_de_coisa
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
+#else
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+#endif
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(true);
+	
 
 
 	Cursor cursor;
@@ -130,6 +151,7 @@ int main() {
 	struct GaloStats bruxoSt;
 	struct GaloStats pesteSt;
 	struct GaloStats botaSt;
+
 	sniperSt = { 100, 10, 15, 9, 5 , 15 };
 	kalsaSt = { 100, 12, 12, 10, 6 , 20 };
 	bruxoSt = { 60, 15, 12, 9, 5   , 20 };
@@ -137,11 +159,8 @@ int main() {
 	botaSt = { 80, 13, 10, 12, 4   , 20 };
 
 
-	Galo* galo = new Peste(sniperSt, Rooster::state::STOPPED, false);
-	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-
-
-	println("Carregarou");
+	Galo* galo = NULL;
+	Galo* galo2 = NULL;
 
 
 	Pato *miniGame1 = new Pato((*window));
@@ -151,13 +170,23 @@ int main() {
 	fundo.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
+
+
 	MapSelector* mapSelector = new MapSelector();
+	Texture background_t;
+	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	background.setPosition(0, 0);
+	background_t.loadFromFile("sprites/background_menu.png");
+	background.setTexture(&background_t);
 
 
 	fundo.setTexture(mapSelector->getTexture());
 
 	window->setMouseCursorVisible(true);
 	window->setMouseCursorGrabbed(false);
+
+	TcpSocket* socket = new TcpSocket();
+	TcpListener* listener = new TcpListener();
 
 	while (window->isOpen())
 	{
@@ -171,12 +200,7 @@ int main() {
 
 			fundo.setTexture(mapSelector->getSelectedMap());
 
-			println("singleplay");
-
 			singlePlayer(window,*galo,*galo2,option,fundo);
-			break;
-		case MENU_PRINCIPAL:
-			option = MenuPrincipal(window);
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
@@ -195,11 +219,44 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
-			multiPlayer(window, *galo, *galo2, option, fundo);
+		
+			multiPlayer(window, *galo, *galo2, option, fundo, socket);
+			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			mapSelector->draw(window, option, true);
 			break;
+		case JOIN:
+			option = join(window, background, socket);
+			break;
+
+		case CREATE:
+			option = create(window, background, socket, listener);
+			break;
+
+		case MULTI: 
+			option = muitoJogadores(window, background);
+			break;
+		case MULTI_MODE:
+			option = multoJogadoresMode(window, background);
+			break;
+
+		case MENU_PRINCIPAL:
+			option = MenuPrincipal(window, background);
+			break;
+
+		case GAMEMODE:
+			option = selecionarModo(window, background);
+			break;
+		case CONFIG:
+			option = configScreen(window, background);
+			break;
+
+		case MINIGAME:
+			option = minigame(window, background);
+			break;
+		case MULTI_SELECT:
+			option = selector->show(window, &galo, &galo2, socket);
 		default:
 			break;
 		}

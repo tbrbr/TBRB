@@ -28,6 +28,7 @@ namespace Rooster {
 	public:
 		bool NULO = false;
 		bool isTrans = false;
+		bool facingRight;
 
 		Projectile(bool NUlO) {
 			this->NULO = NULO;
@@ -94,7 +95,6 @@ namespace Rooster {
 		}
 		void setPosition(Vector2f position) {
 			this->position = position;
-			sprite.setPosition(position);
 		}
 		void setPosition(float x,float y) {
 			setPosition(Vector2f(x, y));
@@ -142,8 +142,7 @@ namespace Rooster {
 				
 			}
 		}
-
-
+		
 	};
 
 	
@@ -152,7 +151,6 @@ namespace Rooster {
 	public:
 		int id;
 		float Stun;
-		float CoolDown;
 		HitBox hitbox;
 		int Damage;
 		float KnockBack;
@@ -179,10 +177,9 @@ namespace Rooster {
 		
 		
 			
-		Ataques(int id,float Stun,float CoolDown,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
+		Ataques(int id,float Stun,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
 			this->id = id;
-			this->Stun = Stun;
-			this->CoolDown = CoolDown;
+			this->Stun = Stun;		
 			this->hitbox = hitbox;
 			this->Damage = Damage;
 			this->KnockBack = KnockBack;
@@ -197,11 +194,10 @@ namespace Rooster {
 			colDif.x = 0;
 			colDif.y = 0;
 		}
-		Ataques(int id, float Stun, float CoolDown, HitBox hitbox, int Damage, float KnockBack,
+		Ataques(int id, float Stun, HitBox hitbox, int Damage, float KnockBack,
 			float angle, Time timelapse,const char* txt, Time timelapse2) {
 			this->id = id;
 			this->Stun = Stun;
-			this->CoolDown = CoolDown;
 			this->hitbox = hitbox;
 			this->Damage = Damage;
 			this->KnockBack = KnockBack;

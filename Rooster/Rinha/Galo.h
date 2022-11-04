@@ -270,19 +270,23 @@ namespace Rooster {
         int frames = 0;
 
 
-        // Models and Animations
-        struct Model model;
+     
         std::vector<struct Animation> animations;
 
-        
+        Texture star;
+        Sprite estrelinha;
 
     public:
+
+        // Models and Animations
+        struct Model model;
 
         Vector2f position;
 
         // Attacks and Hitboxes
         int atacking;
-        HitBox hitbox;
+        bool isDefending = false;
+        HitBox defense;
         std::vector<HitBox> hurtBox;
         std::vector<Projectile> projectiles;
 
@@ -341,8 +345,9 @@ namespace Rooster {
             this->vspeedLimit = 10;
             this->hAcc = 0.5;
 
-            
-            
+            star.loadFromFile("sprites\\estrelinhas.png");
+            estrelinha.setTexture(star);
+            estrelinha.setScale((float)SCREEN_WIDTH / 7680, (float)SCREEN_HEIGHT / 4320);
 
             this->position = Vector2f(0, 0);
             this->isp1 = isp1;
@@ -352,13 +357,6 @@ namespace Rooster {
                 position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
 
             position.y = floorY;
-
-
-
-
-
-
-
 
         }
 
@@ -420,10 +418,10 @@ namespace Rooster {
 
         virtual void apanhar(Ataques atk, bool direction){
 
+
             if (!invunerable) {
-
+              
                 hp -= atk.Damage/stats.def;
-
 
                 // Calculando os impulsos
                 atk.createBlood(mainPartSystem);
@@ -457,6 +455,7 @@ namespace Rooster {
            
             float frames = ultimateShot->init2.getElapsedTime().asMilliseconds();
             float maxFrames = ultimateShot->timeLapse2.asMilliseconds();
+
             if (frames > maxFrames) {
                 ultimateShot->getHitted = false;
             }
@@ -472,22 +471,12 @@ namespace Rooster {
             
             if (perc < 0.4) {
                 
-                // Tava na busca de entender pq o tiro do sniper n funciona como player 2
-                // Permite?
+               
                 if(((int)frames)%3 == 0) {
                     g2->facingRight = !g2->facingRight;
                 }
 
-                // Permite?
-                // Na verdade eu n sei o que to fazendo perdao
-                /*
-                int add = 7 * sin(toRadiAnus(frames * 2));
-                g2->model.at("Head")->angle += add;
-                g2->model.at("FrontArm")->angle += add;
-                g2->model.at("BackArm")->angle += add;
-                */
-
-
+             
                 g2->position.x += facingRight?
                     ((position.x - g2->position.x + 200) * frames * 2)/maxFrames:
                     ((position.x - g2->position.x - 200) * frames * 2)/maxFrames;
@@ -495,28 +484,26 @@ namespace Rooster {
                 
             }
             else if (perc < 0.7) {
-                drawEstrelinhas(af,g2->position);
-                //int add = 20*(0.7-perc)*sin(toRadiAnus(frames*2));
+                g2->drawEstrelinhas(af);
+                
                 int add = 45;
-                g2->model.at("Head")->angle += add;
 
-                g2->model.at("FrontArm")->angle += add;
-                g2->model.at("BackArm")->angle += add;
+                g2->model.at("Head")->xScl *= -1;
+                
                 
                
             }
             else {
-                g2->model.at("Head")->angle = 0;
-                g2->model.at("FrontArm")->angle = 0;
-                g2->model.at("BackArm")->angle = 0;
-
+                if (g2->model.at("Head")->xScl < 0) {
+                    g2->model.at("Head")->xScl *= -1;
+                }
             }
             
          
         }
         void jump() {
 
-            if (!stunned || stunFrames < 0) {
+            if ((!stunned || stunFrames < 0) && atacking == NOT_ATTACK) {
                 stunned = false;
                 if (!air) {
                     vspeed += jumpSpeed;
@@ -525,9 +512,13 @@ namespace Rooster {
             }
         }
         
-        void run() {
+        void run(bool facingRight) {
 
-            if (!stunned || stunFrames < 0) {
+            if ((!stunned || stunFrames < 0) && atacking == NOT_ATTACK) {
+
+                estado = RUNNING;
+                this->facingRight = facingRight;
+
                 stunned = false;
 
                 float acc = hAcc * ((facingRight) ? 1:-1);
@@ -539,6 +530,14 @@ namespace Rooster {
 
 
         virtual void defend() = 0; 
+
+        virtual void defended(Galo& galo2,Ataques * atk,bool facingRight) {
+            Ataques* ataque = new Ataques(*atk);
+            ataque->Damage *= 0.25;
+            ataque->KnockBack *= 0.25;
+            apanhar(*ataque, facingRight);
+        }
+
         virtual void highKick() = 0;
         virtual void lowKick() = 0;
         virtual void especial() = 0;
@@ -557,12 +556,8 @@ namespace Rooster {
                         projectiles[i].draw(window);             
             }
             
-           
-            
-
-            
-
-            if (SHOWDEBUG || false) {
+                
+            if (SHOWDEBUG) {
                 for (int i = 0; i < hurtBox.size(); i++) {
 
 
@@ -581,6 +576,9 @@ namespace Rooster {
                 if (hiKick->isAtacking) {
                     drawHitBox(window, hiKick->hitbox, sf::Color::Red);
                 }
+                if (isDefending) {
+                    drawHitBox(window, defense, sf::Color::Green);
+                }
 
             }
         }
@@ -597,7 +595,7 @@ namespace Rooster {
             window.draw(circle);
         }
 
-
+        
         virtual void updatePhysics() {
 
             // Timers
@@ -741,6 +739,23 @@ namespace Rooster {
             model.update();
 
             estadoUpdate = false;
+        }
+
+        void drawEstrelinhas(RenderWindow* window) {
+
+            
+            
+            
+            
+            if (frames % 5 == 0) {
+                estrelinha.setScale(estrelinha.getScale().x * -1, estrelinha.getScale().y);
+            }
+           if(estrelinha.getScale().x > 0)
+               estrelinha.setPosition(position.x - abs(model.getBounds().width)/2, position.y - model.getBounds().height * 1.2);
+           else
+               estrelinha.setPosition(position.x + abs(model.getBounds().width)/2, position.y - model.getBounds().height * 1.2);
+            window->draw(estrelinha);
+
         }
     };
 

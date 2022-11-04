@@ -27,22 +27,18 @@ namespace Rooster {
 		float legWalkAngFase = 0;
 		float ArmSpinAngFase = 0;
 		float Arm2SpinAngFase = 0;
-
-
+		SoundBuffer defenseBuffer;
+		Sound defenseSound;
 
 	public:
 		Sniper(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
 			this->name = "Sniper";
 
-
-
-
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 			
-			this->hiKick = new Ataques(0, 20, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 4, milliseconds(1000),"");
-			this->louKick = new Ataques(1,20, 0.5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, PI / 4, milliseconds(1000),"");
-			this->ultimateShot = new Ataques(2,10, 0.5, HitBox{ Vector2f(0, 0), 0 }, 10, 20, 0, milliseconds(2000),"sounds\\awp.ogg");
-
+			this->hiKick = new Ataques(0, 25, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(1000),"sounds\\fist-punch-or-kick-7171.ogg");
+			this->louKick = new Ataques(1,20, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(1000),"sounds\\punch-2-123106.ogg");
+			this->ultimateShot = new Ataques(2,10, HitBox{ Vector2f(0, 0), 0 }, 50, 20, 0, milliseconds(2000),"sounds\\awp.ogg");
 
 
 			const char const* txt = "sprites\\bullet.png";
@@ -81,7 +77,16 @@ namespace Rooster {
 			agacharAnim.connectLoop = false;
 			animations.push_back(agacharAnim);
 
+			struct Animation danceAnim;
+			danceAnim.init("animations/sniperDance4.txt");
+			danceAnim.playingSpeed = 0.2;
+			danceAnim.connectLoop = true;
+			animations.push_back(danceAnim);
+
 			
+
+			defenseBuffer.loadFromFile("sounds\\block-6839.ogg");
+			defenseSound.setBuffer(defenseBuffer);
 
 		}
 
@@ -295,7 +300,7 @@ namespace Rooster {
 			int angFix = (facingRight) ? 1 : -1;
 			angFix = -1;
 
-
+			static bool go = true;
 			if (percentage < 1.f / 3.f) {
 
 
@@ -320,6 +325,10 @@ namespace Rooster {
 				hiKick->hitbox.center = model.at(PE_ATRAS)->drawPos;
 				hiKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width / 2;
 				hiKick->isAtacking = true;
+				if (go) {
+					hiKick->playSound();
+					go = false;
+				}
 
 			}
 			else if (percentage < 2.9f / 3.f) {
@@ -335,6 +344,7 @@ namespace Rooster {
 				hiKick->hitbox.center = { 0,0 };
 				hiKick->hitbox.radius = 0;
 				hiKick->isAtacking = false;
+				go = true;
 
 			}
 			else {
@@ -359,7 +369,7 @@ namespace Rooster {
 
 			float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
 
-
+			static bool go;
 			if (percentage < 1.f / 3.f) {
 
 
@@ -390,6 +400,10 @@ namespace Rooster {
 				louKick->hitbox.center = model.at(PE_ATRAS)->drawPos;
 				louKick->hitbox.radius = model.at(PE_ATRAS)->sprite.getGlobalBounds().width / 2;
 				louKick->isAtacking = true;
+				if (go) {
+					louKick->playSound();
+					go = false;
+				}
 			}
 			else if (percentage < 2.9f / 3.f) {
 
@@ -404,7 +418,7 @@ namespace Rooster {
 				louKick->hitbox.center = { 0,0 };
 				louKick->hitbox.radius = 0;
 				louKick->isAtacking = false;
-
+				go = true;
 			}
 			else {
 				model.at(CORPO)->angle = 0;
@@ -420,51 +434,15 @@ namespace Rooster {
 
 		}
 
-
-		/*
-		void apanhar(Ataques atk, bool direction) override { 
-
-			if (invFrames <= 0) {
-
-				hp -= atk.Damage;
-
-
-				// Calculando os impulsos
-
-
-				atk.createBlood(mainPartSystem);
-
-				
-				vspeed += sin(atk.angle) * atk.KnockBack;
-				hspeed += cos(atk.angle) * atk.KnockBack;
-
-				if (vspeed < 0) {
-					air = true;
-				}
-				if (!direction) {
-					hspeed *= -1;
-				}
-
-				// Tempo de perda de controle sobre o Rooster
-				stunFrames = atk.Stun;
-
-				// Tempo de invulnerabilidade
-				invFrames = 30;
-
-				bar->update(hp);
-
-				atk.playSound();
-				
-			}
-
-
-		}
-
-		*/
-
+		 void defended(Galo& galo2, Ataques* atk, bool facingRight) override {
+			Ataques* ataque = new Ataques(*atk);
+			ataque->Damage *= 0.25;
+			ataque->KnockBack *= 0.25;
+			apanhar(*ataque, facingRight);
+			defenseSound.play();
+		 }
 
 		void updateAnimations() override {
-
 
 
 			if (estadoUpdate) {
@@ -475,16 +453,13 @@ namespace Rooster {
 			weatherAnim(frames);
 
 
-
-
-
 			model.at("FrontArm")->angle = ArmSpinAngFase;
 			model.at("BackArm")->angle = Arm2SpinAngFase;
 
 
 			if (!stunned) {
 
-
+				
 				if (air) {
 					jumpAnim();
 				}
@@ -492,108 +467,60 @@ namespace Rooster {
 					cairAnim();
 				}
 
-
-
+				
 				if (estado == RUNNING) {
 					runAnim();
+					isDefending = false;
 				}
 				else if (estado == DEFENDING) {
+					
 					animations[0].update();
 					if (animations[0].playingFrame > 15) {
 						animations[0].playingFrame = 15;
+						isDefending = true;
+						defense.center.x = model.at("Sniper")->drawPos.x;
+						defense.center.y = model.at("Sniper")->drawPos.y;
+						defense.radius = model.at("Sniper")->sprite.getGlobalBounds().height / 2;
 					}
+					else {
+						isDefending = false;
+					}
+					
 					model.updateWithAnimation(animations[0]);
-
+					
 				}
 				else if (estado == STOPPED) {
+					isDefending = false;
 					runReset();
 				}
-
-
+				
+					
 				if (atacking == HIGH_KICK) {
 					highKickAnim();
+					isDefending = false;
 				}
 				else if (atacking == LOW_KICK) {
 					lowKickAnim();
+					isDefending = false;
 				}
 				else if (atacking == SPECIAL) {
 					especialAnim();
+					isDefending = false;
+				}
+				else if (estado == DANCING) {
+					animations[1].update();
+					model.updateWithAnimation(animations[1]);
 				}
 
 				projectiles[0].update();
 
 				ultimateShot->hitbox.center = projectiles[0].getPosition();
-				ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
+				ultimateShot->hitbox.radius = projectiles[0].getSize().y/2;
 			}
 		}
 
 
-		/*
-		void update() override {
 
-			// Timer 
-
-			invFrames--;
-			stunFrames--;
-
-
-			projectiles[0].update();
-
-
-			if (air) {
-				vspeed += peso * Gravity / 100;
-			}
-
-			
-
-			/// Aqui vem a suavização
-			// A perda de velocidade
-			// Simulando atrito com ar?
-
-
-
-			for (int i = 0; i < hurtBox.size(); i++) {
-
-				hurtBox[i].center = model.at(i)->drawPos;
-				hurtBox[i].radius = model.at(i)->sprite.getGlobalBounds().width / 2;
-
-			}
-
-			frames++;
-			
-
-
-			if (position.y > floorY) {
-				vspeed = 0;
-				position.y = floorY;
-				air = false;
-			}
-
-			position.x += hspeed;
-			position.y += vspeed;
-
-
-			model.pos = position;
-
-
-			bar->update(hp);
-
-
-			model.pos = position;
-			model.xScl = 4 * (facingRight ? 1 : -1) * -(float)SCREEN_WIDTH / 5120;
-			model.yScl = 4 * (float)SCREEN_WIDTH / 5120;
-
-
-
-			model.update();
-
-
-			estadoUpdate = false;
-
-
-
-		}
-		*/
 	};
 
 

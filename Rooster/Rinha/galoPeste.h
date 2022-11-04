@@ -27,18 +27,18 @@ namespace Rooster {
 
 
             // Creating Attacks
-            this->hiKick = new Ataques(6,
-                8, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->hiKick = new Ataques(
+                6, 8, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(1200), ""
             );
 
-            this->louKick = new Ataques(7,
-                5, 0.5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI / 4, milliseconds(1000), ""
+            this->louKick = new Ataques(
+                7, 5, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, PI / 4, milliseconds(1000), "sounds\\cartoon-mouse-96437.ogg"
             );
 
-            this->ultimateShot = new Ataques(8,
-                0.9, 0.5, HitBox{ Vector2f(0, 0), 0 },
+            this->ultimateShot = new Ataques(
+                8, 0.9, HitBox{ Vector2f(0, 0), 0 },
                 10, 3, 0, milliseconds(1500),
                 "sounds\\awp.ogg"
             );
@@ -250,7 +250,7 @@ namespace Rooster {
                 projectiles[1].setScale(Vector2f(1, 1));
 
                 projectiles[1].setPosition(
-                    Vector2f(model.at("BackArm")->drawPos.x,//- SCREEN_WIDTH/300 * model.xScl,
+                    Vector2f(model.at("BackArm")->drawPos.x,
                         (model.at("BackArm")->drawPos.y - model.at("BackArm")->sprite.getGlobalBounds().height 
                          + projectiles[1].getSize().y / 2)
                     )
@@ -371,36 +371,25 @@ namespace Rooster {
                 model.at("FrontLeg")->angle = -10;
                 
             }
-            else if (percentage < 2.05f / 3.f) {
-                //ultimateShot->playSound();
-            }
             else if (percentage < 2.2f / 3.f) {
-
-
 
                 projectiles[0].setVisibility(true);
                 projectiles[0].setScale(Vector2f(1, 1));
 
-                projectiles[0].setPosition(
-                    Vector2f(model.at("BackArm")->drawPos.x,
-                        (floorY - projectiles[0].getSize().y)
-                    )
-                );
-
-
+                projectiles[0].setPosition(Vector2f(model.at("BackArm")->drawPos.x,floorY - projectiles[0].getSize().y));
 
                 if (facingRight) {
                     projectiles[0].setImpulse(3, 0);
                     projectiles[0].setScale(Vector2f(-0.2, 0.2));
+                    projectiles[0].facingRight = true;
                 }
-
                 else {
                     projectiles[0].setImpulse(-3, 0);
                     projectiles[0].setScale(Vector2f(0.2, 0.2));
+                    projectiles[0].facingRight = false;
                 }
 
-
-                ultimateShot->isAtacking = true;
+                louKick->isAtacking = true;
             }
             else if (percentage < 2.5f / 3.f) {
 
@@ -423,6 +412,7 @@ namespace Rooster {
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
                 model.at("Head")->angle = 0;
+               
             }
 
         }
@@ -514,19 +504,28 @@ namespace Rooster {
 
             if (estado == RUNNING) {
                 runAnim();
+                isDefending = false;
             }
             else if (estado == DEFENDING) {
-               estado == STOPPED;
-                
+               estado = STOPPED;
                animations[0].update();
                if (animations[0].playingFrame > 15) {
-                    animations[0].playingFrame = 15;
+                   animations[0].playingFrame = 15;
+                   isDefending = true;
+                   defense.center.x = model.at("Body")->drawPos.x;
+                   defense.center.y = model.at("Body")->drawPos.y;
+                   defense.radius = model.at("Body")->sprite.getGlobalBounds().height / 2;
                }
+               else {
+                   isDefending = false;
+               }
+
                model.updateWithAnimation(animations[0]);
                
             }
             else if (estado == STOPPED) {
                 runReset();
+                isDefending = false;
             }
 
 
@@ -544,19 +543,41 @@ namespace Rooster {
                 model.updateWithAnimation(animations[1]);
             }
 
-
-
             projectiles[0].update();
             projectiles[1].update();
+
+            ultimateShot->hitbox.center = projectiles[1].getPosition();
+            ultimateShot->hitbox.radius = projectiles[1].getSize().y / 2;
+
             if (projectiles[0].getVisibility()) {
+
+                static bool playS = true;
+                if (playS) {
+                    louKick->playSound();
+                    playS = false;
+                }
+                louKick->soundCollision.setLoop(true);
+                
+                if (projectiles[0].getPosition().x > SCREEN_WIDTH || projectiles[0].getPosition().x < 0) {
+                    louKick->soundCollision.setLoop(false);
+                    playS = true;
+                    projectiles[0].setVisibility(false);
+                    louKick->isAtacking = false;
+                }
 
                 int i = (frames % 30) / 10;
 
                 projectiles[0].setTextureRec(IntRect(864 * i, 0, 864, 606));
-              
-                ultimateShot->hitbox.center.x = projectiles[0].getPosition().x - projectiles[0].getSize().y / 2;
-                ultimateShot->hitbox.center.y = projectiles[0].getPosition().y;
-                ultimateShot->hitbox.radius = projectiles[0].getSize().y/2;
+
+                if (projectiles[0].facingRight) {
+                    louKick->hitbox.center.x = projectiles[0].getPosition().x - projectiles[0].getSize().y / 2;
+                }
+                else {
+                    louKick->hitbox.center.x = projectiles[0].getPosition().x + projectiles[0].getSize().y / 2;
+                }
+                
+                louKick->hitbox.center.y = projectiles[0].getPosition().y;
+                louKick->hitbox.radius = projectiles[0].getSize().y/2;
             }
 
 
@@ -662,10 +683,22 @@ namespace Rooster {
             fatalpeste.setVolume(60);
             //SoundBuffer 
             fatalpeste.play();
+
+
+
+            Explosion3DEffect* exp = new Explosion3DEffect();
+            exp->mortal = false;
+
+
+            int timeFrames = 0;
+            galo2->update();
+
+
             while (window->isOpen()) {
 
                 int time = Timer.getElapsedTime().asMilliseconds();
 
+                
                 window->clear();
                 window->draw(fundo);
 
@@ -712,11 +745,12 @@ namespace Rooster {
                     else if (time < 6000) {
                         trovao.play();
                         bright.setFillColor(Color(255, 255, 255, 255));
-                        galo2->facingRight = true;
-                        galo2->setState(Rooster::state::RUNNING); 
-                        galo2->run();
+                        
+                        
+                        galo2->run(true);
                     }
                     else if (time < 6500) {
+                        galo2->setState(STOPPED);
                         bright.setFillColor(Color(255, 255, 255, 0));
 
                         lightning.setPosition(SCREEN_WIDTH/4, 0);
@@ -742,6 +776,15 @@ namespace Rooster {
                         socorro.update();
                         socorro.draw(window);
                         highKick();
+
+
+                        // Falido
+                        if (timeFrames  % 20 == 0) {
+                            exp->createParticles(10, galo2->position, Color::Red, Vector2f(0, -4), 10, 0, 360);
+                        }
+                        timeFrames++;
+
+
                         
                         if (time > 8000) {
                             static bool lets = true;
@@ -778,11 +821,13 @@ namespace Rooster {
                 
                 if (position.x - (model.getBounds().width * abs(model.xScl))/1.5 < galo2->position.x ) {
                     estado = RUNNING;
-                    run();
+                    run(true);
                 }
                 else {
                     estado = STOPPED;
                 }
+                
+
                 
              
                 update();
@@ -791,7 +836,17 @@ namespace Rooster {
 
                 show(*window);
                 window->draw(bright);
+
+                exp->update();
+                exp->draw(*window); 
+
                 window->display();
+
+                if (time > 10000) {
+                    return;
+                }
+               
+
             }
         }
         

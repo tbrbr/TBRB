@@ -1,5 +1,4 @@
 
-	
 
 	void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 
@@ -135,28 +134,28 @@
 
 
 
+
 			if (mainInput.inputState[player][GORIGHT][0])
 			{
-				galo.setState(Rooster::state::RUNNING);
-				galo.facingRight = true;
-				galo.run();
+				
+				galo.run(true);
 
 			}
 			else if (mainInput.inputState[player][GOLEFT][0])
 			{
-				galo.setState(Rooster::state::RUNNING);
-				galo.facingRight = false;
-				galo.run();
+				
+				galo.run(false);
 
 			}
 			else if (mainInput.inputState[player][GODOWN][0])
 			{
 				galo.defend();
 			}
-			else
-			{
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo.setState(Rooster::state::DANCING);
+			}
+			else{		
 				galo.setState(Rooster::state::STOPPED);
-
 			}
 
 
@@ -186,81 +185,147 @@
 
 			if (mainInput.inputState[player][GORIGHT][0])
 			{
-				galo2.setState(Rooster::state::RUNNING);
-				galo2.facingRight = true;
-				galo2.run();
+				
+				galo2.run(true);
 
 			}
 			else if (mainInput.inputState[player][GOLEFT][0])
 			{
-				galo2.setState(Rooster::state::RUNNING);
-				galo2.facingRight = false;
-				galo2.run();
+				
+				galo2.run(false);
 
 			}
 			else if (mainInput.inputState[player][GODOWN][0])
 			{
 				galo2.defend();
 			}
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo2.setState(Rooster::state::DANCING);
+			}
 			else
 			{
 				galo2.setState(Rooster::state::STOPPED);
 
 			}
-		
+						
 			for (int i = 0; i < galo.hurtBox.size(); i++) {
-
+								
 				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
-					galo.apanhar(*galo2.hiKick, galo2.facingRight);
+					if (galo.isDefending) {
+						if (galo2.hiKick->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.hiKick, galo2.facingRight);
+						}else 
+							galo.apanhar(*galo2.hiKick, galo2.facingRight);
+					}else 
+						galo.apanhar(*galo2.hiKick, galo2.facingRight);
 
 				}
 				if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
-					galo.apanhar(*galo2.louKick, galo2.facingRight);
-
+					if (galo.isDefending) {
+						if (galo2.louKick->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.louKick, galo2.facingRight);
+						}
+						else
+							galo.apanhar(*galo2.louKick, galo2.facingRight);
+					}
+					else
+						galo.apanhar(*galo2.louKick, galo2.facingRight);
 				}
+
 				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
+
 					if (galo2.ultimateShot->id == 5) {
-						if (!galo2.ultimateShot->getHitted) {
+						if (galo.isDefending) {
+							if (galo2.ultimateShot->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+							}
+							else if (!galo2.ultimateShot->getHitted) {
+								galo2.ultimateShot->getHitted = true;
+								galo2.ultimateShot->init2.restart();
+							}
+						}
+						else if (!galo2.ultimateShot->getHitted) {
 							galo2.ultimateShot->getHitted = true;
 							galo2.ultimateShot->init2.restart();
-						}	
+						}
 					}
 					else {
-						println("A");
-						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
-						galo2.ultimateShot->getHitted = true;
-					}
+						if (galo.isDefending) {
+							if (galo2.ultimateShot->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+							}
+							else
+								galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+						}
+						else
+						{
+							galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+							galo2.ultimateShot->getHitted = true;
+						}
+					}							
 				}
 			}
-
 
 			for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
 				if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
-					galo2.apanhar(*galo.hiKick, galo.facingRight);
+					if (galo2.isDefending) {
+						if (galo.hiKick->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.hiKick, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.hiKick, galo.facingRight);
+					}
+					else
+						galo2.apanhar(*galo.hiKick, galo.facingRight);
 
 				}
 				if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
-					galo2.apanhar(*galo.louKick, galo.facingRight);
+					if (galo.isDefending) {
+						if (galo.louKick->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.louKick, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.louKick, galo.facingRight);
+					}
+					else
+						galo2.apanhar(*galo.louKick, galo.facingRight);
 				}
-				if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
-					if (galo.ultimateShot->id == 5) {
 
-						if (!galo.ultimateShot->getHitted) {
+				if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
+
+					if (galo.ultimateShot->id == 5) {
+						if (galo2.isDefending) {
+							if (galo.ultimateShot->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							}
+							else if (!galo.ultimateShot->getHitted) {
+								galo.ultimateShot->getHitted = true;
+								galo.ultimateShot->init2.restart();
+							}
+						}
+						else if (!galo.ultimateShot->getHitted) {
 							galo.ultimateShot->getHitted = true;
 							galo.ultimateShot->init2.restart();
 						}
 					}
 					else {
-						println("A");
-						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
-						galo.ultimateShot->getHitted = true;
+						if (galo2.isDefending) {
+							if (galo.ultimateShot->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							}
+							else
+								galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+						}
+						else
+						{
+							galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+							galo2.ultimateShot->getHitted = true;
+						}
 					}
-
-
 				}
-
 			}
+
 
 			if (galo.ultimateShot->getHitted && galo.ultimateShot->id==5) {
 				galo.apanharByKalsa(&galo2, window);
@@ -287,13 +352,13 @@
 			if (galo.gethp() < 0 ) {
 
 				rounds++;
-				if (rounds == 3 || p2Rounds) {
+				if (rounds == 3 || p2Rounds == 2) {
 					framesWin = 60;
 				}
 				else {
 					framesRound = 60;
 					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
 					p2Rounds++;
 				}
 			}
@@ -305,7 +370,7 @@
 				else {
 					framesRound = 60;
 					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
 					p1Rounds++;
 				}
 				
@@ -321,9 +386,9 @@
 					s.play();
 					framesFight = 60;
 				}
-				window->draw(round[rounds]);
-				
+				window->draw(round[rounds]);				
 			}
+
 			if (framesFight > 0) {				
 				framesFight--;				
 				window->draw(fight);

@@ -14,7 +14,15 @@ namespace Rooster {
 		SELECTION,
 		INTRO,
 		BOTAPRAARROCHAR,
-		MAPA_FALIDO_E_ACHE_RUIM_WALTER
+		MAPA_FALIDO_E_ACHE_RUIM_WALTER,
+		MULTI_SELECT,
+		JOIN,
+		CREATE,
+		GAMEMODE,
+		MINIGAME,
+		MULTI_MODE,
+		CONFIG,
+		MULTI
 	};
 
 	enum JoystickKeys {
@@ -24,6 +32,8 @@ namespace Rooster {
 		JOYLEFT,
 		JOYA,
 		JOYB,
+		JOYX,
+		JOYY,
 		JOYTOTAL
 	};
 
@@ -34,6 +44,7 @@ namespace Rooster {
 		GOUP,
 		LIGHT_ATTACK,
 		STRONG_ATTACK,
+		DANCE,
 		INPUTSTOTAL
 	};
 
@@ -61,12 +72,11 @@ namespace Rooster {
 	public:
 		hud hudselected;
 
-		int p1Hud = 2;
+		int p1Hud = 0;
 		int p2Hud = 0;
 
 		// Rapaz me explique o que é isso porfavor
 		// Ahh to entendendo
-	
 	
 		bool keyboardState[sf::Keyboard::KeyCount][3];
 		bool mouseState[sf::Mouse::ButtonCount][3];
@@ -115,8 +125,6 @@ namespace Rooster {
 
 
 
-
-
 			struct inputInfo mInput;
 			struct inputInfo kInput;
 			struct inputInfo jInput;
@@ -134,6 +142,7 @@ namespace Rooster {
 			board[player][GOUP][KEYBOARD]          = kInput.setKey(Keyboard::W);
 			board[player][LIGHT_ATTACK][KEYBOARD]  = kInput.setKey(Keyboard::F);
 			board[player][STRONG_ATTACK][KEYBOARD] = kInput.setKey(Keyboard::G);
+			board[player][DANCE][KEYBOARD]         = kInput.setKey(Keyboard::Q);
 
 
 			// Keyboard
@@ -141,6 +150,7 @@ namespace Rooster {
 			board[player][GODOWN][MOUSE_AND_KEYBOARD]  = kInput.setKey(Keyboard::S);
 			board[player][GORIGHT][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::D);
 			board[player][GOUP][MOUSE_AND_KEYBOARD]    = kInput.setKey(Keyboard::W);
+			board[player][DANCE][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::Q);
 			// Mouse
 			board[player][LIGHT_ATTACK][MOUSE_AND_KEYBOARD]  = mInput.setKey(Mouse::Button::Left);
 			board[player][STRONG_ATTACK][MOUSE_AND_KEYBOARD] = mInput.setKey(Mouse::Button::Right);
@@ -153,6 +163,7 @@ namespace Rooster {
 			board[player][GOUP][JOYSTICK] = jInput.setKey(JOYUP);
 			board[player][LIGHT_ATTACK][JOYSTICK] = jInput.setKey(JOYA);
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
+			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 
 
 
@@ -165,6 +176,7 @@ namespace Rooster {
 			board[player][GOUP][KEYBOARD] = kInput.setKey(Keyboard::Up);
 			board[player][LIGHT_ATTACK][KEYBOARD] = kInput.setKey(Keyboard::K);
 			board[player][STRONG_ATTACK][KEYBOARD] = kInput.setKey(Keyboard::L);
+			board[player][DANCE][KEYBOARD] = kInput.setKey(Keyboard::P);
 
 
 			// Keyboard
@@ -172,6 +184,7 @@ namespace Rooster {
 			board[player][GODOWN][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::Down);
 			board[player][GORIGHT][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::Right);
 			board[player][GOUP][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::Up);
+			board[player][DANCE][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::P);
 			// Mouse
 			board[player][LIGHT_ATTACK][MOUSE_AND_KEYBOARD] = mInput.setKey(Mouse::Button::Left);
 			board[player][STRONG_ATTACK][MOUSE_AND_KEYBOARD] = mInput.setKey(Mouse::Button::Right);
@@ -184,6 +197,7 @@ namespace Rooster {
 			board[player][GOUP][JOYSTICK] = jInput.setKey(JOYUP);
 			board[player][LIGHT_ATTACK][JOYSTICK] = jInput.setKey(JOYA);
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
+			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 		}
 
 		bool getJoystickState(int button, int joystickId = 0) {
@@ -232,6 +246,13 @@ namespace Rooster {
 
 			case JOYB:
 				return sf::Joystick::isButtonPressed(joystickId, 3);
+			case JOYX:
+				return sf::Joystick::isButtonPressed(joystickId, 4);
+
+			case JOYY:
+				return sf::Joystick::isButtonPressed(joystickId, 5);
+
+			
 
 			}
 			return false;

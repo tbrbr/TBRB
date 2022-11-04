@@ -75,6 +75,8 @@ struct BoneManager{
 
     bool draggingBar = false;
 
+    bool animating = false;
+
     struct{
         float x = 0;
         float y = 0;
@@ -296,17 +298,6 @@ struct BoneManager{
 
             if( boneHandles[ind]->bone->selected){
 
-                /*
-                std::stringstream str2;
-                str2 << "Dependents " << (streamIntVec(dependBars[ind].dependents)) << "   DependOn [" ;
-                str2 << (dependBars[ind].dependOn)  << "]  ID " << (dependBars[ind].id);
-                str2 << std::endl << "  BarOrder " << streamIntVec(dependBarOrder) << "  Depth (" << dependBars[ind].depth << ")";
-
-                ax.setString(str2.str());
-                ax.setPosition(info.GUI.lBar.wid, 400);
-
-                window.draw(ax);
-                */
 
                 sprTrashcan.setScale(2.2, 2.2);
                 sprTrashcan.setPosition(barX + barWid/4, layerY + layerHei/2 - sprTrashcan.getGlobalBounds().height/2);
@@ -888,74 +879,208 @@ struct BoneManager{
 
 
 
-        if(timeManager.boneSelected != elementSelected){
-            timeManager.changeSelectedBone(elementSelected);
-        }
 
 
+        if(animating){
+            timeManager.active = true;
+
+            if(timeManager.boneSelected != elementSelected){
+                timeManager.changeSelectedBone(elementSelected);
+            }
 
 
+            timeManager.update(info);
 
-        timeManager.update(info);
+            if(timeManager.hovered){
+                info.hoveringGUI = true;
+            }
 
-        if(timeManager.hovered){
-            info.hoveringGUI = true;
-        }
+            if(elementSelected != -1){
+                if(timeManager.frameSelected.x != -1){
 
-        if(elementSelected != -1){
-            if(timeManager.frameSelected.x != -1){
+                    bool ctrl  = info.keyboardState[sf::Keyboard::LControl][0];
 
-                bool kTrue = info.keyboardState[sf::Keyboard::K][1];
-                bool fTrue = info.keyboardState[sf::Keyboard::F][1];
-                bool sTrue = info.keyboardState[sf::Keyboard::S][1];
-                if(kTrue || fTrue || sTrue){
-                    int pType = timeManager.frameSelected.y;
-                    struct Properties p;
-                    p.init();
-                    p.propertyId = pType;
-                    p.frame = timeManager.frameSelected.x;
+                    bool kTrue = info.keyboardState[sf::Keyboard::Num1][1];
+                    bool fTrue = info.keyboardState[sf::Keyboard::Num2][1];
+                    bool sTrue = info.keyboardState[sf::Keyboard::Num3][1];
+                    bool iTrue = info.keyboardState[sf::Keyboard::Num4][1];
+                    bool tTrue = info.keyboardState[sf::Keyboard::Num5][1];
 
-                    if(fTrue){
-                        p.progressionType = 1;
-                    } else if(sTrue){
-                        p.progressionType = 2;
+                    if(ctrl){
+                        if(kTrue || fTrue || sTrue || iTrue || tTrue){
+                            int pType = timeManager.frameSelected.y;
+                            struct Properties p;
+                            p.init();
+                            p.propertyId = pType;
+                            p.frame = timeManager.frameSelected.x;
+
+                            if(fTrue){
+                                p.progressionType = 1;
+                            } else if(sTrue){
+                                p.progressionType = 2;
+                            } else if(iTrue){
+                                p.progressionType = 3;
+                            } else if(tTrue){
+                                p.progressionType = 4;
+                            }
+
+                            switch(pType){
+                                case 0:
+                                    p.val = ossos[elementSelected]->center.x;
+                                    break;
+                                case 1:
+                                    p.val = ossos[elementSelected]->center.y;
+                                    break;
+                                case 2:
+                                    p.val = ossos[elementSelected]->attach.x;
+                                    break;
+                                case 3:
+                                    p.val = ossos[elementSelected]->attach.y;
+                                    break;
+                                case 4:
+                                    p.val = ossos[elementSelected]->offset.x;
+                                    break;
+                                case 5:
+                                    p.val = ossos[elementSelected]->offset.y;
+                                    break;
+                                case 6:
+                                    p.val = ossos[elementSelected]->xScl;
+                                    break;
+                                case 7:
+                                    p.val = ossos[elementSelected]->yScl;
+                                    break;
+                                case 8:
+                                    p.val = ossos[elementSelected]->angle;
+                                    break;
+                            }
+
+
+                            timeManager.createKeyFrameHere(elementSelected, pType, p);
+                        }
                     }
-
-                    switch(pType){
-                        case 0:
-                            p.val = ossos[elementSelected]->center.x;
-                            break;
-                        case 1:
-                            p.val = ossos[elementSelected]->center.y;
-                            break;
-                        case 2:
-                            p.val = ossos[elementSelected]->attach.x;
-                            break;
-                        case 3:
-                            p.val = ossos[elementSelected]->attach.y;
-                            break;
-                        case 4:
-                            p.val = ossos[elementSelected]->offset.x;
-                            break;
-                        case 5:
-                            p.val = ossos[elementSelected]->offset.y;
-                            break;
-                        case 6:
-                            p.val = ossos[elementSelected]->xScl;
-                            break;
-                        case 7:
-                            p.val = ossos[elementSelected]->yScl;
-                            break;
-                        case 8:
-                            p.val = ossos[elementSelected]->angle;
-                            break;
-                    }
-
-
-                    timeManager.createKeyFrameHere(elementSelected, pType, p);
                 }
             }
+
+
+
+
+
+
+            if(timeManager.clicked || timeManager.playing){
+                float fPos = timeManager.frameSelected.x;
+                if(timeManager.playing){
+                    fPos = timeManager.playingFrame;
+                }
+                for(int i = 0; i < timeManager.timeline.size(); i++){
+                        if(timeManager.frameSelected.x != -1){
+
+
+
+
+                            struct Properties p;
+                            p = timeManager.getPropertyValue(i, 0, fPos);
+
+                            if(p.exists){
+                                ossos[i]->center.x = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 1, fPos);
+
+                            if(p.exists){
+                                ossos[i]->center.y = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 2, fPos);
+
+                            if(p.exists){
+                                ossos[i]->attach.x = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 3, fPos);
+
+                            if(p.exists){
+                                ossos[i]->attach.y = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 4, fPos);
+
+                            if(p.exists){
+                                ossos[i]->offset.x = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 5, fPos);
+
+                            if(p.exists){
+                                ossos[i]->offset.y = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 6, fPos);
+
+                            if(p.exists){
+                                ossos[i]->xScl = p.val;
+                            }
+
+                            p = timeManager.getPropertyValue(i, 7, fPos);
+
+                            if(p.exists){
+                                ossos[i]->yScl = p.val;
+                            }
+
+
+                            p = timeManager.getPropertyValue(i, 8, fPos);
+
+                            if(p.exists){
+                                ossos[i]->angle = p.val;
+                            }
+
+
+                        }
+
+                }
+            }
+
+
+        } else {
+            timeManager.active = false;
         }
+
+
+            bool ctrl  = info.keyboardState[sf::Keyboard::LControl][0];
+
+            bool cTrue = info.keyboardState[sf::Keyboard::C][1];
+            bool vTrue = info.keyboardState[sf::Keyboard::V][1];
+            bool qTrue = info.keyboardState[sf::Keyboard::Q][1];
+
+            if(ctrl){
+                if(cTrue){
+                        if(animating){
+                    timeManager.copyFrame();
+                        }
+
+
+                } else if(vTrue){
+                      if(animating){
+                    timeManager.pasteFrame();
+                        }
+                } else if(qTrue){
+                    if(animating){
+                        animating = false;
+                    } else {
+                        animating = true;
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1007,78 +1132,6 @@ struct BoneManager{
         }
 
 
-        if(timeManager.clicked || timeManager.playing){
-            float fPos = timeManager.frameSelected.x;
-            if(timeManager.playing){
-                fPos = timeManager.playingFrame;
-            }
-            for(int i = 0; i < timeManager.timeline.size(); i++){
-                    if(timeManager.frameSelected.x != -1){
-
-
-
-
-                        struct Properties p;
-                        p = timeManager.getPropertyValue(i, 0, fPos);
-
-                        if(p.exists){
-                            ossos[i]->center.x = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 1, fPos);
-
-                        if(p.exists){
-                            ossos[i]->center.y = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 2, fPos);
-
-                        if(p.exists){
-                            ossos[i]->attach.x = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 3, fPos);
-
-                        if(p.exists){
-                            ossos[i]->attach.y = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 4, fPos);
-
-                        if(p.exists){
-                            ossos[i]->offset.x = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 5, fPos);
-
-                        if(p.exists){
-                            ossos[i]->offset.y = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 6, fPos);
-
-                        if(p.exists){
-                            ossos[i]->xScl = p.val;
-                        }
-
-                        p = timeManager.getPropertyValue(i, 7, fPos);
-
-                        if(p.exists){
-                            ossos[i]->yScl = p.val;
-                        }
-
-
-                        p = timeManager.getPropertyValue(i, 8, fPos);
-
-                        if(p.exists){
-                            ossos[i]->angle = p.val;
-                        }
-
-
-                    }
-
-            }
-        }
 
 
 

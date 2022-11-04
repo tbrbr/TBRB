@@ -28,6 +28,7 @@ namespace Rooster {
 	public:
 		bool NULO = false;
 		bool isTrans = false;
+		bool facingRight;
 
 		Projectile(bool NUlO) {
 			this->NULO = NULO;
@@ -94,7 +95,6 @@ namespace Rooster {
 		}
 		void setPosition(Vector2f position) {
 			this->position = position;
-			sprite.setPosition(position);
 		}
 		void setPosition(float x,float y) {
 			setPosition(Vector2f(x, y));
@@ -142,7 +142,7 @@ namespace Rooster {
 				
 			}
 		}
-
+		
 	};
 
 	

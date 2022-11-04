@@ -751,9 +751,9 @@ namespace Rooster {
                 estrelinha.setScale(estrelinha.getScale().x * -1, estrelinha.getScale().y);
             }
            if(estrelinha.getScale().x > 0)
-               estrelinha.setPosition(position.x - model.bounds.width/2, position.y - model.bounds.height*1.2);
+               estrelinha.setPosition(position.x - abs(model.getBounds().width)/2, position.y - model.getBounds().height * 1.2);
            else
-               estrelinha.setPosition(position.x + model.bounds.width/2, position.y - model.bounds.height*1.2);
+               estrelinha.setPosition(position.x + abs(model.getBounds().width)/2, position.y - model.getBounds().height * 1.2);
             window->draw(estrelinha);
 
         }

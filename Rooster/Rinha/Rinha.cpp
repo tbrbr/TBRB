@@ -2,9 +2,6 @@
 
 #define SFML_STATIC
 
-
-
-
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <windows.h>
@@ -22,9 +19,9 @@
 using namespace std;
 using namespace sf;
 
-#define VA_SE_FODER_WALTER_ARROMBADO_FDP_URUBU_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 1
+#define deixe_de_coisa 0
 //va se arrombar nao
-#if  VA_SE_FODER_WALTER_ARROMBADO_FDP_URUBU_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#if  deixe_de_coisa
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 #else
@@ -36,7 +33,6 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
-
 
 #include "Math2.h"
 #include "entradas.h"
@@ -112,7 +108,7 @@ int main() {
 	int option = MENU_PRINCIPAL;
 	
 	
-#if 0
+#if deixe_de_coisa
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
 #else
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);

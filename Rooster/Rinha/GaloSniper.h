@@ -27,8 +27,8 @@ namespace Rooster {
 		float legWalkAngFase = 0;
 		float ArmSpinAngFase = 0;
 		float Arm2SpinAngFase = 0;
-
-
+		SoundBuffer defenseBuffer;
+		Sound defenseSound;
 
 	public:
 		Sniper(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
@@ -84,6 +84,9 @@ namespace Rooster {
 			animations.push_back(danceAnim);
 
 			
+
+			defenseBuffer.loadFromFile("sounds\\block-6839.ogg");
+			defenseSound.setBuffer(defenseBuffer);
 
 		}
 
@@ -431,6 +434,13 @@ namespace Rooster {
 
 		}
 
+		 void defended(Galo& galo2, Ataques* atk, bool facingRight) override {
+			Ataques* ataque = new Ataques(*atk);
+			ataque->Damage *= 0.25;
+			ataque->KnockBack *= 0.25;
+			apanhar(*ataque, facingRight);
+			defenseSound.play();
+		 }
 
 		void updateAnimations() override {
 
@@ -463,6 +473,7 @@ namespace Rooster {
 					isDefending = false;
 				}
 				else if (estado == DEFENDING) {
+					
 					animations[0].update();
 					if (animations[0].playingFrame > 15) {
 						animations[0].playingFrame = 15;
@@ -484,7 +495,6 @@ namespace Rooster {
 				}
 				
 					
-
 				if (atacking == HIGH_KICK) {
 					highKickAnim();
 					isDefending = false;

@@ -310,8 +310,11 @@ struct Animation{
                         float w1 = 1 - ((1-perc)*(1-perc));
                         return weightedPropertyMean(pPrev, p, w1);
 
-                    } else {
+                    } else if(pPrev.progressionType == 3) {
                         float w1 = 1;
+                        return weightedPropertyMean(pPrev, p, w1);
+                    } else {
+                        float w1 = -(cos(PI * perc) - 1) / 2;
                         return weightedPropertyMean(pPrev, p, w1);
                     }
                 }
@@ -920,7 +923,7 @@ int main(){
 
     Rooster::HitBox hb;
     Texture t;
-    t.loadFromFile("sprites/galoSniper.png");
+    t.loadFromFile("sprites/galoKalsa.png");
 
     Texture texToolbar;
     texToolbar.loadFromFile("sprites/toolbar.png");

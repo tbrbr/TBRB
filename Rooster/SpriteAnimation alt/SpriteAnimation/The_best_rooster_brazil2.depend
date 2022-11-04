@@ -3324,7 +3324,7 @@
 	<SFML/Graphics/Drawable.hpp>
 	<SFML/Window/GlResource.hpp>
 
-1667423068 source:c:\tbrb\rooster\spriteanimation alt\spriteanimation\main.cpp
+1667562570 source:c:\tbrb\rooster\spriteanimation alt\spriteanimation\main.cpp
 	<iostream>
 	<SFML/Graphics.hpp>
 	<vector>

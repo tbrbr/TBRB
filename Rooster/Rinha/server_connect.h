@@ -1,6 +1,9 @@
 #ifndef KKKKKKKKKKKKKKKKKKKKK  
 #define KKKKKKKKKKKKKKKKKKKKK
 #include <functional> 
+
+bool isHost = false;
+
 bool validarIp(char* ip) {
 
 	int pontos = 0;
@@ -129,7 +132,8 @@ int create(RenderWindow* window, RectangleShape& background, TcpSocket* socket, 
 		if (con) {
 			println("CONECTOU");
 			connect.terminate();
-			return DOISJODADOR;
+			isHost = true;
+			return MULTI_SELECT;
 		}
 
 		if (clock.getElapsedTime().asMilliseconds() >= 400) {
@@ -156,11 +160,8 @@ int create(RenderWindow* window, RectangleShape& background, TcpSocket* socket, 
 	}
 }
 
-
-
-
 int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket) {
 	socket->connect(IpAddress::getLocalAddress(), 59000);
-	return MULTI_MODE;
+	return MULTI_SELECT;
 }
 #endif // ! 

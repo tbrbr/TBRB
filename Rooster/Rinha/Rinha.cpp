@@ -19,11 +19,11 @@
 using namespace std;
 using namespace sf;
 
-#define ISMOTADESKTOP 1
+#define deixe_de_coisa 0
 //va se arrombar nao
-#if  ISMOTADESKTOP
-const int SCREEN_WIDTH = 1366;
-const int SCREEN_HEIGHT = 768;
+#if  deixe_de_coisa
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 #else
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
@@ -105,10 +105,10 @@ int main() {
 
 
 
-	int option = MENU_PRINCIPAL;
+	int option = MULTI_MODE;
 	
 	
-#if ISMOTADESKTOP
+#if deixe_de_coisa
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
 #else
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
@@ -140,8 +140,8 @@ int main() {
 	botaSt = { 80, 13, 10, 12, 4   , 20 };
 
 
-	Galo* galo = new Sniper(kalsaSt, Rooster::state::STOPPED, true);
-	Galo* galo2 = new Peste(pesteSt, Rooster::state::STOPPED, false);
+	Galo* galo = NULL;
+	Galo* galo2 = NULL;
 
 
 	Pato *miniGame1 = new Pato((*window));
@@ -151,6 +151,8 @@ int main() {
 	fundo.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
+
+
 	MapSelector* mapSelector = new MapSelector();
 	Texture background_t;
 	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -198,7 +200,9 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
-			multiPlayer(window, *galo, *galo2, option, fundo);
+		
+			multiPlayer(window, *galo, *galo2, option, fundo, socket);
+			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			mapSelector->draw(window, option, true);
@@ -232,6 +236,8 @@ int main() {
 		case MINIGAME:
 			option = minigame(window, background);
 			break;
+		case MULTI_SELECT:
+			option = selector->show(window, &galo, &galo2, socket);
 		default:
 			break;
 		}

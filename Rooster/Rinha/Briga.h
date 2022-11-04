@@ -105,11 +105,8 @@
 			mainInput.update();
 
 			if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
-				window->close();
+				int a = Pause::pauseMenu(window);
 			}
-
-
-
 
 			//PLAYER 1 CONTROLES
 

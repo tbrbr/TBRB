@@ -19,12 +19,8 @@
 using namespace std;
 using namespace sf;
 
-#define ISMOTADESKTOP 1
 
-#if  0
-const int SCREEN_WIDTH = 1366;
-const int SCREEN_HEIGHT = 768;
-#define deixe_de_coisa 0
+#define deixe_de_coisa 1
 //va se arrombar nao
 #if  deixe_de_coisa
 const int SCREEN_WIDTH = 1280;
@@ -80,6 +76,7 @@ Rooster::ParticleSystem mainPartSystem;
 
 using namespace Rooster;
 
+#include "pause_menu.h"
 #include "Briga.h"
 #include "muitosjogadores.h"
 #include "server_connect.h"
@@ -88,19 +85,9 @@ using namespace Rooster;
 #include "selecao_de_mapa_falida.h"
 
 
+
 int main() {
 
-<<<<<<< HEAD
-	/*cout << IpAddress::getLocalAddress();
-=======
-	/*
-	cout << IpAddress::getLocalAddress();
->>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
->>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
-	cout << "Server?";
-	cin >> ishost;
-	*/
-	//mota va tomar no seu cu por favor.
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -110,20 +97,12 @@ int main() {
 		}
 	}
 
-	LANG.startAllTexts(lang);*/
+	LANG.startAllTexts(lang);
 
 
 
-<<<<<<< HEAD
-	int option = INTRO;
-	//option = BOTAPRAARROCHAR;
-	
-=======
+	int option = SELECTION;
 
-	int option = MENU_PRINCIPAL;
->>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
-	
-	
 #if deixe_de_coisa
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
 #else
@@ -192,12 +171,6 @@ int main() {
 		switch (option)
 		{
 		case UMJOGADORES:
-			if (!galo) {
-				return 1;
-			}
-
-			fundo.setTexture(mapSelector->getSelectedMap());
-
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			break;
 		case ISPATOTIME:
@@ -222,7 +195,7 @@ int main() {
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
-			mapSelector->draw(window, option, true);
+			option = UMJOGADORES;
 			break;
 		case JOIN:
 			option = join(window, background, socket);

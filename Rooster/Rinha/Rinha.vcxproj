@@ -160,6 +160,7 @@
     <ClInclude Include="Patinho\jogoDoPatinho.h" />
     <ClInclude Include="Patinho\Patinho.h" />
     <ClInclude Include="Patinho\RoosterPato.h" />
+    <ClInclude Include="pause_menu.h" />
     <ClInclude Include="Sangue.h" />
     <ClInclude Include="selecao_de_mapa_falida.h" />
     <ClInclude Include="server_connect.h" />

@@ -143,7 +143,6 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 
 	//=================================================================
 	
-		window->setFramerateLimit(1000);
 
 
 	while (window->isOpen()) {

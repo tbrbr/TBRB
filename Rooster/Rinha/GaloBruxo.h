@@ -219,8 +219,46 @@ namespace Rooster {
             estado = DEFENDING;
         }
 
-        void agachadinha() {
-            hspeed = 0;
+        void agachadinha() {          
+            static int angle = 0;
+            angle++;
+
+            projectiles[0].isTrans = true;
+
+            projectiles[0].setScale(1, 1);
+
+            Transform trans;
+
+            trans.scale((float)SCREEN_WIDTH / 3840, (float)SCREEN_HEIGHT / 1440);
+
+            if (facingRight) {
+
+                projectiles[0].setSpriteAngle(angle);
+
+                projectiles[0].setTransfrom(trans);
+
+                projectiles[0].setPosition(
+                    position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
+                    position.y / 2 + (projectiles[0].getLocalSize().y)
+                );
+            }
+            else {
+
+                projectiles[0].setSpriteAngle(-angle);
+
+                projectiles[0].setTransfrom(trans);
+
+                projectiles[0].setPosition(
+                    position.x * 2 - (projectiles[0].getLocalSize().x * 1.25),
+                    position.y / 2 + (projectiles[0].getLocalSize().y)
+
+                );
+
+                projectiles[0].setImpulse(0, 0);
+
+            }
+            projectiles[0].setVisibility(true);
+           
         }
 
        
@@ -593,45 +631,8 @@ namespace Rooster {
             else if (estado == DEFENDING) {
                 
                 if (atacking == NOT_ATTACK) {
-                    static int angle = 0;
-                    angle++;
-
-                    projectiles[0].isTrans = true;
-                    projectiles[0].setScale(1, 1);
-                    Transform trans;
-                    trans.scale((float)SCREEN_WIDTH / 3840, (float)SCREEN_HEIGHT / 1440);
-
-                    if (facingRight) {
-
-                        projectiles[0].setSpriteAngle(angle);
-
-                        projectiles[0].setTransfrom(trans);
-
-                        projectiles[0].setPosition(
-                            position.x * 2 + (projectiles[0].getLocalSize().x * 1.25),
-                            position.y / 2 + (projectiles[0].getLocalSize().y)
-                        );
-
-                    }
-                    else {
-
-                        projectiles[0].setSpriteAngle(-angle);
-
-                        projectiles[0].setTransfrom(trans);
-
-
-                        projectiles[0].setPosition(
-                            position.x * 2 - (projectiles[0].getLocalSize().x * 1.25),
-                            position.y / 2 + (projectiles[0].getLocalSize().y)
-
-                        );
-
-                        projectiles[0].setImpulse(0, 0);
-
-
-
-                    }
-                    projectiles[0].setVisibility(true);
+                   
+                    agachadinha();
 
                     animations[0].update();
                     if (animations[0].playingFrame > 15) {

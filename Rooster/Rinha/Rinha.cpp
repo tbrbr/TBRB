@@ -22,17 +22,17 @@
 using namespace std;
 using namespace sf;
 
-#define ISMOTADESKTOP 1
-
-#if  0
-const int SCREEN_WIDTH = 1366;
-const int SCREEN_HEIGHT = 768;
+#define VA_SE_FODER_WALTER_ARROMBADO_FDP_URUBU_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 1
+//va se arrombar nao
+#if  VA_SE_FODER_WALTER_ARROMBADO_FDP_URUBU_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 #else
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
-#define SHOWDEBUG false
+#define SHOWDEBUG true
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
@@ -80,7 +80,7 @@ using namespace Rooster;
 
 #include "Briga.h"
 #include "muitosjogadores.h"
-
+#include "server_connect.h"
 #include "cardapio.h"
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
@@ -90,6 +90,7 @@ int main() {
 
 	/*
 	cout << IpAddress::getLocalAddress();
+>>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
 	cout << "Server?";
 	cin >> ishost;
 	*/
@@ -107,12 +108,15 @@ int main() {
 
 
 
-	int option = MENU_PRINCIPAL;
-	option = BOTAPRAARROCHAR;
+
+	int option = MULTI_MODE;
 	
 	
-	
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Fullscreen);
+#if 1
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
+#else
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+#endif
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
@@ -140,11 +144,8 @@ int main() {
 	botaSt = { 80, 13, 10, 12, 4   , 20 };
 
 
-	Galo* galo = new Peste(sniperSt, Rooster::state::STOPPED, false);
-	Galo* galo2 = new Sniper(sniperSt, Rooster::state::STOPPED, true);
-
-
-	println("Carregarou");
+	Galo* galo = NULL;
+	Galo* galo2 = NULL;
 
 
 	Pato *miniGame1 = new Pato((*window));
@@ -154,13 +155,23 @@ int main() {
 	fundo.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
+
+
 	MapSelector* mapSelector = new MapSelector();
+	Texture background_t;
+	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	background.setPosition(0, 0);
+	background_t.loadFromFile("sprites/background_menu.png");
+	background.setTexture(&background_t);
 
 
 	fundo.setTexture(mapSelector->getTexture());
 
 	window->setMouseCursorVisible(true);
 	window->setMouseCursorGrabbed(false);
+
+	TcpSocket* socket = new TcpSocket();
+	TcpListener* listener = new TcpListener();
 
 	while (window->isOpen())
 	{
@@ -174,12 +185,7 @@ int main() {
 
 			fundo.setTexture(mapSelector->getSelectedMap());
 
-			println("singleplay");
-
 			singlePlayer(window,*galo,*galo2,option,fundo);
-			break;
-		case MENU_PRINCIPAL:
-			option = MenuPrincipal(window);
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
@@ -198,11 +204,44 @@ int main() {
 			if (!galo) {
 				return 1;
 			}
-			multiPlayer(window, *galo, *galo2, option, fundo);
+		
+			multiPlayer(window, *galo, *galo2, option, fundo, socket);
+			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			mapSelector->draw(window, option, true);
 			break;
+		case JOIN:
+			option = join(window, background, socket);
+			break;
+
+		case CREATE:
+			option = create(window, background, socket, listener);
+			break;
+
+		case MULTI: 
+			option = muitoJogadores(window, background);
+			break;
+		case MULTI_MODE:
+			option = multoJogadoresMode(window, background);
+			break;
+
+		case MENU_PRINCIPAL:
+			option = MenuPrincipal(window, background);
+			break;
+
+		case GAMEMODE:
+			option = selecionarModo(window, background);
+			break;
+		case CONFIG:
+			option = configScreen(window, background);
+			break;
+
+		case MINIGAME:
+			option = minigame(window, background);
+			break;
+		case MULTI_SELECT:
+			option = selector->show(window, &galo, &galo2, socket);
 		default:
 			break;
 		}

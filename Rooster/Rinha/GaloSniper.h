@@ -36,8 +36,8 @@ namespace Rooster {
 
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 			
-			this->hiKick = new Ataques(0, 30, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(1000),"sounds\\fist-punch-or-kick-7171.ogg");
-			this->louKick = new Ataques(1,30, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(1000),"sounds\\punch-2-123106.ogg");
+			this->hiKick = new Ataques(0, 25, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(1000),"sounds\\fist-punch-or-kick-7171.ogg");
+			this->louKick = new Ataques(1,20, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(1000),"sounds\\punch-2-123106.ogg");
 			this->ultimateShot = new Ataques(2,10, HitBox{ Vector2f(0, 0), 0 }, 50, 20, 0, milliseconds(2000),"sounds\\awp.ogg");
 
 
@@ -451,7 +451,6 @@ namespace Rooster {
 					cairAnim();
 				}
 
-
 				
 				if (estado == RUNNING) {
 					runAnim();
@@ -462,9 +461,9 @@ namespace Rooster {
 					if (animations[0].playingFrame > 15) {
 						animations[0].playingFrame = 15;
 						isDefending = true;
-						defense.center.x = model.at(CABECA)->drawPos.x;
-						defense.center.y = model.at(CABECA)->drawPos.y;
-						defense.radius = model.at(ASA_FRENTE)->sprite.getGlobalBounds().width/2;
+						defense.center.x = model.at("Sniper")->drawPos.x;
+						defense.center.y = model.at("Sniper")->drawPos.y;
+						defense.radius = model.at("Sniper")->sprite.getGlobalBounds().height / 2;
 					}
 					else {
 						isDefending = false;
@@ -496,7 +495,7 @@ namespace Rooster {
 				projectiles[0].update();
 
 				ultimateShot->hitbox.center = projectiles[0].getPosition();
-				ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
+				ultimateShot->hitbox.radius = projectiles[0].getSize().y/2;
 			}
 		}
 

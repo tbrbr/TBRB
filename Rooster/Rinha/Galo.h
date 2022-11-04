@@ -273,7 +273,8 @@ namespace Rooster {
      
         std::vector<struct Animation> animations;
 
-        
+        Texture star;
+        Sprite estrelinha;
 
     public:
 
@@ -344,8 +345,9 @@ namespace Rooster {
             this->vspeedLimit = 10;
             this->hAcc = 0.5;
 
-            
-            
+            star.loadFromFile("sprites\\estrelinhas.png");
+            estrelinha.setTexture(star);
+            estrelinha.setScale((float)SCREEN_WIDTH / 7680, (float)SCREEN_HEIGHT / 4320);
 
             this->position = Vector2f(0, 0);
             this->isp1 = isp1;
@@ -453,6 +455,7 @@ namespace Rooster {
            
             float frames = ultimateShot->init2.getElapsedTime().asMilliseconds();
             float maxFrames = ultimateShot->timeLapse2.asMilliseconds();
+
             if (frames > maxFrames) {
                 ultimateShot->getHitted = false;
             }
@@ -468,22 +471,12 @@ namespace Rooster {
             
             if (perc < 0.4) {
                 
-                // Tava na busca de entender pq o tiro do sniper n funciona como player 2
-                // Permite?
+               
                 if(((int)frames)%3 == 0) {
                     g2->facingRight = !g2->facingRight;
                 }
 
-                // Permite?
-                // Na verdade eu n sei o que to fazendo perdao
-                /*
-                int add = 7 * sin(toRadiAnus(frames * 2));
-                g2->model.at("Head")->angle += add;
-                g2->model.at("FrontArm")->angle += add;
-                g2->model.at("BackArm")->angle += add;
-                */
-
-
+             
                 g2->position.x += facingRight?
                     ((position.x - g2->position.x + 200) * frames * 2)/maxFrames:
                     ((position.x - g2->position.x - 200) * frames * 2)/maxFrames;
@@ -491,21 +484,19 @@ namespace Rooster {
                 
             }
             else if (perc < 0.7) {
-                drawEstrelinhas(af,g2->position);
-                //int add = 20*(0.7-perc)*sin(toRadiAnus(frames*2));
+                g2->drawEstrelinhas(af);
+                
                 int add = 45;
-                g2->model.at("Head")->angle += add;
 
-                g2->model.at("FrontArm")->angle += add;
-                g2->model.at("BackArm")->angle += add;
+                g2->model.at("Head")->xScl *= -1;
+                
                 
                
             }
             else {
-                g2->model.at("Head")->angle = 0;
-                g2->model.at("FrontArm")->angle = 0;
-                g2->model.at("BackArm")->angle = 0;
-
+                if (g2->model.at("Head")->xScl < 0) {
+                    g2->model.at("Head")->xScl *= -1;
+                }
             }
             
          
@@ -748,6 +739,23 @@ namespace Rooster {
             model.update();
 
             estadoUpdate = false;
+        }
+
+        void drawEstrelinhas(RenderWindow* window) {
+
+            
+            
+            
+            
+            if (frames % 5 == 0) {
+                estrelinha.setScale(estrelinha.getScale().x * -1, estrelinha.getScale().y);
+            }
+           if(estrelinha.getScale().x > 0)
+               estrelinha.setPosition(position.x - model.bounds.width/2, position.y - model.bounds.height * 2);
+           else
+               estrelinha.setPosition(position.x + model.bounds.width/2, position.y - model.bounds.height * 2);
+            window->draw(estrelinha);
+
         }
     };
 

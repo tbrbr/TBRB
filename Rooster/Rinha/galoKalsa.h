@@ -25,17 +25,17 @@ namespace Rooster {
 
     
             this->hiKick = new Ataques(
-                3,30, HitBox{ Vector2f(0, 0), 0 },
+                3,25, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(1200), "sounds\\fist-punch-or-kick-7171.ogg"
             );
             this->louKick = new Ataques(
-                4,30, HitBox{ Vector2f(0, 0), 0 },
+                4,20, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, PI / 4, milliseconds(1000), "sounds\\rooster-crowing-80322.ogg"
             );
 
             this->ultimateShot = new Ataques(
-                5 ,160, HitBox{ Vector2f(0, 0),0},
-                10, 3, 0, milliseconds(1500),
+                5 ,90, HitBox{ Vector2f(0, 0),0},
+                5, 3, 0, milliseconds(1500),
                 "sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
             );
 
@@ -70,7 +70,7 @@ namespace Rooster {
             model.loadModel("models/kalsaModel.txt");
             model.autoSetBounds(model.at("Body"), model.at("BackLeg"), model.at("Head"));
 
-            println("Kalsa Carregou");
+
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
@@ -90,11 +90,6 @@ namespace Rooster {
             agacharAnim.playingSpeed = 1;
             agacharAnim.connectLoop = false;
 
-
-            println(model.boneMap.at("FrontEyebrow"));
-
-            println(model.boneMap.at("BackEyebrow"));
-
             agacharAnim.removeAnimatePart(model.boneMap.at("FrontEyebrow"));
             agacharAnim.removeAnimatePart(model.boneMap.at("BackEyebrow"));
             agacharAnim.removeAnimatePart(model.boneMap.at("Biko"));
@@ -105,10 +100,6 @@ namespace Rooster {
         }
 
 
-        void weatherAnim(int frames) {
-            model.at(CORPO)->angle += 0;
-            model.at(RABO)->angle = sin(frames / 200.f) * 20;
-        }
         void jumpAnim() {
 
 
@@ -197,19 +188,20 @@ namespace Rooster {
                 atacking = NOT_ATTACK;
                 
             }
-           
-
-            float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
-
           
+            float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
+        
             int angFix = -1;
 
             if (!ultimateShot->getHitted) {
                 if (percentage < 1.f / 3.f) {
 
                     float thisPercentage = percentage * 3;
-                    model.at("FrontEyebrow")->offset.y += 0.5;
-                    model.at("BackEyebrow")->offset.y += 0.5;
+                    if (model.at("FrontEyebrow")->offset.y < 6) {
+                        model.at("FrontEyebrow")->offset.y += 0.5;
+                        model.at("BackEyebrow")->offset.y += 0.5;
+                    }
+                   
 
                     model.at("Head")->angle = -15 * sin(thisPercentage * PI / 2);
                     model.at("FrontArm")->angle = -45 * sin(thisPercentage * PI / 2);
@@ -226,12 +218,23 @@ namespace Rooster {
 
                     projectiles[0].setVisibility(true);
 
-
-                    projectiles[0].setPosition(
-                        Vector2f(model.at("BackArm")->drawPos.x + projectiles[0].getSize().x/4,
-                            (model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4)
-                        )
-                    );
+                    if (facingRight) {
+                        projectiles[0].setPosition(
+                            Vector2f(
+                                model.at("BackArm")->drawPos.x + model.at("BackArm")->sprite.getGlobalBounds().width / 2,
+                                model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
+                            )
+                        );
+                    }
+                    else {
+                        projectiles[0].setPosition(
+                            Vector2f(
+                                model.at("BackArm")->drawPos.x - model.at("BackArm")->sprite.getGlobalBounds().width / 2,
+                                model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
+                            )
+                        );
+                    }
+                    
 
                     if (facingRight) {
                         projectiles[0].setScale(Vector2f(0.5 * thisPercentage, 0.5));
@@ -266,10 +269,11 @@ namespace Rooster {
                     model.at("FrontArm")->angle = -20;
                     model.at("BackArm")->angle = 120;
 
+
                     if (facingRight) {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x + (projectiles[0].getSize().x / 2.5 * thisPercentage),
+                                model.at("BackArm")->drawPos.x + model.at("BackArm")->sprite.getGlobalBounds().width / 2,
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -277,7 +281,7 @@ namespace Rooster {
                     else {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x - (projectiles[0].getSize().x / 2.5 * thisPercentage),
+                                model.at("BackArm")->drawPos.x - model.at("BackArm")->sprite.getGlobalBounds().width / 2,
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -309,10 +313,11 @@ namespace Rooster {
                     model.at("BackEyebrow")->offset.y *= 0.9;
                     model.at("Head")->angle *= 0.9;
 
+
                     if (facingRight) {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x - (projectiles[0].getSize().y * thisPercentage),
+                                model.at("BackArm")->drawPos.x + model.at("BackArm")->sprite.getGlobalBounds().width / 2,
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -320,7 +325,7 @@ namespace Rooster {
                     else {
                         projectiles[0].setPosition(
                             Vector2f(
-                                model.at("BackArm")->drawPos.x + (projectiles[0].getSize().y * thisPercentage),
+                                model.at("BackArm")->drawPos.x - model.at("BackArm")->sprite.getGlobalBounds().width / 2,
                                 model.at("BackArm")->drawPos.y - projectiles[0].getSize().y / 4
                             )
                         );
@@ -476,6 +481,7 @@ namespace Rooster {
 
             float percentage = (float)t.asMilliseconds() / (louKick->timeLapse.asMilliseconds());
 
+            static bool go = true;
 
             if (percentage < 1.f / 3.f) {
 
@@ -508,11 +514,15 @@ namespace Rooster {
                 louKick->hitbox.radius = model.at("Biko")->sprite.getGlobalBounds().width / 2;
                 louKick->isAtacking = true;
 
-                
+                if (go) {
+                    louKick->playSound();
+                    go = false;
+                }
                
             }
             else if (percentage < 2.9f / 3.f) {
 
+                go = true;
                 model.at("FrontArm")->angle *= 0.9;
                 model.at("BackArm")->angle *= 0.9;
 
@@ -564,6 +574,7 @@ namespace Rooster {
 
             float percentage = (float)t.asMilliseconds() / (hiKick->timeLapse.asMilliseconds());
 
+            static bool go;
             if (percentage < 0.5 / 3.f) {
 
                 float thisPercentage = percentage * 6;
@@ -597,10 +608,13 @@ namespace Rooster {
                 hiKick->hitbox.center = model.at("BackLeg")->drawPos;
                 hiKick->hitbox.radius = model.at("BackLeg")->sprite.getGlobalBounds().width / 2;
                 hiKick->isAtacking = true;
-
+                if (go) {
+                    hiKick->playSound();
+                    go = false;
+                }
             }
             else if (percentage < 2.9f / 3.f) {
-
+                go = true;
                 model.at("Body")->angle *= 0.9;
                 model.at("BackLeg")->angle *= 0.9;
                 model.at("BackLeg")->offset.x *= 0.9;
@@ -678,11 +692,8 @@ namespace Rooster {
             }
             
             projectiles[0].update();
-
-
         }
-        
-        
+             
     };
 
 

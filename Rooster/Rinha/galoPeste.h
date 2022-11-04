@@ -550,7 +550,7 @@ namespace Rooster {
             ultimateShot->hitbox.center = projectiles[0].getPosition();
             ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
 
-            
+
             if (projectiles[0].getVisibility()) {
 
                 int i = (frames % 30) / 10;

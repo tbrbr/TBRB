@@ -205,10 +205,7 @@
 			}
 						
 			for (int i = 0; i < galo.hurtBox.size(); i++) {
-
-				
-				
-				
+								
 				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
 					if (galo.isDefending) {
 						if (galo2.hiKick->CheckCollision(galo.defense)) {
@@ -229,50 +226,102 @@
 					}
 					else
 						galo.apanhar(*galo2.louKick, galo2.facingRight);
-
 				}
+
 				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
 
 					if (galo2.ultimateShot->id == 5) {
-						if (!galo2.ultimateShot->getHitted) {
+						if (galo.isDefending) {
+							if (galo2.ultimateShot->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+							}
+							else if (!galo2.ultimateShot->getHitted) {
+								galo2.ultimateShot->getHitted = true;
+								galo2.ultimateShot->init2.restart();
+							}
+						}
+						else if (!galo2.ultimateShot->getHitted) {
 							galo2.ultimateShot->getHitted = true;
 							galo2.ultimateShot->init2.restart();
 						}
 					}
 					else {
-						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
-						galo2.ultimateShot->getHitted = true;
-					}
+						if (galo.isDefending) {
+							if (galo2.ultimateShot->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+							}
+							else
+								galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+						}
+						else
+						{
+							galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
+							galo2.ultimateShot->getHitted = true;
+						}
+					}							
 				}
 			}
 
 			for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
 				if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
-					galo2.apanhar(*galo.hiKick, galo.facingRight);
+					if (galo2.isDefending) {
+						if (galo.hiKick->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.hiKick, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.hiKick, galo.facingRight);
+					}
+					else
+						galo2.apanhar(*galo.hiKick, galo.facingRight);
 
 				}
 				if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
-					galo2.apanhar(*galo.louKick, galo.facingRight);
+					if (galo.isDefending) {
+						if (galo.louKick->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.louKick, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.louKick, galo.facingRight);
+					}
+					else
+						galo2.apanhar(*galo.louKick, galo.facingRight);
 				}
-				if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
-					if (galo.ultimateShot->id == 5) {
 
-						if (!galo.ultimateShot->getHitted) {
+				if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
+
+					if (galo.ultimateShot->id == 5) {
+						if (galo2.isDefending) {
+							if (galo.ultimateShot->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							}
+							else if (!galo.ultimateShot->getHitted) {
+								galo.ultimateShot->getHitted = true;
+								galo.ultimateShot->init2.restart();
+							}
+						}
+						else if (!galo.ultimateShot->getHitted) {
 							galo.ultimateShot->getHitted = true;
 							galo.ultimateShot->init2.restart();
 						}
 					}
 					else {
-						
-						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
-						galo.ultimateShot->getHitted = true;
+						if (galo2.isDefending) {
+							if (galo.ultimateShot->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							}
+							else
+								galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+						}
+						else
+						{
+							galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+							galo2.ultimateShot->getHitted = true;
+						}
 					}
-
-
 				}
-
 			}
+
 
 			if (galo.ultimateShot->getHitted && galo.ultimateShot->id==5) {
 				galo.apanharByKalsa(&galo2, window);

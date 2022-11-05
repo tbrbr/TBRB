@@ -28,14 +28,7 @@ ConvexShape rectToConvexShape(float x, float y, float wid, float hei) {
 }
 
 ConvexShape rectToConvexShape(float wid, float hei) {
-	ConvexShape newShape(4);
-
-	newShape.setPoint(0, Vector2f(-wid/2, -hei/2));
-	newShape.setPoint(1, Vector2f(wid/2, -hei/2));
-	newShape.setPoint(2, Vector2f(wid/2, hei/2));
-	newShape.setPoint(3, Vector2f(-wid/2, hei/2));
-
-	return newShape;
+	return rectToConvexShape(-wid/2, -hei/2, wid, hei);
 }
 
 
@@ -217,7 +210,16 @@ public:
 				partColor = Color(100, 100, 100, 180);
 			}
 
-			coisa.push_back( new Rooster::AreaEffect(FloatRect(pos.x + baseAdd * xScl, pos.y + (altura + 20) * yScl, baseQuart * xScl, 20 * yScl), partColor));
+
+			FloatRect area(pos.x + baseAdd * xScl, pos.y + (altura + 20) * yScl, baseQuart * xScl, 20 * yScl);
+
+			Rooster::AreaEffect* areaEffect = new Rooster::AreaEffect(area, partColor);
+			areaEffect->tilesPreset();
+			areaEffect->color = partColor;
+		
+
+
+			coisa.push_back( areaEffect);
 
 		}
 

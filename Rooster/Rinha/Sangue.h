@@ -2,6 +2,41 @@
 namespace Rooster {
 
 
+	// Credits to Tenry on https://en.sfml-dev.org/forums/index.php?topic=7313.0
+	// hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f
+	sf::Color hsv(int hue, float sat, float val)
+	{
+		hue %= 360;
+		while (hue < 0) hue += 360;
+
+		if (sat < 0.f) sat = 0.f;
+		if (sat > 1.f) sat = 1.f;
+
+		if (val < 0.f) val = 0.f;
+		if (val > 1.f) val = 1.f;
+
+		int h = hue / 60;
+		float f = float(hue) / 60 - h;
+		float p = val * (1.f - sat);
+		float q = val * (1.f - sat * f);
+		float t = val * (1.f - sat * (1 - f));
+
+		switch (h)
+		{
+		default:
+		case 0:
+		case 6: return sf::Color(val * 255, t * 255, p * 255);
+		case 1: return sf::Color(q * 255, val * 255, p * 255);
+		case 2: return sf::Color(p * 255, val * 255, t * 255);
+		case 3: return sf::Color(p * 255, q * 255, val * 255);
+		case 4: return sf::Color(t * 255, p * 255, val * 255);
+		case 5: return sf::Color(val * 255, p * 255, q * 255);
+		}
+	}
+
+
+
+
 	class Particle {
 
 
@@ -16,6 +51,7 @@ namespace Rooster {
 
 		float hSpeed = 0;
 		float vSpeed = 0;
+
 		float vAcc = 0;
 		float hAcc = 0;
 
@@ -38,6 +74,12 @@ namespace Rooster {
 
 		float alpha = 1;
 
+		bool isHSV = false;
+		float hue = 0;
+		float sat = 0;
+		float light = 0;
+
+
 		bool fadeInAlpha = false;
 		bool fadeOutAlpha = true;
 
@@ -48,14 +90,14 @@ namespace Rooster {
 
 		bool hasSprite = false;
 
+		float scl = 1;
 
-		float sprScl;
 		Vector2f sprCenter;
 		Sprite sprite;
 
+		float radius = 10;
 
 		Color color;
-		float radius = 10;
 
 		CircleShape point;
 
@@ -70,6 +112,7 @@ namespace Rooster {
 			active = true;
 
 		}
+
 		Particle() {
 			point.setRadius(10);
 			color = Color::Red;
@@ -77,31 +120,17 @@ namespace Rooster {
 			active = true;
 
 		}
-		void setPosition(Vector2f position) {
-			this->position = position;
-		}
-		void setPosition(float x, float y) {
-			this->position.x = x;
-			this->position.y = y;
-		}
-		Vector2f getPosition() {
-			return position;
-		}
-		void setImpulse(float hSpeed, float vSpeed) {
-			this->hSpeed = hSpeed;
-			this->vSpeed = vSpeed;
-		}
-
-		void addImpulse(float hSpeed, float vSpeed) {
-			this->hSpeed += hSpeed;
-			this->vSpeed += vSpeed;
-		}
+		
 
 
 
 		void update() {
 
 			if (active) {
+
+				if (isHSV) {
+					color = hsv(hue, sat, light);
+				}
 
 				if (!fixed) {
 					hSpeed += hAcc;
@@ -143,19 +172,23 @@ namespace Rooster {
 					alpha = 1;
 				}
 
+
+
+
+
 				Color col = color;
 				col.a = 255 * alpha;
 
 				if (hasSprite) {
 					sprite.setColor(col);
 					sprite.setPosition(position.x, position.y);
-					sprite.setOrigin(sprCenter * sprScl);
+					sprite.setOrigin(sprCenter * scl);
 					sprite.setRotation(ang);
-					sprite.setScale(sprScl, sprScl);
+					sprite.setScale(scl, scl);
 				}
 				else {
 
-					float rad = radius *( 1+(depthChange * (1 - (depth / depthStart))));
+					float rad = radius*scl *( 1+(depthChange * (1 - (depth / depthStart))));
 					
 					point.setFillColor(col);
 					point.setPosition(position.x, position.y);
@@ -210,38 +243,232 @@ namespace Rooster {
 	protected:
 		std::vector <Particle> gotas;
 
+	public:
+
+		// Creation vars
 		Vector2f position;
-		Vector2f velocity;
 		Vector2f gravity;
+
+		float angleMin = 0;
+		float angleMax = 0;
+
+		float hspeedMin = 0;
+		float hspeedMax = 0;
+
+		float vspeedMin = 0;
+		float vspeedMax = 0;
+
+		float lifeMin = 10;
+		float lifeMax = 10;
+
+
+		
+		float sclMin = 1;
+		float sclMax = 1;
+
+		float friction = 1;
+
+		float depthMin = 0;
+		float depthMax = 0;
+
+		float depthSpdMin = 0;
+		float depthSpdMax = 0;
+
+
+		bool isHSV = false;
+
+		float hueMin = 0;
+		float hueMax = 255;
+		
+		float lightMin = 0;
+		float lightMax = 1;
+
+
+		Color color;
+
+
 
 		bool fadeOutAlpha = true;
 		bool fadeInAlpha = false;
 
-	public:
-
 		bool active = true;
+
 		int life = 600;
+
+
+
 		bool mortal = true;
+
 		float depth = 0;
 
 		~Effect() {
 			gotas.clear();
 		}
 
-		void setPosition(Vector2f position) {
-			this->position = position;
+
+		void copyEffect(Effect e) {
+			gravity = e.gravity;
+
+			angleMin = e.angleMin;
+			angleMax = e.angleMax;
+
+			hspeedMin = e.hspeedMin;
+			hspeedMax = e.hspeedMax;
+
+			vspeedMin = e.vspeedMin;
+			vspeedMax = e.vspeedMax;
+
+			lifeMin = e.lifeMin;
+			lifeMax = e.lifeMax;
+
+
+
+			sclMin = e.sclMin;
+			sclMax = e.sclMax;
+
+			friction = e.friction;
+
+			depthMin = e.depthMin;
+			depthMax = e.depthMax;
+
+			depthSpdMin = e.depthSpdMin;
+			depthSpdMax = e.depthSpdMax;
+
+
+			isHSV = e.isHSV;
+
+			hueMin = e.hueMin;
+			hueMax = e.hueMax;
+
+			lightMin = e.lightMin;
+			lightMax = e.lightMax;
+
+
+			color = e.color;
+
+
+
+			fadeOutAlpha = e.fadeOutAlpha;
+			fadeInAlpha = e.fadeInAlpha;
+
 		}
-		void setPosition(float x, float y) {
-			this->position.x = x;
-			this->position.y = y;
+
+		void sanguePreset() {
+			gravity = Vector2f(0, 0.2);
+
+			angleMin = 0;
+			angleMax = 0;
+
+			hspeedMin = 0;
+			hspeedMax = 0;
+
+			vspeedMin = 0;
+			vspeedMax = 0;
+
+			lifeMin = 100;
+			lifeMax = 250;
+
+
+
+			sclMin = 0.25;
+			sclMax = 2;
+
+			friction = 0.98;
+
+			depthMin = 100;
+			depthMax = 100;
+
+			depthSpdMin = 0;
+			depthSpdMax = 0;
+
+
+			isHSV = false;
+
+			hueMin = 0;
+			hueMax = 0;
+
+			lightMin = 0;
+			lightMax = 0;
+
+
+			color = Color::Red;
+
+
+
+			fadeOutAlpha = true;
+			fadeInAlpha = false;
+
+		}
+
+		void tilesPreset() {
+			sanguePreset();
+
+			sclMax = 1.5;
+			sclMin = 0.25;
+
+			hspeedMin = -3;
+			hspeedMax = 3;
+			vspeedMin = -4;
+			vspeedMax = 2;
 		}
 
 
-		virtual void addParticle(struct Particle p) {
+		void addParticle(struct Particle p) {
 			gotas.push_back(p);
 		}
 
-		virtual void update(){
+		void createBaseParticle() {
+			struct Particle p;
+			p.position = position;
+			p.scl = randFloatRange(sclMin, sclMax);;
+			p.alpha = 1;
+			p.ang = randFloatRange(angleMin, angleMax);
+			p.life = randFloatRange(lifeMin, lifeMax);
+			p.hSpeed = randFloatRange(hspeedMin, hspeedMax);
+			p.vSpeed = randFloatRange(vspeedMin, vspeedMax);
+
+			if (isHSV) {
+				p.hue = randFloatRange(hueMin, hueMax);
+				p.sat = 1;
+				p.light = randFloatRange(lightMin, lightMax);
+				p.isHSV = true;
+			}
+			else {
+				p.color = color;
+				p.isHSV = false;
+			}
+
+			p.vAcc = gravity.y;
+			p.hAcc = gravity.x;
+
+			p.angAcc = 0;
+			p.angSpeed = 0;
+
+			p.depth = randFloatRange(depthMin, depthMax);
+			p.depthSpd = randFloatRange(depthSpdMin, depthSpdMax);
+
+			p.fadeInAlpha = fadeInAlpha;
+			p.fadeOutAlpha = fadeOutAlpha;
+
+			p.mortal = mortal;
+
+			p.active = true;
+
+			gotas.push_back(p);
+		}
+
+		virtual void createParticle() {
+			createBaseParticle();
+		}
+
+
+		void createMultipleParticles(int particleNumber) {
+			for (int i = 0; i < particleNumber; i++) {
+				createParticle();
+			}
+		}
+
+		void update(){
 			for (int i = gotas.size()-1; i > -1; i--) {
 				if (gotas[i].active) {
 					gotas[i].update();
@@ -252,6 +479,7 @@ namespace Rooster {
 				
 			}
 
+			// Morte do efeito
 			if (mortal) {
 				life--;
 				if (life <= 0) {
@@ -273,7 +501,6 @@ namespace Rooster {
 
 	class AreaEffect : public Effect {
 		FloatRect area;
-		Color color;
 
 
 	public:
@@ -281,54 +508,29 @@ namespace Rooster {
 		AreaEffect(FloatRect area, Color cor) {
 			this->area = area;
 
-			color = cor;
+			this->color = cor;
 		}
 
-		void createParticle(){
-
-			int diameter = randFloatRange(1, 3);
-
-			life = 250;
-
-			gravity.x = 0;
-			gravity.y = Gravity / 40;
-
-			Particle p(color);
-
+		void createParticle(Particle p) {
 
 			float pX = randIntRange(area.left, area.left + area.width);
 			float pY = randIntRange(area.top, area.top + area.height);
 
-			float pAngle = randFloatRange(0, 360);
-			float pSpd = randFloatRange(2, 6);
-
-			float pHspd = pSpd*cos(toRadiAnus(pAngle));
-			float pVspd = -pSpd*sin(toRadiAnus(pAngle));
-
-			p.setPosition(pX, pY);
-
-			p.vAcc = gravity.y;
-			p.hAcc = gravity.x;
-
-			p.fadeOutAlpha = false;
-			p.fadeInAlpha = true;
-
-			p.mortal = true;
-
-			p.life = randIntRange(100, 250);
-			p.maxLife = p.life;
-
-			p.maxHspd = 40;
-			p.maxVspd = 40;
-
-			p.radius = randFloatRange(1, 10);
-
-			
-
-			p.setImpulse(pHspd, pVspd);
-
+			p.position = Vector2f(pX, pY);
 
 			gotas.push_back(p);
+		}
+
+		void createParticle() override{
+
+			createBaseParticle();
+
+			Particle& p = gotas[gotas.size() - 1];
+
+			float pX = randIntRange(area.left, area.left + area.width);
+			float pY = randIntRange(area.top, area.top + area.height);
+
+			p.position = Vector2f(pX, pY);
 		}
 
 
@@ -341,67 +543,107 @@ namespace Rooster {
 
 
 	class ExplosionEffect : public Effect {
-		float radius;
-		Vector2f center;
-		Vector2f impact;
+
+		float impactAngle;
+		float impactForce;
+
+		float radialForce;
+
+		bool radialHasAngle;
+		float radialAngle;
+		float radialAngleVariation;
+
 
 	public:
 
 
-		ExplosionEffect(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
-			int diameter = radius * 2;
+		ExplosionEffect(Vector2f explosionPosition, float radialForce, float radialAngle, float radialAngleVariation, float impactForce, float impactAngle) {
+			
+			position = explosionPosition;
+			
+			this->impactForce = impactForce;
+			this->impactAngle = impactAngle;
 
-			life = 100;
+			this->radialForce = radialForce;
 
-			gravity.x = 0;
-			gravity.y = Gravity / 80;
+			radialHasAngle = true;
+			this->radialAngle = radialAngle;
+			this->radialAngleVariation = radialAngleVariation;
+		}
 
-			for (int i = 0; i < 500; i++) {
+		ExplosionEffect(Vector2f explosionPosition, float radialForce, float impactForce, float impactAngle) {
 
+			position = explosionPosition;
 
-				Particle p(Color::Red);
+			this->impactForce = impactForce;
+			this->impactAngle = impactAngle;
 
-				p.setPosition(center);
+			this->radialForce = radialForce;
 
-				p.vAcc = gravity.y;
-				p.hAcc = gravity.x;
+			radialHasAngle = false;
+		}
 
-				p.fadeOutAlpha = false;
-				p.fadeInAlpha = true;
+		ExplosionEffect(Vector2f explosionPosition, float radialForce) {
 
-				p.mortal = true;
+			position = explosionPosition;
 
-				p.life = randIntRange(50, 150);
-				p.maxLife = p.life;
+			this->radialForce = radialForce;
 
-				p.maxHspd = 40;
-				p.maxVspd = 40;
+			radialHasAngle = false;
+		}
 
-				p.radius = randIntRange(1, 10);
-
-				float ang = toRadiAnus(randFloatRangeNormal(angle - 180, angle + 180, angleFocus));
-
-
-				float impact = randFloat(explosionForce);
-
-				p.setImpulse(
-					(cos(ang) * impact) + impactForce.x,
-					(sin(ang) * impact) + impactForce.y
-				);
+		ExplosionEffect() {
+			radialForce = 10;
+			impactForce = 0;
+			impactAngle = 0;
+			radialHasAngle = false;
+		}
 
 
-				gotas.push_back(p);
+
+
+		void createParticle() override {
+
+			createBaseParticle();
+
+			Particle& p = gotas[gotas.size() - 1];
+
+
+			p.position = position;
+
+			p.fadeOutAlpha = false;
+			p.fadeInAlpha = true;
+
+			p.mortal = true;
+
+			p.maxHspd = 40;
+			p.maxVspd = 40;
+
+			p.radius = randIntRange(1, 10);
+
+
+			// Explosion Stuff
+
+			float ang = toRadiAnus(randFloat(360));
+			if (radialHasAngle) {
+				ang = toRadiAnus(randFloatRangeNormal(radialAngle-radialAngleVariation/2, radialAngle + radialAngleVariation / 2, radialAngleVariation / 4));
 			}
 
-		}
+			float impAng = toRadiAnus(impactAngle);
+			float impactHspd = cos(impAng) * impactForce;
+			float impactVspd = sin(impAng) * impactForce;
 
 
-		void setRadius(float radius) {
-			this->radius = radius;
+			float radForce = randFloat(radialForce);
+
+			p.hSpeed = (cos(ang) * radForce) + impactHspd;
+			p.vSpeed = (sin(ang) * radForce) + impactVspd;
 		}
+
 	};
 
 
+	/*
 	class Explosion3DEffect : public Effect {
 		float radius;
 		Vector2f center;
@@ -469,6 +711,7 @@ namespace Rooster {
 
 
 
+	*/
 
 
 
@@ -482,9 +725,9 @@ namespace Rooster {
 
 	class ParticleSystem {
 
+	std::vector<Effect*> effects;
 
 	public:
-		std::vector<Effect*> effects;
 
 		ParticleSystem() {
 

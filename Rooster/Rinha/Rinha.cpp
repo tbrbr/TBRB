@@ -19,7 +19,7 @@
 using namespace std;
 using namespace sf;
 
-#define deixe_de_coisa 0
+#define deixe_de_coisa 1
 //va se arrombar nao
 #if  deixe_de_coisa
 const int SCREEN_WIDTH = 1280;
@@ -29,7 +29,7 @@ const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
-#define SHOWDEBUG false
+#define SHOWDEBUG true
 
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"

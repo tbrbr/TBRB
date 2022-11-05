@@ -95,7 +95,7 @@
 				}
 
 			}
-			if (false) {
+			if (true) {
 				musicas[index].stop();
 				galo.fatality(window, &galo2, fundo);
 

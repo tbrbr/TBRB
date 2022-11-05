@@ -158,13 +158,9 @@ namespace Rooster {
             model.at("FrontArm")->angle = 0;
             model.at("BackArm")->angle = 0;
 
-            
-
             model.at("Body")->offset.y = 0;
             model.at("BackLeg")->offset.y = 0;
             model.at("FrontLeg")->offset.y = 0;
-
-
 
         }
 

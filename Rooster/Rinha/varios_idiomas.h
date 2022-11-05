@@ -26,7 +26,7 @@ private:
 			return "lang/pt-br.txt";
 		}
 	}
-
+	 
 public:
 
 	~LANGUAGE() {

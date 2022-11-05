@@ -745,12 +745,22 @@ namespace Rooster {
             estadoUpdate = false;
         }
 
-        void drawEstrelinhas(RenderWindow* window) {
+        virtual void updateWithoutPhysics() {
 
-            
-            
-            
-            
+            model.pos.x = position.x;
+            model.pos.y = position.y;
+
+            float resizeScl = (float)SCREEN_WIDTH / 5120;
+
+            model.xScl = 4 * (facingRight ? -1 : 1) * resizeScl;
+            model.yScl = 4 * resizeScl;
+            model.update();
+
+            estadoUpdate = false;
+        }
+
+        void drawEstrelinhas(RenderWindow* window) {
+         
             if (frames % 5 == 0) {
                 estrelinha.setScale(estrelinha.getScale().x * -1, estrelinha.getScale().y);
             }
@@ -761,6 +771,36 @@ namespace Rooster {
             window->draw(estrelinha);
 
         }
+
+        void getHitByBruxoFatality() {
+          
+            static int thisFrames = 0;
+            thisFrames++;
+            
+            if(frames < 60)
+                position.y = SCREEN_HEIGHT / 2;
+            else if (frames > 60 && position.y < floorY) {
+                position.y++;
+            }
+
+            for (int i = 0; i < model.allBones.size(); i++) {
+
+                if (i < model.allBones.size() / 2) {
+                    model.at(i)->offset.x += i % 4 - 2;
+                    model.at(i)->offset.y -= 2;
+
+                }
+                else {
+                    model.at(i)->offset.x += i % 4 - 2;
+                    model.at(i)->offset.y += 2;
+
+                }
+            }
+
+
+        }
+
+
     };
 
 }

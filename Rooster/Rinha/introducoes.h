@@ -14,6 +14,8 @@ int introducao(RenderWindow* window) {
 	Sprite logo;
 	Texture classificationT;
 	Sprite classification;
+	Texture contentclasseT;
+	Sprite contentclasse;
 	Texture loadT;
 	Sprite load;
 	RectangleShape fundo;
@@ -117,6 +119,10 @@ int introducao(RenderWindow* window) {
 	classification.setTexture(classificationT);
 	classification.setScale((float)SCREEN_WIDTH / 1920, (float)SCREEN_WIDTH / 1920);
 
+	contentclasseT.loadFromFile("IntroFiles\\conteudo.png");
+	contentclasse.setTexture(contentclasseT);
+	contentclasse.setScale((float)SCREEN_WIDTH / 1920, (float)SCREEN_WIDTH / 1920);
+
 	int sizel = 12;
 	loadT.loadFromFile("IntroFiles\\load.png");
 	load.setTexture(loadT);
@@ -174,15 +180,20 @@ int introducao(RenderWindow* window) {
 		}
 
 
-		if (aviso.getElapsedTime().asMilliseconds() < 3000) {
+		if (aviso.getElapsedTime().asMilliseconds() < 4000) {
 			load.rotate(6.f);
-
-			if (aviso.getElapsedTime().asMilliseconds() > 1000) {
-				int fx = 255 - (255 * (aviso.getElapsedTime().asMilliseconds() - 1000)) / 1000;
+			if (aviso.getElapsedTime().asMilliseconds() > 2000) {
+				int fx = 255 - (255 * (aviso.getElapsedTime().asMilliseconds() - 2000)) / 1000;
 				classification.setColor(Color(fx, fx, fx));
-				load.setColor(Color(fx, fx, fx));
+				if (aviso.getElapsedTime().asMilliseconds() > 3000) {
+					classification.setColor(Color(0, 0, 0));
+					int fx2 = 255 - (255 * (aviso.getElapsedTime().asMilliseconds() - 3000)) / 1000;
+					contentclasse.setColor(Color(fx2, fx2, fx2));
+					load.setColor(Color(fx2, fx2, fx2));
+				}
 			}
 			window->draw(classification);
+			window->draw(contentclasse);
 			window->draw(load);
 		}
 		else if (!isTime) {

@@ -814,7 +814,7 @@ bool pianoTiles(RenderWindow* window) {
 	galoKalsa->facingRight = true;
 
 	Texture fundao;
-	fundao.loadFromFile("sprites/chorao.png");
+	fundao.loadFromFile("sprites/tiringa.png");
 
 	RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	rect.setTexture(&fundao);

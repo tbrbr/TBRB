@@ -949,3 +949,40 @@ public:
 	}
 };
 
+int rematchScreen(RenderWindow * window,Galo& galo1, Galo& galo2,bool whowins) {
+
+	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	
+	Texture texFundo;
+
+	
+
+	while (window->isOpen()) {
+
+		window->clear();
+
+		Event e;
+		
+		while (window->pollEvent(e))
+		{
+			if (e.type == Event::Closed)
+			{
+				window->close();
+			}
+
+			if (e.type == Event::KeyPressed) {
+				if (e.KeyPressed == Keyboard::Escape) {
+					window->close();
+				}
+			}
+		}
+
+
+		
+
+
+		window->display();
+
+	}
+}
+

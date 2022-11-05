@@ -35,11 +35,11 @@ namespace Rooster {
 			this->name = "Sniper";
 
 			bar = new LifeBar(maxHp, isp1, name.c_str());
-			
-			this->hiKick = new Ataques(0, 15, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(500),"sounds\\fist-punch-or-kick-7171.ogg");
-			this->louKick = new Ataques(1,17, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(500),"sounds\\punch-2-123106.ogg");
-			this->ultimateShot = new Ataques(2,10, HitBox{ Vector2f(0, 0), 0 }, 50, 20, 0, milliseconds(1000),"sounds\\awp.ogg");
 
+			this->hiKick = new Ataques(0, 15, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(500), "sounds\\fist-punch-or-kick-7171.ogg");
+			this->louKick = new Ataques(1, 17, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(500), "sounds\\punch-2-123106.ogg");
+			this->ultimateShot = new Ataques(2, 10, HitBox{ Vector2f(0, 0), 0 }, 40, 20, 0, milliseconds(1000), "sounds\\awp.ogg");
+			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
 			const char const* txt = "sprites\\bullet.png";
 
@@ -83,7 +83,7 @@ namespace Rooster {
 			danceAnim.connectLoop = true;
 			animations.push_back(danceAnim);
 
-			
+
 
 			defenseBuffer.loadFromFile("sounds\\block-6839.ogg");
 			defenseSound.setBuffer(defenseBuffer);
@@ -113,11 +113,11 @@ namespace Rooster {
 			model.at(PERNA_ATRAS)->angle = vspeed / 2;
 			model.at(PERNA_ATRAS)->offset.y += vspeed / 10;
 			model.at(PE_ATRAS)->angle += vspeed / 5;
-		
+
 			model.at(BIGODE_FRENTE)->angle += vspeed / 2;
 			model.at(BIGODE_ATRAS)->angle += vspeed / 2;
-			
-			
+
+
 		}
 		void cairAnim() {
 			model.at(PERNA_FRENTE)->offset.y *= 0.25;
@@ -188,6 +188,227 @@ namespace Rooster {
 				atacking = SPECIAL;
 			ultimateShot->init.restart();
 		}
+		void super() override {
+			if (atacking == NOT_ATTACK)
+				atacking = SUPER;
+			superAtack->init.restart();
+		}
+
+		void superAnim() {
+
+			Time t = superAtack->init.getElapsedTime();
+
+			if (t > superAtack->timeLapse) {
+				atacking = NOT_ATTACK;
+			}
+
+			float percentage = (float)t.asMilliseconds() / (superAtack->timeLapse.asMilliseconds());
+
+			if (percentage < 0.25f / 3.f) {
+
+				float thisPercentage = percentage * 3;
+				model.at("Sniper")->angle += 45;
+				model.at("Sniper")->sprite.setColor(Color::Red);
+				model.at(ASA_ATRAS)->angle = -45 * -sin(thisPercentage * PI / 2);
+				model.at(ASA_FRENTE)->angle = -90 * sin(thisPercentage * PI / 2);
+
+			}
+			else if (percentage < 1.f / 3.f) {
+				float thisPercentage = percentage * 3;
+
+				model.at("Sniper")->angle = 0;
+				model.at(ASA_ATRAS)->angle = 0;
+				model.at(ASA_FRENTE)->angle = 0;
+				model.at(CABECA)->angle = -10 + sin(frames) * 10;
+				model.at(PERNA_ATRAS)->offset.y = -10;
+				model.at(PERNA_FRENTE)->offset.y = -10;
+				model.at(PERNA_ATRAS)->angle = -10;
+				model.at(PERNA_FRENTE)->angle = -10;
+				model.at(PE_ATRAS)->angle = 10;
+				model.at(PE_FRENTE)->angle = 10;
+				position.y += 10;
+
+			}
+			else if (percentage < 1.02f / 3.f) {
+				superAtack->playSound();
+			}
+			else if (percentage < 1.3f / 3.f) {
+
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(120, 0);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+				else {
+					projectiles[0].setImpulse(-120, 0);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				superAtack->isAtacking = true;
+			}
+			else if (percentage < 1.6f / 3.f) {
+
+				model.at("Sniper")->angle += 1;
+				model.at(ASA_ATRAS)->angle += 1;
+				model.at(ASA_FRENTE)->angle += 1;
+				model.at(CABECA)->angle += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+
+			}
+			else if (percentage < 1.9f / 3.f) {
+
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(120, 0);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+				else {
+					projectiles[0].setImpulse(-120, 0);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				superAtack->isAtacking = true;
+			}
+			else if (percentage < 2.1f / 3.f) {
+
+				model.at("Sniper")->angle += 1;
+				model.at(ASA_ATRAS)->angle += 1;
+				model.at(ASA_FRENTE)->angle += 1;
+				model.at(CABECA)->angle += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+			else if (percentage < 2.2f / 3.f) {
+
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(120, 0);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+				else {
+					projectiles[0].setImpulse(-120, 0);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				superAtack->isAtacking = true;
+			}
+			else if (percentage < 2.3f / 3.f) {
+
+				model.at("Sniper")->angle += 1;
+				model.at(ASA_ATRAS)->angle += 1;
+				model.at(ASA_FRENTE)->angle += 1;
+				model.at(CABECA)->angle += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+			else if (percentage < 2.4f / 3.f) {
+
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(120, 0);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+				else {
+					projectiles[0].setImpulse(-120, 0);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				superAtack->isAtacking = true;
+			}
+			else if (percentage < 2.5f / 3.f) {
+
+				model.at("Sniper")->angle += 1;
+				model.at(ASA_ATRAS)->angle += 1;
+				model.at(ASA_FRENTE)->angle += 1;
+				model.at(CABECA)->angle += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+			else if (percentage < 2.6f / 3.f) {
+
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(120, 0);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+				else {
+					projectiles[0].setImpulse(-120, 0);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				superAtack->isAtacking = true;
+			}
+			else if (percentage < 2.7f / 3.f) {
+
+				model.at("Sniper")->angle += 1;
+				model.at(ASA_ATRAS)->angle += 1;
+				model.at(ASA_FRENTE)->angle += 1;
+				model.at(CABECA)->angle += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+			else if (percentage < 2.9 / 3.f) {
+				model.at("Sniper")->angle *= 0.9;
+				model.at(ASA_ATRAS)->angle *= 0.9;
+				model.at(ASA_FRENTE)->angle *= 0.9;
+				model.at(BIGODE_FRENTE)->angle *= 0.9;
+				model.at(BIGODE_ATRAS)->angle *= 0.9;
+				model.at(CABECA)->angle *= 0.9;
+			}
+			else {
+				model.at("Sniper")->angle = 0;
+				model.at(ASA_ATRAS)->angle = 0;
+				model.at(ASA_FRENTE)->angle = 0;
+				model.at(CABECA)->angle = 0;
+			}
+		}
 
 		void especialAnim() {
 			Time t = ultimateShot->init.getElapsedTime();
@@ -198,9 +419,7 @@ namespace Rooster {
 
 			float percentage = (float)t.asMilliseconds() / (ultimateShot->timeLapse.asMilliseconds());
 
-			int angFix = (facingRight) ? 1 : -1;
-			angFix = -1;
-
+			int angFix = -1;
 
 			if (percentage < 0.5f / 3.f) {
 
@@ -232,14 +451,14 @@ namespace Rooster {
 			}
 			else if (percentage < 2.2f / 3.f) {
 
-				
+
 
 				projectiles[0].setVisibility(true);
 				projectiles[0].setScale(Vector2f(1, 1));
 
 				projectiles[0].setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						    (model.at("Sniper")->drawPos.y - projectiles[0].getSize().y/2)
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
 					)
 				);
 
@@ -253,7 +472,7 @@ namespace Rooster {
 					projectiles[0].setScale(Vector2f(-0.1, 0.1));
 				}
 
-				
+
 				ultimateShot->isAtacking = true;
 			}
 			else if (percentage < 2.5f / 3.f) {
@@ -434,13 +653,13 @@ namespace Rooster {
 
 		}
 
-		 void defended(Galo& galo2, Ataques* atk, bool facingRight) override {
+		void defended(Galo& galo2, Ataques* atk, bool facingRight) override {
 			Ataques* ataque = new Ataques(*atk);
 			ataque->Damage *= 0.25;
 			ataque->KnockBack *= 0.25;
 			apanhar(*ataque, facingRight);
 			defenseSound.play();
-		 }
+		}
 
 		void updateAnimations() override {
 
@@ -459,7 +678,7 @@ namespace Rooster {
 
 			if (!stunned) {
 
-				
+
 				if (air) {
 					jumpAnim();
 				}
@@ -467,13 +686,13 @@ namespace Rooster {
 					cairAnim();
 				}
 
-				
+
 				if (estado == RUNNING) {
 					runAnim();
 					isDefending = false;
 				}
 				else if (estado == DEFENDING) {
-					
+
 					animations[0].update();
 					if (animations[0].playingFrame > 15) {
 						animations[0].playingFrame = 15;
@@ -485,16 +704,16 @@ namespace Rooster {
 					else {
 						isDefending = false;
 					}
-					
+
 					model.updateWithAnimation(animations[0]);
-					
+
 				}
 				else if (estado == STOPPED) {
 					isDefending = false;
 					runReset();
 				}
-				
-					
+
+
 				if (atacking == HIGH_KICK) {
 					highKickAnim();
 					isDefending = false;
@@ -507,7 +726,11 @@ namespace Rooster {
 					especialAnim();
 					isDefending = false;
 				}
-				else if (estado == DANCING) {
+				else if (atacking == SPECIAL) {
+					superAnim();
+					isDefending = false;
+				}
+				else if (estado == DANCING) { // nao tanko kkkkkkkkkkkkk
 					animations[1].update();
 					model.updateWithAnimation(animations[1]);
 				}
@@ -515,7 +738,11 @@ namespace Rooster {
 				projectiles[0].update();
 
 				ultimateShot->hitbox.center = projectiles[0].getPosition();
-				ultimateShot->hitbox.radius = projectiles[0].getSize().y/2;
+				ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
+
+				superAtack->hitbox.center = projectiles[0].getPosition();
+				superAtack->hitbox.radius = projectiles[0].getSize().y / 2;
+
 			}
 		}
 

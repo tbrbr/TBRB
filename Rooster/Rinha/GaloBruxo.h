@@ -288,6 +288,14 @@ namespace Rooster {
 			}
 
 		}
+		void super() override {
+			if (atacking == NOT_ATTACK) {
+				atacking = SUPER;
+				ultimateShot->init.restart();
+			}
+
+		}
+
 		void especialAnim() {
 			Time t = ultimateShot->init.getElapsedTime();
 
@@ -781,8 +789,7 @@ namespace Rooster {
 			exp->depthSpdMax = 4;
 			exp->depthMin = 100;
 			exp->depthMax = 100;
-
-			exp->mortal = true;
+			exp->mortal = false;
 			
 
 			SoundBuffer bufferfeit;

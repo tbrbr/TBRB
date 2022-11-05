@@ -5,9 +5,6 @@
 #include "Elementos.h"
 
 
-
-
-
 namespace Rooster {
 
     /* a element is a small part of a rooster or any character available
@@ -22,6 +19,7 @@ namespace Rooster {
         HIGH_KICK,
         JUMP_KICK,
         SPECIAL,
+        SUPER,//AVEMARIA DOIDO
         FATALITY,  
         DANCING
     };
@@ -66,6 +64,7 @@ namespace Rooster {
        
         int framesOnMax = 0;
         int power = 0;
+        int lastStamina = 0;
     public:
 
         int hp;
@@ -210,15 +209,24 @@ namespace Rooster {
         
         void updateStamin(int stamina) {
         
-            int red = 0 + (stamina * 25);
-            int green = 255 - (stamina * 25);
+            if (stamina > 10) {
+                stamina = 10;
+            }
+            if (stamina > lastStamina) {
+                power += stamina - lastStamina;
+            }
+
+            lastStamina = stamina;
+
+            int red = 0 + (power * 25);
+            int green = 255 - (power * 25);
             int blue = 0;
             int alpha = 255;
+           
+                
+            if (power > 10) {
 
-            
-            if (stamina > 10) {
-
-                stamina = 10;
+                power = 10;
 
                 framesOnMax++;
 
@@ -241,17 +249,17 @@ namespace Rooster {
             }   
             else {
                 framesOnMax = 0;
-                onFire = false;
+                //onFire = false;
             }
 
 
             if (isP1) {
-                for (int i = 0; i < stamina; i++)
+                for (int i = 0; i < power; i++)
                     combo[i].setFillColor(Color(red, green, blue, alpha));
                 
             }
             else {
-                for (int i = 9; i >= 10 - stamina; i--)
+                for (int i = 9; i >= 10 - power; i--)
                     combo[i].setFillColor(Color(red, green, blue, alpha));
             }
 
@@ -263,9 +271,7 @@ namespace Rooster {
             int newTam = (tam.x * hp) / Maxhp;
 
             life.setSize(Vector2f(newTam, tam.y));
-            
-            
-      
+                           
             if (oldTam > newTam) {
                 Damage.setSize(Vector2f(lastTam - newTam, tam.y));
                 Damage.setFillColor(Color::Color(145, 10, 10));
@@ -388,6 +394,7 @@ namespace Rooster {
         Ataques* hiKick;
         Ataques* louKick;
         Ataques* ultimateShot;
+        Ataques* superAtack;
 
         bool noGravity = true;
 
@@ -411,7 +418,9 @@ namespace Rooster {
         bool estadoUpdate = false;
 
         bool isp1;
-        
+
+        //man this is gonna be so sick
+        bool onFire = false;
 
         Galo(struct GaloStats stats, int _state, bool isp1) { 
 
@@ -740,15 +749,17 @@ namespace Rooster {
             }
 
             updateHits();
+
             bar->updateStamin(comboCounter);
+
             // Gravity
 
+            onFire = bar->onFire; 
+            println(onFire);
 
             if (position.y < floorY) {
                 air = true;
             }
-
-
 
             if (air && !noGravity) {
                 vspeed += peso * Gravity / 100;
@@ -819,6 +830,17 @@ namespace Rooster {
 
         }
 
+        virtual void catalize() {
+            if (onFire) {
+                //...
+                bar->onFire = false;
+                bar->setPower(0);
+            }
+        }
+
+        virtual void super() = 0;
+            
+        
         void updateHits() {
 
             comboText.setString(to_string(comboCounter) + " Hits!");

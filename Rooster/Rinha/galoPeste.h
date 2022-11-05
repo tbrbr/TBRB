@@ -194,6 +194,13 @@ namespace Rooster {
             }
 
         }
+
+        void super() override {
+            if (atacking == NOT_ATTACK)
+                atacking = SUPER;
+            superAtack->init.restart();
+        }
+
         void especialAnim() {
             Time t = ultimateShot->init.getElapsedTime();
             int time = t.asMilliseconds();

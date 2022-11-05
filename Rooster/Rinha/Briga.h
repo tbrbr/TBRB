@@ -183,16 +183,17 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 				
 			galo.run(false);
 
-		}
-		else if (mainInput.inputState[player][GODOWN][0])
-		{
-			galo.defend();
-		}
-		else
-		{
-			galo.setState(Rooster::state::STOPPED);
-
-		}
+			}
+			else if (mainInput.inputState[player][GODOWN][0])
+			{
+				galo.defend();
+			}
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo.setState(Rooster::state::DANCING);
+			}
+			else{		
+				galo.setState(Rooster::state::STOPPED);
+			}
 
 
 		//PLAYER 2 CONTROLES
@@ -230,14 +231,17 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 				
 			galo2.run(false);
 
-		}
-		else if (mainInput.inputState[player][GODOWN][0])
-		{
-			galo2.defend();
-		}
-		else
-		{
-			galo2.setState(Rooster::state::STOPPED);
+			}
+			else if (mainInput.inputState[player][GODOWN][0])
+			{
+				galo2.defend();
+			}
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo2.setState(Rooster::state::DANCING);
+			}
+			else
+			{
+				galo2.setState(Rooster::state::STOPPED);
 
 		}
 						

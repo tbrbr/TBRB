@@ -1,6 +1,8 @@
 #ifndef RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO
 #define RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO
 
+// Deus me perdoe mota, mas a demora pro bot escolher o mapa corroeu a minha alma
+
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
@@ -234,7 +236,7 @@ private:
 	}
 
 	void randAnim() {
-		int frames = 80;
+		int frames = 30;
 		static int animFrames = 0;
 
 		if (animFrames % 10 == 0) {

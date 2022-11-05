@@ -296,7 +296,7 @@ namespace Rooster {
         Ataques* louKick;
         Ataques* ultimateShot;
 
-        bool noGravity = false;
+        bool noGravity = true;
 
 
         // Lifebar
@@ -371,6 +371,10 @@ namespace Rooster {
                 position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
 
             position.y = floorY;
+        }
+
+        Model getModel() {
+            return model;
         }
 
         // States

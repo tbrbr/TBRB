@@ -240,8 +240,14 @@ namespace Rooster {
 		}
 
 		void createBlood(ParticleSystem& partSys) {
-			ExplosionEffect* exp = new ExplosionEffect(10, colPos, Color::Red, Vector2f(colDif.x * ((float)Damage/4), colDif.y * ((float)Damage / 4)), 10, colAngle, 60);
-			partSys.effects.push_back(exp);
+
+			//Vector2f(colDif.x * ((float)Damage/4), colDif.y * ((float)Damage / 4)), 10, colAngle, 60
+
+			ExplosionEffect* exp = new ExplosionEffect(colPos, 10, angle, 180, 0, 0);
+			
+			exp->sanguePreset();
+			exp->createMultipleParticles(500);
+			partSys.addEffect(exp);
 		}
 
 	};

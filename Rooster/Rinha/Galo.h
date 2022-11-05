@@ -213,12 +213,11 @@ namespace Rooster {
             int red = 0 + (stamina * 25);
             int green = 255 - (stamina * 25);
             int blue = 0;
-            int alpha;
+            int alpha = 255;
 
             
             if (stamina > 10) {
 
-                power = 10;
                 stamina = 10;
 
                 framesOnMax++;
@@ -390,7 +389,7 @@ namespace Rooster {
         Ataques* louKick;
         Ataques* ultimateShot;
 
-        bool noGravity = false;
+        bool noGravity = true;
 
 
         // Lifebar
@@ -476,6 +475,10 @@ namespace Rooster {
                 position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
 
             position.y = floorY;
+        }
+
+        Model getModel() {
+            return model;
         }
 
         // States

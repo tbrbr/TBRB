@@ -57,16 +57,26 @@ public:
 
 	void update(float atk, float def, float speed, float ulti) {
 
-		allStatus[0] = atk;
-		allStatus[1] = def;
-		allStatus[2] = speed;
-		allStatus[3] = ulti;
+		// Spd Min = 8 Spd Max = 15
+		// Atk Min = 8 Atk Max = 15;
+		// Def Min = 2 Def Max = 10
+		// Hp Min = 50 Hp Max = 120;
+
+
+		allStatus[0] = ruleOfThree(atk, 8, 15, 0, 1);
+		allStatus[1] = ruleOfThree(def, 2, 10, 0, 1);
+		allStatus[2] = ruleOfThree(speed, 8, 15, 0, 1);
+		allStatus[3] = ruleOfThree(ulti, 50, 120, 0, 1);
 
 		for (int i = 0; i < 4; i++) {
 			bars[i].setSize(Vector2f(table.getSize().x * 0.8 * allStatus[i], bars[i].getSize().y));
 			outLines[i].setSize(Vector2f(bars[i].getSize().x + 4, bars[i].getSize().y + 4));
 		}
 
+	}
+
+	void update(struct GaloStats stats) {
+		update(stats.atk, stats.def, stats.speed, stats.hp);
 	}
 
 };
@@ -128,20 +138,41 @@ protected:
 	Text t_ok;
 	Text t_x;
 
+	struct GaloStats sniperSt;
+	struct GaloStats kalsaSt;
+	struct GaloStats bruxoSt;
+	struct GaloStats pesteSt;
+	struct GaloStats botaSt;
+
+	struct GaloStats statsValues[5];
+	
+	
+
+
+
 	static void UpdateGalo2(Galo** galop2, TcpSocket* socket, int* p2, bool* isready) {
 
-		struct GaloStats sniperSt;
-		struct GaloStats kalsaSt;
-		struct GaloStats bruxoSt;
-		struct GaloStats pesteSt;
-		struct GaloStats botaSt;
+		/*
+		struct GaloStats {
+			int hp;
+			int speed;
+			int atk;
+			int def;
+			int peso;
+			int jumpSpd;
+		};
+		*/
 
+		// Spd Min = 8 Spd Max = 15
+		// Atk Min = 8 Atk Max = 15;
+		// Def Min = 2 Def Max = 10
+		// Hp Min = 50 Hp Max = 120;
 
-		sniperSt = { 100, 10, 15, 9, 5 , 15 };
-		kalsaSt = { 100, 12, 12, 10, 6 , 20 };
-		bruxoSt = { 60, 15, 12, 9, 5   , 20 };
-		pesteSt = { 120, 12, 10, 11, 6 , 12 };
-		botaSt = { 80, 13, 10, 12, 4   , 20 };
+		struct GaloStats sniperSt = { 100, 10, 15,  5, 5 , 15 };
+		struct GaloStats kalsaSt =  { 100, 12, 12,  5, 6 , 20 };
+		struct GaloStats bruxoSt =  { 60 , 15, 12,  5, 5 , 20 };
+		struct GaloStats pesteSt =  { 120, 12, 10,  5, 6 , 12 };
+		struct GaloStats botaSt =   { 80 , 13, 10,  5, 4 , 20 };
 
 		char data[15];
 		size_t received;
@@ -197,18 +228,7 @@ protected:
 
 	void selection(Galo** galop1, int i) {
 
-		struct GaloStats sniperSt;
-		struct GaloStats kalsaSt;
-		struct GaloStats bruxoSt;
-		struct GaloStats pesteSt;
-		struct GaloStats botaSt;
 
-
-		sniperSt = { 100, 10, 15, 9, 5 , 15 };
-		kalsaSt = { 100, 12, 12, 10, 6 , 20 };
-		bruxoSt = { 60, 15, 12, 9, 5   , 20 };
-		pesteSt = { 120, 12, 10, 11, 6 , 12 };
-		botaSt = { 80, 13, 10, 12, 4   , 20 };
 
 		if (i == 0) {
 
@@ -237,20 +257,10 @@ protected:
 
 		}
 	}
+
 	void selection(Galo** galop1, Galo** galop2, int i) {
 
-		struct GaloStats sniperSt;
-		struct GaloStats kalsaSt;
-		struct GaloStats bruxoSt;
-		struct GaloStats pesteSt;
-		struct GaloStats botaSt;
 
-
-		sniperSt = { 100, 10, 15, 9, 5 , 15 };
-		kalsaSt = { 100, 12, 12, 10, 6 , 20 };
-		bruxoSt = { 60, 15, 12, 9, 5   , 20 };
-		pesteSt = { 120, 12, 10, 11, 6 , 12 };
-		botaSt = { 80, 13, 10, 12, 4   , 20 };
 
 
 		if (i == 0) {
@@ -299,43 +309,22 @@ protected:
 
 		}
 	}
+
+
+
 	void updateBars(int rooster) {
 		if (isp1Time) {
-			if (rooster == 0) {
-				statusPlayer1.update(0.7, 0.5, 0.4, 0.9);
-			}
-			else if (rooster == 1) {
-				statusPlayer1.update(1, 1, 1, 1);
-			}
-			else if (rooster == 2) {
-				statusPlayer1.update(1, 0.5, 0.2, 0);
-			}
-			else if (rooster == 3) {
-				statusPlayer1.update(0.7, 0.5, 0.4, 0.9);
-			}
-			else if (rooster == 4) {
-				statusPlayer1.update(0.7, 0.5, 0.4, 0.9);
-			}
+			statusPlayer1.update(statsValues[rooster]);
 		}
 		else {
-			if (rooster == 0) {
-				statusPlayer2.update(0.7, 0.5, 0.4, 0.9);
-			}
-			else if (rooster == 1) {
-				statusPlayer2.update(30, 0.7, 0.2, 15);
-			}
-			else if (rooster == 2) {
-				statusPlayer2.update(1, 0.5, 0.2, 0);
-			}
-			else if (rooster == 3) {
-				statusPlayer2.update(0.7, 0.5, 0.4, 0.9);
-			}
-			else if (rooster == 4) {
-				statusPlayer2.update(0.7, 0.5, 0.4, 0.9);
-			}
-
+			statusPlayer2.update(statsValues[rooster]);
 		}
 	}
+
+
+
+
+
 	void updateGaloView(RenderWindow* window, int i, int mousex, int mousey, int& rooster) {
 		if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey))
 		{
@@ -371,6 +360,37 @@ protected:
 	}
 public:
 	SelectionSinglePlayer() {
+
+
+		// Galo stats
+		/*
+		struct GaloStats {
+			int hp;
+			int speed;
+			int atk;
+			int def;
+			int peso;
+			int jumpSpd;
+		};
+		*/
+
+		// Spd Min = 8 Spd Max = 15
+		// Atk Min = 8 Atk Max = 15;
+		// Def Min = 2 Def Max = 10
+		// Hp Min = 50 Hp Max = 120;
+
+		sniperSt = { 100, 10, 15,  5, 5 , 15 };
+		kalsaSt =  { 100, 12, 12,  5, 6 , 20 };
+		bruxoSt =  { 60 , 15, 12,  5, 5 , 20 };
+		pesteSt =  { 120, 12, 10,  5, 6 , 12 };
+		botaSt =   { 80 , 13, 10,  5, 4 , 20 };
+
+		statsValues[0] = sniperSt;
+		statsValues[2] = kalsaSt;
+		statsValues[3] = bruxoSt;
+		statsValues[1] = pesteSt;
+		statsValues[4] = botaSt;
+
 
 
 
@@ -552,6 +572,7 @@ public:
 		borderP2.setFillColor(Color::Transparent);
 		borderP2.setOutlineColor(Color(145, 0, 0));
 
+		/*
 		Model Sniper;
 
 		sniperT.loadFromFile("sprites/galoSniper.png");
@@ -571,10 +592,11 @@ public:
 
 		);
 
-
-
-
 		models.push_back(Sniper);
+		*/
+
+
+
 		circlePodium1.setRadius(circlesLine[0].getRadius());
 		circlePodium1.setPosition(podiumP1.getPosition().x + podiumP1.getGlobalBounds().width / 2 - circlePodium1.getRadius(), podiumP1.getPosition().y);
 		circlePodium1.setScale(-1, 1);
@@ -634,7 +656,12 @@ public:
 	}
 
 
+	void reset() {
+		this->p1 = -1;
+		this->p2 = -1;
+		this->isp1Time = true;
 
+	}
 	void show(RenderWindow* window, int& option, Galo** galop1, Galo** galop2) {
 
 		int mousex = Mouse::getPosition(*window).x;

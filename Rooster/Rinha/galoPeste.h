@@ -679,7 +679,15 @@ namespace Rooster {
             fatalpeste.setVolume(60);         
             fatalpeste.play();
 
-            Explosion3DEffect* exp = new Explosion3DEffect();
+
+
+            ExplosionEffect* exp = new ExplosionEffect(Vector2f(0, 0), 10);
+            exp->sanguePreset();
+            exp->depthSpdMin = -1;
+            exp->depthSpdMax = 4;
+            exp->depthMin = 100;
+            exp->depthMax = 100;
+
             exp->mortal = false;
 
 
@@ -773,7 +781,12 @@ namespace Rooster {
 
                         // Falido
                         if (timeFrames  % 20 == 0) {
-                            exp->createParticles(10, galo2->position, Color::Red, Vector2f(0, -4), 10, 0, 360);
+
+                            Model model = galo2->getModel();
+
+                            exp->position = model.at("Body")->drawPos;
+
+                            exp->createMultipleParticles(500);
                         }
                         timeFrames++;
 

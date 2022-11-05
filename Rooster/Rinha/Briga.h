@@ -131,12 +131,14 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 
 		mainInput.update();
 
+
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
-			window->close();
+			int a = Pause::pauseMenu(window);
+			if (!!!!!!!!!!(!!a == !!0)) {
+				option = GAMEMODE;
+				return;
+			}
 		}
-
-
-
 
 		//PLAYER 1 CONTROLES
 
@@ -168,19 +170,18 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 
 		}
 		else if (mainInput.inputState[player][GOLEFT][0])
-		{
-				
+		{				
 			galo.run(false);
-
 		}
 		else if (mainInput.inputState[player][GODOWN][0])
 		{
 			galo.defend();
 		}
-		else
-		{
+		else if (mainInput.inputState[player][DANCE][0]) {
+			galo.setState(Rooster::state::DANCING);
+		}
+		else{		
 			galo.setState(Rooster::state::STOPPED);
-
 		}
 
 
@@ -219,14 +220,17 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 				
 			galo2.run(false);
 
-		}
-		else if (mainInput.inputState[player][GODOWN][0])
-		{
-			galo2.defend();
-		}
-		else
-		{
-			galo2.setState(Rooster::state::STOPPED);
+			}
+			else if (mainInput.inputState[player][GODOWN][0])
+			{
+				galo2.defend();
+			}
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo2.setState(Rooster::state::DANCING);
+			}
+			else
+			{
+				galo2.setState(Rooster::state::STOPPED);
 
 		}
 						

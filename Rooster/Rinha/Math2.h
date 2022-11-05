@@ -123,5 +123,15 @@ float vecToAngle(Vector2f vec) {
 
 
 
+bool pointInside(Vector2f point, float x, float y, float wid, float hei) {
+	return (point.x > x && point.x < x + wid && point.y > y && point.y < y + hei);
+}
+
+bool pointInside(Vector2f point, FloatRect rect) {
+	return pointInside(point, rect.left, rect.top, rect.width, rect.height);
+}
+
+
+
 
 #endif // !JUNIOTELES

@@ -151,6 +151,7 @@
     <ClInclude Include="galoPeste.h" />
     <ClInclude Include="GaloSniper.h" />
     <ClInclude Include="IAtaques.h" />
+    <ClInclude Include="importados.h" />
     <ClInclude Include="introducoes.h" />
     <ClInclude Include="jogador_de_video.h" />
     <ClInclude Include="Math2.h" />

@@ -35,5 +35,6 @@
     <ClInclude Include="server_connect.h" />
     <ClInclude Include="textBox.h" />
     <ClInclude Include="pause_menu.h" />
+    <ClInclude Include="importados.h" />
   </ItemGroup>
 </Project>

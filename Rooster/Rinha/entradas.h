@@ -207,40 +207,17 @@ namespace Rooster {
 				return false;
 			}
 
-
 			float val = 0;
 
 			switch (button) {
 			case JOYDOWN:
-				val = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Y);
-				if (val > 50) {
-					return true;
-				}
-				return false;
-
+				return sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Y) > 50;
 			case JOYUP:
-				val = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Y);
-				if (val < -50) {
-					return true;
-				}
-				return false;
-
-
+				return sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Y) < -50;
 			case JOYLEFT:
-				val = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::X);
-				if (val < -50) {
-					return true;
-				}
-				return false;
-
+				return sf::Joystick::getAxisPosition(joystickId, sf::Joystick::X) < -50;
 			case JOYRIGHT:
-				val = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::X);
-				if (val > 50) {
-					return true;
-				}
-				return false;
-
-
+				return sf::Joystick::getAxisPosition(joystickId, sf::Joystick::X) > 50;
 			case JOYA:
 				return sf::Joystick::isButtonPressed(joystickId, 2);
 
@@ -251,9 +228,6 @@ namespace Rooster {
 
 			case JOYY:
 				return sf::Joystick::isButtonPressed(joystickId, 5);
-
-			
-
 			}
 			return false;
 		}
@@ -340,9 +314,6 @@ namespace Rooster {
 				joystickState[i][0] = buttonState;
 
 			}
-
-
-
 
 
 			for (int i = 0; i < INPUTSTOTAL; i++) {

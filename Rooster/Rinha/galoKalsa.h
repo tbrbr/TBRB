@@ -25,17 +25,17 @@ namespace Rooster {
 
     
             this->hiKick = new Ataques(
-                3,25, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, -PI / 4, milliseconds(1200), "sounds\\fist-punch-or-kick-7171.ogg"
+                3,15, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, -PI / 4, milliseconds(650), "sounds\\fist-punch-or-kick-7171.ogg"
             );
             this->louKick = new Ataques(
-                4,20, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI / 4, milliseconds(1000), "sounds\\rooster-crowing-80322.ogg"
+                4,10, HitBox{ Vector2f(0, 0), 0 },
+                20, 10, PI / 4, milliseconds(500), "sounds\\rooster-crowing-80322.ogg"
             );
 
             this->ultimateShot = new Ataques(
-                5 ,90, HitBox{ Vector2f(0, 0),0},
-                5, 3, 0, milliseconds(1500),
+                5 ,70, HitBox{ Vector2f(0, 0),0},
+                5, 3, 0, milliseconds(750),
                 "sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
             );
 
@@ -700,6 +700,232 @@ namespace Rooster {
             projectiles[0].update();
         }
              
+        void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
+
+            Clock Timer;
+            Timer.restart();
+
+            estado = FATALITY;
+            galo2->position.x = SCREEN_WIDTH / 2;
+            position.x = SCREEN_WIDTH / 4 + model.getBounds().width * abs(model.xScl);
+
+            Font mortal;
+            mortal.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
+
+            Text fatal("FATALITY", mortal, SCREEN_WIDTH / 10);
+            fatal.setPosition(SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2);
+            fatal.setFillColor(Color(100, 0, 0));
+            fatal.setOutlineThickness(SCREEN_WIDTH / 700);
+            fatal.setOutlineColor(Color(255, 10, 10));
+
+            Texture garrinha;
+            garrinha.loadFromFile("sprites/garrinhaDoFatality.png");
+            Sprite garra1;
+            Sprite garra2;
+            garra1.setTexture(garrinha);
+            garra2.setTexture(garrinha);
+            garra1.setScale(-0.5, 0.5);
+            garra2.setScale(0.5, 0.5);
+
+            garra1.setPosition(
+                SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+                SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+            );
+
+            garra2.setPosition(
+                SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+                SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+            );
+            RectangleShape opening;
+
+            opening.setFillColor(Color(255, 255, 0));
+            opening.setOutlineColor(Color::Yellow);
+            opening.setSize(Vector2f(0, SCREEN_HEIGHT / 100));
+
+            Text kalsawins("Kalsa Wins", mortal, SCREEN_WIDTH / 50);
+
+            kalsawins.setPosition(
+                SCREEN_WIDTH / 2 - kalsawins.getGlobalBounds().width / 2,
+                garra2.getPosition().y - kalsawins.getGlobalBounds().height
+            );
+            kalsawins.setFillColor(Color(250, 250, 250));
+            kalsawins.setOutlineThickness(SCREEN_WIDTH / 700);
+            kalsawins.setOutlineColor(Color(255, 255, 10));
+
+
+            SoundBuffer grito;
+            grito.loadFromFile("sounds\\Fatality_Scream.wav");
+            Sound gritoSound;
+            gritoSound.setBuffer(grito);
+            gritoSound.setLoop(true);
+
+
+            model.resetToBase();
+
+
+            SoundBuffer fatalityBuffer;
+            fatalityBuffer.loadFromFile("sounds/fatality.ogg");
+            Sound fatalitysound;
+            fatalitysound.setBuffer(fatalityBuffer);
+            fatalitysound.setLoop(false);
+
+            SoundBuffer whowinsBuf;
+            if (isp1) {
+                whowinsBuf.loadFromFile("sounds/Player_1_Wins.wav");
+            }
+            else {
+                whowinsBuf.loadFromFile("sounds/Player_2_Wins.wav");
+            }
+            Sound whowins;
+            whowins.setBuffer(whowinsBuf);
+
+            ExplosionEffect* exp = new ExplosionEffect(Vector2f(0, 0), 10);
+            exp->sanguePreset();
+            exp->depthSpdMin = -1;
+            exp->depthSpdMax = 4;
+            exp->depthMin = 100;
+            exp->depthMax = 100;
+
+            exp->mortal = false;
+
+            int timeFrames = 0;
+
+            while (window->isOpen()) {
+
+                float time = Timer.getElapsedTime().asMilliseconds();
+
+                window->clear();
+                window->draw(fundo);
+                show(*window);
+
+                exp->update();
+                exp->draw(*window);
+
+                galo2->show(*window);
+
+
+                Event e;
+                while (window->pollEvent(e))
+                {
+                    if (e.type == Event::Closed)
+                    {
+                        window->close();
+                    }
+
+                }
+
+                if (time < 1500) {
+
+                    static int blue = 255;
+                    static int red = 255;
+                    static int green = 255;
+
+                    if (green > 0)
+                        green -= 2;
+                    else
+                        green = 0;
+
+                    if (red > 0)
+                        red -= 2;
+                    else
+                        green = 0;
+
+                    if(frames % 3 == 0)
+                        blue--;
+                    
+
+                    fundo.setFillColor(Color(red, green, blue));
+
+
+
+
+
+                }
+                else if (time < 2500) {
+                    float thisTime = time - 1500;
+
+                 
+
+                }
+                else if (time < 3000) {
+
+                   
+
+                }
+                else if (time < 6000) {
+
+                    float thisTime = (time - 2500) / 6000;
+
+                    static bool istime = true;
+                    if (istime) {
+                        gritoSound.play();
+                        istime = false;
+                    }
+                    position.y = SCREEN_HEIGHT / 2;
+
+
+                  
+
+                    // insano
+                    if (timeFrames % 20 == 0) {
+
+                        Model model = galo2->getModel();
+
+                        exp->position = model.at("Body")->drawPos;
+
+                        exp->createMultipleParticles(500);
+                    }
+                    timeFrames++;
+
+                }
+                else {
+                    if (time > 6000) {
+                        static bool lets = true;
+
+                        if (lets)
+                            fatalitysound.play();
+                        lets = false;
+                        window->draw(fatal);
+                        if (time > 8000) {
+                            if (time < 12000) {
+                                static bool letsgo = true;
+
+                                if (letsgo)
+                                    whowins.play();
+                                letsgo = false;
+                                opening.setSize(Vector2f(ruleOfThree(time, 12000, SCREEN_WIDTH / 10), (float)SCREEN_HEIGHT / 100));
+                            }
+                            else {
+                                opening.setSize(Vector2f((float)SCREEN_WIDTH / 10, (float)SCREEN_HEIGHT / 100));
+
+                            }
+                            garra1.setPosition(opening.getPosition().x, garra1.getPosition().y);
+                            garra2.setPosition(opening.getPosition().x + opening.getSize().x, garra1.getPosition().y);
+                            opening.setPosition(
+                                SCREEN_WIDTH / 2 - opening.getSize().x / 2,
+                                garra2.getPosition().y + garra2.getGlobalBounds().height / 1.5);
+
+                            window->draw(opening);
+                            window->draw(garra1);
+                            window->draw(garra2);
+                            window->draw(kalsawins);
+                        }
+                    }
+                }
+
+                if (time > 15000) {
+                    return;
+                }
+
+                updateWithoutPhysics();
+
+                galo2->updateWithoutPhysics();
+
+                window->display();
+            }
+        }
+
+
     };
 
 

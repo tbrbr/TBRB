@@ -34,5 +34,7 @@
     <ClInclude Include="selecao_de_mapa_falida.h" />
     <ClInclude Include="server_connect.h" />
     <ClInclude Include="textBox.h" />
+    <ClInclude Include="pause_menu.h" />
+    <ClInclude Include="importados.h" />
   </ItemGroup>
 </Project>

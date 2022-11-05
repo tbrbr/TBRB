@@ -53,21 +53,32 @@ namespace Rooster {
         RectangleShape fullLife;
         RectangleShape Damage;
 
+        RectangleShape combo[10];
+        
         Texture iron;
         Font mk11;
-        
+
+        const int maxStamina = 10;
+
         bool isP1;
         int yposition = SCREEN_HEIGHT / 8;
         int xposition;
        
+        int framesOnMax = 0;
+        int power = 0;
     public:
 
         int hp;
-
+        int stamina = 0;
+        
         int lastTam;
         Clock clock;
         Clock piscada;
         Time lastTime;
+
+        //this is sick ngl
+        bool onFire = false;
+        
 
         LifeBar(int maxhp, bool isP1, const char * galoName) {
             Maxhp = maxhp;
@@ -89,6 +100,14 @@ namespace Rooster {
             fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
             fillBar.setOutlineColor(Color::Black);
            
+            for (int i = 0; i < 10; i++) {
+                combo[i].setSize(Vector2f(tam.x / 20, tam.y));
+                combo[i].setOutlineThickness(SCREEN_WIDTH / 900);
+                combo[i].setFillColor(Color::Transparent);
+                combo[i].setOutlineColor(Color(200, 200, 200));
+            }
+            int comboy = (tam.y * 2) + yposition;
+
             if (isP1) {
                 xposition = SCREEN_WIDTH/12;
                 fillBar.setPoint(0, sf::Vector2f(-recLine*2, 0));
@@ -104,6 +123,12 @@ namespace Rooster {
                 fullLife.setPosition(xposition, yposition);
                 life.setPosition(xposition, yposition);
                 playerName.setPosition(xposition + recLine, yposition + recLine);
+
+                for (int i = 0; i < 10; i++) {
+                    int combox = xposition + tam.x/2 + ((tam.x/20) * i);
+                    combo[i].setPosition(combox,comboy);
+                }
+
             }
             else {
                 xposition = SCREEN_WIDTH / 12 + tam.x + spaceForTime;
@@ -122,6 +147,11 @@ namespace Rooster {
                 life.setPosition(xposition + tam.x, yposition);
                 playerName.setPosition(xposition + tam.x - recLine - playerName.getGlobalBounds().width, yposition + recLine);
                 Damage.setScale(-1, 1);
+
+                for (int i = 0; i < 10; i ++) {
+                    int combox = xposition + ((tam.x / 20) * i);                  
+                    combo[i].setPosition(combox, comboy);
+                }
             }
            
             Color niceyellow(245, 205, 80);
@@ -130,6 +160,7 @@ namespace Rooster {
             life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
             fullLife.setSize(Vector2f(tam.x , tam.y));
 
+            
             
             
 
@@ -159,25 +190,81 @@ namespace Rooster {
         int getLifeBarHeight() {
             return tam.y;
         }
-
-        
+        void setPower(int power) {
+            this->power = power;
+        }
+        int getPower() {
+            return power;
+        }
         
         void draw(RenderWindow *window) {
-
+            for (int i = 0; i < 10; i++) {
+                window->draw(combo[i]);
+            }
             window->draw(fillBar);
             window->draw(fullLife);
             window->draw(life);
             window->draw(Damage);
             window->draw(playerName);
         }
-       
+        
+        void updateStamin(int stamina) {
+        
+            int red = 0 + (stamina * 25);
+            int green = 255 - (stamina * 25);
+            int blue = 0;
+            int alpha = 255;
+
+            
+            if (stamina > 10) {
+
+                stamina = 10;
+
+                framesOnMax++;
+
+                alpha = (framesOnMax % 2) * 255;
+                
+                for (int i = 0; i < stamina; i++) {
+                    combo[i].setOutlineColor(Color::White);
+                }
+
+                red = 255;              
+                if (framesOnMax % 4 == 0) {
+                    green = 255;
+                    blue = 255;
+                }
+                else {
+                    green = 0;
+                    blue = 0;
+                }
+                onFire = true;
+            }   
+            else {
+                framesOnMax = 0;
+                onFire = false;
+            }
+
+
+            if (isP1) {
+                for (int i = 0; i < stamina; i++)
+                    combo[i].setFillColor(Color(red, green, blue, alpha));
+                
+            }
+            else {
+                for (int i = 9; i >= 10 - stamina; i--)
+                    combo[i].setFillColor(Color(red, green, blue, alpha));
+            }
+
+
+        }
         void update(int hp) {
 
             int oldTam = life.getGlobalBounds().width;
             int newTam = (tam.x * hp) / Maxhp;
 
             life.setSize(Vector2f(newTam, tam.y));
-
+            
+            
       
             if (oldTam > newTam) {
                 Damage.setSize(Vector2f(lastTam - newTam, tam.y));
@@ -188,7 +275,6 @@ namespace Rooster {
                 else {
                     Damage.setPosition(Vector2f(life.getGlobalBounds().left, life.getGlobalBounds().top));
                 }
-
 
                 piscada.restart();
                 clock.restart();
@@ -276,7 +362,14 @@ namespace Rooster {
         Texture star;
         Sprite estrelinha;
 
+        int hits = 0;
+
+        Font comboFont;
+        Text comboText;
+
     public:
+
+        int comboCounter;
 
         // Models and Animations
         struct Model model;
@@ -312,7 +405,7 @@ namespace Rooster {
         int stunFrames = 0;
         int coolDownFrames = 0;
 
-
+        
 
         bool facingRight = false;
         bool estadoUpdate = false;
@@ -345,10 +438,21 @@ namespace Rooster {
             this->vspeedLimit = 10;
             this->hAcc = 0.5;
 
+            //me desculpe por deixar feio || excuse me for leaving it looking like mota
+
             star.loadFromFile("sprites\\estrelinhas.png");
             estrelinha.setTexture(star);
             estrelinha.setScale((float)SCREEN_WIDTH / 7680, (float)SCREEN_HEIGHT / 4320);
 
+            comboFont.loadFromFile("fonts\\Act_Of_Rejection.ttf");
+            
+            comboText.setFont(comboFont);
+            comboText.setCharacterSize(SCREEN_WIDTH / 30);
+            comboText.setFillColor(Color::Yellow);
+            comboText.setOutlineThickness(SCREEN_WIDTH / 900);
+            comboText.setOutlineColor(Color(255, 255, 10));
+            
+ 
             this->position = Vector2f(0, 0);
             this->isp1 = isp1;
             if (isp1)
@@ -419,12 +523,25 @@ namespace Rooster {
         void sethp(int hp) {
             this->hp = hp;
         }
+        int getHits() {
+            return hits;
+        }
 
         virtual void apanhar(Ataques atk, bool direction){
 
 
             if (!invunerable) {
-              
+                
+                static int lastFrameHit = frames;
+                
+                hits++;
+                
+                if (hits > 2 && (frames - lastFrameHit > 90)) {
+                    hits = 1;                    
+                }
+
+                lastFrameHit = frames;
+
                 hp -= atk.Damage/stats.def;
 
                 // Calculando os impulsos
@@ -585,6 +702,9 @@ namespace Rooster {
                 }
 
             }
+            if (comboCounter > 2) {
+                window.draw(comboText);
+            }
         }
 
 
@@ -619,8 +739,8 @@ namespace Rooster {
                 stunFrames--;
             }
 
-            
-
+            updateHits();
+            bar->updateStamin(comboCounter);
             // Gravity
 
 
@@ -699,6 +819,21 @@ namespace Rooster {
 
         }
 
+        void updateHits() {
+
+            comboText.setString(to_string(comboCounter) + " Hits!");
+            if(isp1)
+                comboText.setPosition(SCREEN_WIDTH/4 - comboText.getGlobalBounds().width/2,SCREEN_HEIGHT/5);
+            else
+                comboText.setPosition(SCREEN_WIDTH - (SCREEN_WIDTH / 4 - comboText.getGlobalBounds().width / 2), SCREEN_HEIGHT / 5);
+            int colorYellow = 255 - (comboCounter * 25);
+            if (colorYellow < 0) {
+                colorYellow = 0;
+            }
+            int colorRed = 255 - comboCounter * 2;
+            comboText.setColor(Color(colorRed, colorYellow, 0));
+  
+        }
 
         virtual void update() {
 
@@ -715,21 +850,13 @@ namespace Rooster {
             }
 
 
-            // Projectiles
-            // KEKEKEKEKEEKEEKEKKEKEKKEKEKKEKEKEKEEKEKKEKEKEKEKEKEKEKEKKEKEKEKEKEKEKKEK
-            /*pare de tentar ajudar e destruir o restp da miinhda vdasidnbhasvgy
-            for (int i = 0; i < projectiles.size(); i++) {
-                projectiles[i].update();
-            }*/
-
-
             updateAnimations();
 
 
             // Health Bar Update
             bar->update(hp);
 
-
+            
 
 
 

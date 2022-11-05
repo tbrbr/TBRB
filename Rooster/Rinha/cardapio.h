@@ -656,7 +656,12 @@ public:
 	}
 
 
+	void reset() {
+		this->p1 = -1;
+		this->p2 = -1;
+		this->isp1Time = true;
 
+	}
 	void show(RenderWindow* window, int& option, Galo** galop1, Galo** galop2) {
 
 		int mousex = Mouse::getPosition(*window).x;

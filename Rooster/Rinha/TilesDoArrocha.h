@@ -257,6 +257,7 @@ public:
 
 
 		
+		/*
 		for (int i = 0; i < 4; i++) {
 
 			int insertInd = 0;
@@ -274,6 +275,9 @@ public:
 				}
 			}
 		}
+		*/
+
+		loadNotas();
 		
 	}
 
@@ -388,7 +392,8 @@ public:
 				bps = std::stof(line);
 
 				clearNotas();
-				scrollY = 0;
+				setScroll(0);
+				
 
 				std::getline(file, line);
 				while (line != "End" || file.eof() != 0) {
@@ -447,11 +452,13 @@ public:
 		playing = false;
 	}
 
-
+	void setScroll(float amount) {
+		scrollY = maximum(amount, 0);
+		musTeste.music.setPlayingOffset(sf::seconds(scrollY / bps));
+	}
 
 	void moveScroll(float amount) {
-		scrollY = maximum(scrollY+amount, 0);
-		musTeste.music.setPlayingOffset(sf::seconds(scrollY/bps));
+		setScroll(scrollY + amount);
 	}
 
 	void update(int frames) {
@@ -470,7 +477,6 @@ public:
 
 
 				if (mainInput.mouseState[0][1]) {
-					println("Click");
 
 					ConvexShape testRect = rect;
 					testRect.setScale(xScl, yScl);
@@ -516,7 +522,6 @@ public:
 									holdingNoteY = nota->y;
 									holdingY = yy;
 
-									println("Part");
 
 									i = notas.size();
 

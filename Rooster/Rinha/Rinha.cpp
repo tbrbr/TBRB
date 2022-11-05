@@ -1,100 +1,10 @@
-#include <iostream>
 
-#define SFML_STATIC
-
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
-#include <windows.h>
-#include <SFML/Network.hpp>
-#include <vector>
-#include <random>
-#include <cmath>
-
-#include <fstream>
-
-#define FRAMERATE_LIMIT 60
-#pragma warning(disable : 4996)
-#define println(x) (std::cout << x << std::endl)
-
-using namespace std;
-using namespace sf;
-
-#define deixe_de_coisa 1
-//va se arrombar nao
-#if  deixe_de_coisa
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-
-#else
-const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
-#endif
-
-#define SHOWDEBUG false
-
-#include "varios_idiomas.h"
-#include "efeitos_fodas.h"
-
-#include "Math2.h"
-#include "entradas.h"
-
-Rooster::input mainInput;
-
-LANGUAGE LANG;
-
-
-#include "Sangue.h"
-Rooster::ParticleSystem mainPartSystem;
-
-#include "fregues.h"
-#include "introducoes.h"
-#include "checador_de_posicao.h"
-
-#include "Elementos.h"
-#include "Galo.h"
-#include "GaloSniper.h"
-#include "galoKalsa.h"
-#include "GaloBruxo.h"
-#include "galoPeste.h"
-#include "galoBota.h"
-
-#include "Patinho/Patinho.h"
-#include "Patinho/jogoDoPatinho.h"
-#include "TilesDoArrocha.h"
-
-
-
-
-//#include "jogador_de_video.h"
-
-
-
-
-
-#include "entradas.h"
-
-using namespace Rooster;
-
-#include "Briga.h"
-#include "muitosjogadores.h"
-#include "server_connect.h"
-#include "cardapio.h"
-#include "menu_inicial.h"
-#include "selecao_de_mapa_falida.h"
+#include "importados.h"
 
 
 int main() {
 
-	/*cout << IpAddress::getLocalAddress();
-=======
-	/*
-	cout << IpAddress::getLocalAddress();
->>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
->>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
-	cout << "Server?";
-	cin >> ishost;
-	*/
-	//mota va tomar no seu cu por favor.
+
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
@@ -106,16 +16,57 @@ int main() {
 
 	LANG.startAllTexts(lang);
 
-
 	int option = INTRO;
-	option = BOTAPRAARROCHAR;
-		
 
-#if deixe_de_coisa
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB",Style::Default);
-#else
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
-#endif
+
+	/* MÚSICA: A MULHER QUANDO QUER NAMORAR
+	* CANTOR: RAIMUNDO SOLDADO
+	A MUIÉ, QUANDO ELA QUER NAMORAR
+	ELA FICA ESQUENTANDO QUE NEM UM MOTOR DE PARTIDA
+	E LOGO A GENTE TOCA NA CHAVE
+	ELA FICA PEGUANDO A PRIMEIRA E A RÉ
+	DA PRIMEIRA E A RÉ ELA VAI PARA A REDUÇÃO
+	VAI PARA A TERCEIRA E A QUARTA APAIXONADA
+	E FICA ESQUENTANDO QUE NEM UM MOTOR DE PARTIDA
+	E LOGO A GENTE TOCA NA CHAVE ELA FICA PEGANDO
+	ELA FICA PEGANDO A PRIMEIRA E A RÉ APAIXONADA
+	APAIXONADA COM O CORAÇÃO BATENDO
+	ELA FICA PEGANDO A PRIMEIRA E A RÉ
+	DA PRIMEIRA E A RÉ ELA VAI PARA A REDUÇÃO
+	VAI PARA A TERCEIRA E A QUARTA APAIXONADA
+	E FICA ESQUENTANDO QUE NEM UM MOTOR DE PARTIDA
+	E LOGO A GENTE TOCA NA CHAVE ELA FICA PEGANDO
+	ELA FICA PEGANDO A PRIMEIRA E A RÉ APAIXONADA
+	APAIXONADA COM O CORAÇÃO BATENDO
+	COM OS OLHOS DERRAMADOS DE AMOR
+	A MUIER, QUANDO ELA QUER NAMORAR
+	ELA FICA ESQUENTANDO QUE NEM UM MOTOR DE PARTIDAM
+	E LOGO A GENTE TOCA NA CHAVE
+	ELA FICA PEGANDO A PRIMEIRA E A RÉ
+	DA PRIMEIRA E A RÉ ELA VAI PARA A REDUÇÃO
+	VAI PARA A TERCEIRA E A QUARTA APAIXONADA
+	E FICA ESQUENTANDO QUE NEM UM MOTOR
+	QUE NEM UM MOTOR DE PARTIDA A TODO MOMENTO
+	A TODO MOMENTO ELA FICA ESQUENTANO
+	QUE NEM UM MOTOR DE PARTIDA
+	E LOGO A GENTE TOCA NA CHAVE ELA FICA PEGANDO
+	A PRIMEIRA E A RÉ
+	A PRIMEIRA RÉ APAIXONADA
+	COM O CORAÇÃO BATENDO E OS OLHOS DERRAMANDO DE AMOR
+	[MUSICA]
+	OH...
+	[POSSIVEL ERRO DO CANTOR]
+	A MUIER, QUANDO ELA QUER NAMORAR
+	ELA FICA ESQUENTANDO QUE NEM UM MOTOR DE PARTIDA
+	E LOGO A GENTE TOCA NA CHAVE
+	ELA FICA PEGANDO A PRIMEIRA E A RÉ
+	DA PRIMEIRA E A RÉ ELA VAI PARA A REDUÇÃO
+	VAI PARA A TERCEIRA E A QUARTA APAIXONADA
+	E FICA PEGANDO E ESQUENTANDO
+	ESQUENTANDO QUE NEM UM MOTOR DE PARTIDA
+	[MUSICA FINALIZANDO]
+	*/
 
 	window->clear(Color::Black);
 	window->setVerticalSyncEnabled(true);
@@ -179,13 +130,10 @@ int main() {
 		switch (option)
 		{
 		case UMJOGADORES:
-			if (!galo) {
-				return 1;
-			}
-
-			fundo.setTexture(mapSelector->getSelectedMap());
-
 			singlePlayer(window,*galo,*galo2,option,fundo);
+			delete galo;
+			delete galo2;
+			selector->reset();
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
@@ -201,15 +149,12 @@ int main() {
 			pianoTiles(window);
 			break;
 		case DOISJODADOR:
-			if (!galo) {
-				return 1;
-			}
-		
 			multiPlayer(window, *galo, *galo2, option, fundo, socket);
+			selector->reset();
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
-			mapSelector->draw(window, option, true);
+			option = UMJOGADORES;
 			break;
 		case JOIN:
 			option = join(window, background, socket);

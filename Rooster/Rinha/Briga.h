@@ -22,10 +22,6 @@ public:
 		buttonMenu.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (2 * SCREEN_HEIGHT / 16)));
 		options.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (3 * SCREEN_HEIGHT / 16)));
 
-
-
-
-
 	}
 
 
@@ -135,12 +131,14 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 
 		mainInput.update();
 
+
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
-			window->close();
+			int a = Pause::pauseMenu(window);
+			if (!!!!!!!!!!(!!a == !!0)) {
+				option = GAMEMODE;
+				return;
+			}
 		}
-
-
-
 
 		//PLAYER 1 CONTROLES
 
@@ -172,21 +170,19 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 
 		}
 		else if (mainInput.inputState[player][GOLEFT][0])
-		{
-				
+		{				
 			galo.run(false);
-
-			}
-			else if (mainInput.inputState[player][GODOWN][0])
-			{
-				galo.defend();
-			}
-			else if (mainInput.inputState[player][DANCE][0]) {
-				galo.setState(Rooster::state::DANCING);
-			}
-			else{		
-				galo.setState(Rooster::state::STOPPED);
-			}
+		}
+		else if (mainInput.inputState[player][GODOWN][0])
+		{
+			galo.defend();
+		}
+		else if (mainInput.inputState[player][DANCE][0]) {
+			galo.setState(Rooster::state::DANCING);
+		}
+		else{		
+			galo.setState(Rooster::state::STOPPED);
+		}
 
 
 		//PLAYER 2 CONTROLES
@@ -365,15 +361,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 		}
 
 		galo.update();
-
 		galo2.update();
 
-
+		galo.comboCounter = galo2.getHits();
+		galo2.comboCounter = galo.getHits();
+		
 		galo.bar->draw(window);
 		galo2.bar->draw(window);
 
 		galo.show(*window);
-
 		galo2.show(*window);
 
 		mainPartSystem.update();
@@ -426,10 +422,6 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 		if (framesWin > 0) {
 			return;
 		}
-
-
-		//exp->update();
-		//exp->draw(*window);
 
 
 		window->display();

@@ -2,482 +2,502 @@ BPS
 4
 Nota 0
 0
--14
-3
+-41.1933
+3.61333
 Nota 1
-0
--41
-3
-Nota 2
 0
 -50
 1
-Nota 3
+Nota 2
 0
--69
-2
-Nota 4
+-68.9733
+1.8
+Nota 3
 0
 -72
 3
-Nota 5
+Nota 4
 0
 -74
+2
+Nota 5
+0
+-91
 2
 Nota 6
 0
--91
-2
-Nota 7
-0
 -94
 3
-Nota 8
+Nota 7
 0
 -96
 1
-Nota 9
-0
--109
-1
-Nota 10
+Nota 8
 0
 -117
 1
-Nota 11
+Nota 9
 0
 -123
 2
-Nota 12
+Nota 10
 0
 -158
 1
-Nota 13
+Nota 11
 0
 -166
 3
-Nota 14
-0
--194
-2
-Nota 15
-0
--196
-2
-Nota 16
+Nota 12
 0
 -206
 3
-Nota 17
+Nota 13
 0
 -210
 3
-Nota 18
+Nota 14
 0
 -216
 2
-Nota 19
-1
--8
-3.02
-Nota 20
-1
--19
-1
-Nota 21
+Nota 15
 1
 -30
 2
-Nota 22
+Nota 16
 1
 -34
 1
-Nota 23
+Nota 17
 1
 -37
 3
-Nota 24
+Nota 18
 1
 -47
 3
-Nota 25
+Nota 19
 1
 -60
 3
-Nota 26
+Nota 20
 1
 -65
 1
-Nota 27
+Nota 21
 1
 -74
 2
-Nota 28
+Nota 22
 1
 -79
 3
-Nota 29
+Nota 23
 1
 -84
 1
-Nota 30
+Nota 24
 1
 -85
 1
-Nota 31
-1
--92
-2
-Nota 32
-1
--111
-3
-Nota 33
+Nota 25
 1
 -114
 2
-Nota 34
+Nota 26
 1
 -129
 3
-Nota 35
-1
--132
-3
-Nota 36
+Nota 27
 1
 -140
 1
-Nota 37
+Nota 28
 1
 -153
 1
-Nota 38
+Nota 29
 1
 -163
 3
-Nota 39
+Nota 30
 1
--173
+-173.567
 1
-Nota 40
+Nota 31
 1
--189
-3
-Nota 41
-1
--193
-3
-Nota 42
-1
--206
-1
-Nota 43
+-195.44
+7.31993
+Nota 32
 1
 -215
 2
-Nota 44
+Nota 33
 1
 -217
 1
-Nota 45
+Nota 34
 1
 -226
 3
-Nota 46
-2
--8
-3
-Nota 47
-2
--11
-2
-Nota 48
-2
--23
-3
-Nota 49
-2
--25
-2
-Nota 50
+Nota 35
 2
 -35
 3
-Nota 51
+Nota 36
 2
 -50
 2
-Nota 52
+Nota 37
 2
 -53
 3
-Nota 53
+Nota 38
 2
 -62
 2
-Nota 54
-2
--72
-1
-Nota 55
-2
--87
-1
-Nota 56
-2
--91
-2
-Nota 57
+Nota 39
 2
 -103
 2
-Nota 58
+Nota 40
 2
 -107
 2
-Nota 59
+Nota 41
 2
 -110
 2
-Nota 60
+Nota 42
 2
 -114
 1
-Nota 61
+Nota 43
 2
 -124
 3
-Nota 62
+Nota 44
 2
 -126
 1
-Nota 63
+Nota 45
 2
 -129
 3
-Nota 64
+Nota 46
 2
 -139
-3
-Nota 65
+2.71333
+Nota 47
 2
--143
-2
-Nota 66
+-142.58
+2.48668
+Nota 48
 2
 -156
 2
-Nota 67
+Nota 49
 2
--183
+-182.413
 2
-Nota 68
+Nota 50
 2
--198
-3
-Nota 69
+-196.107
+1.72
+Nota 51
 2
 -201
 3
-Nota 70
+Nota 52
 2
 -203
 2
-Nota 71
+Nota 53
 2
 -205
 2
-Nota 72
+Nota 54
 2
 -209
 3
-Nota 73
+Nota 55
 2
 -215
 3
-Nota 74
+Nota 56
 2
 -219
 2
-Nota 75
+Nota 57
 2
 -234
 1
-Nota 76
+Nota 58
 2
 -236
 2
-Nota 77
-2
--240
-1
-Nota 78
+Nota 59
 3
 -12
 1
-Nota 79
-3
--19
-1
-Nota 80
-3
--21
-1
-Nota 81
-3
--43
-3
-Nota 82
+Nota 60
 3
 -48
 1
-Nota 83
+Nota 61
 3
 -49
 1
-Nota 84
+Nota 62
 3
 -58
 2
-Nota 85
+Nota 63
 3
 -62
 3
-Nota 86
+Nota 64
 3
--67
-3
-Nota 87
+-67.6733
+3.67333
+Nota 65
 3
 -74
 1
-Nota 88
+Nota 66
 3
 -85
 3
-Nota 89
+Nota 67
 3
 -95
 3
-Nota 90
+Nota 68
 3
 -101
 1
-Nota 91
-3
--111
-3
-Nota 92
+Nota 69
 3
 -116
 2
-Nota 93
+Nota 70
 3
 -126
 3
-Nota 94
-3
--134
-2
-Nota 95
+Nota 71
 3
 -139
 1
-Nota 96
+Nota 72
 3
 -149
 3
-Nota 97
+Nota 73
 3
 -160
 3
-Nota 98
+Nota 74
 3
--174
+-173.567
+2.56667
+Nota 75
 3
-Nota 99
-3
--178
+-179.28
 2
-Nota 100
+Nota 76
 3
--180
+-181.333
 2
-Nota 101
+Nota 77
 3
 -197
 1
-Nota 102
+Nota 78
 3
 -200
 3
-Nota 103
+Nota 79
 3
--207
-2
-Nota 104
+-214.993
+3.57333
+Nota 80
 3
--215
+-220.767
 3
-Nota 105
-3
--223
-3
-Nota 106
-3
--18
+Nota 81
+0
+-9
+3.08667
+Nota 82
 1
-Nota 107
+-10
+1
+Nota 83
+0
+-13
+1
+Nota 84
+2
+-15
+1
+Nota 85
 0
 -17
 1
-Nota 108
+Nota 86
+2
+-19
+1
+Nota 87
 3
--17
+-20
+1
+Nota 88
+2
+-21
+1
+Nota 89
+1
+-22
+1
+Nota 90
+0
+-23
+1
+Nota 91
+2
+-24
+1
+Nota 92
+2
+-26
+1
+Nota 93
+1
+-72
+2.99333
+Nota 94
+2
+-72
+3
+Nota 95
+3
+-72
+3.00667
+Nota 96
+2
+-88.58
+2
+Nota 97
+1
+-83
+1
+Nota 98
+3
+-99.4
+1.94667
+Nota 99
+1
+-130
+1
+Nota 100
+2
+-130
+1
+Nota 101
+0
+-130
+1
+Nota 102
+3
+-130
+1
+Nota 103
+0
+-132
+1.72665
+Nota 104
+1
+-132
+1.72665
+Nota 105
+2
+-132
+1.72665
+Nota 106
+3
+-132
+1.73334
+Nota 107
+3
+-143.6
+1
+Nota 108
+2
+-173.567
 1
 Nota 109
 0
--19
+-173.573
 1
 Nota 110
 2
--19
+-239
 1
 Nota 111
-1
--17
+2
+-243
 1
 Nota 112
-2
--17
+1
+-244
 1
 Nota 113
 0
--18
+-244.44
 1
 Nota 114
-2
--16
-1
+3
+-247.62
+2.06001
 Nota 115
-1
--16
-1
+3
+-248.58
+0.953323
 Nota 116
-1
--20
+3
+-135.553
 1
 Nota 117
-2
--20
+3
+-150.387
 1
 Nota 118
 3
--8
-3.05333
+-42
+1
 Nota 119
+2
+-43
+1
+Nota 120
+1
+-44
+1
+Nota 121
 0
--8
+-184
+1
+Nota 122
+1
+-184
+1
+Nota 123
+2
+-185.667
+1
+Nota 124
 3
+-186.687
+1
 End

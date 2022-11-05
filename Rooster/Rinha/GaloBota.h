@@ -25,16 +25,16 @@ namespace Rooster {
 
             this->hiKick = new Ataques(
                 11, 8, HitBox{ Vector2f(0, 0), 0 },
-                40, 10, -PI / 3, milliseconds(1200), ""
+                40, 10, -PI / 3, milliseconds(650), ""
             );
             this->louKick = new Ataques(
                 12, 5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, -PI/3, milliseconds(1000), ""
+                20, 10, -PI/3, milliseconds(500), ""
             );
 
             this->ultimateShot = new Ataques(
                 13,200, HitBox{ Vector2f(0, 0), 0 },
-                10, 10, PI/2, milliseconds(1000),
+                10, 10, PI/2, milliseconds(500),
                 "", milliseconds(2000)
             );
 

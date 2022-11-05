@@ -22,10 +22,6 @@ public:
 		buttonMenu.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (2 * SCREEN_HEIGHT / 16)));
 		options.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (3 * SCREEN_HEIGHT / 16)));
 
-
-
-
-
 	}
 
 
@@ -361,15 +357,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 		}
 
 		galo.update();
-
 		galo2.update();
 
-
+		galo.comboCounter = galo2.getHits();
+		galo2.comboCounter = galo.getHits();
+		
 		galo.bar->draw(window);
 		galo2.bar->draw(window);
 
 		galo.show(*window);
-
 		galo2.show(*window);
 
 		mainPartSystem.update();
@@ -422,10 +418,6 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,Rec
 		if (framesWin > 0) {
 			return;
 		}
-
-
-		//exp->update();
-		//exp->draw(*window);
 
 
 		window->display();

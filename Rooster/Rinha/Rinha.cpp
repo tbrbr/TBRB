@@ -41,7 +41,6 @@ Rooster::input mainInput;
 
 LANGUAGE LANG;
 
-
 #include "Sangue.h"
 Rooster::ParticleSystem mainPartSystem;
 
@@ -61,15 +60,6 @@ Rooster::ParticleSystem mainPartSystem;
 #include "Patinho/jogoDoPatinho.h"
 #include "TilesDoArrocha.h"
 
-
-
-
-//#include "jogador_de_video.h"
-
-
-
-
-
 #include "entradas.h"
 
 using namespace Rooster;
@@ -84,15 +74,7 @@ using namespace Rooster;
 
 int main() {
 
-	/*cout << IpAddress::getLocalAddress();
-=======
-	/*
-	cout << IpAddress::getLocalAddress();
->>>>>>> d3cbbbba0f164096bb2fcd72d6e8adf79221dd15
->>>>>>> 875b55d6aedb2683a908cfb0a5288fa760846f5d
-	cout << "Server?";
-	cin >> ishost;
-	*/
+	
 	//mota va tomar no seu cu por favor.
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
@@ -107,7 +89,6 @@ int main() {
 
 
 	int option = INTRO;
-	//option = BOTAPRAARROCHAR;
 		
 
 #if deixe_de_coisa

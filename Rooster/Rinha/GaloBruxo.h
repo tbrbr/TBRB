@@ -28,12 +28,12 @@ namespace Rooster {
 
 			this->louKick = new Ataques(
 				9, 5, HitBox{ Vector2f(0, 0), 0 },
-				20, 10, PI / 4, milliseconds(1000), "sounds\\smoke-bomb-6761.ogg"
+				20, 10, PI / 4, milliseconds(1250), "sounds\\smoke-bomb-6761.ogg"
 			);
 
 			this->ultimateShot = new Ataques(
 				10, 0.9, HitBox{ Vector2f(0, 0), 0 },
-				10, 3, 0, milliseconds(2000),
+				10, 3, 0, milliseconds(1500),
 				"sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
 			);
 
@@ -775,6 +775,29 @@ namespace Rooster {
 			Sound whowins;
 			whowins.setBuffer(whowinsBuf);
 
+			Explosion3DEffect* exp = new Explosion3DEffect();
+			
+
+			SoundBuffer bufferfeit;
+			bufferfeit.loadFromFile("sounds/Wingardium_Leviosa.ogg");
+			Sound feit;
+			feit.setBuffer(bufferfeit);
+
+
+			int timeFrames = 0;
+
+			Music fatalpeste;
+			fatalpeste.openFromFile("sounds/fatalpeste.ogg");
+			fatalpeste.setVolume(60);			
+			fatalpeste.play();
+
+			bool istime = true;
+			bool istimeagain = true;
+			int blue = 255;
+			int red = 255;
+			int green = 255;
+			bool lets = true;
+			bool letsgo = true;
 
 			while (window->isOpen()) {
 
@@ -782,8 +805,13 @@ namespace Rooster {
 
 				window->clear();
 				window->draw(fundo);
-				galo2->show(*window);
 				show(*window);
+
+				exp->update();
+				exp->draw(*window);
+
+				galo2->show(*window);
+				
 
 				Event e;
 				while (window->pollEvent(e))
@@ -797,9 +825,7 @@ namespace Rooster {
 
 				if (time < 1500) {
 
-					static int blue = 255;
-					static int red = 255;
-					static int green = 255;
+					
 
 					if (green > 0)
 						green -= 2;
@@ -832,45 +858,73 @@ namespace Rooster {
 					model.at("FrontArm4")->angle = 90;
 					model.at("FrontArm5")->angle = 90;
 					model.at("FrontArm6")->angle = -75;
-
+					
 					position.y = SCREEN_HEIGHT - ((SCREEN_HEIGHT / 2) * (thisTime / 1000));
 
 				}
-				else if (time < 3500) {
+				else if (time < 3000) {
+					
 
-					float thisTime = (time - 2500) / 1000;
+					model.at("BackArm")->angle = 45;
+					model.at("BackArm")->offset.x = 5;
+					model.at("FrontArm")->angle = -100;
+					model.at("FrontArm2")->angle = 90;
+					model.at("FrontArm3")->angle = -60;
+					model.at("FrontArm4")->angle = 120;
+					model.at("FrontArm5")->angle = 180;
+					model.at("FrontArm6")->angle = -30;
+					if (time > 2500) {
+						
+						if (istime) {
+							feit.play();
+							istime = false;
+						}
+					}
+				}
+				else if (time < 6000) {
 
-					static bool istime = true;
-					if (istime) {
+					float thisTime = (time - 2500) / 6000;
+
+					
+					if (istimeagain) {
 						gritoSound.play();
-						istime = false;
+						istimeagain = false;
 					}
 					position.y = SCREEN_HEIGHT / 2;
 
 					
-					model.at("BackArm")->angle = 90 - (45*thisTime);
-					model.at("FrontArm")->angle = -45 + (45 * thisTime);
-					model.at("FrontArm2")->angle = 60 - (45 * thisTime);
-					model.at("FrontArm3")->angle = -60 + (45 * thisTime);
-					model.at("FrontArm4")->angle = 90 - (45 * thisTime);
-					model.at("FrontArm5")->angle = 90 - (45 * thisTime);
-					model.at("FrontArm6")->angle = -75 + (45 * thisTime);
+					model.at("BackArm")->angle = 45;
+					model.at("BackArm")->offset.x = 5;
+					model.at("FrontArm")->angle = -100;
+					model.at("FrontArm2")->angle = 90;
+					model.at("FrontArm3")->angle = -60;
+					model.at("FrontArm4")->angle = 120;
+					model.at("FrontArm5")->angle = 180;
+					model.at("FrontArm6")->angle = -30;
+
+					model.at("Body")->angle = cos(frames);
+
 					
 					galo2->getHitByBruxoFatality();
+
+					// insano
+					if (timeFrames % 20 == 0) {
+						exp->createParticles(10, galo2->position, Color::Red, Vector2f(0, -4), 10, 0, 360);
+					}
+					timeFrames++;
 					
 				}
 				else {
-					if (time > 5000) {
-						static bool lets = true;
+					if (time > 6000) {
+						 
 						
 						if (lets)
 							fatalitysound.play();
 						lets = false;
 						window->draw(fatal);
-						if (time > 6000) {
-							if (time < 8000) {
-								static bool letsgo = true;
-								
+						if (time > 8000) {
+							if (time < 12000) {
+															
 								if (letsgo)
 									whowins.play();
 								letsgo = false;
@@ -894,6 +948,9 @@ namespace Rooster {
 					}
 				}
 
+				if (time > 15000) {
+					return;
+				}
 
 				updateWithoutPhysics();
 

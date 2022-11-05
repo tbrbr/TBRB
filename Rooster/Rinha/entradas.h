@@ -81,6 +81,8 @@ namespace Rooster {
 		bool keyboardState[sf::Keyboard::KeyCount][3];
 		bool mouseState[sf::Mouse::ButtonCount][3];
 
+		Vector2f mousePos;
+
 		bool isJoystickConnected = false;
 		bool joystickState[JOYTOTAL][3];
 
@@ -89,6 +91,12 @@ namespace Rooster {
 		bool inputState[2][INPUTSTOTAL][HUDTOTAL];
 
 		input() {
+
+			mousePos = Vector2f(0, 0);
+
+			if (p1Hud == 1 && p2Hud == 1) {
+				p2Hud = 0;
+			}
 
 			if (Joystick::isConnected(0)) {
 				p2Hud = 2;

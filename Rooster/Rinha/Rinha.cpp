@@ -18,7 +18,7 @@ int main() {
 
 	int option = INTRO;
 
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Default);
 	/* MÚSICA: A MULHER QUANDO QUER NAMORAR
 	* CANTOR: RAIMUNDO SOLDADO
 	A MUIÉ, QUANDO ELA QUER NAMORAR
@@ -71,7 +71,9 @@ int main() {
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(true);
-	
+	Image icon;
+	icon.loadFromFile("icons/galo5.png");
+	window->setIcon(100, 100, icon.getPixelsPtr());
 
 
 	Cursor cursor;

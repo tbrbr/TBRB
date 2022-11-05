@@ -1,35 +1,3 @@
-class pause {
-
-	RectangleShape Fundo;
-	RectangleShape buttonResume;
-	RectangleShape buttonMenu;
-	RectangleShape options;
-
-public:
-	pause() {
-
-		Fundo.setFillColor(Color::Magenta);
-		Fundo.setSize(Vector2f(SCREEN_WIDTH/4,SCREEN_HEIGHT/2));
-		Fundo.setPosition(Vector2f(SCREEN_WIDTH/2 - SCREEN_WIDTH / 8,SCREEN_HEIGHT/2 - SCREEN_HEIGHT/4));
-
-		buttonResume.setSize(Vector2f(SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7));
-		buttonMenu.setSize(Vector2f(SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7));
-		options.setSize(Vector2f(SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7));
-
-
-		Vector2f posFundo = Fundo.getPosition();
-		buttonResume.setPosition(Vector2f(posFundo.x/2 - SCREEN_WIDTH / 12, posFundo.y / 3 - SCREEN_HEIGHT / 16));
-		buttonMenu.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (2 * SCREEN_HEIGHT / 16)));
-		options.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (3 * SCREEN_HEIGHT / 16)));
-
-
-
-
-
-	}
-
-
-};
 
 void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option,RectangleShape fundo) {
 

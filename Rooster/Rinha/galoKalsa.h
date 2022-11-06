@@ -95,7 +95,7 @@ namespace Rooster {
 
             struct Animation danceAnim;
             danceAnim.init("animations/kalsaDance3.txt");
-            danceAnim.playingSpeed = 0.2;
+            danceAnim.playingSpeed = 0.1;
             danceAnim.connectLoop = true;
 
             animations.push_back(danceAnim);

@@ -311,8 +311,12 @@ struct Animation {
                         return weightedPropertyMean(pPrev, p, w1);
 
                     }
-                    else {
+                    else if (pPrev.progressionType == 3) {
                         float w1 = 1;
+                        return weightedPropertyMean(pPrev, p, w1);
+                    }
+                    else {
+                        float w1 = -(cos(PI * perc) - 1) / 2;
                         return weightedPropertyMean(pPrev, p, w1);
                     }
                 }

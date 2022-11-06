@@ -2,6 +2,20 @@
 namespace Rooster {
 
 
+	struct PartTextures {
+		Texture flower;
+
+		
+
+		void init() {
+			flower.loadFromFile("sprites/flowerSmall.png");
+		}
+	};
+
+	struct PartTextures partTextures;
+
+
+
 	// Credits to Tenry on https://en.sfml-dev.org/forums/index.php?topic=7313.0
 	// hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f
 	sf::Color hsv(int hue, float sat, float val)
@@ -84,16 +98,21 @@ namespace Rooster {
 		bool fadeOutAlpha = true;
 
 		bool mortal = true;
-		float active = false;
+		bool active = false;
 
 
 
-		bool hasSprite = false;
+		
 
 		float scl = 1;
 
+		bool hasSprite = false;
 		Vector2f sprCenter;
 		Sprite sprite;
+
+		bool hasText = false;
+		Text text;
+
 
 		float radius = 10;
 
@@ -135,12 +154,11 @@ namespace Rooster {
 				if (!fixed) {
 					hSpeed += hAcc;
 					vSpeed += vAcc;
-					ang += angSpeed;
+					angSpeed += angAcc;
 
 					hSpeed *= friction;
 					vSpeed *= friction;
 					angSpeed *= angFriction;
-
 
 					hSpeed = constrain(hSpeed, -maxHspd, maxHspd);
 					vSpeed = constrain(vSpeed, -maxVspd, maxVspd);
@@ -179,16 +197,26 @@ namespace Rooster {
 				Color col = color;
 				col.a = 255 * alpha;
 
-				if (hasSprite) {
+				float scale = scl * (1 + (depthChange * (1 - (depth / depthStart))));
+
+				if (hasText) {
+					text.setColor(col);
+					text.setPosition(position.x, position.y);
+					text.setRotation(ang);
+					text.setScale(scale, scale);
+				} else if (hasSprite) {
+
+					
+
 					sprite.setColor(col);
 					sprite.setPosition(position.x, position.y);
-					sprite.setOrigin(sprCenter * scl);
+					//sprite.setOrigin(sprCenter);
 					sprite.setRotation(ang);
-					sprite.setScale(scl, scl);
+					sprite.setScale(scale, scale);
 				}
 				else {
 
-					float rad = radius*scl *( 1+(depthChange * (1 - (depth / depthStart))));
+					float rad = radius * scale;
 					
 					point.setFillColor(col);
 					point.setPosition(position.x, position.y);
@@ -207,27 +235,13 @@ namespace Rooster {
 		void draw(RenderWindow& window) {
 
 			if (active) {
-				if (hasSprite) {
+
+				if (hasText) {
+					window.draw(text);
+				} else if (hasSprite) {
 					window.draw(sprite);
 				}
 				else {
-					window.draw(point);
-				}
-			}
-		}
-
-
-		void draw(RenderWindow& window, Vector2f offset) {
-
-			if (active) {
-				if (hasSprite) {
-					sprite.setPosition(sprite.getPosition().x + offset.x, sprite.getPosition().y + offset.y);
-
-					window.draw(sprite);
-				}
-				else {
-					point.setPosition(point.getPosition().x + offset.x, point.getPosition().y + offset.y);
-
 					window.draw(point);
 				}
 			}
@@ -245,12 +259,17 @@ namespace Rooster {
 
 	public:
 
-		// Creation vars
+		// Particle Creation vars
 		Vector2f position;
 		Vector2f gravity;
 
 		float angleMin = 0;
 		float angleMax = 0;
+
+		float angleSpeedMin = 0;
+		float angleSpeedMax = 0;
+
+		float angleFriction = 1;
 
 		float hspeedMin = 0;
 		float hspeedMax = 0;
@@ -260,6 +279,8 @@ namespace Rooster {
 
 		float lifeMin = 10;
 		float lifeMax = 10;
+
+		bool partMortal = true;
 
 
 		
@@ -286,16 +307,23 @@ namespace Rooster {
 
 		Color color;
 
+		bool hasSprite = false;
+		Sprite sprite;
+
+		bool hasText = false;
+		Text text;
+
 
 
 		bool fadeOutAlpha = true;
 		bool fadeInAlpha = false;
 
+
+
+		// Effect Vars
 		bool active = true;
 
 		int life = 600;
-
-
 
 		bool mortal = true;
 
@@ -412,49 +440,96 @@ namespace Rooster {
 			vspeedMax = 2;
 		}
 
+		void floresPreset() {
+			tilesPreset();
+
+			color = Color::White;
+
+			hasSprite = true;
+			sprite.setTexture(partTextures.flower);
+			sclMin = 0.2;
+			sclMax = 0.8;
+			angleMin = 0;
+			angleMax = 360;
+			angleSpeedMin = -5;
+			angleSpeedMax = 5;
+
+			fadeInAlpha = true;
+			fadeOutAlpha = true;
+
+			angleFriction = 0.98;
+
+			sprite.setOrigin(sprite.getLocalBounds().width/2, sprite.getLocalBounds().height/2);
+		}
+
+		void textPreset() {
+			hasText = true;
+			text.setString("Particle");
+			text.setFont(basicFont);
+		}
+
 
 		void addParticle(struct Particle p) {
-			gotas.push_back(p);
+			if (gotas.size() < 2000) {
+				gotas.push_back(p);
+			}
 		}
 
 		void createBaseParticle() {
-			struct Particle p;
-			p.position = position;
-			p.scl = randFloatRange(sclMin, sclMax);;
-			p.alpha = 1;
-			p.ang = randFloatRange(angleMin, angleMax);
-			p.life = randFloatRange(lifeMin, lifeMax);
-			p.hSpeed = randFloatRange(hspeedMin, hspeedMax);
-			p.vSpeed = randFloatRange(vspeedMin, vspeedMax);
 
-			if (isHSV) {
-				p.hue = randFloatRange(hueMin, hueMax);
-				p.sat = 1;
-				p.light = randFloatRange(lightMin, lightMax);
-				p.isHSV = true;
+			if (gotas.size() < 2000) {
+				struct Particle p;
+				p.position = position;
+				p.scl = randFloatRange(sclMin, sclMax);
+
+				p.alpha = 1;
+
+				p.ang = randFloatRange(angleMin, angleMax);
+				p.angSpeed = randFloatRange(angleSpeedMin, angleSpeedMax);
+				p.angFriction = angleFriction;
+
+
+				p.life = randFloatRange(lifeMin, lifeMax);
+				p.hSpeed = randFloatRange(hspeedMin, hspeedMax);
+				p.vSpeed = randFloatRange(vspeedMin, vspeedMax);
+
+
+				p.vAcc = gravity.y;
+				p.hAcc = gravity.x;
+
+				p.depth = randFloatRange(depthMin, depthMax);
+				p.depthSpd = randFloatRange(depthSpdMin, depthSpdMax);
+
+				p.fadeInAlpha = fadeInAlpha;
+				p.fadeOutAlpha = fadeOutAlpha;
+
+				if (isHSV) {
+					p.hue = randFloatRange(hueMin, hueMax);
+					p.sat = 1;
+					p.light = randFloatRange(lightMin, lightMax);
+					p.isHSV = true;
+				}
+				else {
+					p.color = color;
+					p.isHSV = false;
+				}
+
+				if (hasSprite) {
+					p.sprite = sprite;
+					p.hasSprite = true;
+				}
+
+				if (hasText) {
+					p.text = text;
+					p.hasText = true;
+				}
+
+				p.mortal = partMortal;
+
+				p.active = true;
+
+				gotas.push_back(p);
 			}
-			else {
-				p.color = color;
-				p.isHSV = false;
-			}
-
-			p.vAcc = gravity.y;
-			p.hAcc = gravity.x;
-
-			p.angAcc = 0;
-			p.angSpeed = 0;
-
-			p.depth = randFloatRange(depthMin, depthMax);
-			p.depthSpd = randFloatRange(depthSpdMin, depthSpdMax);
-
-			p.fadeInAlpha = fadeInAlpha;
-			p.fadeOutAlpha = fadeOutAlpha;
-
-			p.mortal = mortal;
-
-			p.active = true;
-
-			gotas.push_back(p);
 		}
 
 		virtual void createParticle() {

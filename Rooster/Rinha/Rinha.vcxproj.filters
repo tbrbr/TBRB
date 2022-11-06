@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Galo.cpp" />
     <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -36,5 +35,11 @@
     <ClInclude Include="textBox.h" />
     <ClInclude Include="pause_menu.h" />
     <ClInclude Include="importados.h" />
+<<<<<<< HEAD
+    <ClInclude Include="versus.h" />
+    <ClInclude Include="particula_falida.h" />
+=======
+    <ClInclude Include="GUI.h" />
+>>>>>>> a10d19e142e52ef96b53a6c3eb7f0c21b171ab96
   </ItemGroup>
 </Project>

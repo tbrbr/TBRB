@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Galo.cpp" />
     <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +149,7 @@
     <ClInclude Include="galoKalsa.h" />
     <ClInclude Include="galoPeste.h" />
     <ClInclude Include="GaloSniper.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="IAtaques.h" />
     <ClInclude Include="importados.h" />
     <ClInclude Include="introducoes.h" />
@@ -157,6 +157,7 @@
     <ClInclude Include="Math2.h" />
     <ClInclude Include="menu_inicial.h" />
     <ClInclude Include="muitosjogadores.h" />
+    <ClInclude Include="particula_falida.h" />
     <ClInclude Include="Patinho\Fps.h" />
     <ClInclude Include="Patinho\jogoDoPatinho.h" />
     <ClInclude Include="Patinho\Patinho.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="textBox.h" />
     <ClInclude Include="TilesDoArrocha.h" />
     <ClInclude Include="varios_idiomas.h" />
+    <ClInclude Include="versus.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

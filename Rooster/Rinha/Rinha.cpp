@@ -16,9 +16,20 @@ int main() {
 
 	LANG.startAllTexts(lang);
 
+
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Default);
+
+	// Carregando texturas pra particulas
+	Rooster::partTextures.init();
+
+	basicFont.loadFromFile("fonts/whitrabt.ttf");
+
+
+
 	int option = INTRO;
 
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+	bool motaouhenrique = true;
+
 
 	/* MÚSICA: A MULHER QUANDO QUER NAMORAR
 	* CANTOR: RAIMUNDO SOLDADO
@@ -72,7 +83,9 @@ int main() {
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FRAMERATE_LIMIT);
 	window->setMouseCursorGrabbed(true);
-	
+	Image icon;
+	icon.loadFromFile("icons/galo5.png");
+	window->setIcon(100, 100, icon.getPixelsPtr());
 
 
 	Cursor cursor;
@@ -140,6 +153,10 @@ int main() {
 			break;
 		case SELECTION:
 			selector->show(window,option,&galo,&galo2);
+			break;
+		case VERSUS:
+			versus(*window, *galo, *galo2, fundo);
+			option = UMJOGADORES;
 			break;
 		case INTRO: {
 			option = introducao(window);

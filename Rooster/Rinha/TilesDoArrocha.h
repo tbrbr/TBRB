@@ -143,17 +143,39 @@ public:
 	float holdingNoteY = 0;
 	float holdingY = 0;
 
+	float roomWid = 1280;
+	float roomHei = 720;
+
+
+
 	struct Musica musTeste;
 
 
 	vector<Rooster::AreaEffect*> slideEffects;
+	Rooster::Effect* textEffects;
 
-	
 
-	Yamaha() {
 
-		musTeste.music.openFromFile("sounds/teclado lindinho.ogg");
-		musTeste.music.play();
+	~Yamaha() {
+		for (int i = 0; i < slideEffects.size(); i++) {
+			delete slideEffects[i];
+		}
+		slideEffects.clear();
+
+		delete textEffects;
+
+		musTeste.music.stop();
+		//musTeste.music.~Music();
+	}
+
+	Yamaha(Vector2f roomSize) {
+
+		roomWid = roomSize.x;
+		roomHei = roomSize.y;
+
+
+		musTeste.music.openFromFile("sounds/ze.ogg");
+		//musTeste.music.play();
 
 		base = 400;
 		altura = 600;
@@ -164,7 +186,7 @@ public:
 
 		bps = 4;
 
-		pos.x = SCREEN_WIDTH / 2;
+		pos.x = roomWid / 2;
 		pos.y = 40;
 
 
@@ -255,6 +277,22 @@ public:
 
 		}
 
+		textEffects = new Rooster::Effect();
+		textEffects->tilesPreset();
+		textEffects->gravity.y = 0;
+		textEffects->sclMin = 1.4;
+		textEffects->sclMax = 1.5;
+		textEffects->hspeedMax = 0.1;
+		textEffects->hspeedMin = -0.1;
+		textEffects->vspeedMax = -2;
+		textEffects->vspeedMin = -1.8;
+		textEffects->friction = 0.95;
+		textEffects->lifeMin = 350;
+		textEffects->lifeMax = 350;
+		textEffects->fadeInAlpha = true;
+		textEffects->textPreset();
+		textEffects->mortal = false;
+
 
 		
 		/*
@@ -277,7 +315,7 @@ public:
 		}
 		*/
 
-		loadNotas();
+		loadNotas("ze.txt");
 		
 	}
 
@@ -348,10 +386,17 @@ public:
 	}
 
 
+	float getScroll() {
+		return scrollY;
+	}
+
+	float getPlayingSeconds() {
+		return musTeste.music.getPlayingOffset().asSeconds();
+	}
 
 
-	void saveNotas() {
-		std::ofstream file("testMusica.txt");
+	void saveNotas(std::string str) {
+		std::ofstream file(str);
 
 		if (file.is_open()) {
 			file << "BPS" << std::endl;
@@ -380,8 +425,8 @@ public:
 		notas.clear();
 	}
 
-	void loadNotas() {
-		std::ifstream file("testMusica.txt");
+	void loadNotas(std::string str) {
+		std::ifstream file(str);
 
 		if (file.is_open()) {
 
@@ -461,7 +506,7 @@ public:
 		setScroll(scrollY + amount);
 	}
 
-	void update(int frames) {
+	void update(Vector2f mouse) {
 
 		
 		if (editing) {
@@ -486,7 +531,6 @@ public:
 					Vector2f rectSize = Vector2f(testRect.getGlobalBounds().width, testRect.getGlobalBounds().height);
 
 
-					Vector2f mouse = mainInput.mousePos;
 
 					if (pointInside(mouse, rectPos.x, rectPos.y, rectSize.x, rectSize.y)) {
 
@@ -558,7 +602,6 @@ public:
 					Vector2f rectPos = Vector2f(testRect.getGlobalBounds().left, testRect.getGlobalBounds().top);
 					Vector2f rectSize = Vector2f(testRect.getGlobalBounds().width, testRect.getGlobalBounds().height);
 
-					Vector2f mouse = mainInput.mousePos;
 
 					struct Nota* nota = notas[holdingNote];
 					float yy = (((mouse.y - rectPos.y) / altura) * notasPorYamaha) - notasPorYamaha - scrollY;
@@ -654,8 +697,8 @@ public:
 								}
 								teclaMissed[coluna] = false;
 
-								combo++;
-								bregaPower += 30;
+								comboAdd();
+								bregaPower += 15 + combo*2;
 							}
 						}
 					}
@@ -665,7 +708,9 @@ public:
 					if (!nota->missed && !nota->hitted) {
 						nota->missed = true;
 						life -= 5;
-						combo = 0;
+
+						comboBreak();
+						
 						bregaPower -= 280;
 					}
 				}
@@ -675,7 +720,8 @@ public:
 				if (teclaPressed[i]) {
 					if (teclaMissed[i]) {
 						life -= 5;
-						combo = 0;
+						
+						comboBreak();
 						bregaPower -= 50;
 					}
 				}
@@ -694,7 +740,42 @@ public:
 		
 
 
+		textEffects->update();
+	}
 
+	void comboBreak() {
+
+		if (combo > 3) {
+			std::string str = "ComboBreak ";
+			str += std::to_string(combo);
+			textEffects->position.x = randFloat(roomWid);
+			textEffects->position.y = randFloat(roomHei);
+			textEffects->color = Color::Red;
+			textEffects->text.setString(str);
+			textEffects->createParticle();
+		}
+
+
+		combo = 0;
+	}
+
+	void comboAdd() {
+
+		combo++;
+
+		if (combo > 3) {
+			std::string str = "Combo ";
+			str += std::to_string(combo);
+
+			textEffects->position.x = roomWid*0.75 + randFloat(roomWid/10);
+			textEffects->position.y = roomHei*0.5  + randFloat(roomHei/10);
+			textEffects->color = Rooster::hsv(combo*5, 1, 1);
+			textEffects->text.setString(str);
+			textEffects->createParticle();
+		}
+
+
+		
 	}
 
 
@@ -935,7 +1016,7 @@ public:
 		int x = 0;
 		int y = 0;
 
-		int wid = SCREEN_WIDTH;
+		int wid = roomWid;
 		int hei = 40;
 
 		rect.setFillColor(Color(250, 250 ,250, 255));
@@ -963,6 +1044,8 @@ public:
 			slideEffects[i]->draw(*window);
 		}
 
+		textEffects->draw(*window);
+
 	}
 
 };
@@ -982,7 +1065,7 @@ class BregaMeter {
 public:
 	float percentage = 0;
 
-	BregaMeter(Texture& bregaMeterTex) {
+	BregaMeter(Texture& bregaMeterTex, Vector2f roomSize) {
 		
 		sprite.setTexture(bregaMeterTex);
 
@@ -991,7 +1074,7 @@ public:
 		float bregaSprWid = bregaMeterTex.getSize().x / 2;
 		float bregaSprHei = bregaMeterTex.getSize().y;
 
-		wid = SCREEN_WIDTH / 5;
+		wid = roomSize.x / 5;
 		
 
 		sprite.setTextureRect(IntRect(0, 0, bregaSprWid, bregaSprHei));
@@ -1005,8 +1088,8 @@ public:
 
 		hei = bregaSprHei * yScl;
 
-		x = SCREEN_WIDTH - wid;
-		y = SCREEN_HEIGHT - (bregaSprHei * yScl);
+		x = roomSize.x -wid;
+		y = roomSize.y - (bregaSprHei * yScl);
 
 		
 	}
@@ -1038,52 +1121,196 @@ public:
 
 
 
+struct TilesInfo {
+	Yamaha* alcides;
+
+	int frames = 0;
+
+	Rooster::Galo* galoPeste;
+	Rooster::Galo* galoKalsa;
+	Rooster::Galo* galoSniper;
+
+	Texture fundao;
+	Texture bregaMeterTex;
+
+	BregaMeter* bregaMeter;
+
+	RectangleShape rect;
+
+	sf::View tilesView;
+
+	Vector2f roomSize;
+
+	void init() {
+
+		roomSize = Vector2f(1280, 720);
+
+		struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
+
+		galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+		galoKalsa = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
+		galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
+
+		galoSniper->setPosition(Vector2f((float)roomSize.x / 1.05, Rooster::floorY));
+		galoKalsa->facingRight = true;
+
+		fundao.loadFromFile("sprites/tiringa.png");
+
+		bregaMeterTex.loadFromFile("sprites/medidorBrega.png");
+
+		bregaMeter = new BregaMeter(bregaMeterTex, roomSize);
+
+		rect.setSize(roomSize);
+		rect.setTexture(&fundao);
+		rect.setFillColor(Color(255, 0, 255, 255));
+
+		alcides = new Yamaha(roomSize);
+
+
+		galoPeste->update();
+
+		galoKalsa->update();
+
+		galoSniper->update();
+
+		alcides->update(Vector2f(0, 0));
+
+	}
+
+	void clear() {
+		delete galoPeste;
+		delete galoKalsa;
+		delete galoSniper;
+		delete bregaMeter;
+		delete alcides;
+	}
+
+	void draw(RenderWindow& window) {
+		window.draw(rect);
+
+		alcides->draw(&window, frames);
+
+		galoPeste->show(window);
+		galoKalsa->show(window);
+		galoSniper->show(window);
+
+		bregaMeter->draw(window);
+	}
+
+	void update(RenderWindow& window) {
+		frames++;
+
+
+		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
+			alcides->moveScroll(-0.2);
+		}
+		if (mainInput.keyboardState[sf::Keyboard::Up][0]) {
+			alcides->moveScroll(0.2);
+		}
+
+		if (mainInput.keyboardState[sf::Keyboard::Space][1]) {
+			if (alcides->editing) {
+				if (alcides->playing) {
+
+					alcides->pause();
+				}
+				else {
+					alcides->play();
+
+				}
+			}
+		}
+
+
+		Vector2f mousePos = window.mapPixelToCoords((Vector2i)mainInput.mousePos);
+		alcides->update(mousePos);
+
+		if (alcides->playing) {
+			galoPeste->update();
+
+			galoKalsa->update();
+
+			galoSniper->update();
+		}
+
+		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
+	}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 bool pianoTiles(RenderWindow* window) {
 
 
-	Yamaha alcides;
+	struct TilesInfo info;
+	info.init();
 
-	
-	Clock timer;
-	timer.restart();
-
-	int frames = 0;
-
-	struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
-
-	Rooster::Galo* galoPeste  = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
-	Rooster::Galo* galoKalsa  = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true );
-	Rooster::Galo* galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
-
-	galoSniper->setPosition(Vector2f((float)SCREEN_WIDTH/1.05, Rooster::floorY));
-	galoKalsa->facingRight = true;
-
-	Texture fundao;
-	fundao.loadFromFile("sprites/tiringa.png");
-
-	RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	rect.setTexture(&fundao);
-	rect.setFillColor(Color(255, 0, 255, 255));
+	bool flores = false;
 
 
-	Texture bregaMeterTex;
-	bregaMeterTex.loadFromFile("sprites/medidorBrega.png");
+	sf::View view;
+	if (true) {
 
-	BregaMeter bregaMeter(bregaMeterTex);
+		Vector2f size = (Vector2f)window->getSize();
 
-	
+		float wid = 1280;
+		float hei = 720;
+		float xScl = (float)size.x / wid;
+		float yScl = (float)size.y / hei;
+
+		if (xScl > yScl) {
+			wid *= yScl;
+			hei = size.y;
+		}
+		else {
+
+			hei *= xScl;
+			wid = size.x;
+		}
+
+		xScl = wid / (float)size.x;
+		yScl = hei / (float)size.y;
+
+		sf::FloatRect area(0.f, 0.f, 1280, 720);
+		view.setSize(area.width, area.height);
+		view.setCenter(area.width/2, area.height/2);
+		view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
+		window->setView(view);
+	}
+
+
+
+
+	// Detecta texto para o editor
+	int inputType = -1;
+	char lastChar = ' ';
+
+	struct ValBox loadBox;
+	loadBox.init(2, 0, 100, 300, 40, "loadPath");
+	loadBox.label = "loadPath sem o .txt (Ctrl+L)";
+
+	struct ValBox saveBox;
+	saveBox.init(2, 0, 300, 300, 40, "savePath");
+	saveBox.label = "savePath sem o .txt (Ctrl+P)";
+
 
 
 
 	while (window->isOpen()) {
 
-		
-		int time = timer.getElapsedTime().asMilliseconds();
-
-		
-		
+		inputType = -1;
 
 		Event e;
 		while (window->pollEvent(e))
@@ -1093,9 +1320,9 @@ bool pianoTiles(RenderWindow* window) {
 				if (e.key.code == Keyboard::Escape)
 				{
 					window->close();
+				} else if(e.key.code == Keyboard::Enter) {
+					inputType = 1;
 				}
-
-
 			}
 
 			if (e.type == Event::MouseMoved) {
@@ -1126,10 +1353,26 @@ bool pianoTiles(RenderWindow* window) {
 				xScl = wid / (float)e.size.width;
 				yScl = hei/(float)e.size.height;
 
-				sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
-				sf::View view(visibleArea);
+				sf::FloatRect area(0.f, 0.f, 1280, 720);
+				view.setSize(area.width, area.height);
+				view.setCenter(area.width / 2, area.height / 2);
 				view.setViewport(FloatRect((1-xScl)/2,(1-yScl)/2, xScl, yScl));
 				window->setView(view);
+			}
+			else if (e.type == Event::TextEntered) {
+				if (e.text.unicode < 128) {
+					//std::cout << "Arcor" << std::endl;
+					if (e.text.unicode > 31) {
+						lastChar = (static_cast<char>(e.text.unicode));
+						//std::cout << info.lastChar << std::endl;
+						inputType = 0;
+
+					}
+					else if (e.text.unicode == 3 || e.text.unicode == 8) {
+						inputType = 2;
+						//std::cout << "Delete" << std::endl;
+					}
+				}
 			}
 		}
 
@@ -1137,76 +1380,66 @@ bool pianoTiles(RenderWindow* window) {
 
 		window->clear();
 
-		frames++;
-
 		
+		
+		info.update(*window);
+		info.draw(*window);
 
+		if (info.alcides->editing) {
 
-		window->draw(rect);
+			Vector2f mouseViewPos = window->mapPixelToCoords((Vector2i)mainInput.mousePos);
 
+			loadBox.update(mouseViewPos, inputType, lastChar);
+			loadBox.draw(*window);
 
-		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
-			alcides.moveScroll(-0.2);
+			saveBox.update(mouseViewPos, inputType, lastChar);
+			saveBox.draw(*window);
 		}
-
-		if (mainInput.keyboardState[sf::Keyboard::Up][0]) {
-			alcides.moveScroll(0.2);
-		}
-
-		if (mainInput.keyboardState[sf::Keyboard::Space][1]) {
-			if (alcides.editing) {
-				if (alcides.playing){
-
-					alcides.pause();
-				}
-				else {
-					alcides.play();
-					
-				}
-			}
-		}
+		//window->setView(view);
 
 		if (mainInput.keyboardState[sf::Keyboard::LControl][0]) {
 			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
-				alcides.loadNotas();
+
+				std::string str = loadBox.sVal;
+				str += ".txt";
+
+
+				info.alcides->loadNotas(str);
 			}
 
 			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
-				alcides.saveNotas();
+
+				std::string str = saveBox.sVal;
+				str += ".txt";
+
+				info.alcides->saveNotas(str);
 			}
 		}
 
-		
-			
-		alcides.update(frames);
-		alcides.draw(window, frames);
 
-		
 
-		if (alcides.playing) {
-			galoPeste->update();
 
-			galoKalsa->update();
+		if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+			flores = true;
 
-			galoSniper->update();
+			FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
+
+			Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
+			effect->floresPreset();
+			//effect->color = Color(200, 250, 100);
+
+			effect->createMultipleParticles(100);
+
+			mainPartSystem.addEffect(effect);
 		}
-		
 
-		galoPeste->show(*window);
-		galoKalsa->show(*window);
-		galoSniper->show(*window);
-		
-
-
-
-		bregaMeter.percentage = (float)alcides.bregaPower / alcides.bregaMax;
-		bregaMeter.draw(*window);
-
-
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
 
 		window->display();
 	}
 
+	return true;
 	
 	
 }

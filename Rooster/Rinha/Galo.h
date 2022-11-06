@@ -374,7 +374,7 @@ namespace Rooster {
         Sprite estrelinha;
 
         int hits = 0;
-
+       
         Font comboFont;
         Text comboText;
 
@@ -478,6 +478,14 @@ namespace Rooster {
 
         }
 
+        int getHits() {
+            return this->hits;
+        }
+
+        Vector2f getPosition() {
+            return this->position;
+        }
+
         void setPosition(Vector2f pos) {
             this->position = pos;
         }
@@ -537,9 +545,7 @@ namespace Rooster {
         void sethp(int hp) {
             this->hp = hp;
         }
-        int getHits() {
-            return hits;
-        }
+        
 
         virtual void apanhar(Ataques atk, bool direction){
 

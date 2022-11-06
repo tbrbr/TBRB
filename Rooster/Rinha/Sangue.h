@@ -366,7 +366,7 @@ namespace Rooster {
 			vspeedMax = 0;
 
 			lifeMin = 100;
-			lifeMax = 250;
+			lifeMax = 350;
 
 
 
@@ -641,84 +641,6 @@ namespace Rooster {
 		}
 
 	};
-
-
-	/*
-	class Explosion3DEffect : public Effect {
-		float radius;
-		Vector2f center;
-		Vector2f impact;
-
-	public:
-
-
-		Explosion3DEffect() {
-			life = 100;
-
-			gravity.x = 0;
-			gravity.y = Gravity / 80;
-		}
-
-		void createParticles(float radius, Vector2f center, Color cor, Vector2f impactForce, float explosionForce, float angle, float angleFocus) {
-
-
-			for (int i = 0; i < 500; i++) {
-
-
-				Particle p(Color::Red);
-
-				p.setPosition(center);
-
-				p.vAcc = gravity.y;
-				p.hAcc = gravity.x;
-
-				p.fadeOutAlpha = false;
-				p.fadeInAlpha = true;
-
-				p.mortal = true;
-
-				p.life = randIntRange(300, 600);
-				p.maxLife = p.life;
-
-				p.maxHspd = 40;
-				p.maxVspd = 40;
-
-				p.depthSpd = randFloatRange(-1, 4);
-
-				p.radius = randIntRange(radius/2, radius);
-
-				float ang = toRadiAnus(randFloatRangeNormal(angle - 180, angle + 180, angleFocus));
-
-
-				float impact = randFloat(explosionForce);
-
-				p.setImpulse(
-					(cos(ang) * impact) + impactForce.x,
-					(sin(ang) * impact) + impactForce.y
-				);
-
-
-				gotas.push_back(p);
-			}
-		}
-
-
-		void setRadius(float radius) {
-			this->radius = radius;
-		}
-
-	};
-
-
-
-	*/
-
-
-
-
-
-
-
 
 
 

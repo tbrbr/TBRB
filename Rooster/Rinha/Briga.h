@@ -383,30 +383,38 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		mainPartSystem.draw(*window);
 
 		if (galo.gethp() < 0) {
-
 			rounds++;
+			p2Rounds++;
+
 			if (rounds == 3 || p2Rounds == 2) {
 				framesWin = 60;
+				musicas[index].stop();
+				galo2.fatality(window, &galo, fundo);
+				option = MENU_PRINCIPAL;
+				return;
 			}
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-				p2Rounds++;
+				galo2.sethp(galo2.getMaxhp());				
 			}
 		}
 		else if (galo2.gethp() < 0) {
 			rounds++;
+			p1Rounds++;
+
 			if (rounds == 3 || p1Rounds == 2) {
 				framesWin = 60;
+				musicas[index].stop();
+				galo.fatality(window, &galo2, fundo);
+				option = MENU_PRINCIPAL;
+				return;
 			}
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-				p1Rounds++;
+				galo2.sethp(galo2.getMaxhp());				
 			}
-
 		}
 
 

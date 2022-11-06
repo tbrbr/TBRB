@@ -16,9 +16,10 @@ int main() {
 
 	LANG.startAllTexts(lang);
 
-	int option = INTRO;
+	int option = SELECTION;
 
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Default);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Fullscreen);
+
 	/* MÚSICA: A MULHER QUANDO QUER NAMORAR
 	* CANTOR: RAIMUNDO SOLDADO
 	A MUIÉ, QUANDO ELA QUER NAMORAR

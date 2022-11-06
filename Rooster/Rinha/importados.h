@@ -19,17 +19,8 @@
 using namespace std;
 using namespace sf;
 
-#define deixe_de_coisa 1
-
-//va se arrombar nao
-#if  deixe_de_coisa
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-
-#else
-const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
-#endif
+const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
 
 #define SHOWDEBUG false
 

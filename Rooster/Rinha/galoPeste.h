@@ -29,17 +29,17 @@ namespace Rooster {
             // Creating Attacks
             this->hiKick = new Ataques(
                 6, 8, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, -PI / 4, milliseconds(1200), ""
+                20, 10, -PI / 4, milliseconds(650), ""
             );
 
             this->louKick = new Ataques(
                 7, 5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, PI / 4, milliseconds(1000), "sounds\\cartoon-mouse-96437.ogg"
+                20, 10, PI / 4, milliseconds(750), "sounds\\cartoon-mouse-96437.ogg"
             );
 
             this->ultimateShot = new Ataques(
                 8, 0.9, HitBox{ Vector2f(0, 0), 0 },
-                10, 3, 0, milliseconds(1500),
+                10, 3, 0, milliseconds(1000),
                 "sounds\\awp.ogg"
             );
 
@@ -676,8 +676,7 @@ namespace Rooster {
 
             Music fatalpeste;
             fatalpeste.openFromFile("sounds/fatalpeste.ogg");
-            fatalpeste.setVolume(60);
-            //SoundBuffer 
+            fatalpeste.setVolume(60);         
             fatalpeste.play();
 
 

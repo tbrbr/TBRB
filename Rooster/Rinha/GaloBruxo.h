@@ -15,6 +15,8 @@ namespace Rooster {
 		SoundBuffer defenseBuffer;
 		Sound defenseSound;
 
+		
+
 	public:
 		Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
 			// Stats
@@ -81,9 +83,6 @@ namespace Rooster {
 
 				hurtBox.push_back(*hit);
 			}
-
-
-
 			delete hit;
 
 			struct Animation agacharAnim;

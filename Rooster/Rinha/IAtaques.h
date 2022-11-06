@@ -246,7 +246,7 @@ namespace Rooster {
 			ExplosionEffect* exp = new ExplosionEffect(colPos, 10, angle, 180, 0, 0);
 			
 			exp->sanguePreset();
-			exp->createMultipleParticles(500);
+			exp->createMultipleParticles(200);
 			partSys.addEffect(exp);
 		}
 

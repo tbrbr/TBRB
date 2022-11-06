@@ -19,7 +19,7 @@
 using namespace std;
 using namespace sf;
 
-#define porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota 1
+#define porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota 0
 
 //va se arrombar nao
 #if  porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota
@@ -31,7 +31,7 @@ const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 #endif
 
-#define SHOWDEBUG false
+#define SHOWDEBUG true
 
 
 Font basicFont;

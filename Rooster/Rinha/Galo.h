@@ -741,7 +741,7 @@ namespace Rooster {
                 invFrames--;
             }
 
-            if (stunFrames <= -400) {
+            if (stunFrames <= -100) {
                 stunned = false;
             }
             else {
@@ -755,7 +755,7 @@ namespace Rooster {
             // Gravity
 
             onFire = bar->onFire; 
-            println(onFire);
+            //println(onFire);
 
             if (position.y < floorY) {
                 air = true;

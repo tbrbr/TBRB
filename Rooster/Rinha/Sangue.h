@@ -8,7 +8,7 @@ namespace Rooster {
 		Font base;
 
 		void init() {
-			flower.loadFromFile("sprites/flower.png");
+			flower.loadFromFile("sprites/flowerSmall.png");
 			base.loadFromFile("fonts/blops.ttf");
 		}
 	};
@@ -249,25 +249,6 @@ namespace Rooster {
 		}
 
 
-		/*
-		void draw(RenderWindow& window, Vector2f offset) {
-
-			if (active) {
-				if (hasSprite) {
-					sprite.setPosition(sprite.getPosition().x + offset.x, sprite.getPosition().y + offset.y);
-
-					window.draw(sprite);
-				}
-				else {
-					point.setPosition(point.getPosition().x + offset.x, point.getPosition().y + offset.y);
-
-					window.draw(point);
-				}
-			}
-		}
-		*/
-
-
 
 
 	};
@@ -464,8 +445,8 @@ namespace Rooster {
 
 			hasSprite = true;
 			sprite.setTexture(partTextures.flower);
-			sclMin = 0.05;
-			sclMax = 0.2;
+			sclMin = 0.2;
+			sclMax = 0.8;
 			angleMin = 0;
 			angleMax = 360;
 			angleSpeedMin = -5;

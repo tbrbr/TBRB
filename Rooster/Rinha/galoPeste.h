@@ -28,12 +28,12 @@ namespace Rooster {
 
             // Creating Attacks
             this->hiKick = new Ataques(
-                6, 8, HitBox{ Vector2f(0, 0), 0 },
+                6, 1, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, -PI / 4, milliseconds(650), ""
             );
 
             this->louKick = new Ataques(
-                7, 5, HitBox{ Vector2f(0, 0), 0 },
+                7, 1, HitBox{ Vector2f(0, 0), 0 },
                 20, 10, PI / 4, milliseconds(750), "sounds\\cartoon-mouse-96437.ogg"
             );
 
@@ -42,6 +42,7 @@ namespace Rooster {
                 10, 3, 0, milliseconds(1000),
                 "sounds\\awp.ogg"
             );
+            this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
             Projectile* rato = new Projectile(
                 Vector2f(0, 0),
@@ -855,7 +856,7 @@ namespace Rooster {
 
                 window->display();
 
-                if (time > 10000) {
+                if (time > 15000) {
                     return;
                 }
                

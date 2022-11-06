@@ -174,7 +174,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/ze.ogg");
+		musTeste.music.openFromFile("sounds/teclado lindinho.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -315,7 +315,7 @@ public:
 		}
 		*/
 
-		loadNotas("ze.txt");
+		loadNotas("testMusica.txt");
 		
 	}
 

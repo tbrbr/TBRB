@@ -2,7 +2,7 @@
 #define ITATECH_JR
 
 namespace Rooster {
-	
+
 
 	typedef struct {
 		Vector2f center;
@@ -24,7 +24,7 @@ namespace Rooster {
 		Vector2f size;
 		float hei;
 		Transform t;
-		
+
 	public:
 		bool NULO = false;
 		bool isTrans = false;
@@ -33,25 +33,25 @@ namespace Rooster {
 		Projectile(bool NUlO) {
 			this->NULO = NULO;
 		}
-		Projectile(Vector2f position,  const char* textureFile, float hSpeed, float vSpeed, Vector2f scl) {
+		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl) {
 			this->position = position;
 			this->texture = texture;
 			this->hSpeed = hSpeed;
 			this->vSpeed = vSpeed;
 			this->vAcc = Gravity / 10;
 
-			
+
 			texture.loadFromFile(textureFile);
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
 			size.x = sprite.getGlobalBounds().width;
 			size.y = sprite.getGlobalBounds().height;
-			
+
 			sprite.setScale(scl);
 
-			
+
 		}
-		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl,IntRect spriteRec) {
+		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl, IntRect spriteRec) {
 			this->position = position;
 			this->texture = texture;
 			this->hSpeed = hSpeed;
@@ -62,7 +62,7 @@ namespace Rooster {
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
 			sprite.setScale(scl);
-			sprite.setTextureRect(spriteRec);			
+			sprite.setTextureRect(spriteRec);
 
 		}
 		void setOriginCenter() {
@@ -81,7 +81,7 @@ namespace Rooster {
 			setScale(Vector2f(x, y));
 		}
 		void setSpriteScale(float x, float y) {
-			sprite.setScale(x,y);
+			sprite.setScale(x, y);
 		}
 		void setImpulse(float hSpeed, float vSpeed) {
 			this->hSpeed = hSpeed;
@@ -96,11 +96,14 @@ namespace Rooster {
 		void setPosition(Vector2f position) {
 			this->position = position;
 		}
-		void setPosition(float x,float y) {
+		void setPosition(float x, float y) {
 			setPosition(Vector2f(x, y));
 		}
+		void setSpritePosition(float x, float y) {
+			sprite.setPosition(x,y);
+		}
 		Vector2f getSize() {
-			return Vector2f(sprite.getGlobalBounds().width,sprite.getGlobalBounds().height);
+			return Vector2f(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height);
 		}
 		Vector2f getLocalSize() {
 			float lastAngle = sprite.getRotation();
@@ -133,19 +136,19 @@ namespace Rooster {
 		void draw(RenderWindow& window) {
 			if (isVisible) {
 				window.draw(sprite);
-				
+
 			}
 		}
 		void drawTrans(RenderWindow& window) {
 			if (isVisible) {
-				window.draw(sprite,t);
-				
+				window.draw(sprite, t);
+
 			}
 		}
-		
+
 	};
 
-	
+
 
 	class Ataques {
 	public:
@@ -164,22 +167,19 @@ namespace Rooster {
 		Clock init2;
 		Time timeLapse2;
 
-		
+		int invFrames = 30;
 
 		Vector2f colPos;
 		Vector2f colDif;
 		float colAngle = 0;
 
-
-
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
-		
-		
-			
-		Ataques(int id,float Stun,HitBox hitbox,int Damage,float KnockBack,float angle,Time timelapse,const char* txt) {
+
+
+		Ataques(int id, float Stun, HitBox hitbox, int Damage, float KnockBack, float angle, Time timelapse, const char* txt) {
 			this->id = id;
-			this->Stun = Stun;		
+			this->Stun = Stun;
 			this->hitbox = hitbox;
 			this->Damage = Damage;
 			this->KnockBack = KnockBack;
@@ -195,7 +195,7 @@ namespace Rooster {
 			colDif.y = 0;
 		}
 		Ataques(int id, float Stun, HitBox hitbox, int Damage, float KnockBack,
-			float angle, Time timelapse,const char* txt, Time timelapse2) {
+			float angle, Time timelapse, const char* txt, Time timelapse2) {
 			this->id = id;
 			this->Stun = Stun;
 			this->hitbox = hitbox;
@@ -220,7 +220,7 @@ namespace Rooster {
 		void setTimeLapse(Time timeLapse) {
 			this->timeLapse = timeLapse;
 		}
-		
+
 		bool CheckCollision(HitBox galo) {
 			if (isAtacking) {
 				colPos.x = (galo.center.x + hitbox.center.x) / 2;
@@ -229,24 +229,21 @@ namespace Rooster {
 				colDif = (galo.center - hitbox.center);
 
 				colDif = normalizar(colDif);
-
 				colAngle = vecToAngle(colDif);
-
 
 				return (pointDistance(galo.center, hitbox.center) < galo.radius + hitbox.radius);
 			}
+
 			return false;
-			
 		}
 
 		void createBlood(ParticleSystem& partSys) {
 
-			//Vector2f(colDif.x * ((float)Damage/4), colDif.y * ((float)Damage / 4)), 10, colAngle, 60
-
 			ExplosionEffect* exp = new ExplosionEffect(colPos, 10, angle, 180, 0, 0);
-			
+
 			exp->sanguePreset();
-			exp->createMultipleParticles(500);
+
+			exp->createMultipleParticles(200 + Damage * 20);
 			partSys.addEffect(exp);
 		}
 

@@ -15,6 +15,8 @@ namespace Rooster {
 		SoundBuffer defenseBuffer;
 		Sound defenseSound;
 
+		
+
 	public:
 		Bruxo(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
 			// Stats
@@ -36,6 +38,8 @@ namespace Rooster {
 				10, 3, 0, milliseconds(1500),
 				"sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
 			);
+
+			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(2000), "sounds\\mg34.ogg");
 
 			Projectile* defense = new Projectile(
 				Vector2f(0, 0),
@@ -61,6 +65,12 @@ namespace Rooster {
 			atacking = NOT_ATTACK;
 			projectiles.push_back(*fumaca);
 
+			Projectile* flame = new Projectile(
+				Vector2f(0, 0),
+				"sprites\\flame.png",
+				0, 0, Vector2f(0.25, 0.25)
+			);
+			projectiles.push_back(*flame);
 
 			t.loadFromFile("sprites/galoBruxo.png");
 
@@ -81,9 +91,6 @@ namespace Rooster {
 
 				hurtBox.push_back(*hit);
 			}
-
-
-
 			delete hit;
 
 			struct Animation agacharAnim;
@@ -291,7 +298,84 @@ namespace Rooster {
 		void super() override {
 			if (atacking == NOT_ATTACK) {
 				atacking = SUPER;
-				ultimateShot->init.restart();
+				superAtack->init.restart();
+			}
+
+		}
+		void superAnim() {
+			Time t = superAtack->init.getElapsedTime();
+
+			if (t > superAtack->timeLapse) {
+				atacking = NOT_ATTACK;
+			}
+
+			float percentage = (float)t.asMilliseconds() / (superAtack->timeLapse.asMilliseconds());
+
+			static int thisFrames = 0;
+
+			if (percentage < 1.f / 3.f) {
+
+				float thisPercentage = percentage * 3;
+
+				model.at("Body")->angle = 30 * thisPercentage;
+				model.at("FrontArm")->angle = -90 * thisPercentage;
+				model.at("BackArm")->angle = -90 * thisPercentage;
+				model.at("Head")->angle = 20 * thisPercentage;
+				model.at("Hat")->angle = -10 * thisPercentage;
+
+				model.at("Hat")->yScl = model.at("Hat")->yScl +  (model.at("Hat")->yScl/2)  * thisPercentage;
+				model.at("Hat")->yScl = model.at("Hat")->xScl + (model.at("Hat")->xScl / 3) * thisPercentage;
+
+			}
+			else if (percentage < 2.f / 3.f) {
+
+				thisFrames++;
+
+				model.at("Body")->angle = -30;
+				model.at("FrontArm")->angle = -90;
+				model.at("BackArm")->angle = -90;
+				model.at("Head")->angle = -20;
+				model.at("Hat")->angle = 30;
+				
+				if (facingRight) {
+					projectiles[3].setSpriteScale((float)- thisFrames / 30, (float)SCREEN_WIDTH / 1920);
+
+					projectiles[3].setSpritePosition(
+						model.at("Hat")->drawPos.x + model.at("Hat")->sprite.getGlobalBounds().width/5 + projectiles[3].getSize().x,
+						model.at("Hat")->drawPos.y + model.at("Hat")->sprite.getGlobalBounds().height/2 - projectiles[3].getSize().y
+					);
+				}
+				else {
+					projectiles[3].setSpriteScale((float)thisFrames/30, (float)SCREEN_WIDTH / 1920);
+
+					projectiles[3].setSpritePosition(
+						model.at("Hat")->drawPos.x - model.at("Hat")->sprite.getGlobalBounds().width / 5 -  projectiles[3].getSize().x,
+						model.at("Hat")->drawPos.y + model.at("Hat")->sprite.getGlobalBounds().height / 2 - projectiles[3].getSize().y
+					);
+				}
+				
+				projectiles[3].setVisibility(true);
+			}
+			else if(percentage < 2.9f / 3.f) {
+
+				thisFrames = 0;
+				projectiles[3].setVisibility(false);
+
+				model.at("Body")->angle *= 0.99;
+				model.at("BackArm")->angle *= 0.99;
+				model.at("Head")->angle *= 0.99;
+				model.at("Hat")->angle *= 0.99;
+
+				model.at("Hat")->yScl = model.at("Hat")->getBaseScale().x;			
+				model.at("Hat")->yScl = model.at("Hat")->getBaseScale().y;
+			}
+			else {
+
+				model.at("Body")->angle = 0;
+				model.at("BackArm")->angle = 0;
+				model.at("Head")->angle = 0;
+				model.at("Hat")->angle = 0;
+
 			}
 
 		}
@@ -674,6 +758,9 @@ namespace Rooster {
 			}
 			else if (atacking == SPECIAL) {
 				especialAnim();
+			}
+			else if (atacking == SUPER) {
+				superAnim();
 			}
 
 			// projectiles[0].update();

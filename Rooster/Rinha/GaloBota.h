@@ -14,7 +14,7 @@ namespace Rooster {
         float ArmSpinAngFase = 0;
         float Arm2SpinAngFase = 0;
 
-
+        Texture puffTex;
 
     public:
         Bota(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
@@ -23,22 +23,9 @@ namespace Rooster {
             bar = new LifeBar(maxHp, isp1, name.c_str());
 
 
-            this->hiKick = new Ataques(
-                11, 8, HitBox{ Vector2f(0, 0), 0 },
-                40, 10, -PI / 3, milliseconds(650), ""
-            );
-            this->louKick = new Ataques(
-                12, 5, HitBox{ Vector2f(0, 0), 0 },
-                20, 10, -PI/3, milliseconds(500), ""
-            );
-
-            this->ultimateShot = new Ataques(
-                13,200, HitBox{ Vector2f(0, 0), 0 },
-                10, 10, PI/2, milliseconds(500),
-                "", milliseconds(2000)
-            );
 
 
+            this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
             atacking = NOT_ATTACK;
 
@@ -65,6 +52,20 @@ namespace Rooster {
                 hurtBox.push_back(*hit);
             }
             delete hit;
+
+
+            //Ataques                 (id,Stun,hitbox,                 Damage,KnockBack,angle,Time,const char* txt)
+            this->hiKick = new Ataques(11, 8, HitBox{ Vector2f(0, 0), 0 }, 40, 10, -PI / 3, milliseconds(650), "");
+            hiKick->hitbox.radius = 20 * abs(model.xScl);
+
+            this->louKick = new Ataques( 12, 5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 3, milliseconds(500), "");
+            louKick->hitbox.radius = 25 * abs(model.xScl);
+
+            this->ultimateShot = new Ataques( 13, 10, HitBox{ Vector2f(0, 0), 0 },10, 10, PI / 2, milliseconds(500),"");
+            ultimateShot->hitbox.radius = 5 * abs(model.xScl);
+
+
+
 
 
 
@@ -186,10 +187,8 @@ namespace Rooster {
                 if (ultimateShot->getHitted || !air) {
                     atacking = NOT_ATTACK;
 
-                    vspeed = 30;
-
-                    vspeed *= -0.5;
-
+                    vspeed = -10;
+                    //println("Bateu " << ultimateShot->getHitted);
 
                     ultimateShot->isAtacking = false;
                     ultimateShot->getHitted = false;
@@ -237,12 +236,7 @@ namespace Rooster {
 
                     ultimateShot->isAtacking = true;
                     ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
-                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20*model.yScl;
-
-                    ultimateShot->hitbox.radius = 5 * model.xScl;
-
-
-
+                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 100*model.yScl;
                 }
                 else if (percentage < 2.9f / 3.f) {
 
@@ -252,12 +246,7 @@ namespace Rooster {
 
                     ultimateShot->isAtacking = true;
                     ultimateShot->hitbox.center.x = model.at("Body")->drawPos.x;
-                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 20 * model.yScl;
-
-                    ultimateShot->hitbox.radius = 5 * model.xScl;
-
-
-
+                    ultimateShot->hitbox.center.y = model.at("Body")->drawPos.y + 100 * model.yScl;
                 }
                 else {
                     ultimateShot->isAtacking = false;
@@ -296,13 +285,12 @@ namespace Rooster {
 
                 model.at("Body")->angle = -75;
 
-
-
                 model.at("Head")->angle = 45;
                 model.at("Head")->offset.x = -15;
 
                 louKick->hitbox.center = model.at("Head")->drawPos;
-                louKick->hitbox.radius = model.at("Head")->sprite.getGlobalBounds().width / 2;
+                louKick->hitbox.center.x -= 100 * model.xScl;
+                
                 louKick->isAtacking = true;
 
 
@@ -314,16 +302,16 @@ namespace Rooster {
                 model.at("Head")->offset.x *= 0.9;
 
                 model.at("Body")->angle *= 0.9;
+
                 louKick->isAtacking = false;
 
             }
             else {
-
-
                 model.at("Head")->angle = 0;
                 model.at("Head")->offset.x = 0;
 
                 model.at("Body")->angle = 0;
+
                 louKick->isAtacking = false;
             }
 
@@ -359,8 +347,8 @@ namespace Rooster {
                 model.at("Body")->angle = 60;
              
 
-                hiKick->hitbox.center = model.at("Head")->drawPos;
-                hiKick->hitbox.radius = model.at("Head")->sprite.getGlobalBounds().width / 2;
+                hiKick->hitbox.center = model.at("Body")->drawPos;
+                hiKick->hitbox.center.x -= 100*model.xScl;
                 hiKick->isAtacking = true;
 
             }
@@ -380,26 +368,6 @@ namespace Rooster {
 
 
         void updateAnimations() override {
-            // Abaixo temos
-            // CA OS TO TAL
-
-            //if (estadoUpdate) {
-               //model.resetToBase();
-                ///animations[0].playingFrame = 0;
-            //}
-
-
-            
-
-
-            //model.at("FrontArm")->angle = ArmSpinAngFase;
-            //model.at("BackArm")->angle = Arm2SpinAngFase;
-
-
-            
-
-           
-
 
             if (stunFrames <= 0) {
 
@@ -418,10 +386,7 @@ namespace Rooster {
 
 
                 }
-
-
-
-                
+            
 
                 if (estado == STOPPED) {
                     runReset();
@@ -429,8 +394,6 @@ namespace Rooster {
                         weatherAnim(frames);
                     }
                 }
-
-
 
 
 

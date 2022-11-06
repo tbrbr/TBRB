@@ -12,7 +12,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	float tilesYPort = -1;
 	bool tilesReady = false;
 
-	bool tilesFall = randFloat(1) < 0.8;
+	bool tilesFall = randFloat(1) < 0.1;
 
 	
 
@@ -332,6 +332,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 						galo2.ultimateShot->init2.restart();
 					}
 				}
+					
 				else {
 					if (galo.isDefending) {
 						if (galo2.ultimateShot->CheckCollision(galo.defense)) {
@@ -343,9 +344,11 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					else
 					{
 						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
-						galo2.ultimateShot->getHitted = true;
+						
 					}
+					galo2.ultimateShot->getHitted = true;
 				}
+				
 			}
 		}
 
@@ -392,20 +395,25 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 						galo.ultimateShot->init2.restart();
 					}
 				}
+					
 				else {
 					if (galo2.isDefending) {
 						if (galo.ultimateShot->CheckCollision(galo2.defense)) {
 							galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							
 						}
 						else
 							galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+							
 					}
 					else
 					{
 						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
-						galo2.ultimateShot->getHitted = true;
+						
 					}
+					galo.ultimateShot->getHitted = true;
 				}
+				
 			}
 		}
 
@@ -440,30 +448,38 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 		if (galo.gethp() < 0) {
-
 			rounds++;
+			p2Rounds++;
+
 			if (rounds == 3 || p2Rounds == 2) {
 				framesWin = 60;
+				musicas[index].stop();
+				galo2.fatality(window, &galo, fundo);
+				option = MENU_PRINCIPAL;
+				return;
 			}
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-				p2Rounds++;
+				galo2.sethp(galo2.getMaxhp());				
 			}
 		}
 		else if (galo2.gethp() < 0) {
 			rounds++;
+			p1Rounds++;
+
 			if (rounds == 3 || p1Rounds == 2) {
 				framesWin = 60;
+				musicas[index].stop();
+				galo.fatality(window, &galo2, fundo);
+				option = MENU_PRINCIPAL;
+				return;
 			}
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-				p1Rounds++;
+				galo2.sethp(galo2.getMaxhp());				
 			}
-
 		}
 
 

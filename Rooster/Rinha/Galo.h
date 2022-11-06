@@ -189,8 +189,13 @@ namespace Rooster {
         int getLifeBarHeight() {
             return tam.y;
         }
-        void setPower(int power) {
-            this->power = power;
+        void resetPower() {
+
+            this->power = 0;
+            for (int i = 0; i < 10; i++) {
+                combo[i].setFillColor(Color::Transparent);
+            }
+            onFire = false;
         }
         int getPower() {
             return power;
@@ -224,7 +229,7 @@ namespace Rooster {
             int alpha = 255;
            
                 
-            if (power > 10) {
+            if (power >= 10) {
 
                 power = 10;
 
@@ -572,11 +577,11 @@ namespace Rooster {
                 }
 
                 // Tempo de perda de controle sobre o Rooster
-                stunFrames = atk.Stun*2;
+                stunFrames = atk.Stun;
                 stunned = true;
 
                 // Tempo de invulnerabilidade
-                invFrames = 30;
+                invFrames = atk.invFrames;
                 invunerable = true;
 
                 bar->update(hp);
@@ -712,6 +717,10 @@ namespace Rooster {
                 if (hiKick->isAtacking) {
                     drawHitBox(window, hiKick->hitbox, sf::Color::Red);
                 }
+                if (superAtack->isAtacking) {
+                    drawHitBox(window, superAtack->hitbox, sf::Color::Red);
+                }
+
                 if (isDefending) {
                     drawHitBox(window, defense, sf::Color::Green);
                 }
@@ -747,7 +756,7 @@ namespace Rooster {
                 invFrames--;
             }
 
-            if (stunFrames <= -400) {
+            if (stunFrames <= -100) {
                 stunned = false;
             }
             else {
@@ -761,7 +770,7 @@ namespace Rooster {
             // Gravity
 
             onFire = bar->onFire; 
-            println(onFire);
+            //println(onFire);
 
             if (position.y < floorY) {
                 air = true;
@@ -839,8 +848,8 @@ namespace Rooster {
         virtual void catalize() {
             if (onFire) {
                 //...
-                bar->onFire = false;
-                bar->setPower(0);
+
+                bar->resetPower();
             }
         }
 
@@ -955,6 +964,46 @@ namespace Rooster {
 
         }
 
+        void getHitByKalsaFatality(RenderWindow * window,Galo * g2, bool isBody) {
+
+            static int frames = 0;
+            float maxFrames = 120;
+
+            if (frames > maxFrames) {
+            
+                frames = 0;
+            }
+
+            Vector2f nextPosition = position;
+
+            float perc = (float)frames / maxFrames;
+
+            if (perc < 0.7) {
+
+                if (((int)frames) % 3 == 0) {
+                    g2->facingRight = !g2->facingRight;
+                }
+
+                if (isBody) {
+                    g2->position.x += facingRight ?
+                        ((position.x - g2->position.x + 200) * frames * 2) / maxFrames :
+                        ((position.x - g2->position.x - 200) * frames * 2) / maxFrames;
+                }
+                else {
+                    g2->model.at("Head")->offset.x += facingRight ?
+                        ((position.x - g2->model.at("Head")->offset.x + 200) * frames * 2) / maxFrames :
+                        ((position.x - g2->model.at("Head")->offset.x - 200) * frames * 2) / maxFrames;
+                }
+                
+            }           
+            else {
+                if (g2->model.at("Head")->xScl < 0) {
+                    g2->model.at("Head")->xScl *= -1;
+                }
+            }
+
+
+        }
 
     };
 

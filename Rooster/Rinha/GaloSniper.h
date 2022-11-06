@@ -41,13 +41,12 @@ namespace Rooster {
 			this->ultimateShot = new Ataques(2, 10, HitBox{ Vector2f(0, 0), 0 }, 40, 20, 0, milliseconds(1000), "sounds\\awp.ogg");
 			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
-			const char const* txt = "sprites\\bullet.png";
+			superAtack->invFrames = 10;
 
-			Projectile* bullet = new Projectile(Vector2f(0, 0), txt, 0, 0, Vector2f(0, 0));
+			Projectile* bullet = new Projectile(Vector2f(0, 0),"sprites\\bullet.png" , 0, 0, Vector2f(0, 0));
 			projectiles.push_back(*bullet);
 			Projectile* n2 = new Projectile(true);
 			projectiles.push_back(*n2);
-
 
 			t.loadFromFile("sprites/galoSniper.png");
 
@@ -189,8 +188,10 @@ namespace Rooster {
 			ultimateShot->init.restart();
 		}
 		void super() override {
+			bar->resetPower();
+			
 			if (atacking == NOT_ATTACK)
-				atacking = SUPER;
+				atacking = SUPER;				
 			superAtack->init.restart();
 		}
 
@@ -208,7 +209,7 @@ namespace Rooster {
 
 				float thisPercentage = percentage * 3;
 				model.at("Sniper")->angle += 45;
-				model.at("Sniper")->sprite.setColor(Color::Red);
+				model.at("Sniper")->sprite.setColor(Color(125,0,0,0));
 				model.at(ASA_ATRAS)->angle = -45 * -sin(thisPercentage * PI / 2);
 				model.at(ASA_FRENTE)->angle = -90 * sin(thisPercentage * PI / 2);
 
@@ -256,13 +257,18 @@ namespace Rooster {
 			}
 			else if (percentage < 1.6f / 3.f) {
 
-				model.at("Sniper")->angle += 1;
-				model.at(ASA_ATRAS)->angle += 1;
-				model.at(ASA_FRENTE)->angle += 1;
-				model.at(CABECA)->angle += 1;
+				
+				model.at("Sniper")->offset.x -= 1;				
 				model.at(BIGODE_FRENTE)->angle += -90;
 				model.at(BIGODE_ATRAS)->angle += -90;
+				position.x += facingRight ? -1 : 1;
 
+			}
+			else if (percentage < 1.8f / 3.f) {
+
+				model.at("Sniper")->offset.x += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;				
 
 			}
 			else if (percentage < 1.9f / 3.f) {
@@ -287,16 +293,22 @@ namespace Rooster {
 
 				superAtack->isAtacking = true;
 			}
-			else if (percentage < 2.1f / 3.f) {
+			else if (percentage < 2.f / 3.f) {
 
-				model.at("Sniper")->angle += 1;
-				model.at(ASA_ATRAS)->angle += 1;
-				model.at(ASA_FRENTE)->angle += 1;
-				model.at(CABECA)->angle += 1;
+				model.at("Sniper")->angle += 1;			
 				model.at(BIGODE_FRENTE)->angle += -90;
 				model.at(BIGODE_ATRAS)->angle += -90;
 
 			}
+			else if (percentage < 2.1f / 3.f) {
+
+				model.at("Sniper")->offset.x += 1;
+				model.at("Sniper")->angle -= 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+
 			else if (percentage < 2.2f / 3.f) {
 
 				projectiles[0].setVisibility(true);
@@ -322,9 +334,15 @@ namespace Rooster {
 			else if (percentage < 2.3f / 3.f) {
 
 				model.at("Sniper")->angle += 1;
-				model.at(ASA_ATRAS)->angle += 1;
-				model.at(ASA_FRENTE)->angle += 1;
-				model.at(CABECA)->angle += 1;
+				model.at("Sniper")->offset.x -= 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+			else if (percentage < 2.35f / 3.f) {
+
+				model.at("Sniper")->offset.x += 1;
+				model.at("Sniper")->angle -= 1;
 				model.at(BIGODE_FRENTE)->angle += -90;
 				model.at(BIGODE_ATRAS)->angle += -90;
 
@@ -357,6 +375,16 @@ namespace Rooster {
 				model.at(ASA_ATRAS)->angle += 1;
 				model.at(ASA_FRENTE)->angle += 1;
 				model.at(CABECA)->angle += 1;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+			}
+			else if (percentage < 2.55f / 3.f) {
+
+				model.at("Sniper")->angle -= 1;
+				model.at(ASA_ATRAS)->angle -= 1;
+				model.at(ASA_FRENTE)->angle -= 1;
+				model.at(CABECA)->angle -= 1;
 				model.at(BIGODE_FRENTE)->angle += -90;
 				model.at(BIGODE_ATRAS)->angle += -90;
 
@@ -396,17 +424,20 @@ namespace Rooster {
 			}
 			else if (percentage < 2.9 / 3.f) {
 				model.at("Sniper")->angle *= 0.9;
+				model.at("Sniper")->offset.x *= 0.9;
 				model.at(ASA_ATRAS)->angle *= 0.9;
 				model.at(ASA_FRENTE)->angle *= 0.9;
 				model.at(BIGODE_FRENTE)->angle *= 0.9;
 				model.at(BIGODE_ATRAS)->angle *= 0.9;
 				model.at(CABECA)->angle *= 0.9;
+
 			}
 			else {
 				model.at("Sniper")->angle = 0;
 				model.at(ASA_ATRAS)->angle = 0;
 				model.at(ASA_FRENTE)->angle = 0;
 				model.at(CABECA)->angle = 0;
+				model.at("Sniper")->offset.x = 0;
 			}
 		}
 
@@ -726,7 +757,7 @@ namespace Rooster {
 					especialAnim();
 					isDefending = false;
 				}
-				else if (atacking == SPECIAL) {
+				else if (atacking == SUPER) {
 					superAnim();
 					isDefending = false;
 				}
@@ -746,6 +777,10 @@ namespace Rooster {
 			}
 		}
 
+		void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
+
+
+		}
 
 
 	};

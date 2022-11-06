@@ -5,11 +5,10 @@ namespace Rooster {
 	struct PartTextures {
 		Texture flower;
 
-		Font base;
+		
 
 		void init() {
 			flower.loadFromFile("sprites/flowerSmall.png");
-			base.loadFromFile("fonts/blops.ttf");
 		}
 	};
 
@@ -99,7 +98,7 @@ namespace Rooster {
 		bool fadeOutAlpha = true;
 
 		bool mortal = true;
-		float active = false;
+		bool active = false;
 
 
 
@@ -260,7 +259,7 @@ namespace Rooster {
 
 	public:
 
-		// Creation vars
+		// Particle Creation vars
 		Vector2f position;
 		Vector2f gravity;
 
@@ -280,6 +279,8 @@ namespace Rooster {
 
 		float lifeMin = 10;
 		float lifeMax = 10;
+
+		bool partMortal = true;
 
 
 		
@@ -317,11 +318,12 @@ namespace Rooster {
 		bool fadeOutAlpha = true;
 		bool fadeInAlpha = false;
 
+
+
+		// Effect Vars
 		bool active = true;
 
 		int life = 600;
-
-
 
 		bool mortal = true;
 
@@ -463,7 +465,7 @@ namespace Rooster {
 		void textPreset() {
 			hasText = true;
 			text.setString("Particle");
-			text.setFont(partTextures.base);
+			text.setFont(basicFont);
 		}
 
 
@@ -522,7 +524,7 @@ namespace Rooster {
 					p.hasText = true;
 				}
 
-				p.mortal = mortal;
+				p.mortal = partMortal;
 
 				p.active = true;
 

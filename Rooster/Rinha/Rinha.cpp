@@ -20,12 +20,15 @@ int main() {
 	// Carregando texturas pra particulas
 	Rooster::partTextures.init();
 
+	basicFont.loadFromFile("fonts/whitrabt.ttf");
+
 
 
 	int option = MENU_PRINCIPAL;
 	bool motaouhenrique = true;
 
 	#if  porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota
+	/*F, pc do fellas acima.*/
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
 	#else
 	

@@ -152,12 +152,17 @@ public:
 
 
 	vector<Rooster::AreaEffect*> slideEffects;
+	Rooster::Effect* textEffects;
+
+
 
 	~Yamaha() {
 		for (int i = 0; i < slideEffects.size(); i++) {
 			delete slideEffects[i];
 		}
 		slideEffects.clear();
+
+		delete textEffects;
 
 		musTeste.music.stop();
 		//musTeste.music.~Music();
@@ -169,7 +174,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/teclado lindinho.ogg");
+		musTeste.music.openFromFile("sounds/ze.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -272,6 +277,22 @@ public:
 
 		}
 
+		textEffects = new Rooster::Effect();
+		textEffects->tilesPreset();
+		textEffects->gravity.y = 0;
+		textEffects->sclMin = 1.4;
+		textEffects->sclMax = 1.5;
+		textEffects->hspeedMax = 0.1;
+		textEffects->hspeedMin = -0.1;
+		textEffects->vspeedMax = -2;
+		textEffects->vspeedMin = -1.8;
+		textEffects->friction = 0.95;
+		textEffects->lifeMin = 350;
+		textEffects->lifeMax = 350;
+		textEffects->fadeInAlpha = true;
+		textEffects->textPreset();
+		textEffects->mortal = false;
+
 
 		
 		/*
@@ -294,7 +315,7 @@ public:
 		}
 		*/
 
-		loadNotas();
+		loadNotas("ze.txt");
 		
 	}
 
@@ -374,8 +395,8 @@ public:
 	}
 
 
-	void saveNotas() {
-		std::ofstream file("testMusica.txt");
+	void saveNotas(std::string str) {
+		std::ofstream file(str);
 
 		if (file.is_open()) {
 			file << "BPS" << std::endl;
@@ -404,8 +425,8 @@ public:
 		notas.clear();
 	}
 
-	void loadNotas() {
-		std::ifstream file("testMusica.txt");
+	void loadNotas(std::string str) {
+		std::ifstream file(str);
 
 		if (file.is_open()) {
 
@@ -676,8 +697,8 @@ public:
 								}
 								teclaMissed[coluna] = false;
 
-								combo++;
-								bregaPower += 30;
+								comboAdd();
+								bregaPower += 15 + combo*2;
 							}
 						}
 					}
@@ -687,7 +708,9 @@ public:
 					if (!nota->missed && !nota->hitted) {
 						nota->missed = true;
 						life -= 5;
-						combo = 0;
+
+						comboBreak();
+						
 						bregaPower -= 280;
 					}
 				}
@@ -697,7 +720,8 @@ public:
 				if (teclaPressed[i]) {
 					if (teclaMissed[i]) {
 						life -= 5;
-						combo = 0;
+						
+						comboBreak();
 						bregaPower -= 50;
 					}
 				}
@@ -716,7 +740,42 @@ public:
 		
 
 
+		textEffects->update();
+	}
 
+	void comboBreak() {
+
+		if (combo > 3) {
+			std::string str = "ComboBreak ";
+			str += std::to_string(combo);
+			textEffects->position.x = randFloat(roomWid);
+			textEffects->position.y = randFloat(roomHei);
+			textEffects->color = Color::Red;
+			textEffects->text.setString(str);
+			textEffects->createParticle();
+		}
+
+
+		combo = 0;
+	}
+
+	void comboAdd() {
+
+		combo++;
+
+		if (combo > 3) {
+			std::string str = "Combo ";
+			str += std::to_string(combo);
+
+			textEffects->position.x = roomWid*0.75 + randFloat(roomWid/10);
+			textEffects->position.y = roomHei*0.5  + randFloat(roomHei/10);
+			textEffects->color = Rooster::hsv(combo*5, 1, 1);
+			textEffects->text.setString(str);
+			textEffects->createParticle();
+		}
+
+
+		
 	}
 
 
@@ -985,6 +1044,8 @@ public:
 			slideEffects[i]->draw(*window);
 		}
 
+		textEffects->draw(*window);
+
 	}
 
 };
@@ -1160,17 +1221,6 @@ struct TilesInfo {
 			}
 		}
 
-		if (mainInput.keyboardState[sf::Keyboard::LControl][0]) {
-			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
-				alcides->loadNotas();
-			}
-
-			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
-				alcides->saveNotas();
-			}
-		}
-
-
 
 		Vector2f mousePos = window.mapPixelToCoords((Vector2i)mainInput.mousePos);
 		alcides->update(mousePos);
@@ -1209,6 +1259,8 @@ bool pianoTiles(RenderWindow* window) {
 
 	bool flores = false;
 
+
+	sf::View view;
 	if (true) {
 
 		Vector2f size = (Vector2f)window->getSize();
@@ -1232,15 +1284,33 @@ bool pianoTiles(RenderWindow* window) {
 		yScl = hei / (float)size.y;
 
 		sf::FloatRect area(0.f, 0.f, 1280, 720);
-		sf::View view(area);
+		view.setSize(area.width, area.height);
+		view.setCenter(area.width/2, area.height/2);
 		view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
 		window->setView(view);
 	}
 
 
 
+
+	// Detecta texto para o editor
+	int inputType = -1;
+	char lastChar = ' ';
+
+	struct ValBox loadBox;
+	loadBox.init(2, 0, 100, 300, 40, "loadPath");
+	loadBox.label = "loadPath sem o .txt (Ctrl+L)";
+
+	struct ValBox saveBox;
+	saveBox.init(2, 0, 300, 300, 40, "savePath");
+	saveBox.label = "savePath sem o .txt (Ctrl+P)";
+
+
+
+
 	while (window->isOpen()) {
 
+		inputType = -1;
 
 		Event e;
 		while (window->pollEvent(e))
@@ -1250,6 +1320,8 @@ bool pianoTiles(RenderWindow* window) {
 				if (e.key.code == Keyboard::Escape)
 				{
 					window->close();
+				} else if(e.key.code == Keyboard::Enter) {
+					inputType = 1;
 				}
 			}
 
@@ -1282,9 +1354,25 @@ bool pianoTiles(RenderWindow* window) {
 				yScl = hei/(float)e.size.height;
 
 				sf::FloatRect area(0.f, 0.f, 1280, 720);
-				sf::View view(area);
+				view.setSize(area.width, area.height);
+				view.setCenter(area.width / 2, area.height / 2);
 				view.setViewport(FloatRect((1-xScl)/2,(1-yScl)/2, xScl, yScl));
 				window->setView(view);
+			}
+			else if (e.type == Event::TextEntered) {
+				if (e.text.unicode < 128) {
+					//std::cout << "Arcor" << std::endl;
+					if (e.text.unicode > 31) {
+						lastChar = (static_cast<char>(e.text.unicode));
+						//std::cout << info.lastChar << std::endl;
+						inputType = 0;
+
+					}
+					else if (e.text.unicode == 3 || e.text.unicode == 8) {
+						inputType = 2;
+						//std::cout << "Delete" << std::endl;
+					}
+				}
 			}
 		}
 
@@ -1296,6 +1384,40 @@ bool pianoTiles(RenderWindow* window) {
 		
 		info.update(*window);
 		info.draw(*window);
+
+		if (info.alcides->editing) {
+
+			Vector2f mouseViewPos = window->mapPixelToCoords((Vector2i)mainInput.mousePos);
+
+			loadBox.update(mouseViewPos, inputType, lastChar);
+			loadBox.draw(*window);
+
+			saveBox.update(mouseViewPos, inputType, lastChar);
+			saveBox.draw(*window);
+		}
+		//window->setView(view);
+
+		if (mainInput.keyboardState[sf::Keyboard::LControl][0]) {
+			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
+
+				std::string str = loadBox.sVal;
+				str += ".txt";
+
+
+				info.alcides->loadNotas(str);
+			}
+
+			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
+
+				std::string str = saveBox.sVal;
+				str += ".txt";
+
+				info.alcides->saveNotas(str);
+			}
+		}
+
+
+
 
 		if (info.alcides->getPlayingSeconds() > 46 && !flores) {
 			flores = true;

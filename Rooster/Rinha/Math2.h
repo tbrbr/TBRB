@@ -132,6 +132,41 @@ bool pointInside(Vector2f point, FloatRect rect) {
 }
 
 
+/*
+void printIntVec(std::vector<int> vec) {
+	std::cout << "[ ";
+	for (int i = 0; i < vec.size(); i++) {
+		std::cout << vec[i];
+		if (i == vec.size() - 1) {
+			std::cout << " ]";
+
+		}
+		else {
+			std::cout << ", ";
+		}
+	}
+}
+
+std::string streamIntVec(std::vector<int> vec) {
+	std::stringstream a;
+	a << "[ ";
+	for (int i = 0; i < vec.size(); i++) {
+		a << vec[i];
+		if (i == vec.size() - 1) {
+
+
+		}
+		else {
+			a << ", ";
+		}
+	}
+	a << " ]";
+
+	return a.str();
+}
+*/
+
+
 
 
 #endif // !JUNIOTELES

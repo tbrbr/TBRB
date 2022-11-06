@@ -150,6 +150,7 @@
     <ClInclude Include="galoKalsa.h" />
     <ClInclude Include="galoPeste.h" />
     <ClInclude Include="GaloSniper.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="IAtaques.h" />
     <ClInclude Include="importados.h" />
     <ClInclude Include="introducoes.h" />

@@ -19,19 +19,11 @@
 using namespace std;
 using namespace sf;
 
-#define porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota 0
+const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;// == 1440 ? 1280 : VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;// == 900 ? 720 : VideoMode::getDesktopMode().height;
 
-//va se arrombar nao
-#if  porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
 
-#else
-const int SCREEN_WIDTH = VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
-#endif
-
-#define SHOWDEBUG true
+#define SHOWDEBUG false
 
 
 Font basicFont;
@@ -81,5 +73,6 @@ using namespace Rooster;
 #include "cardapio.h"
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
+#include "versus.h"
 
 #endif

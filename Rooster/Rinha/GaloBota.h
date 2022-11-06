@@ -25,7 +25,7 @@ namespace Rooster {
 
 
 
-
+            this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
             atacking = NOT_ATTACK;
 
@@ -368,26 +368,6 @@ namespace Rooster {
 
 
         void updateAnimations() override {
-            // Abaixo temos
-            // CA OS TO TAL
-
-            //if (estadoUpdate) {
-               //model.resetToBase();
-                ///animations[0].playingFrame = 0;
-            //}
-
-
-            
-
-
-            //model.at("FrontArm")->angle = ArmSpinAngFase;
-            //model.at("BackArm")->angle = Arm2SpinAngFase;
-
-
-            
-
-           
-
 
             if (stunFrames <= 0) {
 
@@ -406,10 +386,7 @@ namespace Rooster {
 
 
                 }
-
-
-
-                
+            
 
                 if (estado == STOPPED) {
                     runReset();
@@ -417,8 +394,6 @@ namespace Rooster {
                         weatherAnim(frames);
                     }
                 }
-
-
 
 
 

@@ -36,6 +36,7 @@ namespace Rooster {
                 5, 3, 0, milliseconds(750),
                 "sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
             );
+            this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
             Projectile* cinto = new Projectile(
                 Vector2f(0, 0),
@@ -785,6 +786,11 @@ namespace Rooster {
             exp->mortal = false;
 
             int timeFrames = 0;
+
+            struct GaloStats kalsaSt = { 100, 12, 12,  5, 6 , 20 };
+
+            Kalsa kalsa2(kalsaSt, Rooster::state::STOPPED, false);
+            Kalsa kalsa3(kalsaSt, Rooster::state::STOPPED, false);
 
             while (window->isOpen()) {
 

@@ -4,7 +4,6 @@
 
 namespace Rooster {
 
-
 	enum modos {
 
 		UMJOGADORES,
@@ -22,7 +21,8 @@ namespace Rooster {
 		MINIGAME,
 		MULTI_MODE,
 		CONFIG,
-		MULTI
+		MULTI,
+		VERSUS
 	};
 
 	enum JoystickKeys {

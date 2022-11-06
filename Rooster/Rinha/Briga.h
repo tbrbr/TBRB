@@ -1,36 +1,3 @@
-class pause {
-
-	RectangleShape Fundo;
-	RectangleShape buttonResume;
-	RectangleShape buttonMenu;
-	RectangleShape options;
-
-public:
-	pause() {
-
-		Fundo.setFillColor(Color::Magenta);
-		Fundo.setSize(Vector2f(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2));
-		Fundo.setPosition(Vector2f(SCREEN_WIDTH / 2 - SCREEN_WIDTH / 8, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4));
-
-		buttonResume.setSize(Vector2f(SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7));
-		buttonMenu.setSize(Vector2f(SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7));
-		options.setSize(Vector2f(SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7));
-
-
-		Vector2f posFundo = Fundo.getPosition();
-		buttonResume.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - SCREEN_HEIGHT / 16));
-		buttonMenu.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (2 * SCREEN_HEIGHT / 16)));
-		options.setPosition(Vector2f(posFundo.x / 2 - SCREEN_WIDTH / 12, posFundo.y / 3 - (3 * SCREEN_HEIGHT / 16)));
-
-	}
-
-
-};
-
-
-
-
-
 void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleShape fundo) {
 
 	// BREGA
@@ -67,7 +34,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
-
+	int maxComboP1 = 0;
+	int maxComboP2 = 0;
+	
 	Font fonte;
 	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
 
@@ -139,6 +108,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	int index = rand() % 8;
 	musicas[index].play();
+		
+	Clock matchTime;
+	matchTime.restart();
 
 	while (window->isOpen()) {
 		window->clear();
@@ -197,7 +169,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 		mainInput.update();
-
+		if (mainInput.keyboardState[Keyboard::Space][1]) {
+			int a = Pause::rematchScreen(window, galo2, galo, fundo, maxComboP1, matchTime);
+		}
 
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
 
@@ -457,6 +431,14 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		galo.comboCounter = galo2.getHits();
 		galo2.comboCounter = galo.getHits();
 
+		if (galo.comboCounter > maxComboP1) {
+			maxComboP1 = galo.comboCounter;
+		}
+		
+		if (galo2.comboCounter > maxComboP1) {
+			maxComboP2 = galo2.comboCounter;
+		}
+
 		galo.bar->draw(window);
 		galo2.bar->draw(window);
 
@@ -466,30 +448,38 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 		if (galo.gethp() < 0) {
-
 			rounds++;
+			p2Rounds++;
+
 			if (rounds == 3 || p2Rounds == 2) {
 				framesWin = 60;
+				musicas[index].stop();
+				galo2.fatality(window, &galo, fundo);
+				option = MENU_PRINCIPAL;
+				return;
 			}
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-				p2Rounds++;
+				galo2.sethp(galo2.getMaxhp());				
 			}
 		}
 		else if (galo2.gethp() < 0) {
 			rounds++;
+			p1Rounds++;
+
 			if (rounds == 3 || p1Rounds == 2) {
 				framesWin = 60;
+				musicas[index].stop();
+				galo.fatality(window, &galo2, fundo);
+				option = MENU_PRINCIPAL;
+				return;
 			}
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-				p1Rounds++;
+				galo2.sethp(galo2.getMaxhp());				
 			}
-
 		}
 
 

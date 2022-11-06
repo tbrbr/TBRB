@@ -1,6 +1,17 @@
 
+enum mode {
+	SINGLE,
+	LAN,
+	LOCAL
+};
+int mode = SINGLE;
+
 #include "importados.h"
 
+
+void menuSong() {
+
+}
 
 int main() {
 
@@ -137,9 +148,14 @@ int main() {
 	TcpSocket* socket = new TcpSocket();
 	TcpListener* listener = new TcpListener();
 
+	Music opening;
+	opening.openFromFile("sounds\\freefires.ogg");
+	opening.play();
+	opening.setLoop(true);
+
 	while (window->isOpen())
 	{
-		
+
 		switch (option)
 		{
 		case UMJOGADORES:
@@ -152,11 +168,31 @@ int main() {
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
+			opening.pause();
 			selector->show(window,option,&galo,&galo2);
 			break;
 		case VERSUS:
-			versus(*window, *galo, *galo2, fundo);
-			option = UMJOGADORES;
+			if (isHost) {
+				galo2->facingRight = false;
+				galo->facingRight = true;
+			}
+			else {
+				galo2->facingRight = true;
+				galo->facingRight = false;
+			}
+
+			if(isHost)
+				versus(*window, *galo, *galo2, fundo);
+			else
+				versus(*window, *galo2, *galo, fundo);
+			if(mode == SINGLE)
+				option = UMJOGADORES;
+			else if (mode == LAN) {
+				option = DOISJODADOR;
+			}
+			else if (mode == LOCAL) {
+				option = UMJOGADORES;
+			}
 			break;
 		case INTRO: {
 			option = introducao(window);

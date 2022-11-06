@@ -26,6 +26,7 @@ int main() {
 	bool motaouhenrique = true;
 
 	#if  porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota
+	/*F, pc do fellas acima.*/
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
 	#else
 	

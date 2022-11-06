@@ -169,7 +169,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/teclado lindinho.ogg");
+		musTeste.music.openFromFile("sounds/ze.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -375,7 +375,7 @@ public:
 
 
 	void saveNotas() {
-		std::ofstream file("testMusica.txt");
+		std::ofstream file("ze.txt");
 
 		if (file.is_open()) {
 			file << "BPS" << std::endl;
@@ -405,7 +405,7 @@ public:
 	}
 
 	void loadNotas() {
-		std::ifstream file("testMusica.txt");
+		std::ifstream file("ze.txt");
 
 		if (file.is_open()) {
 

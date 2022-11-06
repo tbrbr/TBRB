@@ -16,9 +16,22 @@ int main() {
 
 	LANG.startAllTexts(lang);
 
-	int option = INTRO;
 
+	// Carregando texturas pra particulas
+	Rooster::partTextures.init();
+
+
+
+	int option = MENU_PRINCIPAL;
+	bool motaouhenrique = true;
+
+	#if  porfavorseformexernissodeixe0depoisissotravameupctodosejaeducadoprasersinceroissoeumpedidodesocorroeudesistodetrabalharcommota
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB");
+	#else
+	
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", Style::Fullscreen);
+	#endif
+
 
 	/* MÚSICA: A MULHER QUANDO QUER NAMORAR
 	* CANTOR: RAIMUNDO SOLDADO

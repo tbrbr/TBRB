@@ -27,7 +27,42 @@ public:
 
 };
 
+
+
+
+
 void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleShape fundo) {
+
+	// BREGA
+	//-------------------------------------------------------------------------------------------
+	struct TilesInfo info;
+	info.init();
+
+
+	sf::View baseTilesView;
+
+	float tilesVspeedPort = 0;
+	float tilesYPort = -1;
+	bool tilesReady = false;
+
+	bool tilesFall = randFloat(1) < 0.1;
+
+	
+
+	float wid = 1280;
+	float hei = 720;
+
+	sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
+	baseTilesView.setSize(visibleArea.width, visibleArea.height);
+	baseTilesView.setCenter(visibleArea.left + visibleArea.width/2, visibleArea.top + visibleArea.height / 2);
+	baseTilesView.setViewport(FloatRect(0, tilesYPort+1, 1, 1));
+
+	bool flores = false;
+
+
+
+	//-------------------------------------------------------------------------------------------
+
 
 	int rounds = 0;
 	int p1Rounds = 0;
@@ -107,6 +142,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	while (window->isOpen()) {
 		window->clear();
+		window->setView(window->getDefaultView());
 		window->draw(fundo);
 
 		if (musicas[index].Stopped) {
@@ -121,6 +157,37 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				window->close();
 			}
 
+			if (e.type == Event::MouseMoved) {
+				mainInput.mousePos = Vector2f(e.mouseMove.x, e.mouseMove.y);
+			}
+
+			if (e.type == sf::Event::Resized)
+			{
+				float wid = 1280;
+				float hei = 720;
+				float xScl = (float)e.size.width / wid;
+				float yScl = (float)e.size.height / hei;
+
+				if (xScl > yScl) {
+					wid *= yScl;
+					hei = e.size.height;
+				}
+				else {
+
+					hei *= xScl;
+					wid = e.size.width;
+				}
+
+				xScl = wid / (float)e.size.width;
+				yScl = hei / (float)e.size.height;
+
+				sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
+				baseTilesView.setSize(visibleArea.width, visibleArea.height);
+				baseTilesView.setCenter(visibleArea.left + visibleArea.width/2, visibleArea.top + visibleArea.height / 2);
+				baseTilesView.setViewport(FloatRect((1 - xScl) / 2, tilesYPort + (1 - yScl) / 2, xScl, yScl));
+				
+			}
+
 		}
 		if (false) {
 			musicas[index].stop();
@@ -133,10 +200,19 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
+
+			bool state = info.alcides->playing;
+
+			info.alcides->pause();
 			int a = Pause::pauseMenu(window);
 			if (!!!!!!!!!!(!!a == !!0)) {
 				option = GAMEMODE;
+				info.clear();
 				return;
+			}
+
+			if (state) {
+				info.alcides->play();
 			}
 		}
 
@@ -379,8 +455,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		galo.show(*window);
 		galo2.show(*window);
 
-		mainPartSystem.update();
-		mainPartSystem.draw(*window);
+
 
 		if (galo.gethp() < 0) {
 
@@ -430,6 +505,75 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			return;
 		}
 
+
+
+		if (tilesFall) {
+
+			
+			sf::View currentView = baseTilesView;
+
+			FloatRect currentPort = currentView.getViewport();
+
+			info.tilesView = currentView;
+
+			info.tilesView.setViewport(FloatRect( currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
+
+			if (!tilesReady) {
+
+				tilesVspeedPort += 0.0005;
+
+				tilesYPort += tilesVspeedPort;
+				if (tilesYPort > 0) {
+					tilesVspeedPort *= -0.5;
+					tilesYPort = 0;
+
+					FloatRect area(0, SCREEN_HEIGHT-40, SCREEN_WIDTH, 80);
+
+					AreaEffect* effect = new AreaEffect(area, Color::White);
+					effect->tilesPreset();
+					effect->textPreset();
+					effect->text.setString("Poeira");
+					effect->color = Color(200, 250, 100);
+
+					effect->createMultipleParticles(abs(5000*tilesVspeedPort));
+
+					mainPartSystem.addEffect(effect);
+
+
+					if (abs(tilesVspeedPort) < 0.001) {
+						tilesVspeedPort = 0;
+						tilesReady = true;
+						info.alcides->play();
+						musicas[index].stop();
+					}
+				}
+			}
+			else {
+				info.update(*window);
+
+				if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+					flores = true;
+
+					FloatRect area(0, - 1000, SCREEN_WIDTH, 1000);
+
+					AreaEffect* effect = new AreaEffect(area, Color::White);
+					effect->floresPreset();
+					//effect->color = Color(200, 250, 100);
+
+					effect->createMultipleParticles(100);
+
+					mainPartSystem.addEffect(effect);
+				}
+			}
+
+			window->setView(info.tilesView);
+			info.draw(*window);
+		}
+
+		window->setView(window->getDefaultView());
+
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
 
 		window->display();
 	}

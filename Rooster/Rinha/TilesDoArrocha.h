@@ -143,17 +143,34 @@ public:
 	float holdingNoteY = 0;
 	float holdingY = 0;
 
+	float roomWid = 1280;
+	float roomHei = 720;
+
+
+
 	struct Musica musTeste;
 
 
 	vector<Rooster::AreaEffect*> slideEffects;
 
-	
+	~Yamaha() {
+		for (int i = 0; i < slideEffects.size(); i++) {
+			delete slideEffects[i];
+		}
+		slideEffects.clear();
 
-	Yamaha() {
+		musTeste.music.stop();
+		//musTeste.music.~Music();
+	}
+
+	Yamaha(Vector2f roomSize) {
+
+		roomWid = roomSize.x;
+		roomHei = roomSize.y;
+
 
 		musTeste.music.openFromFile("sounds/teclado lindinho.ogg");
-		musTeste.music.play();
+		//musTeste.music.play();
 
 		base = 400;
 		altura = 600;
@@ -164,7 +181,7 @@ public:
 
 		bps = 4;
 
-		pos.x = SCREEN_WIDTH / 2;
+		pos.x = roomWid / 2;
 		pos.y = 40;
 
 
@@ -348,6 +365,13 @@ public:
 	}
 
 
+	float getScroll() {
+		return scrollY;
+	}
+
+	float getPlayingSeconds() {
+		return musTeste.music.getPlayingOffset().asSeconds();
+	}
 
 
 	void saveNotas() {
@@ -461,7 +485,7 @@ public:
 		setScroll(scrollY + amount);
 	}
 
-	void update(int frames) {
+	void update(Vector2f mouse) {
 
 		
 		if (editing) {
@@ -486,7 +510,6 @@ public:
 					Vector2f rectSize = Vector2f(testRect.getGlobalBounds().width, testRect.getGlobalBounds().height);
 
 
-					Vector2f mouse = mainInput.mousePos;
 
 					if (pointInside(mouse, rectPos.x, rectPos.y, rectSize.x, rectSize.y)) {
 
@@ -558,7 +581,6 @@ public:
 					Vector2f rectPos = Vector2f(testRect.getGlobalBounds().left, testRect.getGlobalBounds().top);
 					Vector2f rectSize = Vector2f(testRect.getGlobalBounds().width, testRect.getGlobalBounds().height);
 
-					Vector2f mouse = mainInput.mousePos;
 
 					struct Nota* nota = notas[holdingNote];
 					float yy = (((mouse.y - rectPos.y) / altura) * notasPorYamaha) - notasPorYamaha - scrollY;
@@ -935,7 +957,7 @@ public:
 		int x = 0;
 		int y = 0;
 
-		int wid = SCREEN_WIDTH;
+		int wid = roomWid;
 		int hei = 40;
 
 		rect.setFillColor(Color(250, 250 ,250, 255));
@@ -982,7 +1004,7 @@ class BregaMeter {
 public:
 	float percentage = 0;
 
-	BregaMeter(Texture& bregaMeterTex) {
+	BregaMeter(Texture& bregaMeterTex, Vector2f roomSize) {
 		
 		sprite.setTexture(bregaMeterTex);
 
@@ -991,7 +1013,7 @@ public:
 		float bregaSprWid = bregaMeterTex.getSize().x / 2;
 		float bregaSprHei = bregaMeterTex.getSize().y;
 
-		wid = SCREEN_WIDTH / 5;
+		wid = roomSize.x / 5;
 		
 
 		sprite.setTextureRect(IntRect(0, 0, bregaSprWid, bregaSprHei));
@@ -1005,8 +1027,8 @@ public:
 
 		hei = bregaSprHei * yScl;
 
-		x = SCREEN_WIDTH - wid;
-		y = SCREEN_HEIGHT - (bregaSprHei * yScl);
+		x = roomSize.x -wid;
+		y = roomSize.y - (bregaSprHei * yScl);
 
 		
 	}
@@ -1038,52 +1060,187 @@ public:
 
 
 
+struct TilesInfo {
+	Yamaha* alcides;
+
+	int frames = 0;
+
+	Rooster::Galo* galoPeste;
+	Rooster::Galo* galoKalsa;
+	Rooster::Galo* galoSniper;
+
+	Texture fundao;
+	Texture bregaMeterTex;
+
+	BregaMeter* bregaMeter;
+
+	RectangleShape rect;
+
+	sf::View tilesView;
+
+	Vector2f roomSize;
+
+	void init() {
+
+		roomSize = Vector2f(1280, 720);
+
+		struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
+
+		galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+		galoKalsa = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
+		galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
+
+		galoSniper->setPosition(Vector2f((float)roomSize.x / 1.05, Rooster::floorY));
+		galoKalsa->facingRight = true;
+
+		fundao.loadFromFile("sprites/tiringa.png");
+
+		bregaMeterTex.loadFromFile("sprites/medidorBrega.png");
+
+		bregaMeter = new BregaMeter(bregaMeterTex, roomSize);
+
+		rect.setSize(roomSize);
+		rect.setTexture(&fundao);
+		rect.setFillColor(Color(255, 0, 255, 255));
+
+		alcides = new Yamaha(roomSize);
+
+
+		galoPeste->update();
+
+		galoKalsa->update();
+
+		galoSniper->update();
+
+		alcides->update(Vector2f(0, 0));
+
+	}
+
+	void clear() {
+		delete galoPeste;
+		delete galoKalsa;
+		delete galoSniper;
+		delete bregaMeter;
+		delete alcides;
+	}
+
+	void draw(RenderWindow& window) {
+		window.draw(rect);
+
+		alcides->draw(&window, frames);
+
+		galoPeste->show(window);
+		galoKalsa->show(window);
+		galoSniper->show(window);
+
+		bregaMeter->draw(window);
+	}
+
+	void update(RenderWindow& window) {
+		frames++;
+
+
+		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
+			alcides->moveScroll(-0.2);
+		}
+		if (mainInput.keyboardState[sf::Keyboard::Up][0]) {
+			alcides->moveScroll(0.2);
+		}
+
+		if (mainInput.keyboardState[sf::Keyboard::Space][1]) {
+			if (alcides->editing) {
+				if (alcides->playing) {
+
+					alcides->pause();
+				}
+				else {
+					alcides->play();
+
+				}
+			}
+		}
+
+		if (mainInput.keyboardState[sf::Keyboard::LControl][0]) {
+			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
+				alcides->loadNotas();
+			}
+
+			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
+				alcides->saveNotas();
+			}
+		}
+
+
+
+		Vector2f mousePos = window.mapPixelToCoords((Vector2i)mainInput.mousePos);
+		alcides->update(mousePos);
+
+		if (alcides->playing) {
+			galoPeste->update();
+
+			galoKalsa->update();
+
+			galoSniper->update();
+		}
+
+		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
+	}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 bool pianoTiles(RenderWindow* window) {
 
 
-	Yamaha alcides;
+	struct TilesInfo info;
+	info.init();
 
-	
-	Clock timer;
-	timer.restart();
+	bool flores = false;
 
-	int frames = 0;
+	if (true) {
 
-	struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
+		Vector2f size = (Vector2f)window->getSize();
 
-	Rooster::Galo* galoPeste  = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
-	Rooster::Galo* galoKalsa  = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true );
-	Rooster::Galo* galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
+		float wid = 1280;
+		float hei = 720;
+		float xScl = (float)size.x / wid;
+		float yScl = (float)size.y / hei;
 
-	galoSniper->setPosition(Vector2f((float)SCREEN_WIDTH/1.05, Rooster::floorY));
-	galoKalsa->facingRight = true;
+		if (xScl > yScl) {
+			wid *= yScl;
+			hei = size.y;
+		}
+		else {
 
-	Texture fundao;
-	fundao.loadFromFile("sprites/tiringa.png");
+			hei *= xScl;
+			wid = size.x;
+		}
 
-	RectangleShape rect(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	rect.setTexture(&fundao);
-	rect.setFillColor(Color(255, 0, 255, 255));
+		xScl = wid / (float)size.x;
+		yScl = hei / (float)size.y;
 
-
-	Texture bregaMeterTex;
-	bregaMeterTex.loadFromFile("sprites/medidorBrega.png");
-
-	BregaMeter bregaMeter(bregaMeterTex);
-
-	
+		sf::FloatRect area(0.f, 0.f, 1280, 720);
+		sf::View view(area);
+		view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
+		window->setView(view);
+	}
 
 
 
 	while (window->isOpen()) {
 
-		
-		int time = timer.getElapsedTime().asMilliseconds();
-
-		
-		
 
 		Event e;
 		while (window->pollEvent(e))
@@ -1094,8 +1251,6 @@ bool pianoTiles(RenderWindow* window) {
 				{
 					window->close();
 				}
-
-
 			}
 
 			if (e.type == Event::MouseMoved) {
@@ -1126,8 +1281,8 @@ bool pianoTiles(RenderWindow* window) {
 				xScl = wid / (float)e.size.width;
 				yScl = hei/(float)e.size.height;
 
-				sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
-				sf::View view(visibleArea);
+				sf::FloatRect area(0.f, 0.f, 1280, 720);
+				sf::View view(area);
 				view.setViewport(FloatRect((1-xScl)/2,(1-yScl)/2, xScl, yScl));
 				window->setView(view);
 			}
@@ -1137,76 +1292,32 @@ bool pianoTiles(RenderWindow* window) {
 
 		window->clear();
 
-		frames++;
-
 		
+		
+		info.update(*window);
+		info.draw(*window);
 
+		if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+			flores = true;
 
-		window->draw(rect);
+			FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
 
+			Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
+			effect->floresPreset();
+			//effect->color = Color(200, 250, 100);
 
-		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
-			alcides.moveScroll(-0.2);
+			effect->createMultipleParticles(100);
+
+			mainPartSystem.addEffect(effect);
 		}
 
-		if (mainInput.keyboardState[sf::Keyboard::Up][0]) {
-			alcides.moveScroll(0.2);
-		}
-
-		if (mainInput.keyboardState[sf::Keyboard::Space][1]) {
-			if (alcides.editing) {
-				if (alcides.playing){
-
-					alcides.pause();
-				}
-				else {
-					alcides.play();
-					
-				}
-			}
-		}
-
-		if (mainInput.keyboardState[sf::Keyboard::LControl][0]) {
-			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
-				alcides.loadNotas();
-			}
-
-			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
-				alcides.saveNotas();
-			}
-		}
-
-		
-			
-		alcides.update(frames);
-		alcides.draw(window, frames);
-
-		
-
-		if (alcides.playing) {
-			galoPeste->update();
-
-			galoKalsa->update();
-
-			galoSniper->update();
-		}
-		
-
-		galoPeste->show(*window);
-		galoKalsa->show(*window);
-		galoSniper->show(*window);
-		
-
-
-
-		bregaMeter.percentage = (float)alcides.bregaPower / alcides.bregaMax;
-		bregaMeter.draw(*window);
-
-
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
 
 		window->display();
 	}
 
+	return true;
 	
 	
 }

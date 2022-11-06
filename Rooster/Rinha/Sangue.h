@@ -5,11 +5,10 @@ namespace Rooster {
 	struct PartTextures {
 		Texture flower;
 
-		Font base;
+		
 
 		void init() {
-			flower.loadFromFile("sprites/flower.png");
-			base.loadFromFile("fonts/blops.ttf");
+			flower.loadFromFile("sprites/flowerSmall.png");
 		}
 	};
 
@@ -99,7 +98,7 @@ namespace Rooster {
 		bool fadeOutAlpha = true;
 
 		bool mortal = true;
-		float active = false;
+		bool active = false;
 
 
 
@@ -249,25 +248,6 @@ namespace Rooster {
 		}
 
 
-		/*
-		void draw(RenderWindow& window, Vector2f offset) {
-
-			if (active) {
-				if (hasSprite) {
-					sprite.setPosition(sprite.getPosition().x + offset.x, sprite.getPosition().y + offset.y);
-
-					window.draw(sprite);
-				}
-				else {
-					point.setPosition(point.getPosition().x + offset.x, point.getPosition().y + offset.y);
-
-					window.draw(point);
-				}
-			}
-		}
-		*/
-
-
 
 
 	};
@@ -279,7 +259,7 @@ namespace Rooster {
 
 	public:
 
-		// Creation vars
+		// Particle Creation vars
 		Vector2f position;
 		Vector2f gravity;
 
@@ -299,6 +279,8 @@ namespace Rooster {
 
 		float lifeMin = 10;
 		float lifeMax = 10;
+
+		bool partMortal = true;
 
 
 		
@@ -336,11 +318,12 @@ namespace Rooster {
 		bool fadeOutAlpha = true;
 		bool fadeInAlpha = false;
 
+
+
+		// Effect Vars
 		bool active = true;
 
 		int life = 600;
-
-
 
 		bool mortal = true;
 
@@ -464,8 +447,8 @@ namespace Rooster {
 
 			hasSprite = true;
 			sprite.setTexture(partTextures.flower);
-			sclMin = 0.05;
-			sclMax = 0.2;
+			sclMin = 0.2;
+			sclMax = 0.8;
 			angleMin = 0;
 			angleMax = 360;
 			angleSpeedMin = -5;
@@ -482,7 +465,7 @@ namespace Rooster {
 		void textPreset() {
 			hasText = true;
 			text.setString("Particle");
-			text.setFont(partTextures.base);
+			text.setFont(basicFont);
 		}
 
 
@@ -541,7 +524,7 @@ namespace Rooster {
 					p.hasText = true;
 				}
 
-				p.mortal = mortal;
+				p.mortal = partMortal;
 
 				p.active = true;
 

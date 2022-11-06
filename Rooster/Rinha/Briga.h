@@ -12,7 +12,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	float tilesYPort = -1;
 	bool tilesReady = false;
 
-	bool tilesFall = randFloat(1) < 0.1;
+	bool tilesFall = randFloat(1) < 0.8;
 
 	
 
@@ -515,6 +515,14 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					effect->tilesPreset();
 					effect->textPreset();
 					effect->text.setString("Poeira");
+					effect->vspeedMin = -4;
+					effect->vspeedMax = 4;
+					effect->gravity.y = 0;
+					effect->friction = 0.95;
+					effect->fadeOutAlpha = true;
+					//effect->fadeInAlpha = true;
+					
+
 					effect->color = Color(200, 250, 100);
 
 					effect->createMultipleParticles(abs(5000*tilesVspeedPort));

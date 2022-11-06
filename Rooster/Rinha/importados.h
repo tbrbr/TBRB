@@ -25,6 +25,9 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;// == 900 ? 720 : V
 
 #define SHOWDEBUG false
 
+
+Font basicFont;
+
 #include "varios_idiomas.h"
 #include "efeitos_fodas.h"
 
@@ -32,6 +35,8 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;// == 900 ? 720 : V
 #include "entradas.h"
 
 Rooster::input mainInput;
+
+#include "GUI.h";
 
 LANGUAGE LANG;
 

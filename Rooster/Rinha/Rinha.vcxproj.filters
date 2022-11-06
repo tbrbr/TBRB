@@ -35,5 +35,7 @@
     <ClInclude Include="textBox.h" />
     <ClInclude Include="pause_menu.h" />
     <ClInclude Include="importados.h" />
+    <ClInclude Include="versus.h" />
+    <ClInclude Include="particula_falida.h" />
   </ItemGroup>
 </Project>

@@ -20,6 +20,11 @@ int main() {
 
 	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Fullscreen);
 
+	// Carregando texturas pra particulas
+	Rooster::partTextures.init();
+	bool motaouhenrique = true;
+
+
 	/* MÚSICA: A MULHER QUANDO QUER NAMORAR
 	* CANTOR: RAIMUNDO SOLDADO
 	A MUIÉ, QUANDO ELA QUER NAMORAR
@@ -142,6 +147,10 @@ int main() {
 			break;
 		case SELECTION:
 			selector->show(window,option,&galo,&galo2);
+			break;
+		case VERSUS:
+			versus(*window, *galo, *galo2, fundo);
+			option = UMJOGADORES;
 			break;
 		case INTRO: {
 			option = introducao(window);

@@ -94,7 +94,7 @@ namespace Rooster {
 
             struct Animation danceAnim;
             danceAnim.init("animations/kalsaDance3.txt");
-            danceAnim.playingSpeed = 0.2;
+            danceAnim.playingSpeed = 0.1;
             danceAnim.connectLoop = true;
 
             animations.push_back(danceAnim);
@@ -183,6 +183,12 @@ namespace Rooster {
             }
 
         }
+        void super() override {
+            if (atacking == NOT_ATTACK)
+                atacking = SUPER;
+            superAtack->init.restart();
+        }
+
         void especialAnim() {
             Time t = ultimateShot->init.getElapsedTime();
 

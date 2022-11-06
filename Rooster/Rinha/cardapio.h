@@ -691,7 +691,7 @@ public:
 							galop1[0]->noGravity = false;
 							galop2[0]->noGravity = false;
 
-							option = Rooster::MAPA_FALIDO_E_ACHE_RUIM_WALTER;
+							option = VERSUS;
 							return;
 						}
 

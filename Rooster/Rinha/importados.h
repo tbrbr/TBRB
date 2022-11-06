@@ -22,6 +22,7 @@ using namespace sf;
 const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
 const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
 
+
 #define SHOWDEBUG false
 
 #include "varios_idiomas.h"
@@ -67,5 +68,6 @@ using namespace Rooster;
 #include "cardapio.h"
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
+#include "versus.h"
 
 #endif

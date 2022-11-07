@@ -550,6 +550,11 @@ namespace Rooster {
                 sumir();
             }
 
+            if (estado != INVISIBLE) {
+                aparecer();
+            }
+
+
             projectiles[0].update();
             projectiles[1].update();
 

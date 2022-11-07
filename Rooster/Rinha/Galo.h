@@ -758,7 +758,7 @@ namespace Rooster {
                 invFrames--;
             }
 
-            if (stunFrames <= -400) {
+            if (stunFrames <= -100) {
                 stunned = false;
             }
             else {
@@ -772,7 +772,8 @@ namespace Rooster {
             // Gravity
 
             onFire = bar->onFire; 
-            
+            //println(onFire);
+
             if (position.y < floorY) {
                 air = true;
             }
@@ -939,16 +940,19 @@ namespace Rooster {
         void sumir() {
             model.alpha = 0;
         }
+        void aparecer() {
+            model.alpha = 1;
+        }
         bool getHitByBruxoSuper(RenderWindow * window) {
 
             static int thisFrames = 0;
-
-            int maxFrames = 60;
+            
+            int maxFrames = 120;
 
             if (thisFrames > maxFrames) {
                 thisFrames = 0;
                 model.alpha = 255;
-                
+                estado = STOPPED;
                 return false;
             }
 
@@ -984,11 +988,21 @@ namespace Rooster {
 
             manoTaFoda.left = ((int)(thisFrames / imgSpace) % 5) * wid;
            
-            burning.setTextureRect(manoTaFoda);
-            burning.setPosition(position);
-            burning.setScale(SCREEN_WIDTH / 192, SCREEN_HEIGHT / 108);
+            burning.setTextureRect(manoTaFoda);         
+            burning.setScale(SCREEN_WIDTH / 480, SCREEN_HEIGHT / 270);
+
+            if (facingRight) {
+                burning.setPosition(position.x - burning.getGlobalBounds().width / 2, position.y - burning.getGlobalBounds().height);
+            }
+            else {
+                burning.setPosition(position.x - burning.getGlobalBounds().width / 2, position.y - burning.getGlobalBounds().height);
+            }
+                
+                
+
             window->draw(burning);
 
+            thisFrames++;
             return true;
         }
         void getHitByBruxoFatality() {

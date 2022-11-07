@@ -123,13 +123,17 @@ class Yamaha {
 	bool teclaPressed[4];
 	bool teclaState[4];
 
+	float finishLineY = 0;
+
 	
 
 
 public:
 	int combo = 0;
-
 	int comboMax = 100;
+
+	bool finished = false;
+	bool success = false;
 
 	float bregaPower = 0;
 	float bregaMax = 1000;
@@ -174,7 +178,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/ze.ogg");
+		musTeste.music.openFromFile("sounds/teclado lindinho.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -315,7 +319,7 @@ public:
 		}
 		*/
 
-		loadNotas("ze.txt");
+		loadNotas("testMusica.txt");
 		
 	}
 
@@ -326,7 +330,7 @@ public:
 			Vector2f point = p.position;
 
 
-			point = noteYPerspective(point, baseMenor);
+			//point = noteYPerspective(point, baseMenor);
 
 			point = convertToTrap(point, baseMenor);
 
@@ -335,6 +339,7 @@ public:
 
 	}
 
+	/*
 	Vector2f noteYPerspective(Vector2f point, float baseMenor) {
 
 
@@ -363,6 +368,7 @@ public:
 
 		return Vector2f(point.x,y);
 	}
+	*/
 
 
 
@@ -395,6 +401,14 @@ public:
 	}
 
 
+
+	void clearNotas() {
+		for (int i = 0; i < notas.size(); i++) {
+			delete notas[i];
+		}
+		notas.clear();
+	}
+
 	void saveNotas(std::string str) {
 		std::ofstream file(str);
 
@@ -416,13 +430,6 @@ public:
 		}
 
 		file.close();
-	}
-
-	void clearNotas() {
-		for (int i = 0; i < notas.size(); i++) {
-			delete notas[i];
-		}
-		notas.clear();
 	}
 
 	void loadNotas(std::string str) {
@@ -464,10 +471,29 @@ public:
 			}
 
 			println("Notas carregadas com sucesso");
+
+
+			// Calculando a linha de chegada para vitoria
+			// Achando a ultima nota da musica
+			float yMin = 0;
+			for (int i = 0; i < notas.size(); i++) {
+				Nota* nota = notas[i];
+
+				if (nota->y < yMin) {
+					yMin = nota->y;
+				}
+			}
+
+			finishLineY = (-yMin) + 2;
+
 		}
 		else {
 			println("Falha ao carregar notas");
 		}
+
+
+
+
 
 		file.close();
 	}
@@ -634,6 +660,13 @@ public:
 
 			//scrollY += scrollSpd;
 			scrollY = bps*musTeste.music.getPlayingOffset().asSeconds();
+
+			if (scrollY > finishLineY) {
+				finished = true;
+				if(life > 0){ 
+					success = true;
+				}
+			}
 
 
 
@@ -1141,6 +1174,8 @@ struct TilesInfo {
 
 	Vector2f roomSize;
 
+	int result = -1;
+
 	void init() {
 
 		roomSize = Vector2f(1280, 720);
@@ -1234,6 +1269,11 @@ struct TilesInfo {
 		}
 
 		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
+
+		if (alcides->finished) {
+			result = alcides->success;
+		}
+
 	}
 };
 

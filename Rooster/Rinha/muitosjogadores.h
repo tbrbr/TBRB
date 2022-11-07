@@ -50,14 +50,7 @@ void galo2move(Galo* galo, char* data) {
 
 void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, RectangleShape fundo, TcpSocket * socket) {
 
-	if (isHost) {
-		galo2.facingRight = false;
-		galo.facingRight = true;
-	}
-	else {
-		galo2.facingRight = true;
-		galo.facingRight = false;
-	}
+	
 	
 
 	int rounds = 0;

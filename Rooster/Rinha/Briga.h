@@ -1,3 +1,102 @@
+
+
+void galoControls(Rooster::Galo& galo, int player) {
+	if (mainInput.inputState[player][GOUP][1])
+	{
+		galo.jump();
+	}
+	else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+		if (mainInput.inputState[player][GODOWN][0]) {
+			galo.lowKick();
+		}
+		else
+			galo.highKick();
+
+	}
+	else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
+		if (galo.onFire)
+			galo.super();
+		else
+			galo.especial();
+	}
+
+
+
+	if (mainInput.inputState[player][GORIGHT][0])
+	{
+
+		galo.run(true);
+
+	}
+	else if (mainInput.inputState[player][GOLEFT][0])
+	{
+		galo.run(false);
+	}
+	else if (mainInput.inputState[player][GODOWN][0])
+	{
+		galo.defend();
+	}
+	else if (mainInput.inputState[player][DANCE][0]) {
+		galo.setState(Rooster::state::DANCING);
+	}
+	else {
+		galo.setState(Rooster::state::STOPPED);
+	}
+}
+
+void galoHandleAttack(Rooster::Galo& attacker, Rooster::Galo& defender, Rooster::Ataques* attack) {
+	bool facing = attacker.facingRight;
+
+	// Kalsa Ultimate Attack
+	if (attack->id == 5) {
+		for (int i = 0; i < defender.hurtBox.size(); i++) {
+			if (attack->CheckCollision(defender.hurtBox[i])) {
+				if (defender.isDefending) {
+					if (attack->CheckCollision(defender.defense)) {
+						defender.defended(attacker, attack, facing);
+					}
+					else if (!attack->getHitted) {
+						attack->getHitted = true;
+						attack->init2.restart();
+					}
+				}
+				else if (!attack->getHitted) {
+					attack->getHitted = true;
+					attack->init2.restart();
+				}
+			}
+		}
+	}
+	// Other Attacks
+	else {
+		for (int i = 0; i < defender.hurtBox.size(); i++) {
+			if (attack->CheckCollision(defender.hurtBox[i])) {
+				if (defender.isDefending) {
+					if (attack->CheckCollision(defender.defense)) {
+						defender.defended(attacker, attack, facing);
+					}
+					else
+						defender.apanhar(*attack, facing);
+				}
+				else
+					defender.apanhar(*attack, facing);
+			}
+		}
+	}
+}
+
+void galoAttacks(Rooster::Galo& attacker, Rooster::Galo& defender) {
+
+	if (!defender.invunerable) {
+		galoHandleAttack(attacker, defender, attacker.hiKick);
+
+		galoHandleAttack(attacker, defender, attacker.louKick);
+
+		galoHandleAttack(attacker, defender, attacker.ultimateShot);
+	}
+}
+
+
 void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleShape fundo) {
 
 	// BREGA
@@ -29,6 +128,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	//-------------------------------------------------------------------------------------------
 
+	bool executarFatality = false;
+
+	// Tenho que botar algo no começo pra garantir que nao vai crashar e pro codigo rodar
+	Rooster::Galo* winner = &galo;
+	Rooster::Galo* looser = &galo2;
+
+	//-------------------------------------------------------------------------------------------
 
 	int rounds = 0;
 	int p1Rounds = 0;
@@ -39,8 +145,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	Font fonte;
 	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
 
+	// Rounds
 	Text round[3];
-
 	for (int i = 0; i < 3; i++) {
 		string name = "Round";
 		name += to_string(i + 1);
@@ -58,6 +164,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		);
 	}
 
+	// Fight
 	Text fight("Fight !!!", fonte, SCREEN_WIDTH / 20);
 	fight.setFillColor(Color::Red);
 	fight.setOutlineColor(Color::Black);
@@ -67,6 +174,24 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		SCREEN_WIDTH / 2 - fight.getGlobalBounds().width / 2,
 		SCREEN_HEIGHT / 2 - fight.getGlobalBounds().height / 2
 	);
+
+	// Finish Him
+	Text finishHim("Finish Him!", fonte, SCREEN_WIDTH / 20);
+	finishHim.setFillColor(Color::Red);
+	finishHim.setOutlineColor(Color::Black);
+	finishHim.setOutlineThickness(SCREEN_WIDTH / 1000);
+
+	finishHim.setPosition(
+		SCREEN_WIDTH / 2 - finishHim.getGlobalBounds().width / 2,
+		SCREEN_HEIGHT / 2 - finishHim.getGlobalBounds().height / 2
+	);
+
+
+	// Teclado Yamaha (Placeholder)
+	Texture yamahaTex;
+	yamahaTex.loadFromFile("sprites/tecladoYamaha.png");
+
+
 
 
 	SoundBuffer player1winsbuf;
@@ -90,9 +215,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		soundRound[i].setBuffer(roundBuf[i]);
 	}
 
+
+
 	int framesRound = 60;
 	int framesFight = 0;
 	int framesWin = 0;
+
+	bool fightWon = false;
 
 
 	Music musicas[8];
@@ -112,6 +241,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	matchTime.restart();
 
 	while (window->isOpen()) {
+
+
 		window->clear();
 		window->setView(window->getDefaultView());
 		window->draw(fundo);
@@ -120,6 +251,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			index = rand() % 8;
 			musicas[index].play();
 		}
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -158,16 +290,12 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				baseTilesView.setViewport(FloatRect((1 - xScl) / 2, tilesYPort + (1 - yScl) / 2, xScl, yScl));
 
 			}
-
 		}
-		if (false) {
-			musicas[index].stop();
-			galo.fatality(window, &galo2, fundo);
 
-		}
 
 
 		mainInput.update();
+
 		if (mainInput.keyboardState[Keyboard::Space][1]) {
 			int a = Pause::rematchScreen(window, galo2, galo, fundo, maxComboP1, matchTime);
 		}
@@ -188,6 +316,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				info.alcides->play();
 			}
 		}
+
+
 
 		//PLAYER 1 CONTROLES
 
@@ -235,398 +365,439 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			galo.setState(Rooster::state::STOPPED);
 		}
 
+		if (!fightWon) {
+			galoControls(galo, 0);
+			galoControls(galo2, 1);
 
-		//PLAYER 2 CONTROLES
 
-		player = 1;
+			// GALO ATAQUES
+			galoAttacks(galo, galo2);
+			galoAttacks(galo2, galo);
 
-		if (mainInput.inputState[player][GOUP][1])
-		{
-			galo2.jump();
-		}
 
-		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
-			if (mainInput.inputState[player][GODOWN][0]) {
-				galo2.lowKick();
+			//PLAYER 2 CONTROLES
+
+			player = 1;
+
+			if (mainInput.inputState[player][GOUP][1])
+			{
+				galo2.jump();
 			}
 
+			else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
+				if (mainInput.inputState[player][GODOWN][0]) {
+					galo2.lowKick();
+				}
+
+				else
+					galo2.highKick();
+
+			}
+			else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
+				if (galo2.onFire)
+					galo2.super();
+				else
+					galo2.especial();
+			}
+
+
+
+			if (mainInput.inputState[player][GORIGHT][0])
+			{
+
+				galo2.run(true);
+
+			}
+			else if (mainInput.inputState[player][GOLEFT][0])
+			{
+
+				galo2.run(false);
+
+			}
+			else if (mainInput.inputState[player][GODOWN][0])
+			{
+				galo2.defend();
+			}
+			else if (mainInput.inputState[player][DANCE][0]) {
+				galo2.setState(Rooster::state::DANCING);
+			}
 			else
-				galo2.highKick();
+			{
+				galo2.setState(Rooster::state::STOPPED);
 
-		}
-		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
-			if (galo2.onFire)
-				galo2.super();
-			else
-				galo2.especial();
-		}
+			}
 
+			for (int i = 0; i < galo.hurtBox.size(); i++) {
 
-
-		if (mainInput.inputState[player][GORIGHT][0])
-		{
-
-			galo2.run(true);
-
-		}
-		else if (mainInput.inputState[player][GOLEFT][0])
-		{
-
-			galo2.run(false);
-
-		}
-		else if (mainInput.inputState[player][GODOWN][0])
-		{
-			galo2.defend();
-		}
-		else if (mainInput.inputState[player][DANCE][0]) {
-			galo2.setState(Rooster::state::DANCING);
-		}
-		else
-		{
-			galo2.setState(Rooster::state::STOPPED);
-
-		}
-
-		for (int i = 0; i < galo.hurtBox.size(); i++) {
-
-			if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
-				if (galo.isDefending) {
-					if (galo2.hiKick->CheckCollision(galo.defense)) {
-						galo.defended(galo2, galo2.hiKick, galo2.facingRight);
+				if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
+					if (galo.isDefending) {
+						if (galo2.hiKick->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.hiKick, galo2.facingRight);
+						}
+						else
+							galo.apanhar(*galo2.hiKick, galo2.facingRight);
 					}
 					else
 						galo.apanhar(*galo2.hiKick, galo2.facingRight);
-				}
-				else
-					galo.apanhar(*galo2.hiKick, galo2.facingRight);
 
-			}
-			if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
-				if (galo.isDefending) {
-					if (galo2.louKick->CheckCollision(galo.defense)) {
-						galo.defended(galo2, galo2.louKick, galo2.facingRight);
+				}
+				if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
+					if (galo.isDefending) {
+						if (galo2.louKick->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.louKick, galo2.facingRight);
+						}
+						else
+							galo.apanhar(*galo2.louKick, galo2.facingRight);
 					}
 					else
 						galo.apanhar(*galo2.louKick, galo2.facingRight);
 				}
-				else
-					galo.apanhar(*galo2.louKick, galo2.facingRight);
-			}
 
-			if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
+				if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
 
-				if (galo2.ultimateShot->id == 5) {
-					if (galo.isDefending) {
-						if (galo2.ultimateShot->CheckCollision(galo.defense)) {
-							galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+					if (galo2.ultimateShot->id == 5) {
+						if (galo.isDefending) {
+							if (galo2.ultimateShot->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+							}
+							else if (!galo2.ultimateShot->getHitted) {
+								galo2.ultimateShot->getHitted = true;
+								galo2.ultimateShot->init2.restart();
+							}
 						}
 						else if (!galo2.ultimateShot->getHitted) {
 							galo2.ultimateShot->getHitted = true;
 							galo2.ultimateShot->init2.restart();
 						}
 					}
-					else if (!galo2.ultimateShot->getHitted) {
-						galo2.ultimateShot->getHitted = true;
-						galo2.ultimateShot->init2.restart();
-					}
-				}
-				else {
-					if (galo.isDefending) {
-						if (galo2.ultimateShot->CheckCollision(galo.defense)) {
-							galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+					else {
+						if (galo.isDefending) {
+							if (galo2.ultimateShot->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.ultimateShot, galo2.facingRight);
+							}
+							else
+								galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
 						}
 						else
+						{
 							galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
-					}
-					else
-					{
-						galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
-						galo2.ultimateShot->getHitted = true;
+							galo2.ultimateShot->getHitted = true;
+						}
 					}
 				}
-			}
-			if (galo2.superAtack->CheckCollision(galo.hurtBox[i])) {
+				if (galo2.superAtack->CheckCollision(galo.hurtBox[i])) {
 
-				if (galo2.superAtack->id == 15) {
+					if (galo2.superAtack->id == 15) {
 
-					if (!galo2.superAtack->getHitted) {
-						galo2.superAtack->getHitted = true;
-						galo.apanhar(*galo2.superAtack, galo2.facingRight);
+						if (!galo2.superAtack->getHitted) {
+							galo2.superAtack->getHitted = true;
+							galo.apanhar(*galo2.superAtack, galo2.facingRight);
+						}
 					}
-				}
-				else {
-					if (galo.isDefending) {
-						if (galo2.superAtack->CheckCollision(galo.defense)) {
-							galo.defended(galo2, galo2.superAtack, galo2.facingRight);
+					else {
+						if (galo.isDefending) {
+							if (galo2.superAtack->CheckCollision(galo.defense)) {
+								galo.defended(galo2, galo2.superAtack, galo2.facingRight);
+							}
+							else
+								galo.apanhar(*galo2.superAtack, galo2.facingRight);
 						}
 						else
+						{
 							galo.apanhar(*galo2.superAtack, galo2.facingRight);
-					}
-					else
-					{
-						galo.apanhar(*galo2.superAtack, galo2.facingRight);
-						galo2.superAtack->getHitted = true;
+							galo2.superAtack->getHitted = true;
+						}
 					}
 				}
 			}
-		}
 
 
 
-		for (int i = 0; i < galo2.hurtBox.size(); i++) {
+			for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
-			if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
-				if (galo2.isDefending) {
-					if (galo.hiKick->CheckCollision(galo2.defense)) {
-						galo2.defended(galo, galo.hiKick, galo.facingRight);
+				if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
+					if (galo2.isDefending) {
+						if (galo.hiKick->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.hiKick, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.hiKick, galo.facingRight);
 					}
 					else
 						galo2.apanhar(*galo.hiKick, galo.facingRight);
-				}
-				else
-					galo2.apanhar(*galo.hiKick, galo.facingRight);
 
-			}
-			if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
-				if (galo.isDefending) {
-					if (galo.louKick->CheckCollision(galo2.defense)) {
-						galo2.defended(galo, galo.louKick, galo.facingRight);
+				}
+				if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
+					if (galo.isDefending) {
+						if (galo.louKick->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.louKick, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.louKick, galo.facingRight);
 					}
 					else
 						galo2.apanhar(*galo.louKick, galo.facingRight);
 				}
-				else
-					galo2.apanhar(*galo.louKick, galo.facingRight);
-			}
 
-			if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
+				if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
 
-				if (galo.ultimateShot->id == 5) {
-					if (galo2.isDefending) {
-						if (galo.ultimateShot->CheckCollision(galo2.defense)) {
-							galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+					if (galo.ultimateShot->id == 5) {
+						if (galo2.isDefending) {
+							if (galo.ultimateShot->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							}
+							else if (!galo.ultimateShot->getHitted) {
+								galo.ultimateShot->getHitted = true;
+								galo.ultimateShot->init2.restart();
+							}
 						}
 						else if (!galo.ultimateShot->getHitted) {
 							galo.ultimateShot->getHitted = true;
 							galo.ultimateShot->init2.restart();
 						}
 					}
-					else if (!galo.ultimateShot->getHitted) {
-						galo.ultimateShot->getHitted = true;
-						galo.ultimateShot->init2.restart();
-					}
-				}
-				else {
-					if (galo2.isDefending) {
-						if (galo.ultimateShot->CheckCollision(galo2.defense)) {
-							galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+					else {
+						if (galo2.isDefending) {
+							if (galo.ultimateShot->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.ultimateShot, galo.facingRight);
+							}
+							else
+								galo2.apanhar(*galo.ultimateShot, galo.facingRight);
 						}
 						else
+						{
 							galo2.apanhar(*galo.ultimateShot, galo.facingRight);
+							galo2.ultimateShot->getHitted = true;
+						}
 					}
-					else
-					{
-						galo2.apanhar(*galo.ultimateShot, galo.facingRight);
-						galo2.ultimateShot->getHitted = true;
+				}
+				if (galo.superAtack->CheckCollision(galo2.hurtBox[i])) {
+
+					if (galo.superAtack->id == 15) {
+
+						if (!galo.superAtack->getHitted) {
+							galo.superAtack->getHitted = true;
+							galo2.apanhar(*galo.superAtack, galo.facingRight);
+						}
+					}
+					else {
+						if (galo2.isDefending) {
+							if (galo.superAtack->CheckCollision(galo2.defense)) {
+								galo2.defended(galo, galo.superAtack, galo.facingRight);
+							}
+							else
+								galo2.apanhar(*galo.superAtack, galo.facingRight);
+						}
+						else
+						{
+							galo2.apanhar(*galo.superAtack, galo.facingRight);
+							galo.superAtack->getHitted = true;
+						}
 					}
 				}
 			}
-			if (galo.superAtack->CheckCollision(galo2.hurtBox[i])) {
-				if (galo2.superAtack->id == 15) {
-					if (!galo.superAtack->getHitted) {
-						galo.superAtack->getHitted = true;
-						galo2.apanhar(*galo.superAtack, galo.facingRight);
+
+
+			if (galo.ultimateShot->getHitted && galo.ultimateShot->id == 5) {
+				galo.apanharByKalsa(&galo2, window);
+			}
+			else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
+				galo2.apanharByKalsa(&galo, window);
+			}
+
+			if (galo.superAtack->getHitted && galo.superAtack->id == 15) {
+				galo.superAtack->getHitted = galo2.getHitByBruxoSuper(window);
+			}
+			else if (galo2.superAtack->getHitted && galo2.superAtack->id == 15) {
+				galo2.superAtack->getHitted = galo.getHitByBruxoSuper(window);
+			}
+
+			galo.update();
+			galo2.update();
+
+			// Combo
+			galo.comboCounter = galo2.getHits();
+			galo2.comboCounter = galo.getHits();
+
+			if (galo.comboCounter > maxComboP1) {
+				maxComboP1 = galo.comboCounter;
+			}
+
+			if (galo2.comboCounter > maxComboP1) {
+				maxComboP2 = galo2.comboCounter;
+			}
+
+			// Health Bar
+			galo.bar->draw(window);
+			galo2.bar->draw(window);
+
+			// Draw
+			galo.show(*window);
+			galo2.show(*window);
+
+
+
+			// Rounds
+
+			if (!fightWon) {
+				if (galo.gethp() < 0) {
+					rounds++;
+					p2Rounds++;
+
+					if (rounds == 3 || p2Rounds == 2) {
+						framesWin = 60;
+						musicas[index].stop();
+						galo2.fatality(window, &galo, fundo);
+						option = MENU_PRINCIPAL;
+						return;
+					}
+					else {
+						framesRound = 60;
+						galo.sethp(galo.getMaxhp());
+						galo2.sethp(galo2.getMaxhp());
+					}
+				}
+				else if (galo2.gethp() < 0) {
+					rounds++;
+					p1Rounds++;
+
+					if (rounds == 3 || p1Rounds == 2) {
+						framesWin = 60;
+						musicas[index].stop();
+						galo.fatality(window, &galo2, fundo);
+						option = MENU_PRINCIPAL;
+						return;
+					}
+					else {
+						framesRound = 60;
+						galo.sethp(galo.getMaxhp());
+						galo2.sethp(galo2.getMaxhp());
+					}
+				}
+
+
+				// Round Extra Stuff
+				if (framesRound > 0) {
+					if (framesRound == 60) {
+						soundRound[rounds].play();
+					}
+					framesRound--;
+					if (framesRound == 0) {
+						s.play();
+						framesFight = 60;
+					}
+					window->draw(round[rounds]);
+				}
+
+				if (framesFight > 0) {
+					framesFight--;
+					window->draw(fight);
+				}
+			}
+
+			if (fightWon) {
+
+				window->draw(finishHim);
+				framesWin--;
+				if (framesWin <= 0) {
+					tilesFall = true;
+				}
+			}
+
+			// Oxem o que significa isso?
+			/*
+			if (framesWin > 0) {
+				return;
+			}
+			*/
+
+
+
+			if (executarFatality) {
+				winner->fatality(window, looser, fundo);
+				option = MENU_PRINCIPAL;
+				return;
+			}
+
+			// Piano Tiles
+			if (tilesFall) {
+
+
+				sf::View currentView = baseTilesView;
+
+				FloatRect currentPort = currentView.getViewport();
+
+				info.tilesView = currentView;
+
+				info.tilesView.setViewport(FloatRect(currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
+
+				if (!tilesReady) {
+
+					tilesVspeedPort += 0.0005;
+
+					tilesYPort += tilesVspeedPort;
+					if (tilesYPort > 0) {
+						tilesVspeedPort *= -0.5;
+						tilesYPort = 0;
+
+						FloatRect area(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 80);
+
+						AreaEffect* effect = new AreaEffect(area, Color::White);
+						effect->tilesPreset();
+						effect->textPreset();
+						effect->text.setString("Poeira");
+						effect->vspeedMin = -4;
+						effect->vspeedMax = 4;
+						effect->gravity.y = 0;
+						effect->friction = 0.95;
+						effect->fadeOutAlpha = true;
+						//effect->fadeInAlpha = true;
+
+
+						effect->color = Color(200, 250, 100);
+
+						effect->createMultipleParticles(abs(5000 * tilesVspeedPort));
+
+						mainPartSystem.addEffect(effect);
+
+
+						if (abs(tilesVspeedPort) < 0.001) {
+							tilesVspeedPort = 0;
+							tilesReady = true;
+							info.alcides->play();
+							musicas[index].stop();
+						}
 					}
 				}
 				else {
-					if (galo2.isDefending) {
-						if (galo.superAtack->CheckCollision(galo2.defense)) {
-							galo2.defended(galo, galo.superAtack, galo.facingRight);
-						}
-						else
-							galo2.apanhar(*galo.superAtack, galo.facingRight);
-					}
-					else
-					{
-						galo2.apanhar(*galo.superAtack, galo.facingRight);
-						galo2.superAtack->getHitted = true;
-					}
-				}
-			}
-		}
+					info.update(*window);
 
+					if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+						flores = true;
 
-		if (galo.ultimateShot->getHitted && galo.ultimateShot->id == 5) {
-			galo.apanharByKalsa(&galo2, window);
-		}
-		else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
-			galo2.apanharByKalsa(&galo, window);
-		}
+						FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
 
-		if (galo.superAtack->getHitted && galo.superAtack->id == 15) {
-			galo.superAtack->getHitted = galo2.getHitByBruxoSuper(window);
-		}
-		else if (galo2.superAtack->getHitted && galo2.superAtack->id == 15) {
-			galo2.superAtack->getHitted = galo.getHitByBruxoSuper(window);
-		}
+						AreaEffect* effect = new AreaEffect(area, Color::White);
+						effect->floresPreset();
+						//effect->color = Color(200, 250, 100);
 
-		galo.update();
-		galo2.update();
+						effect->createMultipleParticles(100);
 
-		galo.comboCounter = galo2.getHits();
-		galo2.comboCounter = galo.getHits();
-
-		if (galo.comboCounter > maxComboP1) {
-			maxComboP1 = galo.comboCounter;
-		}
-
-		if (galo2.comboCounter > maxComboP1) {
-			maxComboP2 = galo2.comboCounter;
-		}
-
-		galo.bar->draw(window);
-		galo2.bar->draw(window);
-
-		galo.show(*window);
-		galo2.show(*window);
-
-
-
-		if (galo.gethp() < 0) {
-			rounds++;
-			p2Rounds++;
-
-			if (rounds == 3 || p2Rounds == 2) {
-				framesWin = 60;
-				musicas[index].stop();
-				galo2.fatality(window, &galo, fundo);
-				option = MENU_PRINCIPAL;
-				return;
-			}
-			else {
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-			}
-		}
-		else if (galo2.gethp() < 0) {
-			rounds++;
-			p1Rounds++;
-
-			if (rounds == 3 || p1Rounds == 2) {
-				framesWin = 60;
-				musicas[index].stop();
-				galo.fatality(window, &galo2, fundo);
-				option = MENU_PRINCIPAL;
-				return;
-			}
-			else {
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());
-			}
-		}
-
-
-		if (framesRound > 0) {
-			if (framesRound == 60) {
-				soundRound[rounds].play();
-			}
-			framesRound--;
-			if (framesRound == 0) {
-				s.play();
-				framesFight = 60;
-			}
-			window->draw(round[rounds]);
-		}
-
-		if (framesFight > 0) {
-			framesFight--;
-			window->draw(fight);
-		}
-		if (framesWin > 0) {
-			return;
-		}
-
-
-
-		if (tilesFall) {
-
-
-			sf::View currentView = baseTilesView;
-
-			FloatRect currentPort = currentView.getViewport();
-
-			info.tilesView = currentView;
-
-			info.tilesView.setViewport(FloatRect(currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
-
-			if (!tilesReady) {
-
-				tilesVspeedPort += 0.0005;
-
-				tilesYPort += tilesVspeedPort;
-				if (tilesYPort > 0) {
-					tilesVspeedPort *= -0.5;
-					tilesYPort = 0;
-
-					FloatRect area(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 80);
-
-					AreaEffect* effect = new AreaEffect(area, Color::White);
-					effect->tilesPreset();
-					effect->textPreset();
-					effect->text.setString("Poeira");
-					effect->vspeedMin = -4;
-					effect->vspeedMax = 4;
-					effect->gravity.y = 0;
-					effect->friction = 0.95;
-					effect->fadeOutAlpha = true;
-					//effect->fadeInAlpha = true;
-
-
-					effect->color = Color(200, 250, 100);
-
-					effect->createMultipleParticles(abs(5000 * tilesVspeedPort));
-
-					mainPartSystem.addEffect(effect);
-
-
-					if (abs(tilesVspeedPort) < 0.001) {
-						tilesVspeedPort = 0;
-						tilesReady = true;
-						info.alcides->play();
-						musicas[index].stop();
+						mainPartSystem.addEffect(effect);
 					}
 				}
-			}
-			else {
-				info.update(*window);
 
-				if (info.alcides->getPlayingSeconds() > 46 && !flores) {
-					flores = true;
-
-					FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
-
-					AreaEffect* effect = new AreaEffect(area, Color::White);
-					effect->floresPreset();
-					//effect->color = Color(200, 250, 100);
-
-					effect->createMultipleParticles(100);
-
-					mainPartSystem.addEffect(effect);
-				}
+				window->setView(info.tilesView);
+				info.draw(*window);
 			}
 
-			window->setView(info.tilesView);
-			info.draw(*window);
+			window->setView(window->getDefaultView());
+
+			mainPartSystem.update();
+			mainPartSystem.draw(*window);
+
+			window->display();
 		}
 
-		window->setView(window->getDefaultView());
-
-		mainPartSystem.update();
-		mainPartSystem.draw(*window);
-
-		window->display();
 	}
 }

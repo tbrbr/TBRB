@@ -406,6 +406,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 					if (__temp != -1) {
 
 						if (__temp == 0) {
+							mode = SINGLE;
 							return Rooster::SELECTION;
 						}
 						else if (__temp == 1) {
@@ -457,10 +458,7 @@ int MenuPrincipal(RenderWindow * window, RectangleShape& background) {
 	
 	window->setMouseCursorVisible(true);
 	
-	Music opening;
-	opening.openFromFile("sounds\\freefires.ogg");
-	opening.play();
-	opening.setLoop(true);
+	
 	Font font;
 	Font titleFont;
 	titleFont.loadFromFile("fonts/CloisterBlack.ttf");
@@ -821,9 +819,11 @@ int muitoJogadores(RenderWindow* window, RectangleShape& background) {
 					if (__temp != -1) {
 
 						if (__temp == 0) {
+							mode = LOCAL;
 							return Rooster::SELECTION;
 						}
 						else if (__temp == 1) {
+							mode = LAN;
 							return MULTI_MODE;
 						}
 						else if (__temp == 2) {

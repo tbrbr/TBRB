@@ -228,8 +228,6 @@ protected:
 
 	void selection(Galo** galop1, int i) {
 
-
-
 		if (i == 0) {
 
 			*galop1 = new Sniper(sniperSt, Rooster::state::STOPPED, isHost);
@@ -259,9 +257,6 @@ protected:
 	}
 
 	void selection(Galo** galop1, Galo** galop2, int i) {
-
-
-
 
 		if (i == 0) {
 			if (isp1Time) {
@@ -309,8 +304,6 @@ protected:
 
 		}
 	}
-
-
 
 	void updateBars(int rooster) {
 		if (isp1Time) {
@@ -808,7 +801,6 @@ public:
 		sf::Thread th(std::bind(&UpdateGalo2, galop2, socket, &p2, &isready2));
 		th.launch();
 
-
 		char data[10] = "\0";
 
 		while (window->isOpen()) {
@@ -819,8 +811,6 @@ public:
 			Event e;
 			statusPlayer1.visibility = (p1 != -1);
 			statusPlayer2.visibility = (p2 != -1);
-
-
 			while (window->pollEvent(e))
 			{
 				if (e.type == Event::Closed)
@@ -828,6 +818,7 @@ public:
 					window->close();
 					th.terminate();
 				}
+
 
 
 				if (e.type == Event::MouseButtonPressed) {
@@ -844,6 +835,7 @@ public:
 
 									itoa(p1 + 1, data, 10);
 									socket->send(data, sizeof(data));
+
 								}
 							}
 						}
@@ -870,13 +862,17 @@ public:
 				th.terminate();
 				galop1[0]->resetPosition();				
 				galop2[0]->resetPosition();
-				return DOISJODADOR;
+
+				galop2[0]->update();
+				galop1[0]->update();
+
+				return VERSUS;
 
 			}
 
 			if (p2 != -1) {
 				galop2[0]->facingRight = false;
-				galop2[0]->noGravity = false;
+				galop2[0]->noGravity = true;
 				galop2[0]->setPosition(Vector2f(podiumP2.getGlobalBounds().width / 2 + podiumP2.getPosition().x, podiumP2.getPosition().y + podiumP2.getGlobalBounds().height * 0.3));
 
 			}

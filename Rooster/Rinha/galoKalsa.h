@@ -21,8 +21,6 @@ namespace Rooster {
 
             bar = new LifeBar(maxHp, isp1, name.c_str());
 
-            this->peso = 4;
-
     
             this->hiKick = new Ataques(
                 3,15, HitBox{ Vector2f(0, 0), 0 },
@@ -53,14 +51,6 @@ namespace Rooster {
             projectiles.push_back(*cinto);
             projectiles.push_back(*cintoAmarrado);
 
-            if (isp1)
-                position.x = SCREEN_WIDTH / 4;
-            else
-                position.x = SCREEN_WIDTH - SCREEN_WIDTH / 4;
-
-            position.y = floorY;
-
-      
             
 
 
@@ -705,6 +695,11 @@ namespace Rooster {
                 else if (estado == INVISIBLE) {
                     sumir();
                 }
+
+                if (estado != INVISIBLE) {
+                    aparecer();
+                }
+
 
             }
             

@@ -129,6 +129,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	//-------------------------------------------------------------------------------------------
 
+	bool executarFatality = false;
+
+	// Tenho que botar algo no começo pra garantir que nao vai crashar e pro codigo rodar
+	Rooster::Galo* winner = &galo;
+	Rooster::Galo* looser = &galo2;
+
+	//-------------------------------------------------------------------------------------------
 
 	int rounds = 0;
 	int p1Rounds = 0;
@@ -136,11 +143,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	int maxComboP1 = 0;
 	int maxComboP2 = 0;
 	
+
+
+	// Textos Insanos
+	//-------------------------------------------------------------------------------------------
 	Font fonte;
 	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
 
+	// Rounds
 	Text round[3];
-
 	for (int i = 0; i < 3; i++) {
 		string name = "Round";
 		name += to_string(i + 1);
@@ -158,6 +169,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		);
 	}
 
+	// Fight
 	Text fight("Fight !!!", fonte, SCREEN_WIDTH / 20);
 	fight.setFillColor(Color::Red);
 	fight.setOutlineColor(Color::Black);
@@ -167,6 +179,24 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		SCREEN_WIDTH / 2 - fight.getGlobalBounds().width / 2,
 		SCREEN_HEIGHT / 2 - fight.getGlobalBounds().height / 2
 	);
+
+	// Finish Him
+	Text finishHim("Finish Him!", fonte, SCREEN_WIDTH / 20);
+	finishHim.setFillColor(Color::Red);
+	finishHim.setOutlineColor(Color::Black);
+	finishHim.setOutlineThickness(SCREEN_WIDTH / 1000);
+
+	finishHim.setPosition(
+		SCREEN_WIDTH / 2 - finishHim.getGlobalBounds().width / 2,
+		SCREEN_HEIGHT / 2 - finishHim.getGlobalBounds().height / 2
+	);
+
+
+	// Teclado Yamaha (Placeholder)
+	Texture yamahaTex;
+	yamahaTex.loadFromFile("sprites/tecladoYamaha.png");
+
+
 
 
 	SoundBuffer player1winsbuf;
@@ -190,9 +220,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		soundRound[i].setBuffer(roundBuf[i]);
 	}
 
+
+
 	int framesRound = 60;
 	int framesFight = 0;
 	int framesWin = 0;
+
+	bool fightWon = false;
 
 
 	Music musicas[8];
@@ -212,6 +246,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	matchTime.restart();
 
 	while (window->isOpen()) {
+
+
 		window->clear();
 		window->setView(window->getDefaultView());
 		window->draw(fundo);
@@ -220,6 +256,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			index = rand() % 8;
 			musicas[index].play();
 		}
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -258,16 +295,12 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				baseTilesView.setViewport(FloatRect((1 - xScl) / 2, tilesYPort + (1 - yScl) / 2, xScl, yScl));
 				
 			}
-
 		}
-		if (false) {
-			musicas[index].stop();
-			galo.fatality(window, &galo2, fundo);
 
-		}
 
 
 		mainInput.update();
+
 		if (mainInput.keyboardState[Keyboard::Space][1]) {
 			int a = Pause::rematchScreen(window, galo2, galo, fundo, maxComboP1, matchTime);
 		}
@@ -290,106 +323,159 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		}
 
 
+
+
 		// Oxe, sumiu o codigo foi?
-		//PLAYER CONTROLES
-		galoControls(galo, 0);
-		galoControls(galo2, 1);
-	
+		// PLAYER CONTROLES
 
-		//GALO ATAQUES
-		galoAttacks(galo, galo2);
-		galoAttacks(galo2, galo);
+		if (!fightWon) {
+			galoControls(galo, 0);
+			galoControls(galo2, 1);
 
 
+			// GALO ATAQUES
+			galoAttacks(galo, galo2);
+			galoAttacks(galo2, galo);
 
-		if (galo.ultimateShot->getHitted && galo.ultimateShot->id == 5) {
-			galo.apanharByKalsa(&galo2, window);
+
+
+			// Ataque de Cinto
+			if (galo.ultimateShot->getHitted && galo.ultimateShot->id == 5) {
+				galo.apanharByKalsa(&galo2, window);
+			}
+
+			if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
+				galo2.apanharByKalsa(&galo, window);
+			}
+
+
+			// Update
+			galo.update();
+			galo2.update();
+
+			// Combo
+			galo.comboCounter = galo2.getHits();
+			galo2.comboCounter = galo.getHits();
+
+			if (galo.comboCounter > maxComboP1) {
+				maxComboP1 = galo.comboCounter;
+			}
+
+			if (galo2.comboCounter > maxComboP1) {
+				maxComboP2 = galo2.comboCounter;
+			}
 		}
-		else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
-			galo2.apanharByKalsa(&galo, window);
-		}
 
-		galo.update();
-		galo2.update();
-
-		galo.comboCounter = galo2.getHits();
-		galo2.comboCounter = galo.getHits();
-
-		if (galo.comboCounter > maxComboP1) {
-			maxComboP1 = galo.comboCounter;
-		}
-		
-		if (galo2.comboCounter > maxComboP1) {
-			maxComboP2 = galo2.comboCounter;
-		}
-
+		// Health Bar
 		galo.bar->draw(window);
 		galo2.bar->draw(window);
 
+		// Draw
 		galo.show(*window);
 		galo2.show(*window);
 
 
 
-		if (galo.gethp() < 0) {
-			rounds++;
-			p2Rounds++;
+		// Rounds
 
-			if (rounds == 3 || p2Rounds == 2) {
-				framesWin = 60;
-				musicas[index].stop();
-				galo2.fatality(window, &galo, fundo);
-				option = MENU_PRINCIPAL;
+		if (!fightWon) {
+			if (galo.gethp() < 0) {
+				rounds++;
+				p2Rounds++;
+
+				if (rounds == 3 || p2Rounds == 2) {
+					// Galo 2 Win
+					framesWin = 60;
+					musicas[index].stop();
+
+					fightWon = true;
+					
+					winner = &galo2;
+					looser = &galo;
+				}
+				else {
+					// New Round
+					framesRound = 60;
+					galo.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
+				}
+			}
+			else if (galo2.gethp() < 0) {
+				rounds++;
+				p1Rounds++;
+
+				if (rounds == 3 || p1Rounds == 2) {
+					// Galo win
+					framesWin = 60;
+					musicas[index].stop();
+
+					fightWon = true;
+					
+					winner = &galo;
+					looser = &galo2;
+				}
+				else {
+					// New Round
+					framesRound = 60;
+					galo.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
+				}
+			}
+
+
+			// Round Extra Stuff
+			if (framesRound > 0) {
+				if (framesRound == 60) {
+					soundRound[rounds].play();
+				}
+				framesRound--;
+				if (framesRound == 0) {
+					s.play();
+					framesFight = 60;
+				}
+				window->draw(round[rounds]);
+			}
+
+			if (framesFight > 0) {
+				framesFight--;
+				window->draw(fight);
+			}
+		}
+
+		if (fightWon) {
+
+			window->draw(finishHim);
+			framesWin--;
+			if (framesWin <= 0) {
+				tilesFall = true;
+			}
+		}
+
+			// Oxem o que significa isso?
+			/*
+			if (framesWin > 0) {
 				return;
 			}
-			else {
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());				
-			}
-		}
-		else if (galo2.gethp() < 0) {
-			rounds++;
-			p1Rounds++;
-
-			if (rounds == 3 || p1Rounds == 2) {
-				framesWin = 60;
-				musicas[index].stop();
-				galo.fatality(window, &galo2, fundo);
-				option = MENU_PRINCIPAL;
-				return;
-			}
-			else {
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());				
-			}
-		}
+			*/
+		
 
 
-		if (framesRound > 0) {
-			if (framesRound == 60) {
-				soundRound[rounds].play();
-			}
-			framesRound--;
-			if (framesRound == 0) {
-				s.play();
-				framesFight = 60;
-			}
-			window->draw(round[rounds]);
-		}
-
-		if (framesFight > 0) {
-			framesFight--;
-			window->draw(fight);
-		}
-		if (framesWin > 0) {
+		if (executarFatality) {
+			winner->fatality(window, looser, fundo);
+			option = MENU_PRINCIPAL;
 			return;
 		}
 
+		
 
 
+		// Piano Tiles
 		if (tilesFall) {
+
+			if (info.result != -1) {
+				tilesFall = false;
+				executarFatality = true;
+			}
 
 			
 			sf::View currentView = baseTilesView;

@@ -152,6 +152,7 @@ int main() {
 	opening.openFromFile("sounds\\freefires.ogg");
 	//opening.play();
 	//opening.setLoop(true);
+	opening.setLoop(true);
 
 	while (window->isOpen())
 	{

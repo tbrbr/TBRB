@@ -673,18 +673,16 @@ public:
 			}
 
 
+			// Player 1 (Por enquanto) 
+			teclaPressed[0] = mainInput.inputState[0][Rooster::TILES1][1];
+			teclaPressed[1] = mainInput.inputState[0][Rooster::TILES2][1];
+			teclaPressed[2] = mainInput.inputState[0][Rooster::TILES3][1];
+			teclaPressed[3] = mainInput.inputState[0][Rooster::TILES4][1];
 
-			teclaPressed[0] = mainInput.keyboardState[sf::Keyboard::A][1];
-			teclaPressed[1] = mainInput.keyboardState[sf::Keyboard::S][1];
-			teclaPressed[2] = mainInput.keyboardState[sf::Keyboard::D][1];
-			teclaPressed[3] = mainInput.keyboardState[sf::Keyboard::F][1];
-
-
-
-			teclaState[0] = mainInput.keyboardState[sf::Keyboard::A][0];
-			teclaState[1] = mainInput.keyboardState[sf::Keyboard::S][0];
-			teclaState[2] = mainInput.keyboardState[sf::Keyboard::D][0];
-			teclaState[3] = mainInput.keyboardState[sf::Keyboard::F][0];
+			teclaState[0] = mainInput.inputState[0][Rooster::TILES1][0];
+			teclaState[1] = mainInput.inputState[0][Rooster::TILES2][0];
+			teclaState[2] = mainInput.inputState[0][Rooster::TILES3][0];
+			teclaState[3] = mainInput.inputState[0][Rooster::TILES4][0];
 
 
 

@@ -30,10 +30,18 @@ namespace Rooster {
 		JOYRIGHT,
 		JOYDOWN,
 		JOYLEFT,
-		JOYA,
-		JOYB,
 		JOYX,
 		JOYY,
+		JOYA,
+		JOYB,
+		JOYL1,
+		JOYR1,
+		JOYL2,
+		JOYR2,
+		JOYSELECT,
+		JOYSTART,
+		JOYMIDLEFT,
+		JOYMIDRIGHT,
 		JOYTOTAL
 	};
 
@@ -193,10 +201,10 @@ namespace Rooster {
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
 			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 
-			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYLEFT);
-			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYDOWN);
-			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYB);
-			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYA);
+			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYL1);
+			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYR1);
+			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYSELECT);
+			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYSTART);
 
 
 
@@ -249,6 +257,12 @@ namespace Rooster {
 			board[player][TILES4][JOYSTICK] = jInput.setKey(JOY_BUTTON20);
 		}
 
+
+		void setKeybind(int player, int inputSlot, int actualHud, struct inputInfo keybindInfo) {
+			board[player][inputSlot][actualHud] = keybindInfo;
+		}
+
+
 		bool getJoystickState(int button, int joystickId = 0) {
 
 
@@ -267,16 +281,42 @@ namespace Rooster {
 				return sf::Joystick::getAxisPosition(joystickId, sf::Joystick::X) < -50;
 			case JOYRIGHT:
 				return sf::Joystick::getAxisPosition(joystickId, sf::Joystick::X) > 50;
+			case JOYX:
+				return sf::Joystick::isButtonPressed(joystickId, 0);
+
+			case JOYY:
+				return sf::Joystick::isButtonPressed(joystickId, 1);
+
 			case JOYA:
 				return sf::Joystick::isButtonPressed(joystickId, 2);
 
 			case JOYB:
 				return sf::Joystick::isButtonPressed(joystickId, 3);
-			case JOYX:
+			case JOYL1:
 				return sf::Joystick::isButtonPressed(joystickId, 4);
 
-			case JOYY:
+			case JOYL2:
+				return sf::Joystick::isButtonPressed(joystickId, 6);
+
+			case JOYR1:
 				return sf::Joystick::isButtonPressed(joystickId, 5);
+
+			case JOYR2:
+				return sf::Joystick::isButtonPressed(joystickId, 7);
+
+			case JOYSTART:
+				return sf::Joystick::isButtonPressed(joystickId, 9);
+
+			case JOYSELECT:
+				return sf::Joystick::isButtonPressed(joystickId, 8);
+
+			case JOYMIDLEFT:
+				return sf::Joystick::isButtonPressed(joystickId, 10);
+
+			case JOYMIDRIGHT:
+				return sf::Joystick::isButtonPressed(joystickId, 11);
+
+
 			}
 			return false;
 		}

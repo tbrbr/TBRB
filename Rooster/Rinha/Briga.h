@@ -12,17 +12,16 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	float tilesYPort = -1;
 	bool tilesReady = false;
 
-	bool tilesFall = randFloat(1) < 0.8;
+	bool tilesFall = false;
 
-	
 
 	float wid = 1280;
 	float hei = 720;
 
 	sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
 	baseTilesView.setSize(visibleArea.width, visibleArea.height);
-	baseTilesView.setCenter(visibleArea.left + visibleArea.width/2, visibleArea.top + visibleArea.height / 2);
-	baseTilesView.setViewport(FloatRect(0, tilesYPort+1, 1, 1));
+	baseTilesView.setCenter(visibleArea.left + visibleArea.width / 2, visibleArea.top + visibleArea.height / 2);
+	baseTilesView.setViewport(FloatRect(0, tilesYPort + 1, 1, 1));
 
 	bool flores = false;
 
@@ -36,7 +35,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	int p2Rounds = 0;
 	int maxComboP1 = 0;
 	int maxComboP2 = 0;
-	
+
 	Font fonte;
 	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
 
@@ -108,7 +107,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	int index = rand() % 8;
 	musicas[index].play();
-		
+
 	Clock matchTime;
 	matchTime.restart();
 
@@ -155,9 +154,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
 				baseTilesView.setSize(visibleArea.width, visibleArea.height);
-				baseTilesView.setCenter(visibleArea.left + visibleArea.width/2, visibleArea.top + visibleArea.height / 2);
+				baseTilesView.setCenter(visibleArea.left + visibleArea.width / 2, visibleArea.top + visibleArea.height / 2);
 				baseTilesView.setViewport(FloatRect((1 - xScl) / 2, tilesYPort + (1 - yScl) / 2, xScl, yScl));
-				
+
 			}
 
 		}
@@ -210,7 +209,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			if (galo.onFire)
 				galo.super();
 			else
-				galo.especial();	
+				galo.especial();
 		}
 
 
@@ -347,7 +346,33 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					}
 				}
 			}
+			if (galo2.superAtack->CheckCollision(galo.hurtBox[i])) {
+
+				if (galo2.superAtack->id == 15) {
+
+					if (!galo2.superAtack->getHitted) {
+						galo2.superAtack->getHitted = true;
+						galo.apanhar(*galo2.superAtack, galo2.facingRight);
+					}
+				}
+				else {
+					if (galo.isDefending) {
+						if (galo2.superAtack->CheckCollision(galo.defense)) {
+							galo.defended(galo2, galo2.superAtack, galo2.facingRight);
+						}
+						else
+							galo.apanhar(*galo2.superAtack, galo2.facingRight);
+					}
+					else
+					{
+						galo.apanhar(*galo2.superAtack, galo2.facingRight);
+						galo2.superAtack->getHitted = true;
+					}
+				}
+			}
 		}
+
+
 
 		for (int i = 0; i < galo2.hurtBox.size(); i++) {
 
@@ -407,6 +432,28 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					}
 				}
 			}
+			if (galo.superAtack->CheckCollision(galo2.hurtBox[i])) {
+				if (galo2.superAtack->id == 15) {
+					if (!galo.superAtack->getHitted) {
+						galo.superAtack->getHitted = true;
+						galo2.apanhar(*galo.superAtack, galo.facingRight);
+					}
+				}
+				else {
+					if (galo2.isDefending) {
+						if (galo.superAtack->CheckCollision(galo2.defense)) {
+							galo2.defended(galo, galo.superAtack, galo.facingRight);
+						}
+						else
+							galo2.apanhar(*galo.superAtack, galo.facingRight);
+					}
+					else
+					{
+						galo2.apanhar(*galo.superAtack, galo.facingRight);
+						galo2.superAtack->getHitted = true;
+					}
+				}
+			}
 		}
 
 
@@ -415,6 +462,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		}
 		else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
 			galo2.apanharByKalsa(&galo, window);
+		}
+
+		if (galo.superAtack->getHitted && galo.superAtack->id == 15) {
+			galo.superAtack->getHitted = galo2.getHitByBruxoSuper(window);
+		}
+		else if (galo2.superAtack->getHitted && galo2.superAtack->id == 15) {
+			galo2.superAtack->getHitted = galo.getHitByBruxoSuper(window);
 		}
 
 		galo.update();
@@ -426,7 +480,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		if (galo.comboCounter > maxComboP1) {
 			maxComboP1 = galo.comboCounter;
 		}
-		
+
 		if (galo2.comboCounter > maxComboP1) {
 			maxComboP2 = galo2.comboCounter;
 		}
@@ -453,7 +507,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());				
+				galo2.sethp(galo2.getMaxhp());
 			}
 		}
 		else if (galo2.gethp() < 0) {
@@ -470,7 +524,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			else {
 				framesRound = 60;
 				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo2.getMaxhp());				
+				galo2.sethp(galo2.getMaxhp());
 			}
 		}
 
@@ -499,14 +553,14 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 		if (tilesFall) {
 
-			
+
 			sf::View currentView = baseTilesView;
 
 			FloatRect currentPort = currentView.getViewport();
 
 			info.tilesView = currentView;
 
-			info.tilesView.setViewport(FloatRect( currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
+			info.tilesView.setViewport(FloatRect(currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
 
 			if (!tilesReady) {
 
@@ -517,7 +571,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					tilesVspeedPort *= -0.5;
 					tilesYPort = 0;
 
-					FloatRect area(0, SCREEN_HEIGHT-40, SCREEN_WIDTH, 80);
+					FloatRect area(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 80);
 
 					AreaEffect* effect = new AreaEffect(area, Color::White);
 					effect->tilesPreset();
@@ -529,11 +583,11 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					effect->friction = 0.95;
 					effect->fadeOutAlpha = true;
 					//effect->fadeInAlpha = true;
-					
+
 
 					effect->color = Color(200, 250, 100);
 
-					effect->createMultipleParticles(abs(5000*tilesVspeedPort));
+					effect->createMultipleParticles(abs(5000 * tilesVspeedPort));
 
 					mainPartSystem.addEffect(effect);
 
@@ -552,7 +606,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				if (info.alcides->getPlayingSeconds() > 46 && !flores) {
 					flores = true;
 
-					FloatRect area(0, - 1000, SCREEN_WIDTH, 1000);
+					FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
 
 					AreaEffect* effect = new AreaEffect(area, Color::White);
 					effect->floresPreset();

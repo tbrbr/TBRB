@@ -20,6 +20,7 @@ namespace Rooster {
         JUMP_KICK,
         SPECIAL,
         SUPER,//AVEMARIA DOIDO
+        INVISIBLE,//not gonna lie this is harry potter shit
         FATALITY,  
         DANCING
     };
@@ -372,7 +373,8 @@ namespace Rooster {
 
         Texture star;
         Sprite estrelinha;
-
+        Texture burned;
+        Sprite burning;
         int hits = 0;
        
         Font comboFont;
@@ -457,7 +459,7 @@ namespace Rooster {
             star.loadFromFile("sprites\\estrelinhas.png");
             estrelinha.setTexture(star);
             estrelinha.setScale((float)SCREEN_WIDTH / 7680, (float)SCREEN_HEIGHT / 4320);
-
+            
             comboFont.loadFromFile("fonts\\Act_Of_Rejection.ttf");
             
             comboText.setFont(comboFont);
@@ -465,8 +467,8 @@ namespace Rooster {
             comboText.setFillColor(Color::Yellow);
             comboText.setOutlineThickness(SCREEN_WIDTH / 900);
             comboText.setOutlineColor(Color(255, 255, 10));
-            
- 
+            burned.loadFromFile("sprites\\Burning.png");
+            burning.setTexture(burned);
             this->position = Vector2f(0, 0);
             this->isp1 = isp1;
             if (isp1)
@@ -934,7 +936,61 @@ namespace Rooster {
             window->draw(estrelinha);
 
         }
+        void sumir() {
+            model.alpha = 0;
+        }
+        bool getHitByBruxoSuper(RenderWindow * window) {
 
+            static int thisFrames = 0;
+
+            int maxFrames = 60;
+
+            if (thisFrames > maxFrames) {
+                thisFrames = 0;
+                model.alpha = 255;
+                
+                return false;
+            }
+
+            estado = INVISIBLE;
+
+            //vamos dividir as 17 imagens igualmentes em 60 frames
+            int imgSpace = maxFrames / 17;
+            int wid = 115;
+            int hei = 135;
+            int hei2 = 120;
+            int hei3 = 46;
+
+            //to mo cansado
+            IntRect manoTaFoda;
+            manoTaFoda.width = wid;
+
+            if (imgSpace * 5 > thisFrames) {
+                manoTaFoda.height = hei;
+                manoTaFoda.top = 0;
+            }
+            else if (imgSpace * 10 > thisFrames) {
+                manoTaFoda.height = hei;
+                manoTaFoda.top = hei;
+            }
+            else if (imgSpace * 25 > thisFrames) {
+                manoTaFoda.height = hei2;
+                manoTaFoda.top = hei * 2;
+            }
+            else {
+                manoTaFoda.height = hei3;
+                manoTaFoda.top = hei * 2 + hei2;
+            }
+
+            manoTaFoda.left = ((int)(thisFrames / imgSpace) % 5) * wid;
+           
+            burning.setTextureRect(manoTaFoda);
+            burning.setPosition(position);
+            burning.setScale(SCREEN_WIDTH / 192, SCREEN_HEIGHT / 108);
+            window->draw(burning);
+
+            return true;
+        }
         void getHitByBruxoFatality() {
           
             static int thisFrames = 0;

@@ -17,7 +17,7 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Default);
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Fullscreen);
 
 	// Carregando texturas pra particulas
 	Rooster::partTextures.init();

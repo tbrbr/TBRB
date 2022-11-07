@@ -103,6 +103,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	//-------------------------------------------------------------------------------------------
 	struct TilesInfo info;
 	info.init();
+	info.alcides->editing = false;
 
 
 	sf::View baseTilesView;
@@ -192,9 +193,27 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	);
 
 
+
+
+
+
 	// Teclado Yamaha (Placeholder)
 	Texture yamahaTex;
 	yamahaTex.loadFromFile("sprites/tecladoYamaha.png");
+
+
+	float yamahaY = -400;
+	float yamahaVspeed = 0;
+
+	Sprite yamahaSpr(yamahaTex);
+	yamahaSpr.setOrigin(yamahaSpr.getLocalBounds().width/2, yamahaSpr.getLocalBounds().height * 0.8);
+	yamahaSpr.setPosition(0, yamahaY);
+
+
+	SoundBuffer yamahaFallSndBuffer;
+	yamahaFallSndBuffer.loadFromFile("sounds/Explosion.ogg");
+	Sound yamahaFallSnd(yamahaFallSndBuffer);
+	
 
 
 
@@ -322,6 +341,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			}
 		}
 
+		if (fightWon) {
+			window->draw(yamahaSpr);
+		}
 
 
 
@@ -385,7 +407,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				if (rounds == 3 || p2Rounds == 2) {
 					// Galo 2 Win
-					framesWin = 60;
+					framesWin = 250;
 					musicas[index].stop();
 
 					fightWon = true;
@@ -406,7 +428,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				if (rounds == 3 || p1Rounds == 2) {
 					// Galo win
-					framesWin = 60;
+					framesWin = 250;
 					musicas[index].stop();
 
 					fightWon = true;
@@ -442,7 +464,51 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			}
 		}
 
+
+
+
+
+		// Yamaha Falling
+		//-------------------------------------------------------------------------------
 		if (fightWon) {
+
+			float yamahaX = winner->model.at("Body")->drawPos.x - winner->model.xScl *120;
+			yamahaSpr.setScale(-winner->model.xScl*0.75, winner->model.yScl*0.75);
+			
+			yamahaY += yamahaVspeed;
+			yamahaSpr.setPosition(yamahaX, yamahaY);
+
+			if (yamahaY > Rooster::floorY) {
+				yamahaVspeed = 0;
+				yamahaY = Rooster::floorY;
+
+				yamahaFallSnd.play();
+
+				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
+				effect->sanguePreset();
+				//effect->textPreset();
+				//effect->text.setString("Po");
+				//effect->color = Color(230, 200, 60);
+				effect->isHSV = true;
+
+				effect->hueMax = 20;
+				effect->hueMax = 40;
+
+				
+
+				effect->lightMin = 0.75;
+				effect->lightMax = 1;
+
+				effect->friction = 0.95;
+				effect->gravity.y = 0;
+				effect->lifeMin = 60;
+				effect->lifeMax = 150;
+				effect->createMultipleParticles(150);
+				mainPartSystem.addEffect(effect);
+			}
+			else if (yamahaY < Rooster::floorY) {
+				yamahaVspeed = constrain(yamahaVspeed + 0.2, -40, 40);
+			}
 
 			window->draw(finishHim);
 			framesWin--;
@@ -474,6 +540,10 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 			if (info.result != -1) {
 				tilesFall = false;
+
+				info.alcides->pause();
+
+				// Ainda n fiz a parte de perder o fatality
 				executarFatality = true;
 			}
 

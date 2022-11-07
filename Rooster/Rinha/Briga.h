@@ -103,6 +103,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	//-------------------------------------------------------------------------------------------
 	struct TilesInfo info;
 	info.init();
+	info.alcides->editing = false;
 
 
 	sf::View baseTilesView;
@@ -187,9 +188,27 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	);
 
 
+
+
+
+
 	// Teclado Yamaha (Placeholder)
 	Texture yamahaTex;
 	yamahaTex.loadFromFile("sprites/tecladoYamaha.png");
+
+
+	float yamahaY = -400;
+	float yamahaVspeed = 0;
+
+	Sprite yamahaSpr(yamahaTex);
+	yamahaSpr.setOrigin(yamahaSpr.getLocalBounds().width / 2, yamahaSpr.getLocalBounds().height * 0.8);
+	yamahaSpr.setPosition(0, yamahaY);
+
+
+	SoundBuffer yamahaFallSndBuffer;
+	yamahaFallSndBuffer.loadFromFile("sounds/Explosion.ogg");
+	Sound yamahaFallSnd(yamahaFallSndBuffer);
+
 
 
 
@@ -317,6 +336,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			}
 		}
 
+		if (fightWon) {
+			window->draw(yamahaSpr);
+		}
 
 
 		//PLAYER 1 CONTROLES
@@ -639,19 +661,25 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 			// Rounds
 
+
 			if (!fightWon) {
+
 				if (galo.gethp() < 0) {
 					rounds++;
 					p2Rounds++;
 
 					if (rounds == 3 || p2Rounds == 2) {
-						framesWin = 60;
+						// Galo 2 Win
+						framesWin = 250;
 						musicas[index].stop();
-						galo2.fatality(window, &galo, fundo);
-						option = MENU_PRINCIPAL;
-						return;
+
+						fightWon = true;
+
+						winner = &galo2;
+						looser = &galo;
 					}
 					else {
+						// New Round
 						framesRound = 60;
 						galo.sethp(galo.getMaxhp());
 						galo2.sethp(galo2.getMaxhp());
@@ -662,19 +690,22 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					p1Rounds++;
 
 					if (rounds == 3 || p1Rounds == 2) {
-						framesWin = 60;
+						// Galo win
+						framesWin = 250;
 						musicas[index].stop();
-						galo.fatality(window, &galo2, fundo);
-						option = MENU_PRINCIPAL;
-						return;
+
+						fightWon = true;
+
+						winner = &galo;
+						looser = &galo2;
 					}
 					else {
+						// New Round
 						framesRound = 60;
 						galo.sethp(galo.getMaxhp());
 						galo2.sethp(galo2.getMaxhp());
 					}
 				}
-
 
 				// Round Extra Stuff
 				if (framesRound > 0) {
@@ -695,102 +726,147 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				}
 			}
 
+
+
+			// Yamaha Falling
+			//-------------------------------------------------------------------------------
 			if (fightWon) {
+
+				float yamahaX = winner->model.at("Body")->drawPos.x - winner->model.xScl * 120;
+				yamahaSpr.setScale(-winner->model.xScl * 0.75, winner->model.yScl * 0.75);
+
+				yamahaY += yamahaVspeed;
+				yamahaSpr.setPosition(yamahaX, yamahaY);
+
+				if (yamahaY > Rooster::floorY) {
+					yamahaVspeed = 0;
+					yamahaY = Rooster::floorY;
+
+					yamahaFallSnd.play();
+
+					ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
+					effect->sanguePreset();
+					//effect->textPreset();
+					//effect->text.setString("Po");
+					//effect->color = Color(230, 200, 60);
+					effect->isHSV = true;
+
+					effect->hueMax = 20;
+					effect->hueMax = 40;
+
+
+
+					effect->lightMin = 0.75;
+					effect->lightMax = 1;
+
+					effect->friction = 0.95;
+					effect->gravity.y = 0;
+					effect->lifeMin = 60;
+					effect->lifeMax = 150;
+					effect->createMultipleParticles(150);
+					mainPartSystem.addEffect(effect);
+				}
+				else if (yamahaY < Rooster::floorY) {
+					yamahaVspeed = constrain(yamahaVspeed + 0.2, -40, 40);
+				}
 
 				window->draw(finishHim);
 				framesWin--;
 				if (framesWin <= 0) {
 					tilesFall = true;
 				}
-			}
-
-			// Oxem o que significa isso?
-			/*
-			if (framesWin > 0) {
-				return;
-			}
-			*/
 
 
 
-			if (executarFatality) {
-				winner->fatality(window, looser, fundo);
-				option = MENU_PRINCIPAL;
-				return;
-			}
+				if (executarFatality) {
+					winner->fatality(window, looser, fundo);
+					option = MENU_PRINCIPAL;
+					return;
+				}
 
-			// Piano Tiles
-			if (tilesFall) {
-
-
-				sf::View currentView = baseTilesView;
-
-				FloatRect currentPort = currentView.getViewport();
-
-				info.tilesView = currentView;
-
-				info.tilesView.setViewport(FloatRect(currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
-
-				if (!tilesReady) {
-
-					tilesVspeedPort += 0.0005;
-
-					tilesYPort += tilesVspeedPort;
-					if (tilesYPort > 0) {
-						tilesVspeedPort *= -0.5;
-						tilesYPort = 0;
-
-						FloatRect area(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 80);
-
-						AreaEffect* effect = new AreaEffect(area, Color::White);
-						effect->tilesPreset();
-						effect->textPreset();
-						effect->text.setString("Poeira");
-						effect->vspeedMin = -4;
-						effect->vspeedMax = 4;
-						effect->gravity.y = 0;
-						effect->friction = 0.95;
-						effect->fadeOutAlpha = true;
-						//effect->fadeInAlpha = true;
+				// Piano Tiles
+				if (tilesFall) {
 
 
-						effect->color = Color(200, 250, 100);
 
-						effect->createMultipleParticles(abs(5000 * tilesVspeedPort));
+					sf::View currentView = baseTilesView;
 
-						mainPartSystem.addEffect(effect);
+					if (info.result != -1) {
+						tilesFall = false;
+
+						info.alcides->pause();
+
+						// Ainda n fiz a parte de perder o fatality
+						executarFatality = true;
+					}
 
 
-						if (abs(tilesVspeedPort) < 0.001) {
-							tilesVspeedPort = 0;
-							tilesReady = true;
-							info.alcides->play();
-							musicas[index].stop();
+					FloatRect currentPort = currentView.getViewport();
+
+					info.tilesView = currentView;
+
+					info.tilesView.setViewport(FloatRect(currentPort.left, tilesYPort + currentPort.top, currentPort.width, currentPort.height));
+
+					if (!tilesReady) {
+
+						tilesVspeedPort += 0.0005;
+
+						tilesYPort += tilesVspeedPort;
+						if (tilesYPort > 0) {
+							tilesVspeedPort *= -0.5;
+							tilesYPort = 0;
+
+							FloatRect area(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 80);
+
+							AreaEffect* effect = new AreaEffect(area, Color::White);
+							effect->tilesPreset();
+							effect->textPreset();
+							effect->text.setString("Poeira");
+							effect->vspeedMin = -4;
+							effect->vspeedMax = 4;
+							effect->gravity.y = 0;
+							effect->friction = 0.95;
+							effect->fadeOutAlpha = true;
+							//effect->fadeInAlpha = true;
+
+
+							effect->color = Color(200, 250, 100);
+
+							effect->createMultipleParticles(abs(5000 * tilesVspeedPort));
+
+							mainPartSystem.addEffect(effect);
+
+
+							if (abs(tilesVspeedPort) < 0.001) {
+								tilesVspeedPort = 0;
+								tilesReady = true;
+								info.alcides->play();
+								musicas[index].stop();
+							}
 						}
 					}
-				}
-				else {
-					info.update(*window);
+					else {
+						info.update(*window);
 
-					if (info.alcides->getPlayingSeconds() > 46 && !flores) {
-						flores = true;
+						if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+							flores = true;
 
-						FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
+							FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
 
-						AreaEffect* effect = new AreaEffect(area, Color::White);
-						effect->floresPreset();
-						//effect->color = Color(200, 250, 100);
+							AreaEffect* effect = new AreaEffect(area, Color::White);
+							effect->floresPreset();
+							//effect->color = Color(200, 250, 100);
 
-						effect->createMultipleParticles(100);
+							effect->createMultipleParticles(100);
 
-						mainPartSystem.addEffect(effect);
+							mainPartSystem.addEffect(effect);
+						}
 					}
-				}
 
-				window->setView(info.tilesView);
-				info.draw(*window);
+					window->setView(info.tilesView);
+					info.draw(*window);
+				}			
 			}
-
 			window->setView(window->getDefaultView());
 
 			mainPartSystem.update();
@@ -798,6 +874,5 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 			window->display();
 		}
-
 	}
 }

@@ -125,6 +125,9 @@ class Yamaha {
 
 	float finishLineY = 0;
 
+	int fadeFrames = 100;
+
+
 	
 
 
@@ -132,6 +135,7 @@ public:
 	int combo = 0;
 	int comboMax = 100;
 
+	bool exit = false;
 	bool finished = false;
 	bool success = false;
 
@@ -774,6 +778,13 @@ public:
 
 
 		textEffects->update();
+
+		if (finished && !editing) {
+			fadeFrames--;
+			if (fadeFrames <= 0) {
+				exit = true;
+			}
+		}
 	}
 
 	void comboBreak() {
@@ -817,6 +828,8 @@ public:
 			struct Nota* nota = notas[i];
 			nota->resetState();
 		}
+		finished = false;
+		success = false;
 	}
 
 
@@ -1079,6 +1092,13 @@ public:
 
 		textEffects->draw(*window);
 
+		if (finished) {
+			RectangleShape fade(Vector2f(roomWid, roomHei));
+			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/100))));
+			println(fadeFrames);
+			window->draw(fade);
+		}
+
 	}
 
 };
@@ -1270,7 +1290,7 @@ struct TilesInfo {
 
 		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
 
-		if (alcides->finished) {
+		if (alcides->exit) {
 			result = alcides->success;
 		}
 

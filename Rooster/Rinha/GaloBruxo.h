@@ -39,7 +39,7 @@ namespace Rooster {
 				"sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
 			);
 
-			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(2000), "sounds\\mg34.ogg");
+			this->superAtack = new Ataques(15, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(2000), "sounds\\mg34.ogg");
 
 			Projectile* defense = new Projectile(
 				Vector2f(0, 0),
@@ -355,6 +355,14 @@ namespace Rooster {
 				}
 				
 				projectiles[3].setVisibility(true);
+				superAtack->isAtacking = true;
+				
+				superAtack->hitbox.center.x = (facingRight) ?
+					projectiles[3].getSpritePosition().x + projectiles[3].getSize().x / 4:
+					projectiles[3].getSpritePosition().x - projectiles[3].getSize().x / 4;
+
+				superAtack->hitbox.center.y = projectiles[3].getSpritePosition().y + projectiles[3].getSize().y / 2;
+				superAtack->hitbox.radius = projectiles[3].getSize().y / 2;
 			}
 			else if(percentage < 2.9f / 3.f) {
 
@@ -368,6 +376,8 @@ namespace Rooster {
 
 				model.at("Hat")->yScl = model.at("Hat")->getBaseScale().x;			
 				model.at("Hat")->yScl = model.at("Hat")->getBaseScale().y;
+
+				superAtack->isAtacking = false;
 			}
 			else {
 
@@ -375,6 +385,7 @@ namespace Rooster {
 				model.at("BackArm")->angle = 0;
 				model.at("Head")->angle = 0;
 				model.at("Hat")->angle = 0;
+				
 
 			}
 
@@ -742,6 +753,14 @@ namespace Rooster {
 			else if (estado == STOPPED) {
 				runReset();
 			}
+			else if (estado == INVISIBLE) {
+				sumir();
+			}
+
+			if (estado != INVISIBLE) {
+				aparecer();
+			}
+
 
 			if (air) {
 				jumpAnim();

@@ -93,6 +93,10 @@ namespace Rooster {
 		Sprite getSprite() {
 			return sprite;
 		}
+		Vector2f getSpritePosition() {
+			return sprite.getPosition();
+		}
+
 		void setPosition(Vector2f position) {
 			this->position = position;
 		}

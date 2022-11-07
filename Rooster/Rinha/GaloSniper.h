@@ -743,7 +743,13 @@ namespace Rooster {
 					isDefending = false;
 					runReset();
 				}
+				else if (estado == INVISIBLE) {
+					sumir();
+				}
 
+				if (estado != INVISIBLE) {
+					aparecer();
+				}
 
 				if (atacking == HIGH_KICK) {
 					highKickAnim();

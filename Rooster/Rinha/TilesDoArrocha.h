@@ -1115,22 +1115,29 @@ class BregaMeter {
 	float xScl;
 	float yScl;
 
+	float bregaSprWid;
+	float bregaSprHei;
+
+	Rooster::Effect* effect;
+
+	int tick = 0;
+
 public:
 	float percentage = 0;
 
+	bool broken = false;
+
 	BregaMeter(Texture& bregaMeterTex, Vector2f roomSize) {
-		
+
 		sprite.setTexture(bregaMeterTex);
 
 
 
-		float bregaSprWid = bregaMeterTex.getSize().x / 2;
-		float bregaSprHei = bregaMeterTex.getSize().y;
+		bregaSprWid = bregaMeterTex.getSize().x / 2;
+		bregaSprHei = bregaMeterTex.getSize().y;
 
 		wid = roomSize.x / 5;
-		
 
-		sprite.setTextureRect(IntRect(0, 0, bregaSprWid, bregaSprHei));
 
 
 		xScl = wid / bregaSprWid;
@@ -1141,17 +1148,35 @@ public:
 
 		hei = bregaSprHei * yScl;
 
-		x = roomSize.x -wid;
+		x = roomSize.x - wid;
 		y = roomSize.y - (bregaSprHei * yScl);
 
-		
+		effect = new Rooster::Effect();
+		effect->sanguePreset();
+
+
 	}
+
+	void update() {
+		if (broken) {
+			tick++;
+			if (tick > 60) {
+				//effect.createParticle();
+				tick = randInt(30);
+			}
+		}
+	}
+
+
 
 	void draw(RenderWindow& window) {
 
 
 		sprite.setScale(xScl, yScl);
 		sprite.setPosition(x, y);
+
+		sprite.setTextureRect(IntRect(bregaSprWid*broken, 0, bregaSprWid, bregaSprHei));
+
 		window.draw(sprite);
 
 

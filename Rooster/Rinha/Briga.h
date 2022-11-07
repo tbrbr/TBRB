@@ -486,16 +486,10 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
 				effect->sanguePreset();
-				//effect->textPreset();
-				//effect->text.setString("Po");
-				//effect->color = Color(230, 200, 60);
 				effect->isHSV = true;
 
 				effect->hueMax = 20;
 				effect->hueMax = 40;
-
-				
-
 				effect->lightMin = 0.75;
 				effect->lightMax = 1;
 

@@ -243,10 +243,10 @@ namespace Rooster {
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
 			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 
-			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYLEFT);
-			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYDOWN);
-			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYB);
-			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYA);
+			board[player][TILES1][JOYSTICK] = jInput.setKey(JOY_BUTTON17);
+			board[player][TILES2][JOYSTICK] = jInput.setKey(JOY_BUTTON18);
+			board[player][TILES3][JOYSTICK] = jInput.setKey(JOY_BUTTON19);
+			board[player][TILES4][JOYSTICK] = jInput.setKey(JOY_BUTTON20);
 		}
 
 		bool getJoystickState(int button, int joystickId = 0) {

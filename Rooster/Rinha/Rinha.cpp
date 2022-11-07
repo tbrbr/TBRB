@@ -37,7 +37,7 @@ int main() {
 
 
 
-	int option = INTRO;
+	int option = BOTAPRAARROCHAR;
 
 	bool motaouhenrique = true;
 
@@ -151,6 +151,7 @@ int main() {
 	Music opening;
 	opening.openFromFile("sounds\\freefires.ogg");
 	//opening.play();
+	//opening.setLoop(true);
 	opening.setLoop(true);
 
 	while (window->isOpen())

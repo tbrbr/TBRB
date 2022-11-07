@@ -12,34 +12,31 @@
     <ClInclude Include="entradas.h" />
     <ClInclude Include="fregues.h" />
     <ClInclude Include="Galo.h" />
+    <ClInclude Include="GaloBota.h" />
     <ClInclude Include="GaloBruxo.h" />
     <ClInclude Include="galoKalsa.h" />
+    <ClInclude Include="galoPeste.h" />
     <ClInclude Include="GaloSniper.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="IAtaques.h" />
+    <ClInclude Include="importados.h" />
+    <ClInclude Include="introducoes.h" />
     <ClInclude Include="jogador_de_video.h" />
     <ClInclude Include="Math2.h" />
     <ClInclude Include="menu_inicial.h" />
     <ClInclude Include="muitosjogadores.h" />
+    <ClInclude Include="particula_falida.h" />
     <ClInclude Include="Patinho\Fps.h" />
     <ClInclude Include="Patinho\jogoDoPatinho.h" />
     <ClInclude Include="Patinho\Patinho.h" />
     <ClInclude Include="Patinho\RoosterPato.h" />
+    <ClInclude Include="pause_menu.h" />
     <ClInclude Include="Sangue.h" />
-    <ClInclude Include="TilesDoArrocha.h" />
-    <ClInclude Include="introducoes.h" />
-    <ClInclude Include="galoPeste.h" />
-    <ClInclude Include="varios_idiomas.h" />
-    <ClInclude Include="GaloBota.h" />
     <ClInclude Include="selecao_de_mapa_falida.h" />
     <ClInclude Include="server_connect.h" />
     <ClInclude Include="textBox.h" />
-    <ClInclude Include="pause_menu.h" />
-    <ClInclude Include="importados.h" />
-<<<<<<< HEAD
+    <ClInclude Include="TilesDoArrocha.h" />
+    <ClInclude Include="varios_idiomas.h" />
     <ClInclude Include="versus.h" />
-    <ClInclude Include="particula_falida.h" />
-=======
-    <ClInclude Include="GUI.h" />
->>>>>>> a10d19e142e52ef96b53a6c3eb7f0c21b171ab96
   </ItemGroup>
 </Project>

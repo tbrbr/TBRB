@@ -67,6 +67,26 @@ void galoHandleAttack(Rooster::Galo& attacker, Rooster::Galo& defender, Rooster:
 			}
 		}
 	}
+	//bruxo super atack
+	else if (attack->id == 15) {
+		for (int i = 0; i < defender.hurtBox.size(); i++) {
+			if (attack->CheckCollision(defender.hurtBox[i])) {
+				if (defender.isDefending) {
+					if (attack->CheckCollision(defender.defense)) {
+						defender.defended(attacker, attack, facing);
+					}
+					else if (!attack->getHitted) {
+						attack->getHitted = true;
+						defender.apanhar(*attack, facing);
+					}
+				}
+				else if (!attack->getHitted) {
+					attack->getHitted = true;
+					defender.apanhar(*attack, facing);
+				}
+			}
+		}
+	}
 	// Other Attacks
 	else {
 		for (int i = 0; i < defender.hurtBox.size(); i++) {
@@ -116,15 +136,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	bool tilesFall = false;
 
-	
+
 
 	float wid = 1280;
 	float hei = 720;
 
 	sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
 	baseTilesView.setSize(visibleArea.width, visibleArea.height);
-	baseTilesView.setCenter(visibleArea.left + visibleArea.width/2, visibleArea.top + visibleArea.height / 2);
-	baseTilesView.setViewport(FloatRect(0, tilesYPort+1, 1, 1));
+	baseTilesView.setCenter(visibleArea.left + visibleArea.width / 2, visibleArea.top + visibleArea.height / 2);
+	baseTilesView.setViewport(FloatRect(0, tilesYPort + 1, 1, 1));
 
 	bool flores = false;
 
@@ -145,7 +165,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	int p2Rounds = 0;
 	int maxComboP1 = 0;
 	int maxComboP2 = 0;
-	
+
 
 
 	// Textos Insanos
@@ -208,14 +228,14 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	float yamahaVspeed = 0;
 
 	Sprite yamahaSpr(yamahaTex);
-	yamahaSpr.setOrigin(yamahaSpr.getLocalBounds().width/2, yamahaSpr.getLocalBounds().height * 0.8);
+	yamahaSpr.setOrigin(yamahaSpr.getLocalBounds().width / 2, yamahaSpr.getLocalBounds().height * 0.8);
 	yamahaSpr.setPosition(0, yamahaY);
 
 
 	SoundBuffer yamahaFallSndBuffer;
 	yamahaFallSndBuffer.loadFromFile("sounds/Explosion.ogg");
 	Sound yamahaFallSnd(yamahaFallSndBuffer);
-	
+
 
 
 
@@ -262,7 +282,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	int index = rand() % 8;
 	musicas[index].play();
-		
+
 	Clock matchTime;
 	matchTime.restart();
 
@@ -312,9 +332,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				sf::FloatRect visibleArea(0.f, 0.f, 1280, 720);
 				baseTilesView.setSize(visibleArea.width, visibleArea.height);
-				baseTilesView.setCenter(visibleArea.left + visibleArea.width/2, visibleArea.top + visibleArea.height / 2);
+				baseTilesView.setCenter(visibleArea.left + visibleArea.width / 2, visibleArea.top + visibleArea.height / 2);
 				baseTilesView.setViewport(FloatRect((1 - xScl) / 2, tilesYPort + (1 - yScl) / 2, xScl, yScl));
-				
+
 			}
 		}
 
@@ -464,51 +484,57 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					window->draw(round[rounds]);
 				}
 
-			if (framesFight > 0) {
-				framesFight--;
-				window->draw(fight);
+				if (framesFight > 0) {
+					framesFight--;
+					window->draw(fight);
+				}
+
+				mainPartSystem.update();
+				mainPartSystem.draw(*window);
+
+				window->display();
+
 			}
-		}
 
 
 
 
 
-		// Yamaha Falling
-		//-------------------------------------------------------------------------------
-		if (fightWon) {
+			// Yamaha Falling
+			//-------------------------------------------------------------------------------
+			if (fightWon) {
 
-			float yamahaX = winner->model.at("Body")->drawPos.x - winner->model.xScl *120;
-			yamahaSpr.setScale(-winner->model.xScl*0.75, winner->model.yScl*0.75);
-			
-			yamahaY += yamahaVspeed;
-			yamahaSpr.setPosition(yamahaX, yamahaY);
+				float yamahaX = winner->model.at("Body")->drawPos.x - winner->model.xScl * 120;
+				yamahaSpr.setScale(-winner->model.xScl * 0.75, winner->model.yScl * 0.75);
 
-			if (yamahaY > Rooster::floorY) {
-				yamahaVspeed = 0;
-				yamahaY = Rooster::floorY;
+				yamahaY += yamahaVspeed;
+				yamahaSpr.setPosition(yamahaX, yamahaY);
 
-				yamahaFallSnd.play();
+				if (yamahaY > Rooster::floorY) {
+					yamahaVspeed = 0;
+					yamahaY = Rooster::floorY;
 
-				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
-				effect->sanguePreset();
-				effect->isHSV = true;
+					yamahaFallSnd.play();
 
-				effect->hueMax = 20;
-				effect->hueMax = 40;
-				effect->lightMin = 0.75;
-				effect->lightMax = 1;
+					ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
+					effect->sanguePreset();
+					effect->isHSV = true;
 
-				effect->friction = 0.95;
-				effect->gravity.y = 0;
-				effect->lifeMin = 60;
-				effect->lifeMax = 150;
-				effect->createMultipleParticles(150);
-				mainPartSystem.addEffect(effect);
-			}
-			else if (yamahaY < Rooster::floorY) {
-				yamahaVspeed = constrain(yamahaVspeed + 0.2, -40, 40);
-			}
+					effect->hueMax = 20;
+					effect->hueMax = 40;
+					effect->lightMin = 0.75;
+					effect->lightMax = 1;
+
+					effect->friction = 0.95;
+					effect->gravity.y = 0;
+					effect->lifeMin = 60;
+					effect->lifeMax = 150;
+					effect->createMultipleParticles(150);
+					mainPartSystem.addEffect(effect);
+				}
+				else if (yamahaY < Rooster::floorY) {
+					yamahaVspeed = constrain(yamahaVspeed + 0.2, -40, 40);
+				}
 
 				window->draw(finishHim);
 				framesWin--;
@@ -605,14 +631,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 					window->setView(info.tilesView);
 					info.draw(*window);
-				}			
+					window->setView(window->getDefaultView());
+
+					mainPartSystem.update();
+					mainPartSystem.draw(*window);
+
+					window->display();
+				}
 			}
-			window->setView(window->getDefaultView());
-
-			mainPartSystem.update();
-			mainPartSystem.draw(*window);
-
-			window->display();
+			
 		}
 	}
 }

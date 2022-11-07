@@ -951,7 +951,6 @@ namespace Rooster {
 
             if (thisFrames > maxFrames) {
                 thisFrames = 0;
-                model.alpha = 255;
                 estado = STOPPED;
                 return false;
             }

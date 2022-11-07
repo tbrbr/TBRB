@@ -247,7 +247,7 @@ namespace Rooster {
 
 			exp->sanguePreset();
 
-			exp->createMultipleParticles(200 + Damage * 20);
+			exp->createMultipleParticles(1 + Damage * 10);
 			partSys.addEffect(exp);
 		}
 

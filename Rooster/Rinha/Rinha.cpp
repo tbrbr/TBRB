@@ -38,6 +38,7 @@ int main() {
 
 
 	int option = BOTAPRAARROCHAR;
+	option = MENU_PRINCIPAL;
 
 	bool motaouhenrique = true;
 

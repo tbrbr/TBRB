@@ -84,7 +84,7 @@ namespace Rooster {
 	public:
 		hud hudselected;
 
-		int p1Hud = 2;
+		int p1Hud = 0;
 		int p2Hud = 0;
 
 		// Rapaz me explique o que é isso porfavor

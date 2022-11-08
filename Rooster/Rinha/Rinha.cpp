@@ -171,7 +171,6 @@ int main() {
 	t.launch();
 	while (window->isOpen())
 	{
-
 		switch (option)
 		{
 
@@ -269,7 +268,6 @@ int main() {
 		default:
 			break;
 		}
-		
 		
 		
 	}

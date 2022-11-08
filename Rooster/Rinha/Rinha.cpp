@@ -37,7 +37,7 @@ int main() {
 
 
 
-	int option = INTRO;
+	int option = BOTAPRAARROCHAR;
 
 	bool motaouhenrique = true;
 

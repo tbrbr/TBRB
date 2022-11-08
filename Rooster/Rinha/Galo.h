@@ -480,6 +480,10 @@ namespace Rooster {
 
         }
 
+        inline string getName() {
+            return this->name;
+        }
+
         int getHits() {
             return this->hits;
         }

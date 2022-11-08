@@ -77,5 +77,6 @@ using namespace Rooster;
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
 #include "versus.h"
+#include "mapeamentos.h"
 
 #endif

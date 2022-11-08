@@ -850,7 +850,6 @@ namespace Rooster {
 
 
 
-
                 }
                 else if (time < 2500) {
                     float thisTime = time - 1500;
@@ -873,10 +872,7 @@ namespace Rooster {
                         istime = false;
                     }
                     position.y = SCREEN_HEIGHT / 2;
-
-
                   
-
                     // insano
                     if (timeFrames % 20 == 0) {
 

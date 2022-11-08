@@ -125,7 +125,6 @@ namespace Rooster {
 
 
 		Particle(Color color) {
-			point.setRadius(1);
 			this->color = color;
 			point.setFillColor(color);
 			active = true;
@@ -133,7 +132,6 @@ namespace Rooster {
 		}
 
 		Particle() {
-			point.setRadius(10);
 			color = Color::Red;
 			point.setFillColor(color);
 			active = true;
@@ -197,7 +195,10 @@ namespace Rooster {
 				Color col = color;
 				col.a = 255 * alpha;
 
-				float scale = scl * (1 + (depthChange * (1 - (depth / depthStart))));
+				float depthFactor = (1 + (depthChange * (1 - (depth / depthStart))));
+
+				float scale = scl *1;
+				
 
 				if (hasText) {
 					text.setColor(col);
@@ -213,6 +214,7 @@ namespace Rooster {
 					//sprite.setOrigin(sprCenter);
 					sprite.setRotation(ang);
 					sprite.setScale(scale, scale);
+
 				}
 				else {
 
@@ -222,6 +224,7 @@ namespace Rooster {
 					point.setPosition(position.x, position.y);
 					point.setOrigin(rad, rad);
 					point.setRadius(rad);
+					//println(rad);
 				}
 
 				life -= mortal;
@@ -398,7 +401,7 @@ namespace Rooster {
 
 
 
-			sclMin = 0.25;
+			sclMin = 2;
 			sclMax = 2;
 
 			friction = 0.98;
@@ -431,8 +434,8 @@ namespace Rooster {
 		void tilesPreset() {
 			sanguePreset();
 
-			sclMax = 1.5;
-			sclMin = 0.25;
+			sclMax = 1.25;
+			sclMin = 0.4;
 
 			hspeedMin = -3;
 			hspeedMax = 3;
@@ -481,6 +484,7 @@ namespace Rooster {
 				struct Particle p;
 				p.position = position;
 				p.scl = randFloatRange(sclMin, sclMax);
+				
 
 				p.alpha = 1;
 

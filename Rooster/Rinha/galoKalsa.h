@@ -801,6 +801,24 @@ namespace Rooster {
             Kalsa kalsa2(kalsaSt, Rooster::state::STOPPED, false);
             Kalsa kalsa3(kalsaSt, Rooster::state::STOPPED, false);
 
+            Texture jbl;
+            Sprite berimbau;
+            Sprite caixinha;
+
+            berimbau.setTexture(jbl);
+            caixinha.setTexture(jbl);
+
+            IntRect rectBerimbau(0, 0, 809, 2659);
+            IntRect rectcaixinha(809, 0, 2096, 2659);
+
+            berimbau.setTextureRect(rectBerimbau);
+            caixinha.setTextureRect(rectcaixinha);
+            
+            berimbau.setScale((float) SCREEN_WIDTH / 7680, (float) SCREEN_WIDTH / 7680);
+            caixinha.setScale((float) SCREEN_WIDTH / 7680, (float) SCREEN_WIDTH / 7680);
+
+
+
             while (window->isOpen()) {
 
                 float time = Timer.getElapsedTime().asMilliseconds();
@@ -850,7 +868,6 @@ namespace Rooster {
 
 
 
-
                 }
                 else if (time < 2500) {
                     float thisTime = time - 1500;
@@ -873,10 +890,7 @@ namespace Rooster {
                         istime = false;
                     }
                     position.y = SCREEN_HEIGHT / 2;
-
-
                   
-
                     // insano
                     if (timeFrames % 20 == 0) {
 

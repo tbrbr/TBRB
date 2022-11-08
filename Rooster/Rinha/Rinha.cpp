@@ -5,7 +5,7 @@ enum mode {
 	LOCAL
 };
 int mode = SINGLE;
-
+#include <functional>
 #include "importados.h"
 
 void menuSong(int * option, RenderWindow * window) {
@@ -57,9 +57,9 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-
-
 	int option = CONFIG;
+
+
 
 	bool motaouhenrique = true;
 
@@ -169,6 +169,7 @@ int main() {
 
 	TcpSocket* socket = new TcpSocket();
 	TcpListener* listener = new TcpListener();
+
 
 	sf::Thread t(std::bind(&menuSong, &option, window));
 	

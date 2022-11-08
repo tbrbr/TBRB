@@ -5,7 +5,8 @@ class Pause {
 
 
 public:
-	//LEMBRAR DE DELETAR OS PONTEIROS
+	
+
 	static int pauseMenu(RenderWindow * window) {
 
 		Texture* texture = new Texture();
@@ -21,17 +22,35 @@ public:
 		
 		body.setSize(Vector2f(window->getSize().x * 0.6, window->getSize().y * 0.6));
 		body.setPosition(window->getSize().x * 0.2, window->getSize().y * 0.2);
-		
+		body.setFillColor(Color::Transparent);
+
 		int lineSpace = body.getSize().y * 0.05;
+
 		for (int i = 0; i < 3; i++) {
+			options[i].setFillColor(Color::Transparent);
+			options[i].setOutlineColor(Color::Green);
+			options[i].setOutlineThickness(4);
 			(options + i)->setSize(Vector2f(body.getSize().x * 0.5, body.getSize().y * 0.2));
 			(options + i)->setPosition(body.getPosition().x + body.getSize().x / 2 - (options + i)->getSize().x / 2, body.getPosition().y + (i > 0 ? -body.getPosition().y + (options - 1 + i)->getPosition().y + (options - 1 + i)->getSize().y + lineSpace : body.getSize().y * 0.15));
 		}
-		
-		options[0].setFillColor(Color::Green);
-		options[1].setFillColor(Color::Red);
-		options[2].setFillColor(Color::Yellow);
 
+		Font f;
+		f.loadFromFile("fonts/blops.ttf");
+		
+		Text t[3];
+		t[0].setString("RESUME");
+		t[1].setString("OPTIONS");
+		t[2].setString("QUIT");
+
+		for (int i = 0; i < 3; i++)
+		{
+			t[i].setCharacterSize(SCREEN_HEIGHT / 30);
+			t[i].setFont(f);
+			Vector2f position;
+			position.x = options[i].getSize().x / 2 + options[i].getPosition().x - t[i].getGlobalBounds().width / 2;
+			position.y = options[i].getSize().y / 2 + options[i].getPosition().y - t[i].getGlobalBounds().height / 2;
+			t[i].setPosition(position);
+		}
 
 		while (window->isOpen()) {
 
@@ -72,11 +91,12 @@ public:
 				return 1;
 			}
 
-			window->clear();
+			window->clear(Color::Black);
 			window->draw(background);
 			window->draw(body);
 			for (int i = 0; i < 3; i++) {
 				window->draw(options[i]);
+				window->draw(t[i]);
 			}
 			window->display();
 		}

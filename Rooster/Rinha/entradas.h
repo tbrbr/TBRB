@@ -84,8 +84,8 @@ namespace Rooster {
 	public:
 		hud hudselected;
 
-		int p1Hud = 2;
-		int p2Hud = 2;
+		int p1Hud = 0;
+		int p2Hud = 0;
 
 		// Rapaz me explique o que é isso porfavor
 		// Ahh to entendendo
@@ -140,7 +140,7 @@ namespace Rooster {
 				joystickState[i][1] = false;
 				joystickState[i][2] = false;
 			}
-		
+
 			for (int i = 0; i < 2; i++) {
 				struct inputInfo inpInf;
 				for (int j = 0; j < INPUTSTOTAL; j++) {
@@ -164,25 +164,25 @@ namespace Rooster {
 
 			int player = 0;
 			// Keyboard
-			board[player][GOLEFT][KEYBOARD]        = kInput.setKey(Keyboard::A);
-			board[player][GODOWN][KEYBOARD]        = kInput.setKey(Keyboard::S);
-			board[player][GORIGHT][KEYBOARD]       = kInput.setKey(Keyboard::D);
-			board[player][GOUP][KEYBOARD]          = kInput.setKey(Keyboard::W);
-			board[player][LIGHT_ATTACK][KEYBOARD]  = kInput.setKey(Keyboard::F);
+			board[player][GOLEFT][KEYBOARD] = kInput.setKey(Keyboard::A);
+			board[player][GODOWN][KEYBOARD] = kInput.setKey(Keyboard::S);
+			board[player][GORIGHT][KEYBOARD] = kInput.setKey(Keyboard::D);
+			board[player][GOUP][KEYBOARD] = kInput.setKey(Keyboard::W);
+			board[player][LIGHT_ATTACK][KEYBOARD] = kInput.setKey(Keyboard::F);
 			board[player][STRONG_ATTACK][KEYBOARD] = kInput.setKey(Keyboard::G);
-			board[player][DANCE][KEYBOARD]         = kInput.setKey(Keyboard::Q);
+			board[player][DANCE][KEYBOARD] = kInput.setKey(Keyboard::Q);
 
-			board[player][TILES1][KEYBOARD]        = kInput.setKey(Keyboard::A);
-			board[player][TILES2][KEYBOARD]        = kInput.setKey(Keyboard::S);
-			board[player][TILES3][KEYBOARD]        = kInput.setKey(Keyboard::D);
-			board[player][TILES4][KEYBOARD]        = kInput.setKey(Keyboard::F);
+			board[player][TILES1][KEYBOARD] = kInput.setKey(Keyboard::A);
+			board[player][TILES2][KEYBOARD] = kInput.setKey(Keyboard::S);
+			board[player][TILES3][KEYBOARD] = kInput.setKey(Keyboard::D);
+			board[player][TILES4][KEYBOARD] = kInput.setKey(Keyboard::F);
 
 
 			// Keyboard
-			board[player][GOLEFT][MOUSE_AND_KEYBOARD]  = kInput.setKey(Keyboard::A);
-			board[player][GODOWN][MOUSE_AND_KEYBOARD]  = kInput.setKey(Keyboard::S);
+			board[player][GOLEFT][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::A);
+			board[player][GODOWN][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::S);
 			board[player][GORIGHT][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::D);
-			board[player][GOUP][MOUSE_AND_KEYBOARD]    = kInput.setKey(Keyboard::W);
+			board[player][GOUP][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::W);
 			board[player][DANCE][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::Q);
 
 			board[player][TILES1][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::A);
@@ -191,7 +191,7 @@ namespace Rooster {
 			board[player][TILES4][MOUSE_AND_KEYBOARD] = kInput.setKey(Keyboard::F);
 
 			// Mouse
-			board[player][LIGHT_ATTACK][MOUSE_AND_KEYBOARD]  = mInput.setKey(Mouse::Button::Left);
+			board[player][LIGHT_ATTACK][MOUSE_AND_KEYBOARD] = mInput.setKey(Mouse::Button::Left);
 			board[player][STRONG_ATTACK][MOUSE_AND_KEYBOARD] = mInput.setKey(Mouse::Button::Right);
 
 

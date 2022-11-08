@@ -692,17 +692,17 @@ namespace Rooster {
                     animations[1].update();
                     model.updateWithAnimation(animations[1]);
                 }
-                else if (estado == INVISIBLE) {
-                    sumir();
-                }
-
-                if (estado != INVISIBLE) {
-                    aparecer();
-                }
+               
 
 
             }
-            
+
+            if (estado == INVISIBLE) {
+                sumir();
+            }else {
+                aparecer();
+            }
+
             projectiles[0].update();
         }
              

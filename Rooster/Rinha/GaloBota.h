@@ -407,18 +407,16 @@ namespace Rooster {
                 else if (atacking == SPECIAL) {
                     especialAnim();
                 }
-                else if (estado == INVISIBLE) {
-                    sumir();
-                }
-
-                if (estado != INVISIBLE) {
-                    aparecer();
-                }
-
-
-
+                
             }
 
+            if (estado == INVISIBLE) {
+                sumir();
+            }
+
+            if (estado != INVISIBLE) {
+                aparecer();
+            }
 
 
 

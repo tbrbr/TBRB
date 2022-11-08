@@ -753,13 +753,9 @@ namespace Rooster {
 			else if (estado == STOPPED) {
 				runReset();
 			}
-			else if (estado == INVISIBLE) {
-				sumir();
-			}
+		
 
-			if (estado != INVISIBLE) {
-				aparecer();
-			}
+			
 
 
 			if (air) {
@@ -780,6 +776,13 @@ namespace Rooster {
 			}
 			else if (atacking == SUPER) {
 				superAnim();
+			}
+			else if (estado == INVISIBLE) {
+				sumir();
+			}
+
+			if (estado != INVISIBLE) {
+				aparecer();
 			}
 
 			// projectiles[0].update();

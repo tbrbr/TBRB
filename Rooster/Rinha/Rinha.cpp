@@ -38,7 +38,7 @@ int main() {
 
 
 	int option = BOTAPRAARROCHAR;
-	option = MENU_PRINCIPAL;
+	option = BOTAPRAARROCHAR;
 
 	bool motaouhenrique = true;
 
@@ -154,10 +154,10 @@ int main() {
 	//opening.play();
 	//opening.setLoop(true);
 	opening.setLoop(true);
+	
 
 	while (window->isOpen())
 	{
-
 		switch (option)
 		{
 		case UMJOGADORES:
@@ -245,7 +245,6 @@ int main() {
 		default:
 			break;
 		}
-		
 		
 		
 	}

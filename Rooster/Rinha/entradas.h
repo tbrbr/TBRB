@@ -76,6 +76,8 @@ namespace Rooster {
 			this->key = key;
 			return *this;
 		}
+
+
 	};
 
 
@@ -109,8 +111,6 @@ namespace Rooster {
 			if (Joystick::isConnected(0)) {
 				p2Hud = 2;
 			}
-
-
 
 			mousePos = Vector2f(0, 0);
 
@@ -261,7 +261,6 @@ namespace Rooster {
 		void setKeybind(int player, int inputSlot, int actualHud, struct inputInfo keybindInfo) {
 			board[player][inputSlot][actualHud] = keybindInfo;
 		}
-
 
 		bool getJoystickState(int button, int joystickId = 0) {
 

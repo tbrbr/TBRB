@@ -1,6 +1,8 @@
 #ifndef RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO
 #define RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO
 
+#include "versus.h"
+
 struct Mapa {
 
 	string nome;
@@ -18,10 +20,10 @@ void updateCircle(CircleShape * circles, RenderWindow * window) {
 		circles[i].setOutlineColor(Color::Transparent);
 	}
 
-	circles[0].setPosition(window->getSize().x * 0.16, window->getSize().y * 0.3180);
-	circles[1].setPosition(window->getSize().x * 0.26, window->getSize().y * 0.333);
-	circles[2].setPosition(window->getSize().x * 0.345, window->getSize().y * 0.41);
-	circles[3].setPosition(window->getSize().x * 0.235, window->getSize().y * 0.57);
+	circles[0].setPosition(window->getSize().x * 0.16, window->getSize().y * 0.2380);
+	circles[1].setPosition(window->getSize().x * 0.26, window->getSize().y * 0.253);
+	circles[2].setPosition(window->getSize().x * 0.345, window->getSize().y * 0.33);
+	circles[3].setPosition(window->getSize().x * 0.235, window->getSize().y * 0.49);
 
 
 	circles[0].setOutlineThickness(circles[0].getRadius() * 3);
@@ -34,22 +36,23 @@ void updateCircle(CircleShape * circles, RenderWindow * window) {
 void updateDescricao(Text * descricao, int mapa) {
 	string a;
 	if (mapa == 0) {
-		a = "Aquela musica do Renato Russo";
+		a = "Não tinha medo o tal João de Santo Cristo\nEra o que todos diziam quando ele se perdeu\nDeixou pra trás todo o marasmo da fazenda\nSó pra sentir no seu sangue o ódio que Jesus lhe deu\nQuando criança só pensava em ser bandido\nAinda mais quando com um tiro de soldado o pai morreu\nEra o terror da sertania onde morava\nE na escola até o professor com ele aprendeu\nIa pra igreja só pra roubar o dinheiro\nQue as velhinhas colocavam na caixinha do altar\nSentia mesmo que era mesmo diferente\nSentia que aquilo ali não era o seu lugar\n.............";
 	}
 	else if (mapa == 1) {
 		a = "Inaugurado em 08 de junho de 2017, o Shopping\nPeixoto já é o maior centro de compras e lazer\nda região, com uma ABL(Área Bruta Locável) de \n16 mil metros quadrados, ocupando um espaço de\nárea construída de 23.800 mil metros quadrados.\n" 	"São 76 lojas em operação, sendo 04 lojas âncora,\nentre elas : Le Biscuit e Americanas, 04 megalojas\n,01 supermercado, ampla praça de alimentação, 04 salas\nde cinema com capacidade para centenas de pessoas,\ncerca de 900 vagas de estacionamento gratuitas,\nincluindo vagas para vans e ônibus de turismo.";
 	}
 	else if (mapa == 2) {
-		a = "A capital do Agreste dispensa comentários";
+		a = "Descendo a serra Jogando uma bola\nCom alma e paixão Três cores na faixa\nAlegria do povo É o seu campeão\nEm casa ou distante O ardor é o mesmo\nNo campo de ação Na vitória ou derrota\nA disputa com luta E o abraço do irmão\nSomos Itabaiana Cidade celeiro\nQue vibra no esporte Com o seu Tremendão\n";
 	}
 	else {
-		a = "Central de abastecimento de feira de Salvador - BH";
+		a = "O Ceasa de Salvador é um local super agradável\ncom variedade de lojinhas seja de artesanato,\nhortifruti, cereais, bebidas ou frutos do mar.\nPossui praça de alimentação, com variedades,\nvocê encontrará algumas no estilo lanchonete e\n o outras mais restaurantes, no meio da Praça\ntem espaço para apresentação de voz e violão.\nTem espaço infantil, estacionamento, lojinha de picolés.\nAgrada desde ao público local, como os turistas.\n";
 	}
 	descricao->setString(a);
 }
 
 Texture* selecionarMapa(RenderWindow * window) {
 
+	escurecer(*window);
 	Texture mapas[5];
 	
 	for (int i = 0; i < 5; i++) {
@@ -58,11 +61,11 @@ Texture* selecionarMapa(RenderWindow * window) {
 	RectangleShape NORDESTE;
 	NORDESTE.setTexture(mapas);
 	NORDESTE.setSize(Vector2f(window->getSize().x * 0.3, window->getSize().y * 0.6));
-	NORDESTE.setPosition(window->getSize().x * 0.10, window->getSize().y * 0.2);
+	NORDESTE.setPosition(window->getSize().x * 0.10, window->getSize().y * 0.12);
 
-	RectangleShape Cancel;
-	RectangleShape Confirm;
+
 	RectangleShape Map;
+	Map.setFillColor(Color::Transparent);
 
 
 	CircleShape circles[4];
@@ -106,8 +109,34 @@ Texture* selecionarMapa(RenderWindow * window) {
 	descricao.setCharacterSize(SCREEN_WIDTH / 60);
 	descricao.setPosition(Map.getPosition().x, Map.getPosition().y + Map.getSize().y * 1.05);
 	
+	RectangleShape cancel;
+	RectangleShape confirm;
 
-	int a2 = 0;
+	Vector2f buttonSize;
+	Vector2f buttonPosition;
+	buttonSize.x = window->getSize().x * 0.12;
+	buttonSize.y = window->getSize().y * 0.07;
+
+	buttonPosition.x = window->getSize().x * 0.1;
+	buttonPosition.y = window->getSize().y * 0.8;
+
+	cancel.setSize(buttonSize);
+	confirm.setSize(buttonSize);
+
+	confirm.setPosition(buttonPosition);
+	cancel.setPosition(buttonPosition.x + buttonSize.x * 1.3, buttonPosition.y);
+
+	confirm.setFillColor(Color::Black);
+	cancel.setFillColor(Color::Black);
+	
+	confirm.setOutlineThickness(2);
+	cancel.setOutlineThickness(2);
+
+	confirm.setOutlineColor(Color::Red);
+	cancel.setOutlineColor(Color::Red);
+
+	int selectedMap = -1;
+
 	while (window->isOpen())
 	{
 		Event e;
@@ -121,12 +150,7 @@ Texture* selecionarMapa(RenderWindow * window) {
 			{
 				window->close();
 			}
-			if (e.type == Event::KeyPressed) {
-				a2++;
-				if (a2 == 5) {
-					a2 = 0;
-				}
-			}
+			
 
 			if (e.type == Event::MouseButtonPressed)
 			{
@@ -142,10 +166,29 @@ Texture* selecionarMapa(RenderWindow * window) {
 					if (temp != -1) {
 						temp++;
 						Map.setTexture(&textures[temp - 1]);
+						Map.setFillColor(Color::White);
 						NORDESTE.setTexture(mapas + temp);
 						updateDescricao(&descricao, temp - 1);
+						selectedMap = temp - 1;
 					}
+
+
+					if (ButtonCheck::isButtonComMouseNele(confirm, mousex, mousey)) {
+						if (selectedMap != -1) {
+							Texture* t = new Texture();
+							t->loadFromFile(maps[selectedMap].finalfile);
+							return t;
+						}
+
+					}
+
+					else if (ButtonCheck::isButtonComMouseNele(cancel, mousex, mousey)) {
+						return NULL;
+					}
+
 				}
+
+
 			}
 
 			
@@ -165,6 +208,8 @@ Texture* selecionarMapa(RenderWindow * window) {
 		}
 		window->draw(descricao);
 		window->draw(Map);
+		window->draw(confirm);
+		window->draw(cancel);
 		window->display();
 
 	}

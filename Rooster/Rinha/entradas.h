@@ -76,6 +76,8 @@ namespace Rooster {
 			this->key = key;
 			return *this;
 		}
+
+
 	};
 
 
@@ -108,9 +110,11 @@ namespace Rooster {
 
 			if (Joystick::isConnected(0)) {
 				p2Hud = 2;
+				println("olha esta conectado :)");
 			}
-
-
+			else {
+				println("nao esta conectado :(");
+			}
 
 			mousePos = Vector2f(0, 0);
 
@@ -201,10 +205,10 @@ namespace Rooster {
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
 			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 
-			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYL1);
-			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYR1);
-			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYSELECT);
-			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYSTART);
+			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYA);
+			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYX);
+			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYY);
+			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYB);
 
 
 
@@ -251,17 +255,17 @@ namespace Rooster {
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
 			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 
-			board[player][TILES1][JOYSTICK] = jInput.setKey(JOY_BUTTON17);
-			board[player][TILES2][JOYSTICK] = jInput.setKey(JOY_BUTTON18);
-			board[player][TILES3][JOYSTICK] = jInput.setKey(JOY_BUTTON19);
-			board[player][TILES4][JOYSTICK] = jInput.setKey(JOY_BUTTON20);
+			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYA);
+			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYX);
+			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYY);
+			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYB);
+
 		}
 
 
 		void setKeybind(int player, int inputSlot, int actualHud, struct inputInfo keybindInfo) {
 			board[player][inputSlot][actualHud] = keybindInfo;
 		}
-
 
 		bool getJoystickState(int button, int joystickId = 0) {
 

@@ -94,6 +94,7 @@ namespace Rooster {
 	
 		bool keyboardState[sf::Keyboard::KeyCount][3];
 		bool mouseState[sf::Mouse::ButtonCount][3];
+		float mouseScroll = 0;
 
 		Vector2f mousePos;
 
@@ -341,6 +342,8 @@ namespace Rooster {
 
 	
 		void update() {
+
+			mouseScroll = 0;
 
 			for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
 

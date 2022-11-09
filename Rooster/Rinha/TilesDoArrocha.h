@@ -104,6 +104,9 @@ struct YamahaAction {
 
 	Nota notaAntes;
 	Nota notaDepois;
+
+	std::vector<Nota> notas;
+
 };
 
 class Yamaha {
@@ -400,13 +403,16 @@ public:
 
 
 
-	void clearNotas() {
+	void hardClearNotas() {
 		for (int i = 0; i < notas.size(); i++) {
 			delete notas[i];
 		}
 		notas.clear();
 		actions.clear();
 	}
+
+	
+
 
 	void saveNotas(std::string str) {
 		std::ofstream file(str);
@@ -442,7 +448,7 @@ public:
 				std::getline(file, line);
 				bps = std::stof(line);
 
-				clearNotas();
+				hardClearNotas();
 				setScroll(0);
 				
 
@@ -501,7 +507,47 @@ public:
 		file.close();
 	}
 
-	Nota* createNotaNoAction(int col, int len, int yy, int id) {
+
+
+
+	void clearNotasNoAction() {
+		for (int i = 0; i < notas.size(); i++) {
+			delete notas[i];
+		}
+		notas.clear();
+	}
+
+	void clearNotas() {
+		struct YamahaAction action;
+		action.actionType = 4;
+		for (int i = 0; i < notas.size(); i++) {
+			action.notas.push_back(*notas[i]);
+		}
+
+		clearNotasNoAction();
+
+		actions.push_back(action);
+	}
+
+	void unClearNotasNoAction(struct YamahaAction& action) {
+		for (int i = 0; i < action.notas.size(); i++) {
+			Nota n = action.notas[i];
+			createNotaNoAction(n.coluna, n.length, n.y, n.id);
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	Nota* createNotaNoAction(int col, float len, float yy, int id) {
 		Nota* n = new Nota(col, len, yy, id);
 
 		notas.push_back(n);
@@ -509,7 +555,7 @@ public:
 		return n;
 	}
 
-	void createNota(int col, int len, int yy) {
+	void createNota(int col, float len, float yy) {
 
 		uniqueId++;
 		Nota* n = createNotaNoAction(col, len, yy, uniqueId);
@@ -671,6 +717,13 @@ public:
 				println("Bps unsetted");
 				break;
 
+			case 4:
+				// Clear Action // Unclear Undo
+				unClearNotasNoAction(action);
+				println("Notas unCleared");
+				break;
+
+
 			default:
 				break;
 			}
@@ -766,7 +819,7 @@ public:
 						}
 
 						if (!achou) {
-							createNota(coluna, 1, yy-1);
+							createNota(coluna, 1, (int)(yy-1));
 						}
 
 					}
@@ -1595,6 +1648,11 @@ bool pianoTiles(RenderWindow* window) {
 	restartButton.color = Color(100, 100, 255);
 	restartButton.label = "restart";
 
+	struct Button clearButton;
+	clearButton.init(200, roomHei - 40, 60, 20);
+	clearButton.color = Color(0, 0, 0);
+	clearButton.label = "clear";
+
 
 
 
@@ -1602,6 +1660,9 @@ bool pianoTiles(RenderWindow* window) {
 	while (window->isOpen()) {
 
 		inputType = -1;
+
+		mainInput.update();
+
 
 		Event e;
 		while (window->pollEvent(e))
@@ -1618,6 +1679,10 @@ bool pianoTiles(RenderWindow* window) {
 
 			if (e.type == Event::MouseMoved) {
 				mainInput.mousePos = Vector2f(e.mouseMove.x, e.mouseMove.y);
+			}
+
+			if (e.type == Event::MouseWheelScrolled) {
+				mainInput.mouseScroll = e.mouseWheelScroll.delta;
 			}
 
 			if (e.type == Event::Closed)
@@ -1667,7 +1732,7 @@ bool pianoTiles(RenderWindow* window) {
 			}
 		}
 
-		mainInput.update();
+		
 
 		window->clear();
 
@@ -1719,6 +1784,20 @@ bool pianoTiles(RenderWindow* window) {
 			if (restartButton.clicked) {
 				info.alcides->setScroll(0);
 			}
+
+			clearButton.update(mouseViewPos);
+
+			clearButton.draw(*window);
+
+			if (clearButton.clicked) {
+				info.alcides->clearNotas();
+			}
+
+
+			if (mainInput.mouseScroll != 0) {
+				info.alcides->moveScroll(mainInput.mouseScroll);
+			}
+
 		}
 		//window->setView(view);
 

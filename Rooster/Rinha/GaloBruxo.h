@@ -291,6 +291,8 @@ namespace Rooster {
 
 		}
 		void super() override {
+			bar->resetPower();
+
 			if (atacking == NOT_ATTACK) {
 				atacking = SUPER;
 				superAtack->init.restart();

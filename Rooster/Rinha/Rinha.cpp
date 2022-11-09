@@ -4,9 +4,12 @@ enum mode {
 	LAN,
 	LOCAL
 };
+
 int mode = SINGLE;
+
 #include <functional>
 #include "importados.h"
+
 
 void menuSong(int * option, RenderWindow * window) {
 
@@ -16,8 +19,12 @@ void menuSong(int * option, RenderWindow * window) {
 	s.setLoop(true);
 
 	bool play = false;
+
+
 	while (window->isOpen()) {
+
 		int a = *option;
+
 		bool e = a == MENU_PRINCIPAL || a == GAMEMODE || a == MULTI_MODE || a == CONFIG || a == MULTI || a == MINIGAME;
 
 		if (e && !play) {
@@ -165,9 +172,8 @@ int main() {
 	TcpSocket* socket = new TcpSocket();
 	TcpListener* listener = new TcpListener();
 
-
+	Texture* __mapa = NULL;
 	sf::Thread t(std::bind(&menuSong, &option, window));
-	
 	t.launch();
 	while (window->isOpen())
 	{
@@ -178,6 +184,8 @@ int main() {
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			delete galo;
 			delete galo2;
+			__mapa = NULL;
+
 			selector->reset();
 			break;
 		case ISPATOTIME:
@@ -189,7 +197,7 @@ int main() {
 			break;
 		case VERSUS:
 			
-
+			
 			if (mode == SINGLE) {
 				option = UMJOGADORES;
 				versus(*window, *galo, *galo2, fundo);
@@ -216,7 +224,9 @@ int main() {
 				versus(*window, *galo, *galo2, fundo);
 				option = UMJOGADORES;
 			}
+			
 			break;
+
 
 		case INTRO: {
 			option = introducao(window);
@@ -231,8 +241,16 @@ int main() {
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
-			selecionarMapa(window);
-			option = UMJOGADORES;
+			
+			__mapa = selecionarMapa(window);
+			if (__mapa == NULL) {
+				option = SELECTION;
+			}
+			else {
+				fundo.setTexture(__mapa);
+				option = VERSUS;
+			}
+
 			break;
 		case JOIN:
 			option = join(window, background, socket);

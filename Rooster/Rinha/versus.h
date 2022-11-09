@@ -103,7 +103,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	p1.setState(DANCING);
 	p2.setState(DANCING);
 
-	float pauseMilisec = 4000;
+	float pauseMilisec = 6000;
 	int animState = 1;
 	int opacity = 0;
 	int fundoopacity = 0;
@@ -218,6 +218,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 				time.restart();
 				versusvisible = false;
 				p.~ParticleAnimation();
+				createAnim = true;
 			}
 		}
 

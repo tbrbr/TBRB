@@ -206,10 +206,10 @@ namespace Rooster {
 			board[player][STRONG_ATTACK][JOYSTICK] = jInput.setKey(JOYB);
 			board[player][DANCE][JOYSTICK] = jInput.setKey(JOYX);
 
-			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYA);
-			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYX);
-			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYY);
-			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYB);
+			board[player][TILES1][JOYSTICK] = jInput.setKey(JOYL1);
+			board[player][TILES2][JOYSTICK] = jInput.setKey(JOYL2);
+			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYR1);
+			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYR2);
 
 
 

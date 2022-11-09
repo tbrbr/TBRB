@@ -159,7 +159,7 @@ class Yamaha {
 
 	sf::Clock autoSaveTimer;
 	sf::Time autoSaveTime;
-	const string autoSavePath = "_tilesAutoSave.txt";
+	const string autoSavePath = "PianoFiles/_tilesAutoSave.txt";
 
 
 	std::vector<struct YamahaAction> actions;
@@ -226,7 +226,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/napop.ogg");
+		musTeste.music.openFromFile("PianoFiles/sounds/zerebolabola.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -1561,19 +1561,6 @@ struct TilesInfo {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool pianoTiles(RenderWindow* window) {
 
 
@@ -1805,7 +1792,7 @@ bool pianoTiles(RenderWindow* window) {
 			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
 
 				std::string str = loadBox.sVal;
-				str += ".txt";
+				str = "PianoFiles/" + str + ".txt";
 
 
 				info.alcides->loadNotas(str);
@@ -1814,7 +1801,7 @@ bool pianoTiles(RenderWindow* window) {
 			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
 
 				std::string str = saveBox.sVal;
-				str += ".txt";
+				str = "PianoFiles/" + str + ".txt";
 
 				info.alcides->saveNotas(str);
 			}

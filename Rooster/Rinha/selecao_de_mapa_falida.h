@@ -1,447 +1,176 @@
 #ifndef RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO
 #define RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO
 
-// Deus me perdoe mota, mas a demora pro bot escolher o mapa corroeu a minha alma
+struct Mapa {
 
-#include <SFML/Graphics.hpp>
-using namespace sf;
+	string nome;
+	string file;
+	string finalfile;
 
-
-struct Confirm {
-	RectangleShape confirmDiv;
-	RectangleShape OKbutton;
-	RectangleShape cancelButton;
-	Text t_ok;
-	Text t_x;
-	Font f;
-
-	Confirm() {
-
-		f.loadFromFile("fonts\\Act_Of_Rejection.ttf");
-		confirmDiv.setSize(Vector2f(SCREEN_WIDTH * 0.23, SCREEN_HEIGHT * 0.08));
-		confirmDiv.setPosition(SCREEN_WIDTH / 2 - confirmDiv.getSize().x / 2, SCREEN_HEIGHT * 0.9);
-
-		OKbutton.setSize(Vector2f(confirmDiv.getSize().x * 0.45, confirmDiv.getSize().y));
-		cancelButton.setSize(Vector2f(confirmDiv.getSize().x * 0.45, confirmDiv.getSize().y));
-
-		OKbutton.setFillColor(Color::Green);
-		cancelButton.setFillColor(Color::Red);
-
-		OKbutton.setPosition(confirmDiv.getPosition());
-		cancelButton.setPosition(confirmDiv.getPosition().x + cancelButton.getSize().x + confirmDiv.getSize().x * 0.1, confirmDiv.getPosition().y);
-
-		t_x.setCharacterSize(confirmDiv.getSize().y * 0.85);
-		t_x.setString("X");
-		t_x.setFont(f);
-		t_x.setFillColor(Color::Black);
-
-		t_ok.setCharacterSize(confirmDiv.getSize().y * 0.85);
-		t_ok.setString("OK");
-		t_ok.setFont(f);
-		t_ok.setFillColor(Color::Black);
-
-		t_x.setPosition(cancelButton.getPosition().x + cancelButton.getSize().x / 2 - t_x.getGlobalBounds().width / 2, cancelButton.getPosition().y - 4);
-		t_ok.setPosition(OKbutton.getPosition().x + OKbutton.getSize().x / 2 - t_ok.getGlobalBounds().width / 2, cancelButton.getPosition().y - 4);
-
-	}
-
-	void update(RenderWindow* w) {
-		if (ButtonCheck::isButtonComMouseNele(OKbutton, Mouse::getPosition(*w).x, Mouse::getPosition(*w).y)) {
-			OKbutton.setFillColor(Color::Yellow);
-		}
-		else {
-			OKbutton.setFillColor(Color::Green);
-		}
-
-		if (ButtonCheck::isButtonComMouseNele(cancelButton, Mouse::getPosition(*w).x, Mouse::getPosition(*w).y)) {
-			cancelButton.setFillColor(Color::Yellow);
-		}
-		else {
-			cancelButton.setFillColor(Color::Red);
-		}
-
-	}
-	void draw(RenderWindow* window) {
-		update(window);
-		window->draw(OKbutton);
-		window->draw(cancelButton);
-		window->draw(t_x);
-		window->draw(t_ok);
-	}
-
-	int getEvent(RenderWindow* w) {
-		if (ButtonCheck::isButtonComMouseNele(OKbutton, Mouse::getPosition(*w).x, Mouse::getPosition(*w).y)) {
-			return 1;
-		}
-		if (ButtonCheck::isButtonComMouseNele(cancelButton, Mouse::getPosition(*w).x, Mouse::getPosition(*w).y)) {
-			return 0;
-		}
-		return -1;
-	}
 };
 
-class MapSelector {
+void updateCircle(CircleShape * circles, RenderWindow * window) {
 
-private:
-	static const int num_de_mapas = 3;
+	for (int i = 0; i < 4; i++)
+	{
+		circles[i].setRadius(window->getSize().y / 50);
+		circles[i].setFillColor(Color::Red);
+		circles[i].setOutlineColor(Color::Transparent);
+	}
 
-	Texture t_maps[num_de_mapas];
-	Texture * finalTexture = NULL;
-	RectangleShape r_map;
+	circles[0].setPosition(window->getSize().x * 0.16, window->getSize().y * 0.3180);
+	circles[1].setPosition(window->getSize().x * 0.26, window->getSize().y * 0.333);
+	circles[2].setPosition(window->getSize().x * 0.345, window->getSize().y * 0.41);
+	circles[3].setPosition(window->getSize().x * 0.235, window->getSize().y * 0.57);
 
-	RectangleShape player1_map_selected;
-	RectangleShape player2_map_selected;
 
-	Text text_player1;
-	Text text_player2;
-	Font font;
+	circles[0].setOutlineThickness(circles[0].getRadius() * 3);
+	circles[1].setOutlineThickness(circles[1].getRadius() * 3);
+	circles[2].setOutlineThickness(circles[2].getRadius() * 2.8);
+	circles[3].setOutlineThickness(circles[3].getRadius() * 3.3);
 
-	int map_player1 = -1;
-	int map_player2 = -1;
-	int map = 0;
-	int __map = 0;
-	bool isp1time = true;
-	bool isSinglePlayerSelection;
+}
 
-	RectangleShape arrowL;
-	RectangleShape arrowR;
-	Texture t_arrow;
+void updateDescricao(Text * descricao, int mapa) {
+	string a;
+	if (mapa == 0) {
+		a = "Aquela musica do Renato Russo";
+	}
+	else if (mapa == 1) {
+		a = "Inaugurado em 08 de junho de 2017, o Shopping\nPeixoto já é o maior centro de compras e lazer\nda região, com uma ABL(Área Bruta Locável) de \n16 mil metros quadrados, ocupando um espaço de\nárea construída de 23.800 mil metros quadrados.\n" 	"São 76 lojas em operação, sendo 04 lojas âncora,\nentre elas : Le Biscuit e Americanas, 04 megalojas\n,01 supermercado, ampla praça de alimentação, 04 salas\nde cinema com capacidade para centenas de pessoas,\ncerca de 900 vagas de estacionamento gratuitas,\nincluindo vagas para vans e ônibus de turismo.";
+	}
+	else if (mapa == 2) {
+		a = "A capital do Agreste dispensa comentários";
+	}
+	else {
+		a = "Central de abastecimento de feira de Salvador - BH";
+	}
+	descricao->setString(a);
+}
 
-	Confirm confirm = Confirm();
+Texture* selecionarMapa(RenderWindow * window) {
 
+	Texture mapas[5];
 	
-	bool sorteioAnim = false; //n sei sorteio em ingles
-	bool randAnim_ = false; //n sei sorteio em ingles
+	for (int i = 0; i < 5; i++) {
+		mapas[i].loadFromFile("maps/" + std::to_string(i) + ".png");
+	}
+	RectangleShape NORDESTE;
+	NORDESTE.setTexture(mapas);
+	NORDESTE.setSize(Vector2f(window->getSize().x * 0.3, window->getSize().y * 0.6));
+	NORDESTE.setPosition(window->getSize().x * 0.10, window->getSize().y * 0.2);
 
-	void SorteioAnim() {
-		static int frame = 0;
-		static int changeValue = 0;
-		static bool temp = false;
+	RectangleShape Cancel;
+	RectangleShape Confirm;
+	RectangleShape Map;
 
-		if (temp) {
-			player1_map_selected.setOutlineColor(Color::Red);
-			player2_map_selected.setOutlineColor(Color::White);
-		}
-		else {
-			player1_map_selected.setOutlineColor(Color::White);
-			player2_map_selected.setOutlineColor(Color::Red);
-		}
 
-		int finalFrame = player1_map_selected.getTexture() == finalTexture ? 210 :  200;
-		if (frame == finalFrame) {
-			frame = -1;
-			sorteioAnim = false;
-		}
-
-		if (changeValue == 10) {
-			temp = !temp;
-			changeValue = -1;
-		}
-
-		frame++;
-		changeValue++;
+	CircleShape circles[4];
+	CircleShape __circles[4];
+	updateCircle(circles, window);
+	for (int i = 0; i < 4; i++) {
+		__circles[i].setRadius(circles[i].getRadius() + circles[i].getOutlineThickness());
+		__circles[i].setPosition(circles[i].getPosition().x - circles[i].getOutlineThickness(), circles[i].getPosition().y - circles[i].getOutlineThickness());
 	}
 
-	void confirmMap() {
-		if (isp1time) {
-			map_player1 = map;
-			player1_map_selected.setTexture(t_maps + map_player1);
-			isp1time = false;
-			if (isSinglePlayerSelection && map_player2 == -1) {
-				randAnim_ = true;
-				
+	Mapa maps[4];
+	maps[0].nome = "Faroeste";
+	maps[1].nome = "Shopping";
+	maps[2].nome = "Itabaiana";
+	maps[3].nome = "Ceasa";
 
-			}
-		}
-		else {
+	maps[0].finalfile = "maps/cenario faroeste.png";
+	maps[1].finalfile = "maps/shopping.png";
+	maps[2].finalfile = "maps/itabaiana.png";
+	maps[3].finalfile = "maps/ceasa.png";
 
-			if (map_player2 != -1) {
-				finalTexture = (Texture *) sortearMapa(player1_map_selected.getTexture(), player2_map_selected.getTexture());
-				__map = 1;
-				if(player1_map_selected.getTexture() != player2_map_selected.getTexture())
-					sorteioAnim = true;
-			}
-			else {
-				map_player2 = map;
-				player2_map_selected.setTexture(t_maps + map_player2);
-			}
-		}
+	maps[0].file = "maps/cenario faroeste name.png";
+	maps[1].file = "maps/shopping name.png";
+	maps[2].file = "maps/itabaiana name.png";
+	maps[3].file = "maps/ceasa name.png";
+
+	Texture textures[4];
+	for (int i = 0; i < 4; i++) {
+		textures[i].loadFromFile(maps[i].file);
 	}
 
-	void incrementMap() {
-		if (map_player2 != -1) {
-			return;
-		}
-		if (map == num_de_mapas - 1) {
-			this->map = 0;
-		}
-		else {
-			this->map++;
-		}
-		r_map.setTexture((t_maps + map));
-	}
+	Map.setSize(Vector2f(window->getSize().x * 0.35, window->getSize().y * 0.35));
+	Map.setPosition(window->getSize().x * 0.55, window->getSize().y * 0.15);
+	Map.setOutlineColor(Color::Red);
+	Map.setOutlineThickness(2);
 
-	void decreaseMap() {
-		if (map_player2 != -1) {
-			return;
-		}
-		if (map == 0) {
-			this->map = num_de_mapas - 1;
-		}
-		else {
-			this->map--;
-		}
-		r_map.setTexture((t_maps + map));
-	}
-
-	void resetMaps() {
-
-			if (map_player2 != -1) {
-				map_player2 = -1;
-				player2_map_selected.setTexture(NULL);
-				player2_map_selected.setOutlineColor(Color::White);
-				player1_map_selected.setOutlineColor(Color::White);
-				finalTexture = NULL;
-				__map = 0;
-			}
-			else {
-				player1_map_selected.setTexture(NULL);
-				map_player1 = -1;
-				isp1time = true;
-			}
-
-			if (isSinglePlayerSelection) {
-				player1_map_selected.setTexture(NULL);
-				map_player1 = -1;
-				isp1time = true;
-			}
-		
+	Text descricao;
+	Font arial;
+	arial.loadFromFile("fonts/ARIAL.TTF");
+	descricao.setFont(arial);
+	descricao.setCharacterSize(SCREEN_WIDTH / 60);
+	descricao.setPosition(Map.getPosition().x, Map.getPosition().y + Map.getSize().y * 1.05);
 	
-	}
 
-	static Texture* sortearMapa(Texture* mapas, int tam) {
-		unsigned seed = time(0);
-		srand(seed);
-		int ret = rand() % tam;
-		return &mapas[ret];
-	}
-
-	static const Texture* sortearMapa(const Texture * mapas1, const Texture * mapas2) {
-		unsigned seed = time(0);
-		srand(seed);
-		if ((rand() % 2) == 1)
-			return mapas1;
-		else
-			return mapas2;
-	}
-
-	void randAnim() {
-		int frames = 30;
-		static int animFrames = 0;
-
-		if (animFrames % 10 == 0) {
-			this->incrementMap();
-		}
-
-		animFrames++;
-		if (animFrames == frames) {
-			animFrames = 0;
-			randAnim_ = false;
-			map_player2 = 1;
-			player2_map_selected.setTexture(sortearMapa(t_maps, this->num_de_mapas));
-
-			for (int i = 0; i < num_de_mapas; i++) {
-				if (t_maps + i == player2_map_selected.getTexture()) {
-					map = i;
-					r_map.setTexture(t_maps + map);
-				}
-			}
-		}
-
-	}
-
-public:
-	MapSelector() {
-
-		t_maps[0].loadFromFile("maps/ceasa.png");
-		t_maps[1].loadFromFile("maps/cenario faroeste.png");
-		t_maps[2].loadFromFile("maps/shopping.png");
-
-
-		r_map.setTexture(t_maps);
-		r_map.setSize(Vector2f(SCREEN_WIDTH * 0.4, SCREEN_HEIGHT * 0.4));
-		r_map.setPosition(SCREEN_WIDTH / 2 - r_map.getSize().x / 2, SCREEN_HEIGHT * 0.15);
-		r_map.setOutlineThickness(5);
-
-		player1_map_selected.setOutlineThickness(4);
-		player1_map_selected.setOutlineColor(Color::White);
-		player1_map_selected.setSize(Vector2f(SCREEN_WIDTH * 0.15, SCREEN_HEIGHT * 0.15));
-		player1_map_selected.setPosition(SCREEN_WIDTH * 0.2, SCREEN_HEIGHT * 0.7);
-		player2_map_selected.setOutlineThickness(4);
-		player2_map_selected.setOutlineColor(Color::White);
-		player2_map_selected.setSize(Vector2f(SCREEN_WIDTH * 0.15, SCREEN_HEIGHT * 0.15));
-		player2_map_selected.setPosition(SCREEN_WIDTH * 0.8 - player2_map_selected.getSize().x, SCREEN_HEIGHT * 0.7);
-
-		font.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
-
-		text_player1.setCharacterSize(SCREEN_HEIGHT * 0.03);
-		text_player1.setFont(font);
-		text_player1.setString("Player 1");
-		text_player1.setPosition(player1_map_selected.getPosition().x, player1_map_selected.getPosition().y - text_player1.getGlobalBounds().height * 2);
-
-		text_player2.setCharacterSize(SCREEN_HEIGHT * 0.03);
-		text_player2.setFont(font);
-		text_player2.setString("Player 2");
-		text_player2.setPosition(player2_map_selected.getPosition().x, player2_map_selected.getPosition().y - text_player2.getGlobalBounds().height * 2);
-
-		t_arrow.loadFromFile("icons\\arrow.png");
-		arrowL.setFillColor(Color::White);
-		arrowR.setTexture(&t_arrow);
-		arrowL.setTexture(&t_arrow);
-
-		arrowR.setSize(Vector2f(SCREEN_WIDTH * 0.05, SCREEN_HEIGHT * 0.06));
-		arrowL.setSize(Vector2f(SCREEN_WIDTH * 0.05, SCREEN_HEIGHT * 0.06));
-
-		arrowL.setPosition(r_map.getPosition().x - arrowL.getSize().x - 3, r_map.getPosition().y + r_map.getSize().y / 2 - arrowL.getSize().y / 2);
-		arrowR.setPosition(r_map.getPosition().x + r_map.getSize().x + arrowR.getSize().x + 3, r_map.getPosition().y + r_map.getSize().y / 2 - arrowL.getSize().y / 2);
-
-		arrowR.setScale(-1, 1);
-	}
-
-	~MapSelector() {
-
-	}
-
-	Texture* getSelectedMap() {
-		return finalTexture;
-	}
-	void update(RenderWindow* window, int & option) {
-
+	int a2 = 0;
+	while (window->isOpen())
+	{
 		Event e;
-		static float arrowAnim = 0;
-		int pauseFrames = 60;
-		static int p_frame = 0;
 
-		while (window->pollEvent(e)) {
+		while (window->pollEvent(e))
+		{
+			int mousex = Mouse::getPosition(*window).x;
+			int mousey = Mouse::getPosition(*window).y;
 
-			if (e.type == Event::Closed) {
+			if (e.type == Event::Closed)
+			{
 				window->close();
 			}
 			if (e.type == Event::KeyPressed) {
-				if (e.key.code == Keyboard::Escape) {
-					window->close();
+				a2++;
+				if (a2 == 5) {
+					a2 = 0;
 				}
 			}
 
-			if (!this->sorteioAnim) {
-				if (e.type == Event::KeyPressed) {
+			if (e.type == Event::MouseButtonPressed)
+			{
+				if (e.mouseButton.button == Mouse::Left) {
 
-					if (e.key.code == Keyboard::Left) {
-						this->decreaseMap();
+					int temp = -1;
+					for (int i = 0; i < 4; i++) {
+						if (ButtonCheck::checkCircleHover(__circles[i], mousex, mousey)) {
+							temp = i;
+						}
 					}
 
-					if (e.key.code == Keyboard::Right) {
-						this->incrementMap();
-					}
-
-					if (e.key.code == Keyboard::Enter) {
-						this->confirmMap();
-						p_frame = 1;
-					}
-
-
-				}
-
-				if (e.type == Event::MouseButtonPressed) {
-					if (e.mouseButton.button == Mouse::Left) {
-
-						int i = confirm.getEvent(window);
-						if (i == 1) {
-							this->confirmMap();
-							p_frame = 1;
-						}
-						else if (i == 0) {
-							if (this->__map == 0)
-								this->resetMaps();
-						}
-
-						if (ButtonCheck::isButtonComMouseNele(arrowL, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y)) {
-							this->decreaseMap();
-						}
-						//sum the sizex of arrowR because the scale is -1, 
-						/*
-							if(walter.reclamouDoIngles()){
-								mota.falar("Walter, vá se foder");
-							}
-							else{
-								mota.falar("primeiramente, qual é o seu nome?\nSegundamente, cale a boca e segue a call");
-							}
-						*/
-						else if (ButtonCheck::isButtonComMouseNele(arrowR, Mouse::getPosition(*window).x + arrowR.getSize().x, Mouse::getPosition(*window).y)) {
-							this->incrementMap();
-						}
+					if (temp != -1) {
+						temp++;
+						Map.setTexture(&textures[temp - 1]);
+						NORDESTE.setTexture(mapas + temp);
+						updateDescricao(&descricao, temp - 1);
 					}
 				}
 			}
+
+			
+		}
+
+		if (Mouse::isButtonPressed(Mouse::Left))
+		{
+			
 		}
 
 		
-		arrowL.move(cos(arrowAnim), 0);
-		arrowR.move(-cos(arrowAnim), 0);
 
-		arrowAnim += 0.1;
-
-		if (isp1time) {
-			text_player1.setFillColor(Color::Black);
-			text_player2.setFillColor(Color::White);
-
+		window->clear();
+		window->draw(NORDESTE);
+		for (int i = 0; i < 4; i++) {
+			window->draw(circles[i]);
 		}
-		else {
-			text_player1.setFillColor(Color::White);
-			text_player2.setFillColor(Color::Black);
-		}
-
-		if (randAnim_) {
-			this->randAnim();
-		}
-
-		if (sorteioAnim) {
-			this->SorteioAnim();
-		}
-		else if(__map == 1) {
-
-			if (p_frame < pauseFrames) {
-				p_frame++;
-			}
-
-			if (p_frame == pauseFrames) {
-				p_frame = 0;
-				option = UMJOGADORES;
-				__map = 0;
-			}
-		}
-	}
-
-	void draw(RenderWindow* window, int & option, bool isSinglePlayerSelection = false) {
-		this->isSinglePlayerSelection = isSinglePlayerSelection;
-		update(window, option);
-		window->clear(Color::Blue);
-		window->draw(r_map);
-		window->draw(player1_map_selected);
-		window->draw(player2_map_selected);
-		window->draw(text_player1);
-		window->draw(text_player2);
-		window->draw(arrowL);
-		window->draw(arrowR);
-		confirm.draw(window);
+		window->draw(descricao);
+		window->draw(Map);
 		window->display();
+
 	}
 
 
-	Texture* getTexture() {
-		return t_maps + map;
-	}
-};
 
+}
 
 #endif // !RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO

@@ -60,6 +60,7 @@ int main() {
 	int option = BOTAPRAARROCHAR;
 
 
+
 	bool motaouhenrique = true;
 
 
@@ -152,16 +153,11 @@ int main() {
 
 	SelectionSinglePlayer* selector = new SelectionSinglePlayer();
 
-
-	MapSelector* mapSelector = new MapSelector();
 	Texture background_t;
 	RectangleShape background(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	background.setPosition(0, 0);
 	background_t.loadFromFile("sprites/background_menu.png");
 	background.setTexture(&background_t);
-
-
-	fundo.setTexture(mapSelector->getTexture());
 
 	window->setMouseCursorVisible(true);
 	window->setMouseCursorGrabbed(false);
@@ -235,6 +231,7 @@ int main() {
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
+			selecionarMapa(window);
 			option = UMJOGADORES;
 			break;
 		case JOIN:

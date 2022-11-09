@@ -743,13 +743,9 @@ namespace Rooster {
 					isDefending = false;
 					runReset();
 				}
-				else if (estado == INVISIBLE) {
-					sumir();
-				}
+				
 
-				if (estado != INVISIBLE) {
-					aparecer();
-				}
+				
 
 				if (atacking == HIGH_KICK) {
 					highKickAnim();
@@ -771,6 +767,7 @@ namespace Rooster {
 					animations[1].update();
 					model.updateWithAnimation(animations[1]);
 				}
+				
 
 				projectiles[0].update();
 
@@ -780,6 +777,14 @@ namespace Rooster {
 				superAtack->hitbox.center = projectiles[0].getPosition();
 				superAtack->hitbox.radius = projectiles[0].getSize().y / 2;
 
+			}
+
+			if (estado == INVISIBLE) {
+				sumir();
+			}
+
+			if (estado != INVISIBLE) {
+				aparecer();
 			}
 		}
 

@@ -57,7 +57,7 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-	int option = MAPA_FALIDO_E_ACHE_RUIM_WALTER;
+	int option = BOTAPRAARROCHAR;
 
 
 

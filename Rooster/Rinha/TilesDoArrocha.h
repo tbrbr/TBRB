@@ -182,7 +182,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/ze.ogg");
+		musTeste.music.openFromFile("sounds/escoces.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -1319,19 +1319,6 @@ struct TilesInfo {
 
 	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 bool pianoTiles(RenderWindow* window) {

@@ -306,10 +306,10 @@ protected:
 	}
 
 	void updateBars(int rooster) {
-		if (isp1Time) {
+		if (p1 == -1) {
 			statusPlayer1.update(statsValues[rooster]);
 		}
-		else {
+		else if(p2 == -1) {
 			statusPlayer2.update(statsValues[rooster]);
 		}
 	}
@@ -684,7 +684,7 @@ public:
 							galop1[0]->noGravity = false;
 							galop2[0]->noGravity = false;
 
-							option = VERSUS;
+							option = MAPA_FALIDO_E_ACHE_RUIM_WALTER;
 							return;
 						}
 

@@ -76,6 +76,8 @@ namespace Rooster {
 			this->key = key;
 			return *this;
 		}
+
+
 	};
 
 
@@ -113,7 +115,6 @@ namespace Rooster {
 			else {
 				println("nao esta conectado :(");
 			}
-
 
 			mousePos = Vector2f(0, 0);
 
@@ -265,7 +266,6 @@ namespace Rooster {
 		void setKeybind(int player, int inputSlot, int actualHud, struct inputInfo keybindInfo) {
 			board[player][inputSlot][actualHud] = keybindInfo;
 		}
-
 
 		bool getJoystickState(int button, int joystickId = 0) {
 

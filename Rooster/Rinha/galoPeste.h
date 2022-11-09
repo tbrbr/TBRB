@@ -202,6 +202,45 @@ namespace Rooster {
             superAtack->init.restart();
         }
 
+        void superAnim() {
+            Time t = superAtack->init.getElapsedTime();
+            int time = t.asMilliseconds();
+
+            if (t > superAtack->timeLapse) {
+                atacking = NOT_ATTACK;
+            }
+
+            float percentage = (float)t.asMilliseconds() / (superAtack->timeLapse.asMilliseconds());
+
+
+            if (percentage < 1.f / 3.f) {
+
+                float thisPercentage = percentage * 3;
+
+
+            }
+            else if (percentage < 2.f / 3.f) {
+                float thisPercentage = (percentage * 3) / 2;
+
+
+
+
+            }
+            else if (percentage < 2.9f / 3.f) {
+                
+
+
+            }
+            else {
+
+
+            }
+
+
+
+
+
+        }
         void especialAnim() {
             Time t = ultimateShot->init.getElapsedTime();
             int time = t.asMilliseconds();
@@ -416,7 +455,7 @@ namespace Rooster {
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
                 model.at("Head")->angle = 0;
-               
+                
             }
 
         }
@@ -483,10 +522,12 @@ namespace Rooster {
                 model.at("FrontArm")->angle = 0;
                 model.at("BackArm")->angle = 0;
                 model.at("Head")->angle *= 0;
+                hiKick->isAtacking = false;
             }
         }
 
         void updateAnimations() override {
+
             if (estadoUpdate) {
                 model.resetToBase();
                 animations[0].playingFrame = 0;
@@ -494,59 +535,61 @@ namespace Rooster {
 
             //weatherAnim(frames);
 
-
-            if (air) {
-                jumpAnim();
-            }
-            else {
-                cairAnim();
-            }
-
-
-            model.at("FrontArm")->angle = ArmSpinAngFase;
-            model.at("BackArm")->angle = Arm2SpinAngFase;
-
-            if (estado == RUNNING) {
-                runAnim();
-                isDefending = false;
-            }
-            else if (estado == DEFENDING) {
-               estado = STOPPED;
-               animations[0].update();
-               if (animations[0].playingFrame > 15) {
-                   animations[0].playingFrame = 15;
-                   isDefending = true;
-                   defense.center.x = model.at("Body")->drawPos.x;
-                   defense.center.y = model.at("Body")->drawPos.y;
-                   defense.radius = model.at("Body")->sprite.getGlobalBounds().height / 2;
-               }
-               else {
-                   isDefending = false;
-               }
-
-               model.updateWithAnimation(animations[0]);
-               
-            }
-            else if (estado == STOPPED) {
-                runReset();
-                isDefending = false;
-            }
+            if (!stunned) {
+                if (air) {
+                    jumpAnim();
+                }
+                else {
+                    cairAnim();
+                }
 
 
-            if (atacking == HIGH_KICK) {
-                highAtackAnim();
+                model.at("FrontArm")->angle = ArmSpinAngFase;
+                model.at("BackArm")->angle = Arm2SpinAngFase;
+
+                if (estado == RUNNING) {
+                    runAnim();
+                    isDefending = false;
+                }
+                else if (estado == DEFENDING) {
+                    estado = STOPPED;
+                    animations[0].update();
+                    if (animations[0].playingFrame > 15) {
+                        animations[0].playingFrame = 15;
+                        isDefending = true;
+                        defense.center.x = model.at("Body")->drawPos.x;
+                        defense.center.y = model.at("Body")->drawPos.y;
+                        defense.radius = model.at("Body")->sprite.getGlobalBounds().height / 2;
+                    }
+                    else {
+                        isDefending = false;
+                    }
+
+                    model.updateWithAnimation(animations[0]);
+
+                }
+                else if (estado == STOPPED) {
+                    runReset();
+                    isDefending = false;
+                }
+
+
+                if (atacking == HIGH_KICK) {
+                    highAtackAnim();
+                }
+                else if (atacking == LOW_KICK) {
+                    louKickAnim();
+                }
+                else if (atacking == SPECIAL) {
+                    especialAnim();
+                }
+                else if (estado == DANCING) {
+                    animations[1].update();
+                    model.updateWithAnimation(animations[1]);
+                }
+                
             }
-            else if (atacking == LOW_KICK) {
-                louKickAnim();
-            }
-            else if (atacking == SPECIAL) {
-                especialAnim();
-            }
-            else if (estado == DANCING) {
-                animations[1].update();
-                model.updateWithAnimation(animations[1]);
-            }
-            else if (estado == INVISIBLE) {
+            if (estado == INVISIBLE) {
                 sumir();
             }
 
@@ -554,12 +597,18 @@ namespace Rooster {
                 aparecer();
             }
 
-
             projectiles[0].update();
             projectiles[1].update();
 
             ultimateShot->hitbox.center = projectiles[1].getPosition();
             ultimateShot->hitbox.radius = projectiles[1].getSize().y / 2;
+            
+            if (projectiles[1].getPosition().x > SCREEN_WIDTH || projectiles[0].getPosition().x < 0) {
+                          
+                projectiles[1].setVisibility(false);
+                ultimateShot->isAtacking = false;
+            }
+
 
             if (projectiles[0].getVisibility()) {
 
@@ -568,6 +617,7 @@ namespace Rooster {
                     louKick->playSound();
                     playS = false;
                 }
+
                 louKick->soundCollision.setLoop(true);
                 
                 if (projectiles[0].getPosition().x > SCREEN_WIDTH || projectiles[0].getPosition().x < 0) {

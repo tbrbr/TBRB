@@ -460,10 +460,13 @@ public:
 					std::getline(file, line);
 					float length = std::stof(line);
 
-					Nota* nota = new Nota(coluna, length, y, uniqueId);
-					uniqueId++;
+					if (length > 0) {
+						Nota* nota = new Nota(coluna, length, y, uniqueId);
 
-					notas.push_back(nota);
+						uniqueId++;
+
+						notas.push_back(nota);
+					}
 
 					std::getline(file, line); // Gets End or Nota X
 				}
@@ -732,7 +735,6 @@ public:
 							struct Nota* nota = notas[i];
 
 							if (nota->coluna == coluna) {
-
 								if (yy > nota->y && yy < nota->y + nota->length) {
 
 									achou = true;
@@ -760,8 +762,6 @@ public:
 									i = notas.size();
 
 								}
-
-
 							}
 						}
 
@@ -806,14 +806,19 @@ public:
 
 
 					if (holdingPart == 0) {
-						nota->length = holdingStartState.length - yDif;
-						nota->y = holdingStartState.y + yDif;
+
+
+						nota->length = maximum(holdingStartState.length - yDif, 0.25);
+						float newDif = holdingStartState.length - nota->length;
+
+						nota->y = holdingStartState.y + newDif;
 					}
 					else if (holdingPart == 1) {
+
 						nota->y = holdingStartState.y + yDif;
 					}
 					else {
-						nota->length = holdingStartState.length + yDif;
+						nota->length = maximum(holdingStartState.length + yDif, 0.25);
 					}
 
 
@@ -1041,6 +1046,13 @@ public:
 			window->draw(bar);
 		}
 
+
+		sf::Text notaIndex;
+		notaIndex.setFont(basicFont);
+		notaIndex.setColor(Color::White);
+		notaIndex.setCharacterSize(15);
+		notaIndex.setScale(xScl, yScl);
+
 		for (int i = 0; i < notas.size(); i++) {
 			
 			ConvexShape noteShape;
@@ -1084,10 +1096,11 @@ public:
 			window->draw(noteShape);
 
 
+
 			if (notas[i]->length > 1) {
 				ConvexShape lineShape;
 
-				
+
 
 				lineShape.setPointCount(4);
 
@@ -1128,7 +1141,7 @@ public:
 				float sliderX = noteX + baseQuart / 2 - sliderWid / 2;
 
 				float sliderHei = sliderWid;
-				float sliderY = noteY - (sliderHei / 2) + (noteLen-notaSize) * (1 - notas[i]->slided);
+				float sliderY = noteY - (sliderHei / 2) + (noteLen - notaSize) * (1 - notas[i]->slided);
 
 				sliderShape = rectToConvexShape(sliderX, sliderY, sliderWid, sliderHei);
 
@@ -1158,6 +1171,15 @@ public:
 
 
 			}
+
+
+			if (true) {
+				notaIndex.setPosition(noteX + pos.x, noteY + pos.y);
+				notaIndex.setString(std::to_string(i));
+				window->draw(notaIndex);
+			}
+
+
 
 
 			

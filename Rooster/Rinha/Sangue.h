@@ -197,7 +197,7 @@ namespace Rooster {
 
 				float depthFactor = (1 + (depthChange * (1 - (depth / depthStart))));
 
-				float scale = scl *1;
+				float scale = scl * depthFactor;
 				
 
 				if (hasText) {
@@ -401,7 +401,7 @@ namespace Rooster {
 
 
 
-			sclMin = 2;
+			sclMin = 0.5;
 			sclMax = 2;
 
 			friction = 0.98;
@@ -697,8 +697,6 @@ namespace Rooster {
 
 			p.maxHspd = 40;
 			p.maxVspd = 40;
-
-			p.radius = randIntRange(1, 10);
 
 
 			// Explosion Stuff

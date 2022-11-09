@@ -33,7 +33,7 @@ namespace Rooster {
 
 
 
-
+            // Criando modelo
             t.loadFromFile("sprites/galoBota.png");
 
             model.tex = &t;
@@ -43,7 +43,16 @@ namespace Rooster {
 
 
 
+            // Puff
+            puffTex.loadFromFile("sprites/botaProjectile.png");
+
+
+            // Hurtboxes
             HitBox* hit = new HitBox;
+
+            // Too much hit box 
+
+
             for (int i = 0; i < model.allBones.size(); i++) {
 
                 hit->center = model.at(i)->drawPos;

@@ -133,7 +133,9 @@ namespace Rooster {
 			position.x += hSpeed;
 			position.y += vSpeed;
 
-			sprite.setPosition(position);
+			if (!isTrans) {
+				sprite.setPosition(position);
+			}
 			sprite.setScale(scl);
 
 		}

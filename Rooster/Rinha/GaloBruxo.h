@@ -239,34 +239,29 @@ namespace Rooster {
 
 			Transform trans;
 
-
-			if (facingRight) {
-
-				projectiles[0].setSpriteAngle(angle);
-
-				trans.scale((float)SCREEN_WIDTH / 15360, (float)SCREEN_HEIGHT / 4320);
-				trans.translate(position);
-				projectiles[0].setPosition(position);
-				projectiles[0].setTransfrom(trans);
+			float xScale = model.xScl*0.1;//(float)SCREEN_WIDTH / 15360;
+			float yScale = model.yScl*0.2;//(float)SCREEN_HEIGHT / 4320;
 
 
-			}
-			else {
+			projectiles[0].setSpriteAngle(angle*sign(xScale));
 
-				projectiles[0].setSpriteAngle(-angle);
+			Vector2f shieldPos = model.at("Body")->drawPos;
+			shieldPos.x -= 140 * model.xScl;
+			shieldPos.y -= model.getBounds().height/2.5;
 
-				trans.scale((float)-SCREEN_WIDTH / 15360, (float)SCREEN_HEIGHT / 4320);
-				trans.translate(1, 1);
-				projectiles[0].setPosition(position);
-				projectiles[0].setTransfrom(trans);
-
+			trans.translate(shieldPos);
+			trans.scale(xScale, yScale);
+			
+			
+			
+				
+			// projectiles[0].setPosition(Vector2f(0, 0));
+			projectiles[0].setPosition(shieldPos);
+			projectiles[0].setTransfrom(trans);
 
 
 
-
-
-
-			}
+			
 			projectiles[0].setImpulse(0, 0);
 			projectiles[0].setVisibility(true);
 			projectiles[0].update();
@@ -346,6 +341,7 @@ namespace Rooster {
 					);
 				}
 				else {
+
 					projectiles[3].setSpriteScale((float)thisFrames/30, (float)SCREEN_WIDTH / 1920);
 
 					projectiles[3].setSpritePosition(
@@ -948,6 +944,8 @@ namespace Rooster {
 
 				}
 
+
+				float perc = 0;
 				if (time < 1500) {
 
 					
@@ -962,19 +960,22 @@ namespace Rooster {
 					fundo.setFillColor(Color(red, green, blue));
 
 
+					perc = time / 1500;
 
-					model.at("BackArm")->angle = (time / 1500) * 90;
-					model.at("FrontArm")->angle = (time / 1500) * -45;
-					model.at("FrontArm2")->angle = (time / 1500) * 60;
-					model.at("FrontArm3")->angle = (time / 1500) * -60;
-					model.at("FrontArm4")->angle = (time / 1500) * 90;
-					model.at("FrontArm5")->angle = (time / 1500) * 90;
-					model.at("FrontArm6")->angle = (time / 1500) * -75;
+					model.at("BackArm")->angle = perc * 90;
+					model.at("FrontArm")->angle = perc * -45;
+					model.at("FrontArm2")->angle = perc * 60;
+					model.at("FrontArm3")->angle = perc * -60;
+					model.at("FrontArm4")->angle = perc * 90;
+					model.at("FrontArm5")->angle = perc * 90;
+					model.at("FrontArm6")->angle = perc * -75;
 
 
 				}
 				else if (time < 2500) {
 					float thisTime = time - 1500;
+
+					perc = thisTime / 1000;
 
 					model.at("BackArm")->angle = 90;
 					model.at("FrontArm")->angle = -45;
@@ -984,7 +985,7 @@ namespace Rooster {
 					model.at("FrontArm5")->angle = 90;
 					model.at("FrontArm6")->angle = -75;
 					
-					position.y = SCREEN_HEIGHT - ((SCREEN_HEIGHT / 2) * (thisTime / 1000));
+					position.y = SCREEN_HEIGHT - ((SCREEN_HEIGHT / 2) * perc);
 
 				}
 				else if (time < 3000) {
@@ -1008,6 +1009,7 @@ namespace Rooster {
 				}
 				else if (time < 6000) {
 
+					// Ta nem usando esse thisTime né safado
 					float thisTime = (time - 2500) / 6000;
 
 					

@@ -5,14 +5,36 @@ enum mode {
 	LOCAL
 };
 int mode = SINGLE;
-
+#include <functional>
 #include "importados.h"
 
+void menuSong(int * option, RenderWindow * window) {
 
-void menuSong() {
+	SoundBuffer buffer;
+	buffer.loadFromFile("sounds\\freefires.ogg");
+	Sound s(buffer);
+	s.setLoop(true);
+
+	bool play = false;
+	while (window->isOpen()) {
+		int a = *option;
+		bool e = a == MENU_PRINCIPAL || a == GAMEMODE || a == MULTI_MODE || a == CONFIG || a == MULTI || a == MINIGAME;
+
+		if (e && !play) {
+			s.play();
+			play = true;
+		}
+		else 
+		{
+			if (!e && play) {
+				play = false;
+				s.stop();
+			}
+		}
+	}
+
 
 }
-
 int main() {
 
 
@@ -35,9 +57,8 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-
-
 	int option = BOTAPRAARROCHAR;
+
 
 	bool motaouhenrique = true;
 
@@ -148,16 +169,15 @@ int main() {
 	TcpSocket* socket = new TcpSocket();
 	TcpListener* listener = new TcpListener();
 
-	Music opening;
-	opening.openFromFile("sounds\\freefires.ogg");
-	//opening.play();
-	opening.setLoop(true);
 
+	sf::Thread t(std::bind(&menuSong, &option, window));
+	
+	t.launch();
 	while (window->isOpen())
 	{
-
 		switch (option)
 		{
+
 		case UMJOGADORES:
 			singlePlayer(window,*galo,*galo2,option,fundo);
 			delete galo;
@@ -168,32 +188,40 @@ int main() {
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-			opening.pause();
+			
 			selector->show(window,option,&galo,&galo2);
 			break;
 		case VERSUS:
-			if (isHost) {
-				galo2->facingRight = false;
-				galo->facingRight = true;
-			}
-			else {
-				galo2->facingRight = true;
-				galo->facingRight = false;
-			}
+			
 
-			if(isHost)
-				versus(*window, *galo, *galo2, fundo);
-			else
-				versus(*window, *galo2, *galo, fundo);
-			if(mode == SINGLE)
+			if (mode == SINGLE) {
 				option = UMJOGADORES;
+				versus(*window, *galo, *galo2, fundo);
+			}
 			else if (mode == LAN) {
+
+				if (isHost) {
+					galo2->facingRight = false;
+					galo->facingRight = true;
+				}
+				else {
+					galo2->facingRight = true;
+					galo->facingRight = false;
+				}
+
+				if (isHost)
+					versus(*window, *galo, *galo2, fundo);
+				else
+					versus(*window, *galo2, *galo, fundo);
+
 				option = DOISJODADOR;
 			}
 			else if (mode == LOCAL) {
+				versus(*window, *galo, *galo2, fundo);
 				option = UMJOGADORES;
 			}
 			break;
+
 		case INTRO: {
 			option = introducao(window);
 			break;
@@ -243,7 +271,6 @@ int main() {
 		default:
 			break;
 		}
-		
 		
 		
 	}

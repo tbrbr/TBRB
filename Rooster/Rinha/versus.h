@@ -32,9 +32,10 @@ void escurecer(RenderWindow & window) {
 	}
 }
 
-void moveGalo(Galo& g, int x, int y) {
+void inline moveGalo(Galo& g, int x, int y) {
 	g.setPosition(Vector2f(g.getPosition().x + x, g.getPosition().y + y));
 }
+
 int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundoluta)
 {
 
@@ -44,28 +45,27 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	Texture* __azul = new Texture();
 	Texture* __vermelho = new Texture();
 	Texture* __fundo = new Texture();
-	Texture* __rooster1 = new Texture();
-	Texture* __rooster2 = new Texture();
+
 	Texture* __versus = new Texture();
 
 	__fundo->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontobase.png");
 	__azul->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontoazul.png");
 	__vermelho->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontovermelho.png");
 	__versus->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontoversus.png");
-	__rooster1->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\modelsVS\\galo1.png");
-	__rooster2->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\modelsVS\\galo2.png");
+	
 
 	RectangleShape azul;
 	RectangleShape vermelho;
 	RectangleShape fundo;
 	RectangleShape versus;
-	Sprite rooster1;
-	Sprite rooster2;
 	Font font;
 	font.loadFromFile("C:\\TBRB\\Rooster\\Rinha\\fonts\\blops.ttf");
 
-	Text galo1("SNIPER", font, window.getSize().y / 30);
-	Text galo2("PESTE", font, window.getSize().y / 30);
+	string __galo1 = p1.getName();
+	string __galo2 = p2.getName();
+
+	Text galo1(__galo1, font, window.getSize().y / 30);
+	Text galo2(__galo2, font, window.getSize().y / 30);
 
 
 	// galo2.setPosition();
@@ -74,8 +74,6 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	vermelho.setTexture(__vermelho);
 	versus.setTexture(__versus);
 	fundo.setTexture(__fundo);
-	rooster1.setTexture(*__rooster1);
-	rooster2.setTexture(*__rooster2);
 	int arraysize = window.getSize().y / 2;
 	float size = window.getSize().x;
 
@@ -89,8 +87,6 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	vermelho.setSize((Vector2f)window.getSize());
 	fundo.setSize((Vector2f)window.getSize());
 	versus.setSize((Vector2f)window.getSize());
-	rooster1.setScale(0.4, 0.4);
-	rooster2.setScale(-0.4, 0.4);
 	Clock time;
 	Clock opacityTime;
 
@@ -128,6 +124,11 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 		while (window.pollEvent(e)) {
 			if (e.type == Event::Closed) {
 				window.close();
+			}
+
+			if (e.type == Event::KeyPressed) {
+
+				return 0;
 			}
 		}
 

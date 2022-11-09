@@ -441,6 +441,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 						winner = &galo2;
 						looser = &galo;
+
+						println("Ganhou");
 					}
 					else {
 						// New Round
@@ -462,6 +464,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 						winner = &galo;
 						looser = &galo2;
+
+						println("Ganhou");
 					}
 					else {
 						// New Round
@@ -504,6 +508,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			//-------------------------------------------------------------------------------
 			if (fightWon) {
 
+				println("Yamahou");
 				float yamahaX = winner->model.at("Body")->drawPos.x - winner->model.xScl * 120;
 				yamahaSpr.setScale(-winner->model.xScl * 0.75, winner->model.yScl * 0.75);
 
@@ -545,6 +550,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 				if (executarFatality) {
+					println("Fatalitou");
 					winner->fatality(window, looser, fundo);
 					option = MENU_PRINCIPAL;
 					return;
@@ -554,7 +560,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				if (tilesFall) {
 
 
-
+					println("View");
 					sf::View currentView = baseTilesView;
 
 					if (info.result != -1) {

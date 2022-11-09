@@ -22,6 +22,7 @@ using namespace sf;
 //const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
 //const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
 
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -77,5 +78,6 @@ using namespace Rooster;
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
 #include "versus.h"
+#include "mapeamentos.h"
 
 #endif

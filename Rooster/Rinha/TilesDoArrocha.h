@@ -223,7 +223,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/escoces.ogg");
+		musTeste.music.openFromFile("PianoFiles/sounds/zepopozuda.ogg");
 		//musTeste.music.play();
 
 		base = 400;

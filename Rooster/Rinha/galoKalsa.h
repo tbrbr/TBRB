@@ -18,6 +18,7 @@ namespace Rooster {
 		Sprite berimbau;
 		Sprite caixinha;
 
+		bool superIsOn = true;
 
 	public:
 		Kalsa(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
@@ -104,6 +105,65 @@ namespace Rooster {
 		}
 
 
+		Vector2f getFrontFootPos() {
+			float coordXPaint = 600;
+			float coordYPaint = 1095;
+
+			float ax = coordXPaint - model.at("FrontLeg")->sprArea.texRect.left;
+			float ay = coordYPaint - model.at("FrontLeg")->sprArea.texRect.top;
+
+			float difx = ax - model.at("FrontLeg")->center.x;
+			float dify = ay - model.at("FrontLeg")->center.y;
+
+			float ang = toRadiAnus(model.at("FrontLeg")->finalAngle);
+
+			float xScl = model.at("FrontLeg")->finalXScl;
+			float yScl = model.at("FrontLeg")->finalYScl;
+
+			float rotx = cos(ang) * difx - sin(ang) * dify;
+			float roty = sin(ang) * difx + cos(ang) * dify;
+
+			rotx *= xScl;
+			roty *= yScl;
+
+			Vector2f pe;
+			pe.y = model.at("FrontLeg")->drawPos.y + roty;
+			pe.x = model.at("FrontLeg")->drawPos.x + rotx;
+
+			return pe;
+
+		}
+
+		Vector2f getBackFootPos() {
+			float coordXPaint = 600;
+			float coordYPaint = 1095;
+
+			float ax = coordXPaint - model.at("BackLeg")->sprArea.texRect.left;
+			float ay = coordYPaint - model.at("BackLeg")->sprArea.texRect.top;
+
+			float difx = ax - model.at("BackLeg")->center.x;
+			float dify = ay - model.at("BackLeg")->center.y;
+
+			float ang = toRadiAnus(model.at("BackLeg")->finalAngle);
+
+			float xScl = model.at("BackLeg")->finalXScl;
+			float yScl = model.at("BackLeg")->finalYScl;
+
+			float rotx = cos(ang) * difx - sin(ang) * dify;
+			float roty = sin(ang) * difx + cos(ang) * dify;
+
+			rotx *= xScl;
+			roty *= yScl;
+
+			Vector2f pe;
+			pe.y = model.at("BackLeg")->drawPos.y + roty;
+			pe.x = model.at("BackLeg")->drawPos.x + rotx;
+
+			return pe;
+
+		}
+
+
 		void jumpAnim() {
 
 
@@ -186,9 +246,70 @@ namespace Rooster {
 
 		}
 		void super() override {
-			if (atacking == NOT_ATTACK)
+			if (atacking == NOT_ATTACK) {
 				atacking = SUPER;
-			superAtack->init.restart();
+				superAtack->init.restart();
+				superIsOn = true;
+			}
+			
+		}
+
+		void superAnim() {
+			Time t = superAtack->init.getElapsedTime();
+
+			 
+
+			if (t > superAtack->timeLapse) {
+				atacking = NOT_ATTACK;
+				superAtack->isAtacking = false;
+			}
+
+			float percentage = (float)t.asMilliseconds() / (superAtack->timeLapse.asMilliseconds());
+
+			
+
+			if (superIsOn) {
+				vspeed += air ? -1 : jumpSpeed / 1.5;
+				air = true;
+				superIsOn = false;
+				
+			}
+			position.x += 1;
+
+			if (vspeed > 0) {
+
+				air = false;
+
+				vspeed = 0.5;
+
+				superAtack->isAtacking = true;
+
+				
+
+				model.at("Body")->angle = 90;
+
+				float bAngle = -45 * sin(percentage * 32 * PI / 2);
+				float fAngle = 45 * sin(percentage * 32 * PI / 2);
+
+				model.at("BackLeg")->angle = bAngle;
+				model.at("FrontLeg")->angle = fAngle;
+
+				superAtack->hitbox.center = bAngle < fAngle ? getBackFootPos() : getFrontFootPos();
+				superAtack->hitbox.radius = model.at("FrontLeg")->sprite.getGlobalBounds().height / 6;
+
+				model.at("FrontEyebrow")->offset.y = 10;
+				model.at("FrontEyebrow")->offset.x = -5;
+				model.at("BackEyebrow")->offset.y = 5;
+
+				model.at("Head")->angle = -45;
+
+				model.at("FrontArm")->angle = -90;
+				model.at("BackArm")->angle = -90;
+
+			}
+
+		
+
 		}
 
 		void especialAnim() {
@@ -710,6 +831,10 @@ namespace Rooster {
 				}
 				else if (atacking == SPECIAL) {
 					especialAnim();
+					isDefending = false;
+				}
+				else if (atacking == SUPER) {
+					superAnim();
 					isDefending = false;
 				}
 				else if (estado == DANCING) {

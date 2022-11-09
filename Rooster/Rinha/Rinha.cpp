@@ -4,9 +4,12 @@ enum mode {
 	LAN,
 	LOCAL
 };
+
 int mode = SINGLE;
+
 #include <functional>
 #include "importados.h"
+
 
 void menuSong(int * option, RenderWindow * window) {
 
@@ -16,8 +19,12 @@ void menuSong(int * option, RenderWindow * window) {
 	s.setLoop(true);
 
 	bool play = false;
+
+
 	while (window->isOpen()) {
+
 		int a = *option;
+
 		bool e = a == MENU_PRINCIPAL || a == GAMEMODE || a == MULTI_MODE || a == CONFIG || a == MULTI || a == MINIGAME;
 
 		if (e && !play) {
@@ -57,7 +64,7 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-	int option = MAPA_FALIDO_E_ACHE_RUIM_WALTER;
+	int option = INTRO;
 
 
 

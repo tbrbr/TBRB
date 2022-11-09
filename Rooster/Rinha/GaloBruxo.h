@@ -732,59 +732,61 @@ namespace Rooster {
 				animations[0].playingFrame = 0;
 			}
 
+			if (!stunned) {
 
-			if (estado == RUNNING) {
-				runAnim();
-			}
-			else if (estado == DEFENDING) {
+				if (estado == RUNNING) {
+					runAnim();
+				}
+				else if (estado == DEFENDING) {
 
-				if (atacking == NOT_ATTACK) {
+					if (atacking == NOT_ATTACK) {
 
-					agachadinha();
+						agachadinha();
 
-					animations[0].update();
-					if (animations[0].playingFrame > 15) {
-						animations[0].playingFrame = 15;
+						animations[0].update();
+						if (animations[0].playingFrame > 15) {
+							animations[0].playingFrame = 15;
+						}
+						model.updateWithAnimation(animations[0]);
 					}
-					model.updateWithAnimation(animations[0]);
+
+				}
+				else if (estado == STOPPED) {
+					runReset();
 				}
 
-			}
-			else if (estado == STOPPED) {
-				runReset();
-			}
-		
-
-			
 
 
-			if (air) {
-				jumpAnim();
-			}
-			else {
-				cairAnim();
-			}
 
-			if (atacking == HIGH_KICK) {
-				highAtackAnim();
+
+				if (air) {
+					jumpAnim();
+				}
+				else {
+					cairAnim();
+				}
+
+				if (atacking == HIGH_KICK) {
+					highAtackAnim();
+				}
+				else if (atacking == LOW_KICK) {
+					louKickAnim();
+				}
+				else if (atacking == SPECIAL) {
+					especialAnim();
+				}
+				else if (atacking == SUPER) {
+					superAnim();
+				}
+				
 			}
-			else if (atacking == LOW_KICK) {
-				louKickAnim();
-			}
-			else if (atacking == SPECIAL) {
-				especialAnim();
-			}
-			else if (atacking == SUPER) {
-				superAnim();
-			}
-			else if (estado == INVISIBLE) {
+			if (estado == INVISIBLE) {
 				sumir();
 			}
 
 			if (estado != INVISIBLE) {
 				aparecer();
 			}
-
 			// projectiles[0].update();
 
 		}

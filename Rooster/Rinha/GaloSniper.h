@@ -1,5 +1,5 @@
 #ifndef GALOSNIPER_H_INCLUDED
-#define GALOSNIPER_H
+#define GALOSNIPER_H_INCLUDED
 
 #include "Galo.h"
 

@@ -313,6 +313,142 @@ struct ValBox{
 
 
 
+struct Button {
+
+private:
+    float x;
+    float y;
+    float wid;
+    float hei;
+
+public:
+    bool hovered = false;
+    bool clicked = false;
+    bool down = false;
+
+    bool holding = false;
+
+    std::string label;
+
+    sf::Color color;
+
+    bool hasSprite = false;
+    sf::Sprite sprite;
+
+
+    void setPosition(float xx, float yy) {
+        x = xx;
+        y = yy;
+    }
+
+    void setSize(float ww, float hh) {
+        wid = ww;
+        hei = hh;
+    }
+
+    void init(float xx, float yy, float ww, float hh) {
+        x = xx;
+        y = yy;
+        wid = ww;
+        hei = hh;
+
+        label = "";
+
+        color = Color::White;
+    }
+
+
+
+    void update(Vector2f mousePos, bool mouseState, bool mouseClick) {
+        hovered = false;
+        clicked = false;
+        down = false;
+
+        if (pointInside(mousePos, x, y, wid, hei)) {
+            hovered = true;
+        }
+
+        if (mouseClick) {
+            if (hovered) {
+                clicked = true;
+                down = true;
+            }
+            else {
+                down = false;
+            }
+        }
+
+        if (down) {
+            if (!mouseState) {
+                down = false;
+            }
+        }
+    }
+
+
+    void update(Vector2f mousePos) {
+        update(mousePos, mainInput.mouseState[0][0], mainInput.mouseState[0][1]);
+    }
+
+    void update() {
+        update(mainInput.mousePos, mainInput.mouseState[0][0], mainInput.mouseState[0][1]);
+    }
+
+
+
+
+
+    void draw(RenderWindow& window) {
+        draw(window, basicFont);
+    }
+
+    void draw(RenderWindow& window, sf::Font font) {
+        RectangleShape rect(Vector2f(wid, hei));
+        rect.setPosition(x, y);
+
+
+        Color col = color;
+
+
+
+        if (down) {
+            col.b -= 20;
+            col.r -= 20;
+            col.g -= 20;
+        }
+
+        if (hovered) {
+            col.b -= 10;
+            col.r -= 10;
+            col.g -= 10;
+        }
+
+        rect.setFillColor(col);
+        rect.setOutlineColor(Color(150, 150, 150));
+        rect.setOutlineThickness(2);
+
+        window.draw(rect);
+
+        if (hasSprite) {
+            sprite.setColor(col);
+            sprite.setPosition(x, y);
+            window.draw(sprite);
+        }
+        else {
+            float fontSize = hei / 1.4;
+            Text t(label, font, fontSize);
+            float textWid = t.getGlobalBounds().width;
+
+
+            t.setFillColor(Color(255, 255, 255));
+            t.setPosition(x + wid / 2 - textWid / 2, y + hei / 2 - fontSize / 2);
+
+            window.draw(t);
+        }
+    }
+};
+
+
 
 class Slider{
 

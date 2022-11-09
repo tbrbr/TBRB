@@ -37,11 +37,14 @@ ConvexShape rectToConvexShape(float wid, float hei) {
 
 
 
+
 class Nota {
 public:
 	int coluna = -1;
 	float length = 1;
 	float y = -1;
+
+	int id = -1;
 
 	float slided = 0;
 
@@ -53,11 +56,18 @@ public:
 
 	bool loose = false;
 
+	Nota() {
+		coluna = -1;
+		length = 0;
+		y = 0;
+		id = -1;
+	}
 
-	Nota(int c, float l, float yy) {
+	Nota(int c, float l, float yy, int id) {
 		coluna = c;
 		length = l;
 		y = yy;
+		this->id = id;
 	}
 
 	void resetState() {
@@ -79,6 +89,21 @@ public:
 	}
 
 
+};
+
+
+
+struct YamahaAction {
+	int actionType = -1;
+
+	float valorAntes = 0;
+	float valorDepois = 0;
+
+	int valorIntAntes = 0;
+	int valorIntDepois = 0;
+
+	Nota notaAntes;
+	Nota notaDepois;
 };
 
 class Yamaha {
@@ -127,8 +152,17 @@ class Yamaha {
 
 	int fadeFrames = 100;
 
+	int uniqueId = 0;
 
-	
+	sf::Clock autoSaveTimer;
+	sf::Time autoSaveTime;
+	const string autoSavePath = "_tilesAutoSave.txt";
+
+
+	std::vector<struct YamahaAction> actions;
+	std::vector<struct YamahaAction> undoneActions;
+
+	Nota holdingStartState;
 
 
 public:
@@ -146,10 +180,17 @@ public:
 
 	int holdingNote = -1;
 	int selectedNote = -1;
+
+	//std::vector<int> selectedNotes;
+
 	int holdingPart = 0;
+
+	/*
 	float holdingNoteLength = 0;
 	float holdingNoteY = 0;
+	*/
 	float holdingY = 0;
+	
 
 	float roomWid = 1280;
 	float roomHei = 720;
@@ -182,7 +223,7 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/ze.ogg");
+		musTeste.music.openFromFile("sounds/morango.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -205,6 +246,9 @@ public:
 
 
 
+		// Autosave Timer
+		autoSaveTimer.restart();
+		autoSaveTime = sf::seconds(60);
 
 
 
@@ -303,27 +347,8 @@ public:
 
 
 		
-		/*
-		for (int i = 0; i < 4; i++) {
 
-			int insertInd = 0;
-
-			for (int j = 0; j < 200; j++) {
-				if (randInt(8) == 0) {
-
-					int notaLen = randIntRange(1, 4);
-
-					createNota(i, notaLen,-notasPorYamaha -insertInd - notaLen);
-					insertInd += notaLen;
-				}
-				else {
-					insertInd++;
-				}
-			}
-		}
-		*/
-
-		loadNotas("savePath.txt");
+		loadNotas(autoSavePath);
 		
 	}
 
@@ -342,37 +367,6 @@ public:
 		}
 
 	}
-
-	/*
-	Vector2f noteYPerspective(Vector2f point, float baseMenor) {
-
-
-		float y = point.y;
-
-		
-
-		if (base - baseMenor != 0) {
-			// Isso da pra pre calcular
-			float hSmall = baseMenor * altura / (base - baseMenor);
-
-			float alturaTotal = hSmall + altura;
-
-			if (-y + altura + 1 > 0.5) {
-
-				y = (alturaTotal) / (-y + altura + 1);
-
-
-			}
-			else {
-				y = alturaTotal/0.5;
-			}
-
-		}
-		y = point.y;
-
-		return Vector2f(point.x,y);
-	}
-	*/
 
 
 
@@ -411,6 +405,7 @@ public:
 			delete notas[i];
 		}
 		notas.clear();
+		actions.clear();
 	}
 
 	void saveNotas(std::string str) {
@@ -465,7 +460,8 @@ public:
 					std::getline(file, line);
 					float length = std::stof(line);
 
-					Nota* nota = new Nota(coluna, length, y);
+					Nota* nota = new Nota(coluna, length, y, uniqueId);
+					uniqueId++;
 
 					notas.push_back(nota);
 
@@ -502,18 +498,90 @@ public:
 		file.close();
 	}
 
-	void createNota(int col, int len, int yy) {
-
-		Nota* n = new Nota(col, len, yy);
+	Nota* createNotaNoAction(int col, int len, int yy, int id) {
+		Nota* n = new Nota(col, len, yy, id);
 
 		notas.push_back(n);
+
+		return n;
 	}
 
-	void deleteNota(int id) {
-		delete notas[id];
-		notas.erase(notas.begin() + id);
+	void createNota(int col, int len, int yy) {
+
+		uniqueId++;
+		Nota* n = createNotaNoAction(col, len, yy, uniqueId);
+
+		struct YamahaAction action;
+		action.actionType = 1;
+		action.notaAntes = *n;
+		action.notaDepois = *n;
+
+		actions.push_back(action);
+
+		println("NotaCreated");
 	}
 
+	void deleteNotaNoAction(int index) {
+		if (index != -1) {
+			delete notas[index];
+			notas.erase(notas.begin() + index);
+		}
+	}
+
+	void deleteNota(int index) {
+		if (index != -1) {
+			struct YamahaAction action;
+			action.actionType = 2;
+			action.notaAntes = *notas[index];
+			action.notaDepois = *notas[index];
+
+			actions.push_back(action);
+
+			deleteNotaNoAction(index);
+
+			println("NotaDeleted");
+		}
+	}
+
+	void updateNotaNoAction(int index, int coluna, float length, float y) {
+		notas[index]->coluna = coluna;
+		notas[index]->length = length;
+		notas[index]->y = y;
+	}
+
+	void updateNotaNoAction(int index, Nota nota){
+		updateNotaNoAction(index, nota.coluna, nota.length, nota.y);
+	}
+
+	void updateNota(int index, int coluna, float length, float y) {
+		if (index != -1) {
+			struct YamahaAction action;
+			action.actionType = 0;
+			action.notaAntes = *notas[index];
+			//println("L antes " << action.notaAntes.length);
+			
+			updateNotaNoAction(index, coluna, length, y);
+
+			
+
+			action.notaDepois = *notas[index];
+
+			//println("L depois " << action.notaDepois.length);
+
+			actions.push_back(action);
+
+			println("NotaUpdated");
+		}
+		else {
+			println("Index Update Nota = -1");
+		}
+
+
+	}
+
+	void updateNota(int index, Nota note) {
+		updateNota(index, note.coluna, note.length, note.y);
+	}
 
 
 	void play() {
@@ -536,12 +604,102 @@ public:
 		setScroll(scrollY + amount);
 	}
 
+
+	void setBPSNoAction(float beatsPerSecond) {
+		bps = beatsPerSecond;
+	}
+
+	void setBPS(float beatsPerSecond) {
+
+		struct YamahaAction action;
+		action.actionType = 3;
+		action.valorAntes = bps;
+
+		setBPSNoAction(beatsPerSecond);
+
+		action.valorDepois = bps;
+
+		actions.push_back(action);
+
+	}
+
+	float getBPS() {
+		return bps;
+	}
+
+	int getNotaIndexById(int id) {
+		for (int i = 0; i < notas.size(); i++) {
+			if (notas[i]->id == id) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	void undo() {
+
+		if (actions.size() > 0) {
+
+			struct YamahaAction action = actions[actions.size() - 1];
+
+			switch (action.actionType) {
+			case 0:
+
+				//println("Update Id " << action.notaAntes.id << "  Index " << getNotaIndexById(action.notaAntes.id));
+				updateNotaNoAction(getNotaIndexById(action.notaAntes.id), action.notaAntes);
+				println("Nota Unupdated");
+				break;
+
+			case 1:
+				// Create Action  // Delete Undo
+				deleteNotaNoAction(getNotaIndexById(action.notaAntes.id));
+				println("Nota Uncreated");
+				break;
+
+			case 2:
+				// Delete Action // Create Undo
+				createNotaNoAction(action.notaDepois.coluna, action.notaDepois.length, action.notaDepois.y, action.notaDepois.id);
+				println("Nota Undeleted");
+				break;
+
+			case 3:
+				// Set BPS Action // Unset BPS Undo
+				setBPSNoAction(action.valorAntes);
+				println("Bps unsetted");
+				break;
+
+			default:
+				break;
+			}
+
+			actions.pop_back();
+
+			undoneActions.push_back(action);
+
+		}
+	}
+
 	void update(Vector2f mouse) {
 
 		
 		if (editing) {
 
+			if (autoSaveTimer.getElapsedTime() > autoSaveTime) {
+				saveNotas(autoSavePath);
+				autoSaveTimer.restart();
+				println("TILES AUTO-SAVE on " << autoSavePath);
+				
+			}
+
+
 			if (holdingNote == -1) {
+
+				if (mainInput.keyboardState[sf::Keyboard::LControl][0]) {
+					if (mainInput.keyboardState[sf::Keyboard::Z][1]) {
+						undo();
+					}
+				}
+
 
 				if (selectedNote != -1) {
 					if (mainInput.keyboardState[sf::Keyboard::Delete][1]) {
@@ -592,9 +750,11 @@ public:
 									holdingNote = i;
 									selectedNote = i;
 									holdingPart = part;
-									holdingNoteLength = nota->length;
-									holdingNoteY = nota->y;
+									//holdingNoteLength = nota->length;
+									//holdingNoteY = nota->y;
 									holdingY = yy;
+
+									holdingStartState = *nota;
 
 
 									i = notas.size();
@@ -620,7 +780,12 @@ public:
 			}
 			else {
 				if (mainInput.mouseState[0][2]) {
-					println("Soltou");
+					//println("Soltou");
+
+					// Oh gambiarrado satanas
+					Nota n = *notas[holdingNote];
+					*notas[holdingNote] = holdingStartState;
+					updateNota(holdingNote, n);
 					holdingNote = -1;
 				}
 				else {
@@ -641,14 +806,14 @@ public:
 
 
 					if (holdingPart == 0) {
-						nota->length = holdingNoteLength- yDif;
-						nota->y = holdingNoteY + yDif;
+						nota->length = holdingStartState.length - yDif;
+						nota->y = holdingStartState.y + yDif;
 					}
 					else if (holdingPart == 1) {
-						nota->y = holdingNoteY + yDif;
+						nota->y = holdingStartState.y + yDif;
 					}
 					else {
-						nota->length = holdingNoteLength + yDif;
+						nota->length = holdingStartState.length + yDif;
 					}
 
 
@@ -1093,7 +1258,7 @@ public:
 		if (finished) {
 			RectangleShape fade(Vector2f(roomWid, roomHei));
 			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/100))));
-			println(fadeFrames);
+			//println(fadeFrames);
 			window->draw(fade);
 		}
 
@@ -1337,8 +1502,14 @@ struct TilesInfo {
 bool pianoTiles(RenderWindow* window) {
 
 
+	float roomWid = 1280;
+	float roomHei = 720;
+
 	struct TilesInfo info;
+	info.roomSize.x = roomWid;
+	info.roomSize.y = roomHei;
 	info.init();
+
 
 	bool flores = false;
 
@@ -1348,8 +1519,8 @@ bool pianoTiles(RenderWindow* window) {
 
 		Vector2f size = (Vector2f)window->getSize();
 
-		float wid = 1280;
-		float hei = 720;
+		float wid = roomWid;
+		float hei = roomHei;
 		float xScl = (float)size.x / wid;
 		float yScl = (float)size.y / hei;
 
@@ -1388,6 +1559,21 @@ bool pianoTiles(RenderWindow* window) {
 	saveBox.init(2, 0, 300, 300, 40, "savePath");
 	saveBox.label = "savePath sem o .txt (Ctrl+P)";
 
+	struct ValBox bpsBox;
+	bpsBox.init(0, 0, 500, 60, 40, info.alcides->getBPS());
+	bpsBox.label = "Batidas por segundo";
+
+	struct Button playButton;
+	playButton.init(0, roomHei-40, 80, 20);
+	playButton.color = Color(250, 100, 150);
+	playButton.label = "play";
+
+	struct Button restartButton;
+	restartButton.init(100, roomHei - 40, 80, 20);
+	restartButton.color = Color(100, 100, 255);
+	restartButton.label = "restart";
+
+
 
 
 
@@ -1418,8 +1604,8 @@ bool pianoTiles(RenderWindow* window) {
 			}
 			if (e.type == sf::Event::Resized)
 			{
-				float wid = 1280;
-				float hei = 720;
+				float wid = roomWid;
+				float hei = roomHei;
 				float xScl = (float)e.size.width / wid;
 				float yScl = (float)e.size.height / hei;
 
@@ -1436,7 +1622,7 @@ bool pianoTiles(RenderWindow* window) {
 				xScl = wid / (float)e.size.width;
 				yScl = hei/(float)e.size.height;
 
-				sf::FloatRect area(0.f, 0.f, 1280, 720);
+				sf::FloatRect area(0.f, 0.f, roomWid, roomHei);
 				view.setSize(area.width, area.height);
 				view.setCenter(area.width / 2, area.height / 2);
 				view.setViewport(FloatRect((1-xScl)/2,(1-yScl)/2, xScl, yScl));
@@ -1477,6 +1663,40 @@ bool pianoTiles(RenderWindow* window) {
 
 			saveBox.update(mouseViewPos, inputType, lastChar);
 			saveBox.draw(*window);
+
+			bpsBox.update(mouseViewPos, inputType, lastChar);
+			
+			if (bpsBox.confirmed) {
+				info.alcides->setBPS(bpsBox.fVal);
+			}
+			if (!bpsBox.selected) {
+				bpsBox.setValue(info.alcides->getBPS());
+			}
+			
+			bpsBox.draw(*window);
+
+			//playButton.color = info.alcides->playing ? Color(100, 100, 100) : Color(180, 180, 180);
+			playButton.label = info.alcides->playing ? "pause" : "play";
+			playButton.update(mouseViewPos);
+
+			playButton.draw(*window);
+
+			if (playButton.clicked) {
+				if (info.alcides->playing) {
+					info.alcides->pause();
+				}
+				else {
+					info.alcides->play();
+				}
+			}
+
+			restartButton.update(mouseViewPos);
+
+			restartButton.draw(*window);
+
+			if (restartButton.clicked) {
+				info.alcides->setScroll(0);
+			}
 		}
 		//window->setView(view);
 
@@ -1505,7 +1725,7 @@ bool pianoTiles(RenderWindow* window) {
 		if (info.alcides->getPlayingSeconds() > 46 && !flores) {
 			flores = true;
 
-			FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
+			FloatRect area(0, -1000, roomWid, 1000);
 
 			Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
 			effect->floresPreset();

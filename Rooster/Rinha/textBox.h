@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef TEASSD
+#define TEASSD
+
 
 #define SFML_STATIC
 #include <SFML/Graphics.hpp>
@@ -169,3 +172,6 @@ public:
 };
 
 
+
+
+#endif // !TEASSD

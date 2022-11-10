@@ -39,8 +39,14 @@ void inline moveGalo(Galo& g, int x, int y) {
 int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundoluta, int __map)
 {
 
+
 	SoundBuffer buffer;
-	buffer.loadFromFile("sounds/audiofeira.ogg");
+	if (__map == 3)
+		buffer.loadFromFile("sounds/audiofeira.ogg");
+	else {
+		buffer.loadFromFile("sounds/audiofeira.ogg");
+	}
+
 	Sound sound(buffer);
 	sound.play();
 
@@ -108,7 +114,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	p1.setState(DANCING);
 	p2.setState(DANCING);
 
-	float pauseMilisec = 6000;
+	float pauseMilisec = 8000;
 	int animState = 1;
 	int opacity = 0;
 	int fundoopacity = 0;

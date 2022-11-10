@@ -286,6 +286,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	Clock matchTime;
 	matchTime.restart();
 
+	int pauseFrames = 120;
+
 	while (window->isOpen()) {
 
 
@@ -377,8 +379,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		// PLAYER CONTROLES
 
 		if (!fightWon) {
-			galoControls(galo, 0);
-			galoControls(galo2, 1);
+
+			if (pauseFrames <=  0) {
+				galoControls(galo, 0);
+				galoControls(galo2, 1);
+			}
+			else {
+				pauseFrames--;
+			}
+			
 
 
 			// GALO ATAQUES
@@ -435,7 +444,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			if (galo.gethp() < 0) {
 				rounds++;
 				p2Rounds++;
-
+				
+				
 				if (rounds == 3 || p2Rounds == 2) {
 					// Galo 2 Win
 					framesWin = 250;
@@ -451,6 +461,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				else {
 					// New Round
 					framesRound = 60;
+					pauseFrames = 120;
+					galo.resetPosition();
+					galo2.resetPosition();
 					galo.sethp(galo.getMaxhp());
 					galo2.sethp(galo2.getMaxhp());
 				}
@@ -474,6 +487,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				else {
 					// New Round
 					framesRound = 60;
+					pauseFrames = 120;
+					galo.resetPosition();
+					galo2.resetPosition();
 					galo.sethp(galo.getMaxhp());
 					galo2.sethp(galo2.getMaxhp());
 				}
@@ -520,17 +536,10 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				yamahaFallSnd.play();
 
-				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
-				effect->sanguePreset();
-				effect->isHSV = true;
+				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, Rooster::floorY), 2, -90, 220, 0, 0);
+				effect->poeiraPreset();
 
-				effect->hueMax = 20;
-				effect->hueMax = 40;
-				effect->lightMin = 0.75;
-				effect->lightMax = 1;
-
-				effect->friction = 0.95;
-				effect->gravity.y = 0;
+				effect->fadeOutAlpha = true;
 				effect->lifeMin = 60;
 				effect->lifeMax = 150;
 				effect->createMultipleParticles(150);

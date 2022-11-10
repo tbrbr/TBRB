@@ -36,8 +36,13 @@ void inline moveGalo(Galo& g, int x, int y) {
 	g.setPosition(Vector2f(g.getPosition().x + x, g.getPosition().y + y));
 }
 
-int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundoluta)
+int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundoluta, int __map)
 {
+
+	SoundBuffer buffer;
+	buffer.loadFromFile("sounds/audiofeira.ogg");
+	Sound sound(buffer);
+	sound.play();
 
 	escurecer(window);
 

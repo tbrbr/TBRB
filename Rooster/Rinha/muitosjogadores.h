@@ -5,62 +5,151 @@
 
 #include "server_connect.h"
 
-void galo2move(Galo* galo, char* data) {
+void galo2thread(Galo * galo2, TcpSocket * socket) {
+	char data[10] = "\0";
+	size_t received;
+	while (1) {
 
-	if (data[0] == 'w')
-	{
-		galo->jump();
-	}
-	else if (data[0] == 'f') {
-		if (data[1] == 's') {
-			galo->lowKick();
-			data[1] = '\0';
+		socket->receive(data, 10, received);
+		if (data[0] == 'w')
+		{
+			galo2->jump();
+		}
+		else if (data[0] == 'f') {
+			if (data[1] == 's') {
+				galo2->lowKick();
+			}
+			else
+				galo2->highKick();
+
+		}
+		else if (data[0] == 'g') {
+			if (galo2->onFire)
+				galo2->super();
+			else
+				galo2->especial();
+		}
+
+		if (data[5] == 'd')
+		{
+			galo2->run(true);
+		}
+		else if (data[5] == 'a')
+		{
+			galo2->run(false);
+		}
+		else if (data[5] == 's')
+		{
+			galo2->defend();
+		}
+		else if (data[5] == 'q') {
+			galo2->setState(Rooster::state::DANCING);
 		}
 		else {
-			galo->highKick();
+			galo2->setState(Rooster::state::STOPPED);
 		}
-	}
-	else if (data[0] == 'g') {
-		galo->especial();
-	}
 
-	if (data[5] == 'd')
-	{
-	
-		galo->run(true);
-
-	}
-	else if (data[5] == 'a')
-	{
-	
-		galo->run(false);
-
-	}
-	else if (data[5] == 's')
-	{
-		galo->defend();
-	}
-	else
-	{
-		galo->setState(Rooster::state::STOPPED);
+		data[0] = '\0';
+		data[1] = '\0';
+		data[5] = '\0';
 	}
 
 }
 
+void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 
-void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, RectangleShape fundo, TcpSocket * socket) {
 
-	
-	
+	char data[10] = "\0";
+	while (1) {
+		if (*pauseFrames <= 0) {
+			if (mainInput.inputState[0][GOUP][1])
+			{
+				data[0] = 'w';
+				galo->jump();
+			}
+			else if (mainInput.inputState[0][LIGHT_ATTACK][1]) {
+				data[0] = 'f';
+				if (mainInput.inputState[0][GODOWN][0]) {
+					data[1] = 's';
+					galo->lowKick();
+				}
+				else {
+					galo->highKick();
+				}
+
+			}
+			else if (mainInput.inputState[0][STRONG_ATTACK][1]) {
+				data[0] = 'g';
+				if (galo->onFire)
+					galo->super();
+				else
+					galo->especial();
+			}
+
+			if (mainInput.inputState[0][GORIGHT][0])
+			{
+				data[5] = 'd';
+				galo->run(true);
+
+			}
+			else if (mainInput.inputState[0][GOLEFT][0])
+			{
+				data[5] = 'a';
+				galo->run(false);
+			}
+			else if (mainInput.inputState[0][GODOWN][0])
+			{
+				data[5] = 's';
+				galo->defend();
+			}
+			else if (mainInput.inputState[0][DANCE][0]) {
+				data[5] = 'q';
+				galo->setState(Rooster::state::DANCING);
+			}
+			else {
+				data[5] = '0';
+				galo->setState(Rooster::state::STOPPED);
+			}
+		}
+		else {
+			*pauseFrames--;
+		}
+
+		socket->send(data, 10);
+		data[0] = '\0';
+		data[1] = '\0';
+		data[5] = '\0';
+		mainInput.update();
+	}
+}
+
+void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleShape fundo, TcpSocket * socket) {
+
+
+	//-------------------------------------------------------------------------------------------
+	bool executarFatality = false;
+
+	// Tenho que botar algo no começo pra garantir que nao vai crashar e pro codigo rodar
+	Rooster::Galo* winner = &galo;
+	Rooster::Galo* looser = &galo2;
+
+	//-------------------------------------------------------------------------------------------
 
 	int rounds = 0;
 	int p1Rounds = 0;
 	int p2Rounds = 0;
+	int maxComboP1 = 0;
+	int maxComboP2 = 0;
+
+
+
+	// Textos Insanos
+	//-------------------------------------------------------------------------------------------
 	Font fonte;
 	fonte.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
 
+	// Rounds
 	Text round[3];
-
 	for (int i = 0; i < 3; i++) {
 		string name = "Round";
 		name += to_string(i + 1);
@@ -78,6 +167,7 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		);
 	}
 
+	// Fight
 	Text fight("Fight !!!", fonte, SCREEN_WIDTH / 20);
 	fight.setFillColor(Color::Red);
 	fight.setOutlineColor(Color::Black);
@@ -88,6 +178,16 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		SCREEN_HEIGHT / 2 - fight.getGlobalBounds().height / 2
 	);
 
+	// Finish Him
+	Text finishHim("Finish Him!", fonte, SCREEN_WIDTH / 20);
+	finishHim.setFillColor(Color::Red);
+	finishHim.setOutlineColor(Color::Black);
+	finishHim.setOutlineThickness(SCREEN_WIDTH / 1000);
+
+	finishHim.setPosition(
+		SCREEN_WIDTH / 2 - finishHim.getGlobalBounds().width / 2,
+		SCREEN_HEIGHT / 2 - finishHim.getGlobalBounds().height / 2
+	);
 
 	SoundBuffer player1winsbuf;
 	player1winsbuf.loadFromFile("sounds/Player_1_Wins.wav");
@@ -110,9 +210,13 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 		soundRound[i].setBuffer(roundBuf[i]);
 	}
 
+
+
 	int framesRound = 60;
 	int framesFight = 0;
 	int framesWin = 0;
+
+	bool fightWon = false;
 
 
 	Music musicas[8];
@@ -128,248 +232,204 @@ void multiPlayer(RenderWindow* window, Galo& galo, Galo & galo2, int& option, Re
 	int index = rand() % 8;
 	musicas[index].play();
 
-	//=================================================================
+	Clock matchTime;
+	matchTime.restart();
 
-	char* data = (char*)malloc(10);
-	data[0] = '\0';
-	size_t size;
+	int pauseFrames = 120;
 
-	//=================================================================
-	
+	char data[10] = "\0";
 
+	Thread send(std::bind(&galo1thread, &galo ,socket, &pauseFrames));
+	Thread receive(std::bind(&galo2thread, &galo2, socket));
+
+	send.launch();
+	receive.launch();
 
 	while (window->isOpen()) {
+
+
+		/*
+		musicas[index].pause();
+		galo.fatality(window,&galo2,fundo);
+		*/
+
+
 		window->clear();
+		window->setView(window->getDefaultView());
 		window->draw(fundo);
 
 		if (musicas[index].Stopped) {
 			index = rand() % 8;
 			musicas[index].play();
 		}
+
 		Event e;
 		while (window->pollEvent(e))
 		{
 			if (e.type == Event::Closed)
 			{
+				send.terminate();
+				receive.terminate();
 				window->close();
 			}
 
-		}
-		//galo.fatality(window,&galo2,fundo);
-
-		mainInput.update();
-
-		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
-			window->close();
-		}
-
-
-		//PLAYER 1 CONTROLES
-
-		int player = 0;
-
-		if (mainInput.inputState[player][GOUP][1])
-		{
-			data[0] = 'w';
-			galo.jump();
-		}
-		else if (mainInput.inputState[player][LIGHT_ATTACK][1]) {
-			if (mainInput.inputState[player][GODOWN][0]) {
-				strcpy(data, "fs\0");
-				galo.lowKick();
+			if (e.type == Event::MouseMoved) {
+				mainInput.mousePos = Vector2f(e.mouseMove.x, e.mouseMove.y);
 			}
 
-			else {
-				strcpy(data, "f");
-				galo.highKick();
-			}
-		}
-		else if (mainInput.inputState[player][STRONG_ATTACK][1]) {
-			strcpy(data, "g");
-			galo.especial();
-		}
+			if (e.type == sf::Event::Resized)
+			{
 
-
-
-		if (mainInput.inputState[player][GORIGHT][0])
-		{
-			strcpy(data + 5, "d");
-			
-			galo.run(true);
-
-		}
-		else if (mainInput.inputState[player][GOLEFT][0])
-		{
-			strcpy(data + 5, "a");
-			
-			galo.run(false);
-
-		}
-		else if (mainInput.inputState[player][GODOWN][0])
-		{
-			strcpy(data + 5, "s");
-			galo.defend();
-		}
-		else
-		{
-			data[5] = '\0';
-			galo.setState(Rooster::state::STOPPED);
-		}
-
-		//===============================
-
-		if (socket->send(data, 10) != Socket::Done) {
-			data[0] = '\0';
-			data[5] = '\0';
-			data[1] = '\0';
-		}
-		
-		if (socket->receive(data, 10, size) == Socket::Done) {
-			galo2move(&galo2, data);
-		}
-
-		//==============================
-		
-		
-		//PLAYER 2 CONTROLES
-
-		player = 1;
-
-
-		for (int i = 0; i < galo.hurtBox.size(); i++) {
-
-			if (galo2.hiKick->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.hiKick, galo2.facingRight);
-
-			}
-			if (galo2.louKick->CheckCollision(galo.hurtBox[i])) {
-				galo.apanhar(*galo2.louKick, galo2.facingRight);
-
-			}
-			if (galo2.ultimateShot->CheckCollision(galo.hurtBox[i])) {
-				if (galo2.ultimateShot->id == 5) {
-					if (!galo2.ultimateShot->getHitted) {
-						galo2.ultimateShot->getHitted = true;
-						galo2.ultimateShot->init2.restart();
-					}
-				}
-				else {
-					println("A");
-					galo.apanhar(*galo2.ultimateShot, galo2.facingRight);
-					galo2.ultimateShot->getHitted = true;
-				}
 			}
 		}
 
 
-		for (int i = 0; i < galo2.hurtBox.size(); i++) {
+		// PLAYER CONTROLES
 
-			if (galo.hiKick->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.hiKick, galo.facingRight);
+		if (!fightWon) {
 
+			// GALO ATAQUES
+			galoAttacks(galo, galo2);
+			galoAttacks(galo2, galo);
+
+			// Ataque de Cinto
+			if (galo.ultimateShot->getHitted && galo.ultimateShot->id == 5) {
+				galo.apanharByKalsa(&galo2, window);
 			}
-			if (galo.louKick->CheckCollision(galo2.hurtBox[i])) {
-				galo2.apanhar(*galo.louKick, galo.facingRight);
+			else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
+				galo2.apanharByKalsa(&galo, window);
 			}
-			if (galo.ultimateShot->CheckCollision(galo2.hurtBox[i])) {
-				if (galo.ultimateShot->id == 5) {
-
-					if (!galo.ultimateShot->getHitted) {
-						galo.ultimateShot->getHitted = true;
-						galo.ultimateShot->init2.restart();
-					}
-				}
-				else {
-					println("A");
-					galo2.apanhar(*galo.ultimateShot, galo.facingRight);
-					galo.ultimateShot->getHitted = true;
-				}
-
-
+			//ataque de fogo
+			if (galo.superAtack->getHitted && galo.superAtack->id == 15) {
+				galo.superAtack->getHitted = galo2.getHitByBruxoSuper(window);
+			}
+			else if (galo2.superAtack->getHitted && galo2.superAtack->id == 15) {
+				galo2.superAtack->getHitted = galo.getHitByBruxoSuper(window);
 			}
 
+
+			galo.update();
+			galo2.update();
+
+			// Combo
+			galo.comboCounter = galo2.getHits();
+			galo2.comboCounter = galo.getHits();
+
+			if (galo.comboCounter > maxComboP1) {
+				maxComboP1 = galo.comboCounter;
+			}
+
+			if (galo2.comboCounter > maxComboP1) {
+				maxComboP2 = galo2.comboCounter;
+			}
+
+			// Health Bar
+			galo.bar->draw(window);
+			galo2.bar->draw(window);
+
+			// Draw
+			galo.show(*window);
+			galo2.show(*window);
 		}
 
-		if (galo.ultimateShot->getHitted && galo.ultimateShot->id == 5) {
-			galo.apanharByKalsa(&galo2, window);
-		}
-		else if (galo2.ultimateShot->getHitted && galo2.ultimateShot->id == 5) {
-			galo2.apanharByKalsa(&galo, window);
-		}
-
-		galo.update();
-		galo2.update();
+		// Rounds
 
 
-		galo.bar->draw(window);
-		galo2.bar->draw(window);
+		if (!fightWon) {
 
-		galo.show(*window);
-		galo2.show(*window);
-
-		mainPartSystem.update();
-		mainPartSystem.draw(*window);
-
-		if (galo.gethp() < 0) {
-
-			rounds++;
-			if (rounds == 3 || p2Rounds == 2) {
-				framesWin = 60;
-			}
-			else {
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo.getMaxhp());
+			if (galo.gethp() < 0) {
+				rounds++;
 				p2Rounds++;
+
+
+				if (rounds == 3 || p2Rounds == 2) {
+					// Galo 2 Win
+					framesWin = 250;
+					musicas[index].stop();
+
+					fightWon = true;
+					executarFatality = true;
+					winner = &galo2;
+					looser = &galo;
+
+					println("Ganhou");
+				}
+				else {
+					// New Round
+					framesRound = 60;
+					pauseFrames = 120;
+					galo.resetPosition();
+					galo2.resetPosition();
+					galo.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
+				}
 			}
-		}
-		else if (galo2.gethp() < 0) {
-			rounds++;
-			if (rounds == 3 || p1Rounds == 2) {
-				framesWin = 60;
-			}
-			else {
-				framesRound = 60;
-				galo.sethp(galo.getMaxhp());
-				galo2.sethp(galo.getMaxhp());
+			else if (galo2.gethp() < 0) {
+				rounds++;
 				p1Rounds++;
+
+				if (rounds == 3 || p1Rounds == 2) {
+					// Galo win
+					framesWin = 250;
+					musicas[index].stop();
+
+					fightWon = true;
+					executarFatality = true;
+					winner = &galo;
+					looser = &galo2;
+
+					println("Ganhou");
+				}
+				else {
+					// New Round
+					framesRound = 60;
+					pauseFrames = 120;
+					galo.resetPosition();
+					galo2.resetPosition();
+					galo.sethp(galo.getMaxhp());
+					galo2.sethp(galo2.getMaxhp());
+				}
+			}
+
+			// Round Extra Stuff
+			if (framesRound > 0) {
+				if (framesRound == 60) {
+					soundRound[rounds].play();
+				}
+				framesRound--;
+				if (framesRound == 0) {
+					s.play();
+					framesFight = 60;
+				}
+				window->draw(round[rounds]);
+			}
+
+			if (framesFight > 0) {
+				framesFight--;
+				window->draw(fight);
 			}
 
 		}
 
-
-		if (framesRound > 0) {
-			if (framesRound == 60) {
-				soundRound[rounds].play();
-			}
-			framesRound--;
-			if (framesRound == 0) {
-				s.play();
-				framesFight = 60;
-			}
-			window->draw(round[rounds]);
-
-		}
-		if (framesFight > 0) {
-			framesFight--;
-			window->draw(fight);
-		}
-		if (framesWin > 0) {
+		if (executarFatality) {
+			println("Fatalitou");
+			winner->fatality(window, looser, fundo);
+			send.terminate();
+			receive.terminate();
+			option = MENU_PRINCIPAL;
 			return;
 		}
 
-
-		//exp->update();
-		//exp->draw(*window);
-
-		data[0] = '\0';
-		data[5] = '\0';
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
 		window->display();
+
 	}
 
-
+	
 
 }
+
 
 
 

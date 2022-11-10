@@ -20,8 +20,6 @@ void galoControls(Rooster::Galo& galo, int player) {
 			galo.especial();
 	}
 
-
-
 	if (mainInput.inputState[player][GORIGHT][0])
 	{
 

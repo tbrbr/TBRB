@@ -14,8 +14,6 @@ public:
 
 	StatusViewer() {
 
-
-
 		table.setFillColor(Color::White);
 		table.setSize(Vector2f(SCREEN_WIDTH * 0.15, SCREEN_HEIGHT * 0.15));
 
@@ -678,12 +676,6 @@ public:
 					if (p2 != -1) {
 
 						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
-							galop1[0]->resetPosition();
-							galop2[0]->resetPosition();
-
-							galop1[0]->noGravity = false;
-							galop2[0]->noGravity = false;
-
 							option = MAPA_FALIDO_E_ACHE_RUIM_WALTER;
 							return;
 						}
@@ -803,6 +795,45 @@ public:
 
 		char data[10] = "\0";
 
+		RectangleShape cancel2;
+		Vector2f buttonSize;
+		buttonSize.x = window->getSize().x * 0.12;
+		buttonSize.y = window->getSize().y * 0.07;
+
+		cancel2.setSize(buttonSize);
+		cancel2.setFillColor(Color::Black);
+		cancel2.setOutlineThickness(2);
+		cancel2.setOutlineColor(Color::Red);
+
+		Font bops;
+		bops.loadFromFile("fonts/blops.ttf");
+		Text _cancel2("CANCEL", bops, SCREEN_HEIGHT / 60);
+		_cancel2.setFillColor(Color::Black);
+		_cancel2.setOutlineThickness(1);
+		_cancel2.setOutlineColor(Color::Red);
+
+		Vector2f _pos;
+
+		RectangleShape rectangle;
+		rectangle.setSize(Vector2f(window->getSize().x * 0.3, window->getSize().y * 0.3));
+		rectangle.setPosition(window->getSize().x / 2 - rectangle.getSize().x / 2, window->getSize().y / 2 - rectangle.getSize().y / 2);
+		rectangle.setFillColor(Color::Black);
+		rectangle.setOutlineColor(Color::Red);
+		rectangle.setOutlineThickness(4);
+		_pos.x = rectangle.getPosition().x + rectangle.getSize().x / 2 - cancel2.getGlobalBounds().width / 2;
+		_pos.y = rectangle.getPosition().y + rectangle.getSize().y * 0.6;
+		cancel2.setPosition(_pos);
+
+		Text t("Awaiting Oponent", bops, window->getSize().y / 60);
+		t.setPosition(rectangle.getPosition().x + rectangle.getSize().x / 2 - t.getGlobalBounds().width / 2, rectangle.getPosition().y + rectangle.getSize().y * 0.13);
+		t.setFillColor(Color::Red);
+
+		_pos.x = cancel2.getPosition().x + cancel2.getSize().x / 2 - _cancel2.getGlobalBounds().width / 2;
+		_pos.y = cancel2.getPosition().y + cancel2.getSize().y - _cancel2.getGlobalBounds().height * 2;
+		_cancel2.setPosition(_pos);
+
+
+
 		while (window->isOpen()) {
 			data[0] = '\0';
 			int mousex = Mouse::getPosition(*window).x;
@@ -847,13 +878,14 @@ public:
 
 						}
 
-						if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
-							data[0] = 'c';
-							socket->send(data, sizeof(data));
-							delete* galop1;
-							p1 = -1;
-							isready1 = false;
-						}
+						if(isready1 && !isready2)
+							if (ButtonCheck::isButtonComMouseNele(cancel2, mousex, mousey)) {
+								data[0] = 'c';
+								socket->send(data, sizeof(data));
+								delete* galop1;
+								p1 = -1;
+								isready1 = false;
+							}
 					}
 				}
 			}
@@ -866,7 +898,7 @@ public:
 				galop2[0]->update();
 				galop1[0]->update();
 
-				return VERSUS;
+				return MAPA_FALIDO_E_ACHE_RUIM_WALTER;
 
 			}
 
@@ -880,19 +912,20 @@ public:
 				window->close();
 			}
 
+			if (!isready1) {
+				if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
+					OKbutton.setFillColor(Color::Yellow);
+				}
+				else {
+					OKbutton.setFillColor(Color::Green);
+				}
 
-			if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
-				OKbutton.setFillColor(Color::Yellow);
-			}
-			else {
-				OKbutton.setFillColor(Color::Green);
-			}
-
-			if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
-				cancelButton.setFillColor(Color::Yellow);
-			}
-			else {
-				cancelButton.setFillColor(Color::Red);
+				if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
+					cancelButton.setFillColor(Color::Yellow);
+				}
+				else {
+					cancelButton.setFillColor(Color::Red);
+				}
 			}
 
 			window->draw(sprFundo);
@@ -908,9 +941,10 @@ public:
 
 			int rooster = -1;
 
-			for (int i = 0; i < 5; i++) {
-				this->updateGaloView(window, i, mousex, mousey, rooster);
-			}
+			if (!isready1)
+				for (int i = 0; i < 5; i++) {
+					this->updateGaloView(window, i, mousex, mousey, rooster);
+				}
 
 			this->updateBars(rooster);
 
@@ -938,6 +972,13 @@ public:
 				window->draw(cancelButton);
 				window->draw(t_x);
 				window->draw(t_ok);
+			}
+
+			if (isready1 && !isready2) {
+				window->draw(rectangle);
+				window->draw(t);
+				window->draw(cancel2);
+				window->draw(_cancel2);
 			}
 
 			window->display();

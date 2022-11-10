@@ -104,6 +104,9 @@ struct YamahaAction {
 
 	Nota notaAntes;
 	Nota notaDepois;
+
+	std::vector<Nota> notas;
+
 };
 
 class Yamaha {
@@ -156,7 +159,7 @@ class Yamaha {
 
 	sf::Clock autoSaveTimer;
 	sf::Time autoSaveTime;
-	const string autoSavePath = "_tilesAutoSave.txt";
+	const string autoSavePath = "PianoFiles/_tilesAutoSave.txt";
 
 
 	std::vector<struct YamahaAction> actions;
@@ -223,7 +226,8 @@ public:
 		roomHei = roomSize.y;
 
 
-		musTeste.music.openFromFile("sounds/napop.ogg");
+
+		musTeste.music.openFromFile("PianoFiles/sounds/zerebolabola.ogg");
 		//musTeste.music.play();
 
 		base = 400;
@@ -400,13 +404,16 @@ public:
 
 
 
-	void clearNotas() {
+	void hardClearNotas() {
 		for (int i = 0; i < notas.size(); i++) {
 			delete notas[i];
 		}
 		notas.clear();
 		actions.clear();
 	}
+
+	
+
 
 	void saveNotas(std::string str) {
 		std::ofstream file(str);
@@ -442,7 +449,7 @@ public:
 				std::getline(file, line);
 				bps = std::stof(line);
 
-				clearNotas();
+				hardClearNotas();
 				setScroll(0);
 				
 
@@ -460,10 +467,13 @@ public:
 					std::getline(file, line);
 					float length = std::stof(line);
 
-					Nota* nota = new Nota(coluna, length, y, uniqueId);
-					uniqueId++;
+					if (length > 0) {
+						Nota* nota = new Nota(coluna, length, y, uniqueId);
 
-					notas.push_back(nota);
+						uniqueId++;
+
+						notas.push_back(nota);
+					}
 
 					std::getline(file, line); // Gets End or Nota X
 				}
@@ -498,7 +508,47 @@ public:
 		file.close();
 	}
 
-	Nota* createNotaNoAction(int col, int len, int yy, int id) {
+
+
+
+	void clearNotasNoAction() {
+		for (int i = 0; i < notas.size(); i++) {
+			delete notas[i];
+		}
+		notas.clear();
+	}
+
+	void clearNotas() {
+		struct YamahaAction action;
+		action.actionType = 4;
+		for (int i = 0; i < notas.size(); i++) {
+			action.notas.push_back(*notas[i]);
+		}
+
+		clearNotasNoAction();
+
+		actions.push_back(action);
+	}
+
+	void unClearNotasNoAction(struct YamahaAction& action) {
+		for (int i = 0; i < action.notas.size(); i++) {
+			Nota n = action.notas[i];
+			createNotaNoAction(n.coluna, n.length, n.y, n.id);
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	Nota* createNotaNoAction(int col, float len, float yy, int id) {
 		Nota* n = new Nota(col, len, yy, id);
 
 		notas.push_back(n);
@@ -506,7 +556,7 @@ public:
 		return n;
 	}
 
-	void createNota(int col, int len, int yy) {
+	void createNota(int col, float len, float yy) {
 
 		uniqueId++;
 		Nota* n = createNotaNoAction(col, len, yy, uniqueId);
@@ -668,6 +718,13 @@ public:
 				println("Bps unsetted");
 				break;
 
+			case 4:
+				// Clear Action // Unclear Undo
+				unClearNotasNoAction(action);
+				println("Notas unCleared");
+				break;
+
+
 			default:
 				break;
 			}
@@ -732,7 +789,6 @@ public:
 							struct Nota* nota = notas[i];
 
 							if (nota->coluna == coluna) {
-
 								if (yy > nota->y && yy < nota->y + nota->length) {
 
 									achou = true;
@@ -760,13 +816,11 @@ public:
 									i = notas.size();
 
 								}
-
-
 							}
 						}
 
 						if (!achou) {
-							createNota(coluna, 1, yy-1);
+							createNota(coluna, 1, (int)(yy-1));
 						}
 
 					}
@@ -806,14 +860,19 @@ public:
 
 
 					if (holdingPart == 0) {
-						nota->length = holdingStartState.length - yDif;
-						nota->y = holdingStartState.y + yDif;
+
+
+						nota->length = maximum(holdingStartState.length - yDif, 0.25);
+						float newDif = holdingStartState.length - nota->length;
+
+						nota->y = holdingStartState.y + newDif;
 					}
 					else if (holdingPart == 1) {
+
 						nota->y = holdingStartState.y + yDif;
 					}
 					else {
-						nota->length = holdingStartState.length + yDif;
+						nota->length = maximum(holdingStartState.length + yDif, 0.25);
 					}
 
 
@@ -1041,6 +1100,13 @@ public:
 			window->draw(bar);
 		}
 
+
+		sf::Text notaIndex;
+		notaIndex.setFont(basicFont);
+		notaIndex.setColor(Color::White);
+		notaIndex.setCharacterSize(15);
+		notaIndex.setScale(xScl, yScl);
+
 		for (int i = 0; i < notas.size(); i++) {
 			
 			ConvexShape noteShape;
@@ -1084,10 +1150,11 @@ public:
 			window->draw(noteShape);
 
 
+
 			if (notas[i]->length > 1) {
 				ConvexShape lineShape;
 
-				
+
 
 				lineShape.setPointCount(4);
 
@@ -1128,7 +1195,7 @@ public:
 				float sliderX = noteX + baseQuart / 2 - sliderWid / 2;
 
 				float sliderHei = sliderWid;
-				float sliderY = noteY - (sliderHei / 2) + (noteLen-notaSize) * (1 - notas[i]->slided);
+				float sliderY = noteY - (sliderHei / 2) + (noteLen - notaSize) * (1 - notas[i]->slided);
 
 				sliderShape = rectToConvexShape(sliderX, sliderY, sliderWid, sliderHei);
 
@@ -1158,6 +1225,15 @@ public:
 
 
 			}
+
+
+			if (true) {
+				notaIndex.setPosition(noteX + pos.x, noteY + pos.y);
+				notaIndex.setString(std::to_string(i));
+				window->draw(notaIndex);
+			}
+
+
 
 
 			
@@ -1486,19 +1562,6 @@ struct TilesInfo {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool pianoTiles(RenderWindow* window) {
 
 
@@ -1573,6 +1636,11 @@ bool pianoTiles(RenderWindow* window) {
 	restartButton.color = Color(100, 100, 255);
 	restartButton.label = "restart";
 
+	struct Button clearButton;
+	clearButton.init(200, roomHei - 40, 60, 20);
+	clearButton.color = Color(0, 0, 0);
+	clearButton.label = "clear";
+
 
 
 
@@ -1580,6 +1648,9 @@ bool pianoTiles(RenderWindow* window) {
 	while (window->isOpen()) {
 
 		inputType = -1;
+
+		mainInput.update();
+
 
 		Event e;
 		while (window->pollEvent(e))
@@ -1596,6 +1667,10 @@ bool pianoTiles(RenderWindow* window) {
 
 			if (e.type == Event::MouseMoved) {
 				mainInput.mousePos = Vector2f(e.mouseMove.x, e.mouseMove.y);
+			}
+
+			if (e.type == Event::MouseWheelScrolled) {
+				mainInput.mouseScroll = e.mouseWheelScroll.delta;
 			}
 
 			if (e.type == Event::Closed)
@@ -1645,7 +1720,7 @@ bool pianoTiles(RenderWindow* window) {
 			}
 		}
 
-		mainInput.update();
+		
 
 		window->clear();
 
@@ -1697,6 +1772,20 @@ bool pianoTiles(RenderWindow* window) {
 			if (restartButton.clicked) {
 				info.alcides->setScroll(0);
 			}
+
+			clearButton.update(mouseViewPos);
+
+			clearButton.draw(*window);
+
+			if (clearButton.clicked) {
+				info.alcides->clearNotas();
+			}
+
+
+			if (mainInput.mouseScroll != 0) {
+				info.alcides->moveScroll(mainInput.mouseScroll);
+			}
+
 		}
 		//window->setView(view);
 
@@ -1704,7 +1793,7 @@ bool pianoTiles(RenderWindow* window) {
 			if (mainInput.keyboardState[sf::Keyboard::L][1]) {
 
 				std::string str = loadBox.sVal;
-				str += ".txt";
+				str = "PianoFiles/" + str + ".txt";
 
 
 				info.alcides->loadNotas(str);
@@ -1713,7 +1802,7 @@ bool pianoTiles(RenderWindow* window) {
 			if (mainInput.keyboardState[sf::Keyboard::P][1]) {
 
 				std::string str = saveBox.sVal;
-				str += ".txt";
+				str = "PianoFiles/" + str + ".txt";
 
 				info.alcides->saveNotas(str);
 			}

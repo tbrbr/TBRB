@@ -25,7 +25,7 @@ namespace Rooster {
 
 
 
-            this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
+            
 
             atacking = NOT_ATTACK;
 
@@ -43,8 +43,7 @@ namespace Rooster {
 
 
 
-            // Puff
-            puffTex.loadFromFile("sprites/botaProjectile.png");
+         
 
 
             // Hurtboxes
@@ -72,6 +71,33 @@ namespace Rooster {
 
             this->ultimateShot = new Ataques( 13, 10, HitBox{ Vector2f(0, 0), 0 },10, 10, PI / 2, milliseconds(500),"");
             ultimateShot->hitbox.radius = 5 * abs(model.xScl);
+
+            this->superAtack = new Ataques(14, 20, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(800), "sounds\\mg34.ogg");
+            superAtack->hitbox.radius = 5 * abs(model.xScl);
+
+
+            // Puff
+            puffTex.loadFromFile("sprites/botaProjectile.png");
+
+            SpriteMap puffSprMap;
+            puffSprMap.addImages(16, 16, 0, 0, 2, 1, (Vector2i)puffTex.getSize());
+
+            Projectile* puff = new Projectile(
+                Vector2f(0, 0),
+                "sprites/botaProjectile.png",
+                0, 0, Vector2f(5, 5), puffSprMap
+            );
+
+            puff->setOriginCenter(Vector2f(puff->getSprite().getLocalBounds().width/2, (puff->getSprite().getLocalBounds().height)));
+            puff->setSpriteImageSpeed(0.05);
+            puff->setScale(model.xScl*4, model.xScl*4);
+            puff->setMortality(true);
+            puff->setLife(200);
+            puff->setScaleSpeed(0.005, 0.005);
+            puff->active = false;
+           
+
+            projectiles.push_back(*puff);
 
 
 
@@ -174,10 +200,118 @@ namespace Rooster {
         }
         void super() override {
             if (atacking == NOT_ATTACK) {
-                atacking = SPECIAL;
-                ultimateShot->init.restart();
+                atacking = SUPER;
+                superAtack->init.restart();
             }
 
+        }
+
+
+        void superAnim() {
+            Time t = superAtack->init.getElapsedTime();
+
+            if (atacking != NOT_ATTACK) {
+                if (t > superAtack->timeLapse) {
+                    atacking = NOT_ATTACK;
+                    superAtack->isAtacking = false;
+                    superAtack->getHitted = false;
+                    return;
+                }
+
+
+                if (superAtack->getHitted || !air) {
+                    atacking = NOT_ATTACK;
+
+                    vspeed = -5;
+                    println("super atk botas");
+
+                    if (!air) {
+                        float xx = model.pos.x;
+                        float yy = model.pos.y;
+                        projectiles[0].setPosition(xx, Rooster::floorY);
+
+                        float faceSign = facingRight ? 1 : -1;
+
+                        projectiles[0].setImpulse(faceSign * 16, 0);
+                        projectiles[0].setFriction(0.96);
+                        projectiles[0].setVisibility(true);
+                        projectiles[0].active = true;
+                        projectiles[0].setLife(100);
+                 
+                        projectiles[0].setScaleMultiplier(0, 0);
+                        projectiles[0].facingSign = faceSign;
+                        
+                    }
+
+                    
+
+                    superAtack->isAtacking = false;
+                    superAtack->getHitted = false;
+                    return;
+
+
+                }
+
+            }
+
+
+
+            float percentage = (float)t.asMilliseconds() / (superAtack->timeLapse.asMilliseconds());
+
+
+            if (!superAtack->getHitted) {
+                if (percentage < 1.f / 3.f) {
+
+                    float thisPercentage = percentage * 3;
+
+                    model.at("Head")->offset.y *= 0.5;
+
+                    float oPerc = ((thisPercentage / 2) + 1);
+                    model.at("Body")->xScl = model.at("Body")->getBaseScale().x * oPerc;
+                    model.at("Body")->yScl = model.at("Body")->getBaseScale().y * oPerc;
+
+
+
+                }
+                else if (percentage < 2.f / 3.f) {
+
+
+                    float thisPercentage = ruleOfThree(percentage, float(1 / 3), float(2 / 3), 0, 1);
+
+
+                    model.at("Head")->offset.y = 0;
+
+                    float oPerc = 1.5;
+
+                    model.at("Body")->xScl = model.at("Body")->getBaseScale().x * oPerc;
+                    model.at("Body")->yScl = model.at("Body")->getBaseScale().y * oPerc;
+
+
+                    vspeed = 50;
+
+                    superAtack->isAtacking = true;
+                    superAtack->hitbox.center.x = model.at("Body")->drawPos.x;
+                    superAtack->hitbox.center.y = model.at("Body")->drawPos.y + 100 * model.yScl;
+                }
+                else if (percentage < 2.9f / 3.f) {
+
+                    float thisPercentage = ruleOfThree(percentage, float(2 / 3), float(2.9 / 3), 0, 1);
+
+                    vspeed = 50;
+
+                    superAtack->isAtacking = true;
+                    superAtack->hitbox.center.x = model.at("Body")->drawPos.x;
+                    superAtack->hitbox.center.y = model.at("Body")->drawPos.y + 100 * model.yScl;
+                }
+                else {
+                    superAtack->isAtacking = false;
+
+
+                }
+            }
+            else {
+                superAtack->isAtacking = false;
+            }
         }
 
         void especialAnim() {
@@ -196,6 +330,8 @@ namespace Rooster {
                 if (ultimateShot->getHitted || !air) {
                     atacking = NOT_ATTACK;
 
+
+                    println("ultimate shot atk botas");
                     vspeed = -10;
                     //println("Bateu " << ultimateShot->getHitted);
 
@@ -378,6 +514,7 @@ namespace Rooster {
 
         void updateAnimations() override {
 
+
             if (stunFrames <= 0) {
 
 
@@ -416,6 +553,9 @@ namespace Rooster {
                 else if (atacking == SPECIAL) {
                     especialAnim();
                 }
+                else if (atacking == SUPER) {
+                    superAnim();
+                }
                 
             }
 
@@ -428,9 +568,36 @@ namespace Rooster {
             }
 
 
+            projectiles[0].update();
 
+            if (projectiles[0].death) {
+                Effect* effect = new Effect();
+                effect->poeiraPreset();
+                effect->mortal = true;
+                effect->life = 100;
+
+                float wid = projectiles[0].getSprite().getGlobalBounds().width;
+                float hei = projectiles[0].getSprite().getGlobalBounds().height;
+                
+
+                for (int i = 0; i < 6; i++) {
+                    float randDist = randFloat(wid/3);
+                    float randAngle = randFloat(2*PI);
+
+                    float xx = cos(randAngle)*randDist + projectiles[0].getPosition().x - (wid/2)*projectiles[0].facingSign;
+                    float yy = sin(randAngle) * randDist + projectiles[0].getPosition().y - hei/2;
+
+                    effect->position.x = xx;
+                    effect->position.y = yy;
+
+                    effect->createParticle();
+                }
+
+                mainPartSystem.addEffect(effect);
+            }
         }
 
+        
 
     };
 

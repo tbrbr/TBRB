@@ -425,7 +425,6 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			// Draw
 			galo.show(*window);
 			galo2.show(*window);
-
 		}
 
 		// Rounds

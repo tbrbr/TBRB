@@ -13,36 +13,8 @@ struct Galinho
     bool isAlive;
 };
 
-struct SpriteMap{
-    int textureId = -1;
-    vector<IntRect> images;
-    int imgNumber = 0;
-
-    void addImages(int imgWid, int imgHei, int imgX, int imgY, int imgNumX, int imgNumY, Texture& texture){
-        Vector2u size = texture.getSize();
-        int texWid = size.x;
-        int texHei = size.y;
 
 
-        if(imgWid < 0 || imgHei < 0){
-            return;
-        }
-
-        for(int i = 0; i < imgNumY; i++){
-            for(int j = 0; j < imgNumX; j++){
-
-                int xx = imgX + imgWid*j;
-                int yy = imgY + imgHei*i;
-
-                if(imgX >= 0 && xx + imgWid <= texWid && imgY >= 0 && yy + imgHei <= texHei){
-                    IntRect newRect(xx, yy, imgWid, imgHei);
-                    images.push_back(newRect);
-                    imgNumber++;
-                }
-            }
-        }
-    }
-};
 
 struct Aim {
 public:

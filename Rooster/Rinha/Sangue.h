@@ -307,6 +307,9 @@ namespace Rooster {
 		float lightMin = 0;
 		float lightMax = 1;
 
+		float satMin = 1;
+		float satMax = 1;
+
 
 		Color color;
 
@@ -471,6 +474,37 @@ namespace Rooster {
 			text.setFont(basicFont);
 		}
 
+		void poeiraPreset() {
+			tilesPreset();
+			gravity.x = 0;
+			gravity.y = 0;
+
+			hspeedMin = -0.25;
+			hspeedMax = 0.25;
+
+			vspeedMin = -0.25;
+			vspeedMax = 0.25;
+
+			friction = 0.95;
+
+			sclMax = 1.5;
+			sclMin = 1;
+
+			lifeMin = 20;
+			lifeMax = 40;
+
+			isHSV = true;
+			hueMax = 54;
+			hueMin = 54;
+			satMax = 0.3;
+			satMin = 0.2;
+			lightMax = 1;
+			lightMin = 0.8;
+
+
+
+		}
+
 
 		void addParticle(struct Particle p) {
 			if (gotas.size() < 2000) {
@@ -509,7 +543,7 @@ namespace Rooster {
 
 				if (isHSV) {
 					p.hue = randFloatRange(hueMin, hueMax);
-					p.sat = 1;
+					p.sat = randFloatRange(satMin, satMax);
 					p.light = randFloatRange(lightMin, lightMax);
 					p.isHSV = true;
 				}

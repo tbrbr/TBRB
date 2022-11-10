@@ -64,7 +64,7 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-	int option = BOTAPRAARROCHAR;
+	int option = MENU_PRINCIPAL;
 
 
 

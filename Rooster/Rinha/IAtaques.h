@@ -16,58 +16,146 @@ namespace Rooster {
 		Vector2f position;
 		Texture texture;
 		Sprite sprite;
+
+		// Sprite animações
+		struct SpriteMap sprMap;
+		float sprImage = 0;
+		float sprImageSpeed = 0;
+
+		// Physics
 		float hSpeed;
 		float vSpeed;
+		float friction = 1;
 		float vAcc;
+		bool hasGravity = false;
+
+		// Meaning of life
+		int life = 1;
+		bool mortal = false;
+		
+		
+
+		
+
 		Vector2f scl;
+
+		// Pra alterar a escala sem mexer na escala base
+		Vector2f sclMultiplier;
+		Vector2f sclMultiplierSpeed;
+
 		bool isVisible = false;
 		Vector2f size;
 		float hei;
 		Transform t;
+
+		// Se a textura ele mesmo criou ou se recebeu de fora
+		//bool createdTexture = true;
+
 
 	public:
 		bool NULO = false;
 		bool isTrans = false;
 		bool facingRight;
 
+		bool active = true;
+		// 1 ou -1 vai multiplicar a escala em x
+		int facingSign = 1;
+
+
+		bool death = false;
+
+		/*
+		~Projectile() {
+			if (createdTexture) {
+				delete texture;
+			}
+		}
+		*/
+
 		Projectile(bool NUlO) {
 			this->NULO = NULO;
 		}
 		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl) {
+
+			//texture = new Texture();
+
 			this->position = position;
-			this->texture = texture;
 			this->hSpeed = hSpeed;
 			this->vSpeed = vSpeed;
 			this->vAcc = Gravity / 10;
+
+			this->sclMultiplierSpeed.x = 0;
+			this->sclMultiplierSpeed.y = 0;
+			this->sclMultiplier.x = 0;
+			this->sclMultiplier.y = 0;
 
 
 			texture.loadFromFile(textureFile);
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
-			size.x = sprite.getGlobalBounds().width;
-			size.y = sprite.getGlobalBounds().height;
+			size.x = sprite.getLocalBounds().width;
+			size.y = sprite.getLocalBounds().height;
 
 			sprite.setScale(scl);
 
 
 		}
 		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl, IntRect spriteRec) {
+
+			//texture = new Texture();
+
 			this->position = position;
-			this->texture = texture;
 			this->hSpeed = hSpeed;
 			this->vSpeed = vSpeed;
 			this->vAcc = Gravity / 10;
+
+			this->sclMultiplierSpeed.x = 0;
+			this->sclMultiplierSpeed.y = 0;
+			this->sclMultiplier.x = 0;
+			this->sclMultiplier.y = 0;
 
 			texture.loadFromFile(textureFile);
 			sprite.setTexture(texture);
 			sprite.setPosition(position);
 			sprite.setScale(scl);
 			sprite.setTextureRect(spriteRec);
+			size.x = sprite.getLocalBounds().width;
+			size.y = sprite.getLocalBounds().height;
 
 		}
+
+		Projectile(Vector2f position, const char* textureFile, float hSpeed, float vSpeed, Vector2f scl, struct SpriteMap sprMap) {
+			this->position = position;
+			this->hSpeed = hSpeed;
+			this->vSpeed = vSpeed;
+			this->vAcc = Gravity / 10;
+
+			this->sclMultiplierSpeed.x = 0;
+			this->sclMultiplierSpeed.y = 0;
+			this->sclMultiplier.x = 0;
+			this->sclMultiplier.y = 0;
+
+			texture.loadFromFile(textureFile);
+			sprite.setTexture(this->texture);
+			sprite.setPosition(position);
+			sprite.setScale(scl);
+			size.x = sprite.getLocalBounds().width;
+			size.y = sprite.getLocalBounds().height;
+			
+			this->sprMap = sprMap;
+
+			//createdTexture = false;
+		}
+
+
 		void setOriginCenter() {
 			sprite.setOrigin(size.x / 2, size.y / 2);
 		}
+
+		void setOriginCenter(Vector2f origin) {
+			sprite.setOrigin(origin);
+		}
+
 		void setVisibility(bool isVisible) {
 			this->isVisible = isVisible;
 		}
@@ -125,18 +213,88 @@ namespace Rooster {
 		void setTransfrom(Transform trans) {
 			t = trans;
 		}
+
+		void setFriction(float friction) {
+			this->friction = friction;
+		}
+
+		void setSpriteImage(int spriteImage) {
+			this->sprImage = spriteImage;
+		}
+
+		float getSpriteImage() {
+			return sprImage;
+		}
+
+		void setSpriteImageSpeed(float spriteImageSpeed) {
+			this->sprImageSpeed = spriteImageSpeed;
+		}
+
+		void setMortality(bool isMortal) {
+			mortal = isMortal;
+		}
+
+		void setLife(int lifeFrames) {
+			life = lifeFrames;
+		}
+
+		void setScaleSpeed(float hspd, float vspd) {
+			sclMultiplierSpeed.x = hspd;
+			sclMultiplierSpeed.y = vspd;
+		}
+
+		void setScaleMultiplier(float x, float y) {
+			sclMultiplier.x = x;
+			sclMultiplier.y = y;
+		}
+
+
+
 		Transform getTransform() {
 			return t;
 		}
 		void update() {
+			death = false;
 
-			position.x += hSpeed;
-			position.y += vSpeed;
+			if (active) {
+				if (hasGravity) {
+					vSpeed += vAcc;
+				}
 
-			if (!isTrans) {
-				sprite.setPosition(position);
+				hSpeed *= friction;
+				vSpeed *= friction;
+
+				position.x += hSpeed;
+				position.y += vSpeed;
+
+				// Animação de sprite
+				if (sprMap.imgNumber > 0) {
+					sprImage += sprImageSpeed;
+					if (sprImage > sprMap.imgNumber) {
+						sprImage -= sprMap.imgNumber;
+					}
+
+					sprite.setTextureRect(sprMap.images[sprImage]);
+				}
+
+				// Ideologia
+				if (!isTrans) {
+					sprite.setPosition(position);
+				}
+
+
+				sclMultiplier += sclMultiplierSpeed;
+
+				sprite.setScale(Vector2f(scl.x * (1+sclMultiplier.x) * facingSign, scl.y * (1+sclMultiplier.y)));
+
+				life -= mortal;
+				if (life < 0) {
+					isVisible = false;
+					death = true;
+					active = false;
+				}
 			}
-			sprite.setScale(scl);
+
 
 		}
 		void draw(RenderWindow& window) {
@@ -148,7 +306,6 @@ namespace Rooster {
 		void drawTrans(RenderWindow& window) {
 			if (isVisible) {
 				window.draw(sprite, t);
-
 			}
 		}
 
@@ -194,6 +351,7 @@ namespace Rooster {
 			bufferCollision.loadFromFile(txt);
 			soundCollision.setBuffer(bufferCollision);
 
+			
 			colPos.x = 0;
 			colPos.y = 0;
 
@@ -229,8 +387,11 @@ namespace Rooster {
 
 		bool CheckCollision(HitBox galo) {
 			if (isAtacking) {
+
+				// Esses angulos nao estao funcionando
 				colPos.x = (galo.center.x + hitbox.center.x) / 2;
 				colPos.y = (galo.center.y + hitbox.center.y) / 2;
+
 				colPos = hitbox.center;
 				colDif = (galo.center - hitbox.center);
 
@@ -249,7 +410,7 @@ namespace Rooster {
 
 			exp->sanguePreset();
 
-			exp->createMultipleParticles(1 + Damage * 10);
+			exp->createMultipleParticles(1 + Damage * 6);
 			partSys.addEffect(exp);
 		}
 

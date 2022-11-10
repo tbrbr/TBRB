@@ -2,8 +2,9 @@
 #ifndef GALO_H_included
 #define GALO_H_included
 
-#include "IAtaques.h"
 #include "Elementos.h"
+#include "IAtaques.h"
+
 
 
 namespace Rooster {

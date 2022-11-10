@@ -91,10 +91,10 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
     info.sSniper.setTexture(info.sniper);
 
     info.sChorro.setTexture(info.chorro);
-    info.sMapChorro.addImages(32, 40, 0, 0, 2, 1, info.chorro);
+    info.sMapChorro.addImages(32, 40, 0, 0, 2, 1, info.chorro.getSize());
 
     info.sRabo.setTexture(info.ratoSheet);
-    info.sMapRabo.addImages(12, 16, 0, 38, 6, 2, info.ratoSheet);
+    info.sMapRabo.addImages(12, 16, 0, 38, 6, 2, info.ratoSheet.getSize());
 
     info.sRato.setTexture(info.ratoSheet);
     info.sRato.setTextureRect(IntRect(32, 0, 32, 38));

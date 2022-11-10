@@ -378,6 +378,45 @@ struct SpriteArea {
 
 
 
+struct SpriteMap {
+    int textureId = -1;
+    vector<IntRect> images;
+    int imgNumber = 0;
+
+    void addImage(int imgWid, int imgHei, int imgX, int imgY) {
+        IntRect newRect(imgX, imgY, imgWid, imgHei);
+        images.push_back(newRect);
+        imgNumber++;
+    }
+
+    void addImages(int imgWid, int imgHei, int imgX, int imgY, int imgNumX, int imgNumY, Vector2u texSize) {
+        int texWid = texSize.x;
+        int texHei = texSize.y;
+
+
+        if (imgWid < 0 || imgHei < 0) {
+            return;
+        }
+
+        for (int i = 0; i < imgNumY; i++) {
+            for (int j = 0; j < imgNumX; j++) {
+
+                int xx = imgX + imgWid * j;
+                int yy = imgY + imgHei * i;
+
+                if (imgX >= 0 && xx + imgWid <= texWid && imgY >= 0 && yy + imgHei <= texHei) {
+                    IntRect newRect(xx, yy, imgWid, imgHei);
+                    images.push_back(newRect);
+                    imgNumber++;
+                }
+            }
+        }
+    }
+
+    void addImages(int imgWid, int imgHei, int imgX, int imgY, int imgNumX, int imgNumY, Vector2i texSize) {
+        addImages(imgWid, imgHei, imgX, imgY, imgNumX, imgNumY, (Vector2u)texSize);
+    }
+};
 
 
 struct Element {

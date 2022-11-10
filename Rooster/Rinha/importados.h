@@ -25,7 +25,7 @@ const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : Vide
 //const int SCREEN_WIDTH = 1280;
 //const int SCREEN_HEIGHT = 720;
 
-#define SHOWDEBUG false
+#define SHOWDEBUG true
 
 Font basicFont;
 

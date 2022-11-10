@@ -65,9 +65,6 @@ int main() {
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
 	int option = INTRO;
-
-
-
 	bool motaouhenrique = true;
 
 

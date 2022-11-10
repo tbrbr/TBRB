@@ -64,10 +64,7 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-	int option = BOTAPRAARROCHAR;
-
-
-
+	int option = INTRO;
 	bool motaouhenrique = true;
 
 

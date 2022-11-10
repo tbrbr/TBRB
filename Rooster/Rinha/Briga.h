@@ -286,6 +286,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	Clock matchTime;
 	matchTime.restart();
 
+	int pauseFrames = 120;
+
 	while (window->isOpen()) {
 
 
@@ -377,8 +379,15 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		// PLAYER CONTROLES
 
 		if (!fightWon) {
-			galoControls(galo, 0);
-			galoControls(galo2, 1);
+
+			if (pauseFrames <=  0) {
+				galoControls(galo, 0);
+				galoControls(galo2, 1);
+			}
+			else {
+				pauseFrames--;
+			}
+			
 
 
 			// GALO ATAQUES
@@ -436,7 +445,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			if (galo.gethp() < 0) {
 				rounds++;
 				p2Rounds++;
-
+				
+				
 				if (rounds == 3 || p2Rounds == 2) {
 					// Galo 2 Win
 					framesWin = 250;
@@ -452,6 +462,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				else {
 					// New Round
 					framesRound = 60;
+					pauseFrames = 120;
+					galo.resetPosition();
+					galo2.resetPosition();
 					galo.sethp(galo.getMaxhp());
 					galo2.sethp(galo2.getMaxhp());
 				}
@@ -475,6 +488,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				else {
 					// New Round
 					framesRound = 60;
+					pauseFrames = 120;
+					galo.resetPosition();
+					galo2.resetPosition();
 					galo.sethp(galo.getMaxhp());
 					galo2.sethp(galo2.getMaxhp());
 				}

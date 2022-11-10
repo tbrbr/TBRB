@@ -30,6 +30,12 @@ namespace Rooster {
 		SoundBuffer defenseBuffer;
 		Sound defenseSound;
 
+		Texture grenade;
+		Sprite granada;
+		Vector2f posGrenade;
+	
+
+
 	public:
 		Sniper(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
 			this->name = "Sniper";
@@ -86,6 +92,10 @@ namespace Rooster {
 
 			defenseBuffer.loadFromFile("sounds\\block-6839.ogg");
 			defenseSound.setBuffer(defenseBuffer);
+
+			
+
+			grenade.loadFromFile("sprites\\sniperGrenade.png");
 
 		}
 
@@ -788,9 +798,231 @@ namespace Rooster {
 			}
 		}
 
+		void updateGranada() {
+			granada.setTexture(grenade);
+			granada.setScale((float)SCREEN_WIDTH / 15360, (float)SCREEN_WIDTH / 15360);
+			granada.setPosition(posGrenade);
+			granada.setOrigin(granada.getGlobalBounds().width / 2, granada.getGlobalBounds().height / 2);
+		}
+		
+
+		void jogarGranada(RenderWindow * window) {
+
+			static int thisFrames = 0;
+			int maxFrames = 360;
+
+			if (thisFrames > maxFrames) {
+				thisFrames = 0;
+				model.at("Sniper")->alpha = 1;
+
+				return;
+			}
+
+			
+			float percentage = (float) thisFrames / (float) maxFrames;
+
+			model.at("Sniper")->alpha = 0;
+			
+			
+
+			if (percentage < 0.5f / 3.f) {
+				facingRight = true;
+
+				float thisPercentage = percentage * 6;
+
+				Arm2SpinAngFase = - 45 * thisPercentage;
+				ArmSpinAngFase = 45 * thisPercentage;
+				model.at(CABECA)->angle = -20 * thisPercentage;
+				model.at(PE_FRENTE)->angle = -20 * thisPercentage;
+
+				updateGranada();
+
+				posGrenade.x = model.at(ASA_FRENTE)->drawPos.x;
+				posGrenade.y = model.at(ASA_FRENTE)->drawPos.y - granada.getGlobalBounds().height;
+			}
+			else if (percentage < 2.f / 3.f) {
+				
+				float thisPercentage = (percentage * 2) - percentage/6;
+				
+				Arm2SpinAngFase = 90 * thisPercentage;
+				ArmSpinAngFase = -30 * thisPercentage;
+
+				model.at(CABECA)->angle = 15;
+				model.at(PERNA_FRENTE)->angle = -10 * thisPercentage;
+				model.at(PE_FRENTE)->angle = -15;
+				
+				posGrenade.x += posGrenade.x < SCREEN_WIDTH / 1.5 ? 1: 0;
+				posGrenade.y += posGrenade.y < floorY - granada.getGlobalBounds().height ? 5 : - 1 / thisPercentage;
+
+				updateGranada();
+				
+				window->draw(granada);
+				
+			}
+			else {
+				posGrenade.y = floorY - granada.getGlobalBounds().height;
+				estado = DANCING;
+				if (thisFrames % 5 == 0) {
+					facingRight = !facingRight;
+				}
+
+				updateGranada(); 
+
+				
+				granada.setRotation(frames % 60 - 30);
+				window->draw(granada);
+			}
+			
+			
+			thisFrames++;
+
+		}
 		void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
+			Clock Timer;
+			Timer.restart();
+
+			estado = FATALITY;
+			model.resetToBase();
+			galo2->position.x = SCREEN_WIDTH / 2;
+
+			position.x = SCREEN_WIDTH / 3;
+
+			Font mortal;
+			mortal.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
+
+			Text fatal("FATALITY", mortal, SCREEN_WIDTH / 10);
+			fatal.setPosition(SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2);
+			fatal.setFillColor(Color(100, 0, 0));
+			fatal.setOutlineThickness(SCREEN_WIDTH / 700);
+			fatal.setOutlineColor(Color(255, 10, 10));
+
+			Texture garrinha;
+			garrinha.loadFromFile("sprites/garrinhaDoFatality.png");
+			Sprite garra1;
+			Sprite garra2;
+			garra1.setTexture(garrinha);
+			garra2.setTexture(garrinha);
+			garra1.setScale(-0.5, 0.5);
+			garra2.setScale(0.5, 0.5);
+
+			garra1.setPosition(
+				SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+				SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+			);
+
+			garra2.setPosition(
+				SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
+				SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
+			);
+			RectangleShape opening;
+
+			opening.setFillColor(Color(255, 255, 0));
+			opening.setOutlineColor(Color::Yellow);
+			opening.setSize(Vector2f(0, SCREEN_HEIGHT / 100));
+
+			Text kalsawins("Sniper Wins", mortal, SCREEN_WIDTH / 50);
+
+			kalsawins.setPosition(
+				SCREEN_WIDTH / 2 - kalsawins.getGlobalBounds().width / 2,
+				garra2.getPosition().y - kalsawins.getGlobalBounds().height
+			);
+			kalsawins.setFillColor(Color(250, 250, 250));
+			kalsawins.setOutlineThickness(SCREEN_WIDTH / 700);
+			kalsawins.setOutlineColor(Color(255, 255, 10));
 
 
+			SoundBuffer grito;
+			grito.loadFromFile("sounds\\Fatality_Scream.wav");
+			Sound gritoSound;
+			gritoSound.setBuffer(grito);
+			gritoSound.setLoop(true);
+
+
+			model.resetToBase();
+
+
+			SoundBuffer fatalityBuffer;
+			fatalityBuffer.loadFromFile("sounds/fatality.ogg");
+			Sound fatalitysound;
+			fatalitysound.setBuffer(fatalityBuffer);
+			fatalitysound.setLoop(false);
+
+			SoundBuffer whowinsBuf;
+			if (isp1) {
+				whowinsBuf.loadFromFile("sounds/Player_1_Wins.wav");
+			}
+			else {
+				whowinsBuf.loadFromFile("sounds/Player_2_Wins.wav");
+			}
+			Sound whowins;
+			whowins.setBuffer(whowinsBuf);
+
+			ExplosionEffect* exp = new ExplosionEffect(Vector2f(0, 0), 10);
+			exp->sanguePreset();
+			exp->depthSpdMin = -1;
+			exp->depthSpdMax = 4;
+			exp->depthMin = 100;
+			exp->depthMax = 100;
+
+			exp->mortal = false;
+
+			int explosionSize = 270;
+
+			Texture explosion;
+			
+			Sprite explosionSpr;
+			
+			explosion.loadFromFile("sprites\\explosionSheet.png");
+			explosionSpr.setTexture(explosion);
+			
+
+			
+
+
+
+			while (window->isOpen()) {
+
+				float time = Timer.getElapsedTime().asMilliseconds();
+
+				window->clear();
+				window->draw(fundo);
+				show(*window);
+
+				exp->update();
+				exp->draw(*window);
+
+				galo2->show(*window);
+
+
+				Event e;
+				while (window->pollEvent(e))
+				{
+					if (e.type == Event::Closed)
+					{
+						window->close();
+					}
+
+				}
+
+				if (time < 10000) {
+
+
+					estado = STOPPED;
+					jogarGranada(window);
+					update();
+					galo2->setState(STOPPED);
+					galo2->update();
+
+				}
+				
+				if (time > 30000) {
+					return;
+				}
+
+
+				window->display();
+
+			}
 		}
 
 

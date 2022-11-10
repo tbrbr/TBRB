@@ -140,8 +140,8 @@ class Yamaha {
 	Sprite teclas[4];
 
 
-	int maxLife = 300;
-	int life = 300;
+	int maxLife = 100;
+	int life = 100;
 
 	
 
@@ -170,14 +170,14 @@ class Yamaha {
 
 public:
 	int combo = 0;
-	int comboMax = 100;
+	int comboMax = 200;
 
 	bool exit = false;
 	bool finished = false;
 	bool success = false;
 
 	float bregaPower = 0;
-	float bregaMax = 1000;
+	float bregaMax = 1500;
 	bool editing = true;
 	bool playing = false;
 
@@ -345,8 +345,10 @@ public:
 		textEffects->friction = 0.95;
 		textEffects->lifeMin = 350;
 		textEffects->lifeMax = 350;
-		textEffects->fadeInAlpha = true;
 		textEffects->textPreset();
+		textEffects->fadeOutAlpha = false;
+		textEffects->fadeInAlpha = true;
+
 		textEffects->mortal = false;
 
 
@@ -957,7 +959,7 @@ public:
 								teclaMissed[coluna] = false;
 
 								comboAdd();
-								bregaPower += 15 + combo*2;
+								bregaPower += 15 + combo*0.25;
 							}
 						}
 					}
@@ -1361,6 +1363,15 @@ class BregaMeter {
 
 	int tick = 0;
 
+	SoundBuffer sndBufExplosion;
+	Sound sndExplosion;
+
+	float pontAngle = 0;
+	float pontAngleSpeed = 0;
+	Vector2f pontPos;
+	Vector2f pontSpeed;
+	
+
 public:
 	float percentage = 0;
 
@@ -1390,20 +1401,82 @@ public:
 		x = roomSize.x - wid;
 		y = roomSize.y - (bregaSprHei * yScl);
 
+		
 		effect = new Rooster::Effect();
+		
+		
+
+
 		effect->sanguePreset();
+		effect->poeiraPreset();
+		effect->gravity.y = -0.1;
+		effect->lifeMin = 80;
+		effect->lifeMax = 150;
+		effect->sclMin = 1;
+		effect->sclMax = 2.5;
 
 
+		effect->vspeedMax = -2;
+		effect->vspeedMin = -0.5;
+		effect->hspeedMax = 1;
+		effect->hspeedMin = -1;
+		effect->hspeedLimit = 4;
+		effect->vspeedLimit = 3;
+		effect->friction = 0.96;
+		effect->fadeInAlpha = false;
+		effect->fadeOutAlpha = true;
+		effect->satMax = 0;
+		effect->satMin = 0;
+		effect->mortal = false;
+
+		effect->position.x = x + wid / 2;
+		effect->position.y = y + hei/2;
+
+		
+		effect->spreadPreset(wid/1.5, hei/1.5);
+		
+
+		sndBufExplosion.loadFromFile("sounds/Explosion.ogg");
+
+		sndExplosion.setBuffer(sndBufExplosion);
 	}
 
 	void update() {
 		if (broken) {
 			tick++;
-			if (tick > 60) {
-				//effect.createParticle();
+			if (tick > 50) {
+				
+				effect->createMultipleParticles(randInt(4));
 				tick = randInt(30);
+			
 			}
+
+			pontSpeed.y += 0.1;
+
+			pontAngle += pontAngleSpeed;
+			pontPos += pontSpeed;
+
 		}
+		else {
+			pontAngle = (-5 + 185 * percentage);
+		}
+
+		effect->update();
+	}
+
+	void explode() {
+		broken = true;
+
+
+
+		effect->createMultipleParticles(randIntRange(20, 30));
+
+		pontSpeed.y = randFloatRange(-4, -2);
+		pontSpeed.x = randFloatRange(-2, 2);
+
+		pontAngleSpeed = randFloatRange(-4, 4);
+
+		sndExplosion.play();
 	}
 
 
@@ -1422,13 +1495,21 @@ public:
 
 
 
+		
 		RectangleShape ponteiro(Vector2f(wid * 0.4, yScl * 20));
 		ponteiro.setFillColor(Color(0, 0, 0));
-		ponteiro.setPosition(x + wid / 2 + xScl * 18, y + (sprite.getLocalBounds().height - 112) * xScl);
+
+	
+
+		ponteiro.setPosition(pontPos.x + x + wid / 2 + xScl * 18,pontPos.y + y + (sprite.getLocalBounds().height - 112) * xScl);
 		ponteiro.setOrigin(wid * 0.4, xScl * 10);
-		ponteiro.setRotation(-5 + 185 * percentage);
+		ponteiro.setRotation(pontAngle);
 
 		window.draw(ponteiro);
+
+
+		effect->draw(window);
+
 	}
 
 	
@@ -1470,7 +1551,10 @@ struct TilesInfo {
 		galoKalsa = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
 		galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
 
-		galoSniper->setPosition(Vector2f((float)roomSize.x / 1.05, Rooster::floorY));
+
+		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.25, roomSize.y * 0.9));
+		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y * 0.9));
+		galoSniper->setPosition(Vector2f((float)roomSize.x / 1.05, roomSize.y*0.9));
 		galoKalsa->facingRight = true;
 
 		fundao.loadFromFile("sprites/tiringa.png");
@@ -1553,6 +1637,14 @@ struct TilesInfo {
 		}
 
 		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
+		bregaMeter->update();
+
+
+		if (!bregaMeter->broken) {
+			if (bregaMeter->percentage > 1.25) {
+				bregaMeter->explode();
+			}
+		}
 
 		if (alcides->exit) {
 			result = alcides->success;

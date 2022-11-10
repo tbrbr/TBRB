@@ -1,8 +1,7 @@
 
-struct Musica {
-	Music music;
-	float duracao;
-	
+struct TilesMusica {
+	std::string soundPath;
+	std::string notasPath;
 	//mapa de teclas que eu vou implementar nstt
 };
 
@@ -162,6 +161,14 @@ class Yamaha {
 	const string autoSavePath = "PianoFiles/_tilesAutoSave.txt";
 
 
+
+	// Armazenando as musicas
+	std::vector<struct TilesMusica> musicas;
+	Music musica;
+
+
+
+
 	std::vector<struct YamahaAction> actions;
 	std::vector<struct YamahaAction> undoneActions;
 
@@ -200,9 +207,6 @@ public:
 
 
 
-	struct Musica musTeste;
-
-
 	vector<Rooster::AreaEffect*> slideEffects;
 	Rooster::Effect* textEffects;
 
@@ -216,7 +220,7 @@ public:
 
 		delete textEffects;
 
-		musTeste.music.stop();
+		musica.stop();
 		//musTeste.music.~Music();
 	}
 
@@ -226,9 +230,44 @@ public:
 		roomHei = roomSize.y;
 
 
+		struct TilesMusica musLindinho;
+		musLindinho.soundPath = "PianoFiles/sounds/teclado lindinho.ogg";
+		musLindinho.notasPath = "PianoFiles/tecladoLindinho.txt";
 
-		musTeste.music.openFromFile("PianoFiles/sounds/zerebolabola.ogg");
-		//musTeste.music.play();
+		musicas.push_back(musLindinho);
+
+		struct TilesMusica musMorango;
+		musMorango.soundPath = "PianoFiles/sounds/morango.ogg";
+		musMorango.notasPath = "PianoFiles/morango.txt";
+
+		musicas.push_back(musMorango);
+
+		struct TilesMusica musZe;
+		musZe.soundPath = "PianoFiles/sounds/zerebolabola.ogg";
+		musZe.notasPath = "PianoFiles/ze.txt";
+
+		musicas.push_back(musZe);
+
+		struct TilesMusica musEscoces;
+		musEscoces.soundPath = "PianoFiles/sounds/escoces.ogg";
+		musEscoces.notasPath = "PianoFiles/mama.txt";
+
+		musicas.push_back(musEscoces);
+
+
+
+
+
+
+		musica.openFromFile("PianoFiles/sounds/zerebolabola.ogg");
+		loadNotas(autoSavePath);
+
+
+		loadMusica(3);
+
+
+
+
 
 		base = 400;
 		altura = 600;
@@ -354,9 +393,12 @@ public:
 
 		
 
-		loadNotas(autoSavePath);
+		
 		
 	}
+
+
+
 
 
 	void convertNoteToTrap(ConvexShape& note, float baseMenor) {
@@ -401,7 +443,7 @@ public:
 	}
 
 	float getPlayingSeconds() {
-		return musTeste.music.getPlayingOffset().asSeconds();
+		return musica.getPlayingOffset().asSeconds();
 	}
 
 
@@ -509,6 +551,24 @@ public:
 
 		file.close();
 	}
+
+
+
+
+
+	void loadMusica(int tilesMusicaIndex) {
+
+		musica.openFromFile(musicas[tilesMusicaIndex].soundPath);
+		loadNotas(musicas[tilesMusicaIndex].notasPath);
+	}
+
+
+
+
+
+
+
+
 
 
 
@@ -637,19 +697,19 @@ public:
 
 
 	void play() {
-		musTeste.music.play();
+		musica.play();
 		playing = true;
 	}
 
 	void pause() {
-		musTeste.music.pause();
+		musica.pause();
 		resetNotesState();
 		playing = false;
 	}
 
 	void setScroll(float amount) {
 		scrollY = maximum(amount, 0);
-		musTeste.music.setPlayingOffset(sf::seconds(scrollY / bps));
+		musica.setPlayingOffset(sf::seconds(scrollY / bps));
 	}
 
 	void moveScroll(float amount) {
@@ -886,15 +946,11 @@ public:
 
 		
 		if (playing) {
-
-
-			//scrollY += scrollSpd;
-			scrollY = bps*musTeste.music.getPlayingOffset().asSeconds();
+			scrollY = bps * getPlayingSeconds();
 
 			if (scrollY > finishLineY) {
-				finished = true;
-				if(life > 0){ 
-					success = true;
+				if (!finished) {
+					finish();
 				}
 			}
 
@@ -1003,10 +1059,14 @@ public:
 
 		textEffects->update();
 
-		if (finished && !editing) {
-			fadeFrames--;
+		if (finished) {
+			
 			if (fadeFrames <= 0) {
 				exit = true;
+			}
+			else {
+
+				fadeFrames--;
 			}
 		}
 	}
@@ -1046,6 +1106,23 @@ public:
 		
 	}
 
+	void finish() {
+		finished = true;
+
+		if (life > 0) {
+			success = true;
+		}
+
+
+		std::string str = "Finished!";
+
+		textEffects->position.x = roomWid * 0.75 + randFloat(roomWid / 10);
+		textEffects->position.y = roomHei * 0.5 + randFloat(roomHei / 10);
+		textEffects->color = Color::White;
+		textEffects->text.setString(str);
+		textEffects->createParticle();
+	}
+
 
 	void resetNotesState() {
 		for (int i = 0; i < notas.size(); i++) {
@@ -1054,6 +1131,8 @@ public:
 		}
 		finished = false;
 		success = false;
+		exit = false;
+		fadeFrames = 100;
 	}
 
 
@@ -1471,7 +1550,7 @@ public:
 
 		effect->createMultipleParticles(randIntRange(20, 30));
 
-		pontSpeed.y = randFloatRange(-4, -2);
+		pontSpeed.y = randFloatRange(-6, -3);
 		pontSpeed.x = randFloatRange(-2, 2);
 
 		pontAngleSpeed = randFloatRange(-4, 4);

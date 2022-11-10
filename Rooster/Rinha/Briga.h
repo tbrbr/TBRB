@@ -569,7 +569,6 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			if (tilesFall) {
 
 
-				println("View");
 				sf::View currentView = baseTilesView;
 
 				if (info.result != -1) {
@@ -601,8 +600,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 						AreaEffect* effect = new AreaEffect(area, Color::White);
 						effect->tilesPreset();
-						effect->textPreset();
-						effect->text.setString("Poeira");
+						effect->poeiraPreset();
 						effect->vspeedMin = -4;
 						effect->vspeedMax = 4;
 						effect->gravity.y = 0;

@@ -20,8 +20,6 @@ void galoControls(Rooster::Galo& galo, int player) {
 			galo.especial();
 	}
 
-
-
 	if (mainInput.inputState[player][GORIGHT][0])
 	{
 
@@ -434,7 +432,6 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			// Draw
 			galo.show(*window);
 			galo2.show(*window);
-
 		}
 
 		// Rounds
@@ -537,17 +534,10 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				yamahaFallSnd.play();
 
-				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, yamahaY), 3, -90, 220, 0, 0);
-				effect->sanguePreset();
-				effect->isHSV = true;
+				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, Rooster::floorY), 2, -90, 220, 0, 0);
+				effect->poeiraPreset();
 
-				effect->hueMax = 20;
-				effect->hueMax = 40;
-				effect->lightMin = 0.75;
-				effect->lightMax = 1;
-
-				effect->friction = 0.95;
-				effect->gravity.y = 0;
+				effect->fadeOutAlpha = true;
 				effect->lifeMin = 60;
 				effect->lifeMax = 150;
 				effect->createMultipleParticles(150);

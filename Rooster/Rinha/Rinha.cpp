@@ -64,7 +64,10 @@ int main() {
 
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
 
-	int option = INTRO;
+	int option = MENU_PRINCIPAL;
+
+
+
 	bool motaouhenrique = true;
 
 
@@ -172,6 +175,7 @@ int main() {
 	Texture* __mapa = NULL;
 	sf::Thread t(std::bind(&menuSong, &option, window));
 	t.launch();
+	int __map = -1;
 	while (window->isOpen())
 	{
 		switch (option)
@@ -197,7 +201,7 @@ int main() {
 			
 			if (mode == SINGLE) {
 				option = UMJOGADORES;
-				versus(*window, *galo, *galo2, fundo);
+				versus(*window, *galo, *galo2, fundo, __map);
 			}
 			else if (mode == LAN) {
 
@@ -211,14 +215,14 @@ int main() {
 				}
 
 				if (isHost)
-					versus(*window, *galo, *galo2, fundo);
+					versus(*window, *galo, *galo2, fundo, __map);
 				else
-					versus(*window, *galo2, *galo, fundo);
+					versus(*window, *galo2, *galo, fundo, __map);
 
 				option = DOISJODADOR;
 			}
 			else if (mode == LOCAL) {
-				versus(*window, *galo, *galo2, fundo);
+				versus(*window, *galo, *galo2, fundo, __map);
 				option = UMJOGADORES;
 			}
 			
@@ -233,13 +237,17 @@ int main() {
 			pianoTiles(window);
 			break;
 		case DOISJODADOR:
-			multiPlayer(window, *galo, *galo2, option, fundo, socket);
+			lan(window, *galo, *galo2, option, fundo, socket);
 			selector->reset();
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
 			
-			__mapa = selecionarMapa(window);
+			if (mode == LAN) {
+				__mapa = selecionarMapa(window, socket, __map);
+			}
+			else
+				__mapa = selecionarMapa(window, __map);
 			if (__mapa == NULL) {
 				option = SELECTION;
 			}

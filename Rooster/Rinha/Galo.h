@@ -96,11 +96,13 @@ namespace Rooster {
 			playerName.setString(galoName);
 			playerName.setCharacterSize(SCREEN_WIDTH / 50);
 
+			// Full life
 			fullLife.setOutlineThickness(SCREEN_WIDTH / 300);
 			fullLife.setOutlineColor(Color::Black);
 			fullLife.setFillColor(Color::Black);
-			fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
-			fillBar.setOutlineColor(Color::Black);
+
+		
+			
 
 			for (int i = 0; i < 10; i++) {
 				combo[i].setSize(Vector2f(tam.x / 20, tam.y));
@@ -110,6 +112,12 @@ namespace Rooster {
 			}
 			int comboy = (tam.y * 2) + yposition;
 
+
+
+			// Fill Bar
+			fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
+			fillBar.setOutlineColor(Color::Black);
+	
 			if (isP1) {
 				xposition = SCREEN_WIDTH / 12;
 				fillBar.setPoint(0, sf::Vector2f(-recLine * 2, 0));
@@ -157,6 +165,7 @@ namespace Rooster {
 			}
 
 			Color niceyellow(245, 205, 80);
+
 
 			life.setFillColor(niceyellow);
 			life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
@@ -273,8 +282,22 @@ namespace Rooster {
 
 
 		}
+
+
+		void reset() {
+			life.setSize(Vector2f(tam.x, tam.y));
+			Damage.setSize(Vector2f(0, tam.y));
+			if (isP1) {
+				Damage.setPosition(Vector2f(life.getGlobalBounds().left, life.getGlobalBounds().top));
+			}
+			else {
+				Damage.setPosition(Vector2f(life.getGlobalBounds().left, life.getGlobalBounds().top));
+			}
+		}
+
 		void update(int hp) {
 
+			// Rapaz q bug dificil
 			int oldTam = life.getGlobalBounds().width;
 			int newTam = (tam.x * hp) / Maxhp;
 

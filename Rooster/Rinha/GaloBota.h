@@ -110,6 +110,12 @@ namespace Rooster {
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);
 
+            struct Animation danceAnim;
+            danceAnim.init("animations/botaDance.txt");
+            danceAnim.playingSpeed = 0.1;
+            danceAnim.connectLoop = true;
+            animations.push_back(danceAnim);
+
         }
 
 
@@ -556,6 +562,10 @@ namespace Rooster {
                 }
                 else if (atacking == SUPER) {
                     superAnim();
+                }
+                else if (estado == DANCING) { // nao tanko kkkkkkkkkkkkk
+                    animations[1].update();
+                    model.updateWithAnimation(animations[1]);
                 }
                 
             }

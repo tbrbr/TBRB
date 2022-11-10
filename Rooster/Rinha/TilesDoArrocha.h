@@ -263,7 +263,7 @@ public:
 		loadNotas(autoSavePath);
 
 
-		loadMusica(3);
+		loadMusica(0);
 
 
 

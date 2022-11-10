@@ -239,6 +239,7 @@ int main() {
 		case DOISJODADOR:
 			lan(window, *galo, *galo2, option, fundo, socket);
 			selector->reset();
+			socket->disconnect();
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
@@ -248,17 +249,31 @@ int main() {
 			}
 			else
 				__mapa = selecionarMapa(window, __map);
-			if (__mapa == NULL) {
-				option = SELECTION;
+
+			if (mode == LAN && __mapa == NULL) {
+				option = MULTI_MODE;
+				socket->disconnect();
 			}
 			else {
-				fundo.setTexture(__mapa);
-				option = VERSUS;
+				if (__mapa == NULL) {
+					option = SELECTION;
+				}
+				else {
+					fundo.setTexture(__mapa);
+					option = VERSUS;
+				}
 			}
+
+			if (__mapa == NULL) {
+				selector->reset();
+				delete galo;
+				delete galo2;
+			}
+			
 
 			break;
 		case JOIN:
-			option = join(window, background, socket);
+			option = join(window, background, socket, listener);
 			break;
 
 		case CREATE:
@@ -288,11 +303,21 @@ int main() {
 			break;
 		case MULTI_SELECT:
 			option = selector->show(window, &galo, &galo2, socket);
+			if (option == MULTI_MODE)
+			{
+				listener->close();
+				socket->disconnect();
+				selector->reset();
+			}
 		default:
 			break;
 		}
 		
 		
 	}
+
+	delete listener;
+	delete socket;
+
 	return 0;
 }

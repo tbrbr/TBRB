@@ -830,28 +830,28 @@ namespace Rooster {
 
 				float thisPercentage = percentage * 6;
 
-				Arm2SpinAngFase = - 45 * thisPercentage;
-				ArmSpinAngFase = 45 * thisPercentage;
+				Arm2SpinAngFase =  60 * thisPercentage;
+				ArmSpinAngFase = -30 * thisPercentage;
 				model.at(CABECA)->angle = -20 * thisPercentage;
 				model.at(PE_FRENTE)->angle = -20 * thisPercentage;
 
 				updateGranada();
 
 				posGrenade.x = model.at(ASA_FRENTE)->drawPos.x;
-				posGrenade.y = model.at(ASA_FRENTE)->drawPos.y - granada.getGlobalBounds().height;
+				posGrenade.y = model.at(ASA_FRENTE)->drawPos.y - granada.getGlobalBounds().height/2;
 			}
 			else if (percentage < 2.f / 3.f) {
 				
 				float thisPercentage = (percentage * 2) - percentage/6;
 				
-				Arm2SpinAngFase = 90 * thisPercentage;
+				Arm2SpinAngFase = 60 * thisPercentage;
 				ArmSpinAngFase = -30 * thisPercentage;
 
-				model.at(CABECA)->angle = 15;
+				model.at(CABECA)->angle = -15;
 				model.at(PERNA_FRENTE)->angle = -10 * thisPercentage;
 				model.at(PE_FRENTE)->angle = -15;
 				
-				posGrenade.x += posGrenade.x < SCREEN_WIDTH / 1.5 ? 1: 0;
+				posGrenade.x += posGrenade.x < SCREEN_WIDTH / 1.5 ? 10: 0;
 				posGrenade.y += posGrenade.y < floorY - granada.getGlobalBounds().height ? 5 : - 1 / thisPercentage;
 
 				updateGranada();
@@ -861,15 +861,17 @@ namespace Rooster {
 			}
 			else {
 				posGrenade.y = floorY - granada.getGlobalBounds().height;
+
 				estado = DANCING;
-				if (thisFrames % 5 == 0) {
+
+				if (thisFrames % 15 == 0) {
 					facingRight = !facingRight;
 				}
 
 				updateGranada(); 
 
 				
-				granada.setRotation(frames % 60 - 30);
+				granada.setRotation(thisFrames % 45 - 30);
 				window->draw(granada);
 			}
 			
@@ -883,9 +885,9 @@ namespace Rooster {
 
 			estado = FATALITY;
 			model.resetToBase();
-			galo2->position.x = SCREEN_WIDTH / 2;
+			galo2->position.x = SCREEN_WIDTH / 1.5;
 
-			position.x = SCREEN_WIDTH / 3;
+			position.x = SCREEN_WIDTH / 4;
 
 			Font mortal;
 			mortal.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
@@ -966,7 +968,8 @@ namespace Rooster {
 
 			exp->mortal = false;
 
-			int explosionSize = 270;
+			int explosionSizex = 256;
+			int explosionSizey = 248;
 
 			Texture explosion;
 			
@@ -1004,7 +1007,7 @@ namespace Rooster {
 
 				}
 
-				if (time < 10000) {
+				if (time < 6000) {
 
 
 					estado = STOPPED;
@@ -1013,6 +1016,38 @@ namespace Rooster {
 					galo2->setState(STOPPED);
 					galo2->update();
 
+				}
+				else if (time < 12000) {
+
+					facingRight = true;
+					estado = STOPPED;
+					model.at("Sniper")->alpha = 1;
+
+					int thisTime = time - 6000;
+
+					//vamos dividir as 48 imagens igualmentes em 6000 segundos
+					int imgSpace = 6000 / 48;
+					int imgSpaceY = 1000;
+
+					//to mo cansado
+					IntRect manoTaFoda;
+					manoTaFoda.width = explosionSizex;
+					manoTaFoda.height = explosionSizey;
+
+			
+					manoTaFoda.top = (int)(thisTime/imgSpace) * explosionSizey;
+
+					manoTaFoda.left = ((int)(thisTime/ imgSpace) % 8) * explosionSizex;
+					
+					explosionSpr.setTextureRect(manoTaFoda);
+					explosionSpr.setScale(4, 4);
+
+					explosionSpr.setPosition(
+						galo2->position.x - explosionSpr.getGlobalBounds().width / 2,
+						galo2->position.y - explosionSpr.getGlobalBounds().height/2
+					);
+
+					window->draw(explosionSpr);
 				}
 				
 				if (time > 30000) {

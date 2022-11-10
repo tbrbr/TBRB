@@ -291,10 +291,10 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	while (window->isOpen()) {
 
 
-		/*
+		
 		musicas[index].pause();
 		galo.fatality(window,&galo2,fundo);
-		*/
+		
 
 
 		window->clear();

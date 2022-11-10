@@ -434,6 +434,7 @@ namespace Rooster {
 		Ataques* superAtack;
 
 		bool noGravity = true;
+		bool noCollision = false;
 
 
 		// Lifebar
@@ -829,35 +830,38 @@ namespace Rooster {
 
 			FloatRect galoBounds = model.getBounds();
 
-			if (position.y > floorY) {
-				vspeed = 0;
-				position.y = floorY;
-				air = false;
-			}
 
-			// Wall collision
-
-
-			if (position.x > SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl))) {
-
-				if (stunned) {
-					hspeed *= -0.8;
-				}
-				else {
-					hspeed = 0;
+			if (!noCollision) {
+				if (position.y > floorY) {
+					vspeed = 0;
+					position.y = floorY;
+					air = false;
 				}
 
-				position.x = SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl));
-			}
+				// Wall collision
 
-			if (position.x < model.center.x * abs(model.xScl)) {
-				if (stunned) {
-					hspeed *= -0.8;
+
+				if (position.x > SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl))) {
+
+					if (stunned) {
+						hspeed *= -0.8;
+					}
+					else {
+						hspeed = 0;
+					}
+
+					position.x = SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl));
 				}
-				else {
-					hspeed = 0;
+
+				if (position.x < model.center.x * abs(model.xScl)) {
+					if (stunned) {
+						hspeed *= -0.8;
+					}
+					else {
+						hspeed = 0;
+					}
+					position.x = model.center.x * abs(model.xScl);
 				}
-				position.x = model.center.x * abs(model.xScl);
 			}
 
 

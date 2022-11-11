@@ -518,7 +518,7 @@ public:
 				setScroll(0);
 
 
-				std::getline(file, line);
+				std::getline(file, line); // Nota 0
 				while (line != "End" || file.eof() != 0) {
 
 
@@ -1936,7 +1936,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 				{
 					info.clear();
 
-
+					window->setView(window->getDefaultView());
 
 					return false;
 				}
@@ -2199,6 +2199,7 @@ void tilesMenu(RenderWindow * window) {
 			{
 				if (e.key.code == Keyboard::Escape)
 				{
+					window->setView(window->getDefaultView());
 					return;
 				}
 				else if (e.key.code == Keyboard::Enter) {
@@ -2271,6 +2272,35 @@ void tilesMenu(RenderWindow * window) {
 
 			if (buttons[i].clicked) {
 				pianoTiles(window, i);
+				sf::View view;
+				if (true) {
+
+					Vector2f size = (Vector2f)window->getSize();
+
+					float wid = roomWid;
+					float hei = roomHei;
+					float xScl = (float)size.x / wid;
+					float yScl = (float)size.y / hei;
+
+					if (xScl > yScl) {
+						wid *= yScl;
+						hei = size.y;
+					}
+					else {
+
+						hei *= xScl;
+						wid = size.x;
+					}
+
+					xScl = wid / (float)size.x;
+					yScl = hei / (float)size.y;
+
+					sf::FloatRect area(0.f, 0.f, 1280, 720);
+					view.setSize(area.width, area.height);
+					view.setCenter(area.width / 2, area.height / 2);
+					view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
+					window->setView(view);
+				}
 			}
 		}
 

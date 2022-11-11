@@ -612,16 +612,76 @@ namespace Rooster {
 
 
 
-        /*
+        
         void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
 
             Clock Timer;
             Timer.restart();
 
-            estado = FATALITY;
 
-            galo2->position.x = SCREEN_WIDTH / 2;
-            position.x = SCREEN_WIDTH / 4 + model.getBounds().width * abs(model.xScl);
+            estado = FATALITY;
+            model.resetToBase();
+
+
+            Model otherModel = galo2->getModel();
+
+
+            // Bota properties
+            float botaBaseY = Rooster::floorY;
+            float botaBaseX = SCREEN_WIDTH / 4;
+
+            float xSclAdjust = 0;
+            float ySclAdjust = 0;
+
+            float botaX = 0;
+            float botaY = 0;
+
+            float botaBaseXScl = model.xScl;
+            float botaBaseYScl = model.yScl;
+
+            float botaXSclMult = 1;
+            float botaYSclMult = 1;
+
+            float baseHei = model.getBounds().height;
+            float baseWid = model.getBounds().width;
+            float baseCenterY = model.center.y * model.yScl;
+            float baseCenterX = model.center.x * model.xScl;
+
+
+
+
+            // Other Properties
+            float otherBaseX = SCREEN_WIDTH / 1.5;
+            float otherBaseY = Rooster::floorY;
+
+            float otherXSclAdjust = 0;
+            float otherYSclAdjust = 0;
+
+            float otherX = 0;
+            float otherY = 0;
+
+            float oBaseHei = otherModel.getBounds().height;
+            float oBaseWid = otherModel.getBounds().width;
+            float oBaseCenterY = otherModel.center.y * otherModel.yScl;
+            float oBaseCenterX = otherModel.center.x * otherModel.xScl;
+
+            float otherBaseXScl = otherModel.xScl;
+            float otherBaseYScl = otherModel.yScl;
+            
+            float otherXSclMult = 1;
+            float otherYSclMult = 1;
+
+
+
+            float botaXDif = otherBaseX - botaBaseX;
+
+
+
+
+
+
+
+
 
             Font mortal;
             mortal.loadFromFile("fonts/Mortal-Kombat-MK11.otf");
@@ -650,6 +710,8 @@ namespace Rooster {
                 SCREEN_WIDTH / 2 - fatal.getGlobalBounds().width / 2 - garra1.getGlobalBounds().width,
                 SCREEN_HEIGHT / 2 - fatal.getGlobalBounds().height * 2 - garra1.getGlobalBounds().height * 2
             );
+
+
             RectangleShape opening;
 
             opening.setFillColor(Color(255, 255, 0));
@@ -667,11 +729,7 @@ namespace Rooster {
             botawins.setOutlineColor(Color(255, 255, 10));
 
 
-            SoundBuffer grito;
-            grito.loadFromFile("sounds\\Fatality_Scream.wav");
-            Sound gritoSound;
-            gritoSound.setBuffer(grito);
-            gritoSound.setLoop(true);
+          
 
 
             model.resetToBase();
@@ -701,19 +759,63 @@ namespace Rooster {
             exp->depthMax = 100;
             exp->mortal = false;
 
+           
+
+           
+
+
+
+
+
 
             Texture milhoTex;
             milhoTex.loadFromFile("sprites/milho.png");
 
+            float milhoBaseY = -400;
+            float milhoYDif = position.y - milhoBaseY;
+
+
             Sprite milhoSpr(milhoTex);
+            milhoSpr.setOrigin(milhoSpr.getLocalBounds().width/2, milhoSpr.getLocalBounds().height / 2);
             milhoSpr.setScale(10, 10);
             milhoSpr.setPosition(0, -200);
+
+           
+
+
+            SoundBuffer hitSndBuf;
+            hitSndBuf.loadFromFile("sounds/Hit.ogg");
+            Sound hitSnd;
+            hitSnd.setBuffer(hitSndBuf);
+            hitSnd.setVolume(80);
 
 
             SoundBuffer powerupSndBuf;
             powerupSndBuf.loadFromFile("sounds/Powerup.ogg");
             Sound powerupSnd;
             powerupSnd.setBuffer(powerupSndBuf);
+            powerupSnd.setVolume(50);
+
+            SoundBuffer powerupShowSndBuf;
+            powerupShowSndBuf.loadFromFile("sounds/PowerupShow.ogg");
+            Sound powerupShowSnd;
+            powerupShowSnd.setBuffer(powerupShowSndBuf);
+            powerupShowSnd.setVolume(30);
+
+            SoundBuffer jumpSndBuf;
+            jumpSndBuf.loadFromFile("sounds/Jump.ogg");
+            Sound jumpSnd;
+            jumpSnd.setBuffer(jumpSndBuf);
+            jumpSnd.setVolume(80);
+
+            SoundBuffer grito;
+            grito.loadFromFile("sounds/Fatality_Scream.wav");
+            Sound gritoSound;
+            gritoSound.setBuffer(grito);
+            gritoSound.setLoop(true);
+            gritoSound.setVolume(50);
+
+
 
 
             int timeFrames = 0;
@@ -725,153 +827,282 @@ namespace Rooster {
 
             bool istime = true;
             bool istimeagain = true;
-            int blue = 255;
-            int red = 255;
-            int green = 255;
             bool lets = true;
             bool letsgo = true;
+
+            bool powerUp = false;
+            bool jump = false;
+
+
+
+
+            
+            noGravity = true;
+            noCollision = true;
+            noRescale = true;
+
+            galo2->noRescale = true;
 
             while (window->isOpen()) {
 
                 float time = Timer.getElapsedTime().asMilliseconds();
 
+
                 window->clear();
+
                 window->draw(fundo);
-                show(*window);
-
-                exp->update();
-                exp->draw(*window);
-
-                galo2->show(*window);
 
 
                 Event e;
                 while (window->pollEvent(e))
                 {
+                    if (e.type == Event::KeyPressed)
+                    {
+                        if (e.key.code == Keyboard::Escape){
+                            return;
+                        }
+                    }
                     if (e.type == Event::Closed)
                     {
+
                         window->close();
                     }
 
                 }
 
 
+
+
                 float perc = 0;
                 if (time < 1500) {
 
-
-
-                    if (green > 0)
-                        green -= 2;
-                    else
-                        green = 0;
-                    blue--;
-                    red--;
-
-                    fundo.setFillColor(Color(red, green, blue));
-
+                    if (!powerUp) {
+                        powerupShowSnd.play();
+                        powerUp = true;
+                    }
 
                     perc = time / 1500;
 
-
+                    milhoSpr.setPosition(botaBaseX, milhoBaseY + milhoYDif * perc);
+                    milhoSpr.setColor(Color(255,255, 255, (sin(perc*PI*10) + 1)*0.5*255));
 
                 }
                 else if (time < 2500) {
+
+                    milhoSpr.setColor(Color::Transparent);
+
+
+                    if (istime) {
+                        powerupSnd.play();
+                        istime = false;
+                    }
+                    
+
                     float thisTime = time - 1500;
 
                     perc = thisTime / 1000;
 
-                  
-                    position.y = SCREEN_HEIGHT - ((SCREEN_HEIGHT / 2) * perc);
+
+
+                    botaYSclMult = 1 + (((int)(perc * 20)) % 5) / 2;
+                    botaXSclMult = botaYSclMult;
+
+                    
 
                 }
                 else if (time < 3000) {
 
+                    float thisTime = time - 2500;
 
-                    if (time > 2500) {
+                    perc = thisTime / 500;
 
-                        if (istime) {
-                            feit.play();
-                            istime = false;
-                        }
-                    }
+
+                    botaYSclMult = 3  - 1* perc;
+                    botaXSclMult = 3  + 1* perc;
+
+
+                    
                 }
+                else if(time < 5000) {
+                    
+                } 
                 else if (time < 6000) {
 
-                    // Ta nem usando esse thisTime né safado
-                    float thisTime = (time - 2500) / 6000;
 
-
-                    if (istimeagain) {
-                        gritoSound.play();
-                        istimeagain = false;
+                    if (!jump) {
+                        jumpSnd.play();
+                        jump = true;
                     }
-                    position.y = SCREEN_HEIGHT / 2;
 
+                   
+                    float thisTime = (time - 5000);
+                    float perc = thisTime / 1000;
 
-                 
-                    model.at("Body")->angle = cos(frames);
+                    float fastPerc = constrain(thisTime / 500, 0, 1);
+                    float restPerc = maximum((thisTime - 500)/1500, 0);
 
+                    botaYSclMult = 2 + 2 * (fastPerc);
+                    botaXSclMult = 4 - 2 * (fastPerc);
 
-                    galo2->getHitByBruxoFatality();
-
-                    // insano
-                    if (timeFrames % 20 == 0) {
-
-                        Model model = galo2->getModel();
-
-                        exp->position = model.at("Body")->drawPos;
-
-                        exp->createMultipleParticles(500);
-                    }
-                    timeFrames++;
+                    botaY = -sqrt(restPerc) * SCREEN_HEIGHT * 2;
 
                 }
-                else {
-                    if (time > 6000) {
+                else  if (time < 8000) {
+
+                    botaX = botaXDif;
+                    float thisTime = 2000 - (time - 6000);
+                    float perc = thisTime / 2000;
+
+                    float fastPerc = minimum(thisTime / 500, 1);
+                    float restPerc = maximum((thisTime - 500) / 1500, 0);
+
+                    botaYSclMult = 3;
+                    botaXSclMult = 3;
+                    
+                    botaY = -sqrt(restPerc) * SCREEN_HEIGHT * 2;
 
 
-                        if (lets)
-                            fatalitysound.play();
-                        lets = false;
-                        window->draw(fatal);
-                        if (time > 8000) {
-                            if (time < 12000) {
 
-                                if (letsgo)
-                                    whowins.play();
-                                letsgo = false;
-                                opening.setSize(Vector2f(ruleOfThree(time, 12000, SCREEN_WIDTH / 10), (float)SCREEN_HEIGHT / 100));
-                            }
-                            else {
-                                opening.setSize(Vector2f((float)SCREEN_WIDTH / 10, (float)SCREEN_HEIGHT / 100));
+                    if (restPerc <= 0.05) {
 
-                            }
-                            garra1.setPosition(opening.getPosition().x, garra1.getPosition().y);
-                            garra2.setPosition(opening.getPosition().x + opening.getSize().x, garra1.getPosition().y);
-                            opening.setPosition(
-                                SCREEN_WIDTH / 2 - opening.getSize().x / 2,
-                                garra2.getPosition().y + garra2.getGlobalBounds().height / 1.5);
+                        exp->position = otherModel.at("Body")->drawPos;
 
-                            window->draw(opening);
-                            window->draw(garra1);
-                            window->draw(garra2);
-                            window->draw(botawins);
+                        otherYSclMult = 0.2;
+                        otherXSclMult = 1.8;
+
+                        if (istimeagain) {
+
+                            
+
+                            gritoSound.play();
+                            istimeagain = false;
+
+                            hitSnd.play();
+
+                            exp->createMultipleParticles(1200);
                         }
+
+                        if (timeFrames % 50 == 0) {
+                            exp->createMultipleParticles(300);
+                        }
+                        timeFrames++;
                     }
+                   
+
+                    //galo2->getHitByBruxoFatality();
+
+
+                   
+
+
+                    
+                    if (lets) {
+                        fatalitysound.play();
+                    }
+
+                    lets = false;
+                   
+
+
+                   
+                    
+                    
+                    
                 }
+
+
+                
+                if (time > 10000) {
+                   
+                    if (time < 12000) {
+
+                        if (letsgo)
+                            whowins.play();
+                        letsgo = false;
+                        opening.setSize(Vector2f(ruleOfThree(time, 12000, SCREEN_WIDTH / 10), (float)SCREEN_HEIGHT / 100));
+                    }
+                    else {
+                        opening.setSize(Vector2f((float)SCREEN_WIDTH / 10, (float)SCREEN_HEIGHT / 100));
+
+                    }
+                    
+                    garra1.setPosition(opening.getPosition().x, garra1.getPosition().y);
+                    garra2.setPosition(opening.getPosition().x + opening.getSize().x, garra1.getPosition().y);
+
+                    
+                    
+                    opening.setPosition(SCREEN_WIDTH / 2 - opening.getSize().x / 2, garra2.getPosition().y + garra2.getGlobalBounds().height / 1.5);
+
+                    window->draw(opening);
+                    window->draw(garra1);
+                    window->draw(garra2);
+                    window->draw(botawins);
+                }
+
+
 
                 if (time > 15000) {
                     return;
                 }
 
+                ySclAdjust = -(botaYSclMult - 1) * (baseHei - baseCenterY)*0;
+
+                position.x = botaBaseX + botaX + xSclAdjust;
+                position.y = botaBaseY + botaY + ySclAdjust;
+                model.xScl = botaBaseXScl * botaXSclMult;
+                model.yScl = botaBaseYScl * botaYSclMult;
+
+                otherYSclAdjust = -(otherYSclMult - 1) * (oBaseHei - oBaseCenterY)*0;
+
+                galo2->position.x = otherBaseX + otherX + otherXSclAdjust;
+                galo2->position.y = otherBaseY + otherY + otherYSclAdjust;
+                galo2->model.xScl = otherBaseXScl * otherXSclMult;
+                galo2->model.yScl = otherBaseYScl * otherYSclMult;
+
+                galo2->setState(DEFENDING);
+
+
                 updateWithoutPhysics();
 
                 galo2->updateWithoutPhysics();
+                exp->update();
+
+
+
+                
+                // Essa ideia da sombra n deu certo
+                /*
+                if (time > 6000) {
+                    sf::CircleShape elipse(10);
+                    elipse.setOrigin(5, 5);
+
+                    float aPerc = constrain(ruleOfThree(time, 6000, 8000, 0, 1), 0, 1);
+
+                    elipse.setPosition(galo2->model.at("Body")->drawPos.x, galo2->position.y);
+                    elipse.setFillColor(Color(0, 0, 0 ,255*aPerc));
+                    float scl = 20 + (1 - aPerc) * 40;
+                    elipse.setScale(scl, 2);
+                    window->draw(elipse);
+                }
+                */
+                
+
+
+                galo2->show(*window);
+                show(*window);
+
+                window->draw(milhoSpr);
+                exp->draw(*window);
+
+                if (!lets) {
+                    window->draw(fatal);
+                }
 
                 window->display();
             }
-            */
+
+            
+        }
     };
 
 

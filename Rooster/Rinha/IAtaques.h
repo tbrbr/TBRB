@@ -393,6 +393,7 @@ namespace Rooster {
 
 		void playSound() {
 			if (hasSound) {
+				
 				soundCollision.play();
 			}
 		}

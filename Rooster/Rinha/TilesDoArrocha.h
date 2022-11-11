@@ -221,6 +221,7 @@ class Yamaha {
 	// Armazenando as musicas
 
 	Music musica;
+	int musicaId = -1;
 
 
 
@@ -604,12 +605,15 @@ public:
 
 
 
-
+	int getMusicaId() {
+		return musicaId;
+	}
 
 	void loadMusica(int tilesMusicaIndex) {
 
 		musica.openFromFile(tilesMusicas[tilesMusicaIndex].soundPath);
 		loadNotas(tilesMusicas[tilesMusicaIndex].notasPath);
+		musicaId = tilesMusicaIndex;
 	}
 
 
@@ -1000,7 +1004,13 @@ public:
 		if (playing) {
 			scrollY = bps * getPlayingSeconds();
 
-			if (scrollY > finishLineY) {
+			if (musica.getStatus() == sf::Music::Stopped) {
+				musica.setPlayingOffset(musica.getDuration());
+				musica.pause();
+				scrollY = bps * getPlayingSeconds();
+			}
+
+			if (scrollY > finishLineY || musica.getStatus() == sf::Music::Stopped) {
 				if (!finished && !editing) {
 					finish();
 				}
@@ -1892,10 +1902,10 @@ struct TilesInfo {
 
 
 		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
-			alcides->moveScroll(-0.2);
+			alcides->moveScroll(-5);
 		}
 		if (mainInput.keyboardState[sf::Keyboard::Up][0]) {
-			alcides->moveScroll(0.2);
+			alcides->moveScroll(5);
 		}
 
 		if (mainInput.keyboardState[sf::Keyboard::Space][1]) {
@@ -2028,7 +2038,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 	clearButton.label = "clear";
 
 
-
+	int musicaId = info.alcides->getMusicaId();
 
 
 	while (window->isOpen()) {
@@ -2198,20 +2208,26 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 
 
 
+		switch(musicaId) {
+		case 0:
+			if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+				flores = true;
 
-		if (info.alcides->getPlayingSeconds() > 46 && !flores) {
-			flores = true;
+				FloatRect area(0, -1000, roomWid, 1000);
 
-			FloatRect area(0, -1000, roomWid, 1000);
+				Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
+				effect->floresPreset();
+				//effect->color = Color(200, 250, 100);
 
-			Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
-			effect->floresPreset();
-			//effect->color = Color(200, 250, 100);
+				effect->createMultipleParticles(100);
 
-			effect->createMultipleParticles(100);
+				mainPartSystem.addEffect(effect);
+			}
+			break;
 
-			mainPartSystem.addEffect(effect);
-		}
+		case 1:
+			break;
+		} 
 
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);

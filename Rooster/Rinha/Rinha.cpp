@@ -315,9 +315,9 @@ int main() {
 				socket->disconnect();
 				selector->reset();
 			}
+		
 		default:
-			window->close();
-			t.terminate();
+
 			break;
 		}
 		

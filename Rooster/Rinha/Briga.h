@@ -117,7 +117,17 @@ void galoAttacks(Rooster::Galo& attacker, Rooster::Galo& defender) {
 }
 
 
+
+
 void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleShape fundo) {
+
+
+	// Dev tools
+	bool skipToWin = true;
+	bool skipToFatality = true;
+
+
+
 
 	// BREGA
 	//-------------------------------------------------------------------------------------------
@@ -332,13 +342,43 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	int pauseFrames = 120;
 
+
+
+
+
+	// Adiantando as coisas
+	if (skipToWin) {
+		// Galo win
+		framesWin = 250;
+		musicas[index].stop();
+
+		fightWon = true;
+
+		winner = &galo;
+		looser = &galo2;
+
+		println("Ganhou");
+
+		if (skipToFatality) {
+			tilesEnd = true;
+			executarFatality = true;
+		}
+
+	}
+
+	
+
+
+
+
+
 	while (window->isOpen()) {
 
 
-		/*
-		musicas[index].pause();
-		galo.fatality(window,&galo2,fundo);
-		*/
+
+		//musicas[index].pause();
+		//galo.fatality(window,&galo2,fundo);
+		
 
 
 		window->clear();
@@ -689,7 +729,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 					info.alcides->pause();
 					tilesEnd = true;
-					executarFatality = info.result == 1? true : false;
+
+					executarFatality = ((info.result == 1) || GODMODE);
 				}
 
 

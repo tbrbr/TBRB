@@ -805,6 +805,16 @@ struct Model {
         rect.setOutlineThickness(4);
         window.draw(rect);
 
+
+        sf::CircleShape circle(10);
+        circle.setPosition(pos.x + center.x * xSclAbs, center.y*ySclAbs + pos.y - (bounds.height - center.y) * ySclAbs);
+        circle.setOrigin(center.x * xSclAbs + 5, center.y * ySclAbs + 5);
+
+        circle.setFillColor(Color(0, 0, 0, 255));
+        circle.setOutlineColor(Color(255, 255, 0));
+        circle.setOutlineThickness(4);
+        window.draw(circle);
+
     }
 
     void update() {

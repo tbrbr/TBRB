@@ -424,6 +424,7 @@ namespace Rooster {
 
 		bool noGravity = true;
 		bool noCollision = false;
+		bool noRescale = false;
 
 
 		// Lifebar
@@ -943,10 +944,11 @@ namespace Rooster {
 			model.pos.x = position.x;
 			model.pos.y = position.y;
 
-			float resizeScl = (float)SCREEN_WIDTH / 5120;
-
-			model.xScl = 4 * (facingRight ? -1 : 1) * resizeScl;
-			model.yScl = 4 * resizeScl;
+			if (!noRescale) {
+				float resizeScl = (float)SCREEN_WIDTH / 5120;
+				model.xScl = 4 * (facingRight ? -1 : 1) * resizeScl;
+				model.yScl = 4 * resizeScl;
+			}
 			model.update();
 
 			estadoUpdate = false;
@@ -957,10 +959,11 @@ namespace Rooster {
 			model.pos.x = position.x;
 			model.pos.y = position.y;
 
-			float resizeScl = (float)SCREEN_WIDTH / 5120;
-
-			model.xScl = 4 * (facingRight ? -1 : 1) * resizeScl;
-			model.yScl = 4 * resizeScl;
+			if (!noRescale) {
+				float resizeScl = (float)SCREEN_WIDTH / 5120;
+				model.xScl = 4 * (facingRight ? -1 : 1) * resizeScl;
+				model.yScl = 4 * resizeScl;
+			}
 			model.update();
 
 			estadoUpdate = false;

@@ -316,6 +316,8 @@ int main() {
 				selector->reset();
 			}
 		default:
+			window->close();
+			t.terminate();
 			break;
 		}
 		
@@ -324,6 +326,13 @@ int main() {
 
 	delete listener;
 	delete socket;
+	delete galo;
+	delete galo2;
+	delete miniGame1;
+	delete __mapa;
+	delete window;
+	delete selector;
 
 	return 0;
+	//Fim da main
 }

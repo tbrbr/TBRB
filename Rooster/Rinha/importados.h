@@ -19,13 +19,12 @@
 using namespace std;
 using namespace sf;
 
-//const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
-//const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
-
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
+const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
 
 #define SHOWDEBUG false
+#define GODMODE true
+
 
 Font basicFont;
 

@@ -5,6 +5,45 @@
 
 bool isHost = false;
 
+bool validarIp(char* ip) {
+
+	int pontos = 0;
+	if (ip[strlen(ip) - 1] == '.' || ip[0] == '.') {
+		return false;
+	}
+	for (int i = 0; i < strlen(ip); i++) {
+		if (ip[i] == '.') {
+			if (ip[i + 1] == '.') {
+				return false;
+			}
+			pontos++;
+		}
+	}
+
+	if (pontos != 3) {
+		return false;
+	}
+	char a[4][4];
+
+	strcpy(a[0], strtok(ip, "."));
+
+	for (int i = 1; i < 4; i++) {
+		strcpy(a[i], strtok(NULL, "."));
+	}
+
+	for (int i = 0; i < 4; i++) {
+		if (atoi(a[i]) > 255) {
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
+
+
+
 void waitConnection(TcpSocket* socket, TcpListener* listener, bool* connect) {
 	socket->setBlocking(true);
 	listener->listen(59000);
@@ -163,7 +202,7 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 
 	ipBox.init(2, boxX, boxY, boxWid, boxHei, "");
 	ipBox.textLimit = 30;
-	ipBox.label = "Digite o ip Ex.: 154.21.158.367";
+	ipBox.label = "Digite o ip Ex.: 154.21.158.255";
 
 	sf::IpAddress ip;
 	
@@ -207,7 +246,21 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 			else if (e.type == Event::KeyPressed) {
 				if (e.key.code == sf::Keyboard::Enter) {
 					inputType = 1;
+					ip = sf::IpAddress::IpAddress(ipBox.sVal);
+
+					if (socket->connect(ip, 59000) == Socket::Done) {
+						return MULTI_SELECT;
+					}
+					else {
+						return MULTI_MODE;
+					}
 				}
+
+				if (e.key.code == sf::Keyboard::Escape) {
+					return MULTI_MODE;
+				}
+
+
 			}
 			
 		}
@@ -232,7 +285,5 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 
 	}
 
-	socket->connect(ip, 59000);
-	return MULTI_SELECT;
 }
 #endif // ! 

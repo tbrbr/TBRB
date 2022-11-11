@@ -52,8 +52,8 @@ void galo2thread(Galo * galo2, TcpSocket * socket, bool * loss) {
 		else {
 			galo2->setState(Rooster::state::STOPPED);
 		}
-
-		
+		data[1] = '\0';
+		data[5] = '\0';
 	}
 
 }
@@ -118,6 +118,9 @@ void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 			}
 		}
 		else {
+			data[0] = '0';
+			data[1] = '0';
+			data[5] = '0';
 			(*pauseFrames)--;
 		}
 

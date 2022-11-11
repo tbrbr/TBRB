@@ -151,6 +151,16 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	//-------------------------------------------------------------------------------------------
 
 	bool executarFatality = false;
+	bool tilesEnd = false;
+
+
+
+	bool cordaFall = false;
+	bool cordaReady = false;
+	bool cordaPull = false;
+	int  cordaFrames = 100;
+
+
 
 	// Tenho que botar algo no começo pra garantir que nao vai crashar e pro codigo rodar
 	Rooster::Galo* winner = &galo;
@@ -221,7 +231,6 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	Texture yamahaTex;
 	yamahaTex.loadFromFile("sprites/tecladoYamaha.png");
 
-
 	float yamahaY = -400;
 	float yamahaVspeed = 0;
 
@@ -233,6 +242,43 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	SoundBuffer yamahaFallSndBuffer;
 	yamahaFallSndBuffer.loadFromFile("sounds/Explosion.ogg");
 	Sound yamahaFallSnd(yamahaFallSndBuffer);
+
+
+
+
+
+	// Corda
+	Texture cordaTex;
+	cordaTex.loadFromFile("sprites/cordaFalidamenteExtendida.png");
+
+	
+
+	Sprite cordaSpr(cordaTex);
+	cordaSpr.setOrigin(cordaSpr.getLocalBounds().width / 2, 0);
+	cordaSpr.setScale(0.4, 0.4);
+
+	float cordaY = -2*cordaSpr.getGlobalBounds().height;
+	float cordaX = 200;
+	float cordaVspeed = 0;
+	cordaSpr.setPosition(cordaX, cordaY);
+
+	
+	SoundBuffer roldanaSndBuffer;
+	roldanaSndBuffer.loadFromFile("sounds/roldana.ogg");
+	Sound roldanaSnd(roldanaSndBuffer);
+	
+
+	// Earthquake
+	SoundBuffer earthquakeSndBuffer;
+	earthquakeSndBuffer.loadFromFile("sounds/Earthquake.ogg");
+	Sound earthquakeSnd(earthquakeSndBuffer);
+
+	// Pull corda
+	SoundBuffer pullSndBuffer;
+	pullSndBuffer.loadFromFile("sounds/Pull.ogg");
+	Sound pullSnd(pullSndBuffer);
+
+
 
 
 
@@ -540,13 +586,24 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				yamahaFallSnd.play();
 
-				ExplosionEffect* effect = new ExplosionEffect(Vector2f(yamahaX, Rooster::floorY), 2, -90, 220, 0, 0);
+				roldanaSnd.play();
+
+				if (!cordaPull) {
+					cordaFall = true;
+				}
+
+				Effect* effect = new Effect();
+				effect->position = Vector2f(yamahaX, Rooster::floorY);
+				effect->spreadPreset(yamahaSpr.getGlobalBounds().width, yamahaSpr.getGlobalBounds().height/2);
 				effect->poeiraPreset();
+
+				effect->sclMin = 0.5;
+				effect->sclMax = 3;
 
 				effect->fadeOutAlpha = true;
 				effect->lifeMin = 60;
 				effect->lifeMax = 150;
-				effect->createMultipleParticles(150);
+				effect->createMultipleParticles(40);
 				mainPartSystem.addEffect(effect);
 			}
 			else if (yamahaY < Rooster::floorY) {
@@ -560,20 +617,73 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			}
 					
 			if (framesWin <= 0) {
-				tilesFall = true;
+				if (!cordaPull) {
+					cordaFall = true;
+				}
 			}
 
 
+			if (tilesEnd) {
+				if (executarFatality) {
+					winner->fatality(window, looser, fundo);
+				}
 
-			if (executarFatality) {
-				println("Fatalitou");
-				winner->fatality(window, looser, fundo);
 				option = MENU_PRINCIPAL;
 				return;
 			}
 
+			if (cordaFall) {
+
+
+
+				if (!cordaPull) {
+
+					if (cordaReady) {
+						cordaFrames--;
+						if (cordaFrames <= 0) {
+							cordaVspeed += 15;
+							cordaPull = true;
+							pullSnd.play();
+						}
+					}
+
+					if (cordaY < -cordaSpr.getGlobalBounds().height/2) {
+						cordaVspeed += 0.2;
+					}
+					else {
+						cordaReady = true;
+
+						
+						roldanaSnd.pause();
+						
+
+						cordaY = -cordaSpr.getGlobalBounds().height / 2;
+						cordaVspeed *= -0.5;
+
+						
+					}
+				}
+				else {
+					cordaVspeed -= 0.7;
+
+					if (cordaY < -cordaSpr.getGlobalBounds().height) {
+						cordaFall = false;
+						tilesFall = true;
+					}
+				}
+				
+				cordaVspeed = constrain(cordaVspeed, -20, 15);
+
+				cordaY += cordaVspeed;
+
+				cordaSpr.setPosition(cordaX, cordaY);
+				window->draw(cordaSpr);
+			}
+
 			// Piano Tiles
 			if (tilesFall) {
+
+
 
 
 				sf::View currentView = baseTilesView;
@@ -582,9 +692,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					tilesFall = false;
 
 					info.alcides->pause();
-
-					// Ainda n fiz a parte de perder o fatality
-					executarFatality = true;
+					tilesEnd = true;
+					executarFatality = info.result == 1? true : false;
 				}
 
 
@@ -596,21 +705,29 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 				if (!tilesReady) {
 
-					tilesVspeedPort += 0.0005;
+					tilesVspeedPort += 0.001;
 
 					tilesYPort += tilesVspeedPort;
 					if (tilesYPort > 0) {
 
+						earthquakeSnd.setVolume(tilesVspeedPort*1000);
+						earthquakeSnd.play();
+
+
 						tilesVspeedPort *= -0.5;
 						tilesYPort = 0;
+
+						
 
 						FloatRect area(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 80);
 
 						AreaEffect* effect = new AreaEffect(area, Color::White);
 						effect->tilesPreset();
 						effect->poeiraPreset();
-						effect->vspeedMin = -4;
-						effect->vspeedMax = 4;
+						effect->vspeedMin = -2;
+						effect->vspeedMax = 2;
+						effect->sclMin = 1.5;
+						effect->sclMax = 4;
 						effect->gravity.y = 0;
 						effect->friction = 0.95;
 						effect->fadeOutAlpha = true;
@@ -619,12 +736,12 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 						effect->color = Color(200, 250, 100);
 
-						effect->createMultipleParticles(abs(5000 * tilesVspeedPort));
+						effect->createMultipleParticles(abs(20000 * tilesVspeedPort));
 
 						mainPartSystem.addEffect(effect);
 
 
-						if (abs(tilesVspeedPort) < 0.001) {
+						if (abs(tilesVspeedPort) < 0.002) {
 							tilesVspeedPort = 0;
 							tilesReady = true;
 							info.alcides->play();

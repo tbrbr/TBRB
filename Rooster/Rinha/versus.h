@@ -115,6 +115,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	p2.setState(DANCING);
 
 	float pauseMilisec = 8000;
+	
 	int animState = 1;
 	int opacity = 0;
 	int fundoopacity = 0;

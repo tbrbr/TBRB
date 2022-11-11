@@ -2,8 +2,53 @@
 struct TilesMusica {
 	std::string soundPath;
 	std::string notasPath;
-	//mapa de teclas que eu vou implementar nstt
+
+	std::string name;
+	
+	sf::Sprite sprite;
+
+	
 };
+
+// Variavel global com as informações das musicas
+std::vector<struct TilesMusica> tilesMusicas;
+
+void initTilesMusica() {
+	struct TilesMusica musLindinho;
+	musLindinho.soundPath = "PianoFiles/sounds/teclado lindinho.ogg";
+	musLindinho.notasPath = "PianoFiles/tecladoLindinho.txt";
+	musLindinho.name = "Teclado Lindinho";
+
+	tilesMusicas.push_back(musLindinho);
+
+	struct TilesMusica musMorango;
+	musMorango.soundPath = "PianoFiles/sounds/morango.ogg";
+	musMorango.notasPath = "PianoFiles/morango.txt";
+	musMorango.name = "Morango";
+
+	tilesMusicas.push_back(musMorango);
+
+	struct TilesMusica musZe;
+	musZe.soundPath = "PianoFiles/sounds/zerebolabola.ogg";
+	musZe.notasPath = "PianoFiles/ze.txt";
+	musZe.name = "Ze";
+
+	tilesMusicas.push_back(musZe);
+
+	struct TilesMusica musEscoces;
+	musEscoces.soundPath = "PianoFiles/sounds/escoces.ogg";
+	musEscoces.notasPath = "PianoFiles/mama.txt";
+	musEscoces.name = "Escoces";
+
+	tilesMusicas.push_back(musEscoces);
+
+	struct TilesMusica musLatitude;
+	musLatitude.soundPath = "PianoFiles/sounds/latitude.ogg";
+	musLatitude.notasPath = "PianoFiles/latitude.txt";
+	musLatitude.name = "Latitude";
+
+	tilesMusicas.push_back(musLatitude);
+}
 
 
 // Função pra transformar retangulo em convexShape
@@ -164,7 +209,7 @@ class Yamaha {
 
 
 	// Armazenando as musicas
-	std::vector<struct TilesMusica> musicas;
+	
 	Music musica;
 
 
@@ -231,46 +276,19 @@ public:
 		roomHei = roomSize.y;
 
 
-		struct TilesMusica musLindinho;
-		musLindinho.soundPath = "PianoFiles/sounds/teclado lindinho.ogg";
-		musLindinho.notasPath = "PianoFiles/tecladoLindinho.txt";
 
-		musicas.push_back(musLindinho);
-
-		struct TilesMusica musMorango;
-		musMorango.soundPath = "PianoFiles/sounds/morango.ogg";
-		musMorango.notasPath = "PianoFiles/morango.txt";
-
-		musicas.push_back(musMorango);
-
-		struct TilesMusica musZe;
-		musZe.soundPath = "PianoFiles/sounds/zerebolabola.ogg";
-		musZe.notasPath = "PianoFiles/ze.txt";
-
-		musicas.push_back(musZe);
-
-		struct TilesMusica musEscoces;
-		musEscoces.soundPath = "PianoFiles/sounds/escoces.ogg";
-		musEscoces.notasPath = "PianoFiles/mama.txt";
-
-		musicas.push_back(musEscoces);
-
-		struct TilesMusica musLatitude;
-		musEscoces.soundPath = "PianoFiles/sounds/latitude.ogg";
-		musEscoces.notasPath = "PianoFiles/latitude.txt";
-
-		musicas.push_back(musLatitude);
+		// Ce ta procurando a lista de musicas do tiles, tá no inicio do TilesDoArrocha.h
 
 
 
-		musica.openFromFile("PianoFiles/sounds/latitude.ogg");
-		loadNotas(autoSavePath);
 
 
-		loadMusica(0);
+		//musica.openFromFile("PianoFiles/sounds/latitude.ogg");
+		//loadNotas(autoSavePath);
 
-		
-		//musTeste.music.play();
+
+		loadMusica(randInt(5));
+
 
 		base = 400;
 		altura = 600;
@@ -561,8 +579,8 @@ public:
 
 	void loadMusica(int tilesMusicaIndex) {
 
-		musica.openFromFile(musicas[tilesMusicaIndex].soundPath);
-		loadNotas(musicas[tilesMusicaIndex].notasPath);
+		musica.openFromFile(tilesMusicas[tilesMusicaIndex].soundPath);
+		loadNotas(tilesMusicas[tilesMusicaIndex].notasPath);
 	}
 
 
@@ -1816,7 +1834,7 @@ struct TilesInfo {
 };
 
 
-bool pianoTiles(RenderWindow* window) {
+bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 
 
 	float roomWid = 1280;
@@ -1826,6 +1844,9 @@ bool pianoTiles(RenderWindow* window) {
 	info.roomSize.x = roomWid;
 	info.roomSize.y = roomHei;
 	info.init();
+	info.alcides->editing = false;
+	info.alcides->loadMusica(musicaSelecionada);
+	info.alcides->play();
 
 
 	bool flores = false;
@@ -1913,7 +1934,11 @@ bool pianoTiles(RenderWindow* window) {
 			{
 				if (e.key.code == Keyboard::Escape)
 				{
-					window->close();
+					info.clear();
+
+
+
+					return false;
 				} else if(e.key.code == Keyboard::Enter) {
 					inputType = 1;
 				}
@@ -2079,10 +2104,184 @@ bool pianoTiles(RenderWindow* window) {
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);
 
+		if (info.result != -1) {
+			return info.result;
+		}
+
 		window->display();
 	}
 
+
+	info.clear();
 	return true;
 	
 	
+}
+
+
+
+void tilesMenu(RenderWindow* window) {
+
+	float roomWid = 1280;
+	float roomHei = 720;
+
+
+	sf::View view;
+	if (true) {
+
+		Vector2f size = (Vector2f)window->getSize();
+
+		float wid = roomWid;
+		float hei = roomHei;
+		float xScl = (float)size.x / wid;
+		float yScl = (float)size.y / hei;
+
+		if (xScl > yScl) {
+			wid *= yScl;
+			hei = size.y;
+		}
+		else {
+
+			hei *= xScl;
+			wid = size.x;
+		}
+
+		xScl = wid / (float)size.x;
+		yScl = hei / (float)size.y;
+
+		sf::FloatRect area(0.f, 0.f, 1280, 720);
+		view.setSize(area.width, area.height);
+		view.setCenter(area.width / 2, area.height / 2);
+		view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
+		window->setView(view);
+	}
+
+
+
+
+	// Detecta texto para o editor
+	int inputType = -1;
+	char lastChar = ' ';
+
+
+	std::vector<struct Button> buttons;
+
+	float buttonWid = 400;
+	float buttonHei = 60;
+	float yOffset = 40;
+
+	for (int i = 0; i < tilesMusicas.size(); i++) {
+		struct Button playButton;
+		playButton.init(roomWid / 2 - buttonWid / 2, roomHei / 2 - tilesMusicas.size()*(yOffset+buttonHei)/2 - buttonHei/2 + (buttonHei + yOffset)*i , buttonWid, buttonHei);
+		playButton.color = Color(250, 100, 150);
+		playButton.label = tilesMusicas[i].name;
+		buttons.push_back(playButton);
+	}
+	
+
+
+
+
+
+
+	while (window->isOpen()) {
+
+		inputType = -1;
+
+		mainInput.update();
+
+
+		Event e;
+		while (window->pollEvent(e))
+		{
+			if (e.type == Event::KeyPressed)
+			{
+				if (e.key.code == Keyboard::Escape)
+				{
+					return;
+				}
+				else if (e.key.code == Keyboard::Enter) {
+					inputType = 1;
+				}
+			}
+
+			if (e.type == Event::MouseMoved) {
+				mainInput.mousePos = Vector2f(e.mouseMove.x, e.mouseMove.y);
+			}
+
+			if (e.type == Event::MouseWheelScrolled) {
+				mainInput.mouseScroll = e.mouseWheelScroll.delta;
+			}
+
+			if (e.type == Event::Closed)
+			{
+				window->close();
+			}
+			if (e.type == sf::Event::Resized)
+			{
+				float wid = roomWid;
+				float hei = roomHei;
+				float xScl = (float)e.size.width / wid;
+				float yScl = (float)e.size.height / hei;
+
+				if (xScl > yScl) {
+					wid *= yScl;
+					hei = e.size.height;
+				}
+				else {
+
+					hei *= xScl;
+					wid = e.size.width;
+				}
+
+				xScl = wid / (float)e.size.width;
+				yScl = hei / (float)e.size.height;
+
+				sf::FloatRect area(0.f, 0.f, roomWid, roomHei);
+				view.setSize(area.width, area.height);
+				view.setCenter(area.width / 2, area.height / 2);
+				view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
+				window->setView(view);
+			}
+			else if (e.type == Event::TextEntered) {
+				if (e.text.unicode < 128) {
+
+					if (e.text.unicode > 31) {
+						lastChar = (static_cast<char>(e.text.unicode));
+						inputType = 0;
+					}
+					else if (e.text.unicode == 3 || e.text.unicode == 8) {
+						inputType = 2;
+					}
+				}
+			}
+		}
+
+
+
+		window->clear();
+
+
+		Vector2f mouseViewPos = window->mapPixelToCoords((Vector2i)mainInput.mousePos);
+
+		for (int i = 0; i < buttons.size(); i++) {
+			buttons[i].draw(*window);
+			buttons[i].update(mouseViewPos);
+
+			if (buttons[i].clicked) {
+				pianoTiles(window, i);
+			}
+		}
+
+		
+
+
+		mainPartSystem.update();
+		mainPartSystem.draw(*window);
+
+
+		window->display();
+	}
+
+	return;
 }

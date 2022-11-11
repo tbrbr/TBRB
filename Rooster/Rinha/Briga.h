@@ -289,10 +289,10 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	while (window->isOpen()) {
 
 
-		
+		/*
 		musicas[index].pause();
 		galo.fatality(window,&galo2,fundo);
-		
+		*/
 
 
 		window->clear();
@@ -462,8 +462,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					pauseFrames = 120;
 					galo.resetPosition();
 					galo2.resetPosition();
+					
 					galo.sethp(galo.getMaxhp());
 					galo2.sethp(galo2.getMaxhp());
+					
+					galo.bar->resetBarHp();
+					galo2.bar->resetBarHp();
+
 				}
 			}
 			else if (galo2.gethp() < 0) {
@@ -487,9 +492,11 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					framesRound = 60;
 					pauseFrames = 120;
 					galo.resetPosition();
-					galo2.resetPosition();
+					galo2.resetPosition();				
 					galo.sethp(galo.getMaxhp());
 					galo2.sethp(galo2.getMaxhp());
+					galo.bar->resetBarHp();
+					galo2.bar->resetBarHp();
 				}
 			}
 
@@ -594,6 +601,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 					tilesYPort += tilesVspeedPort;
 					if (tilesYPort > 0) {
+
 						tilesVspeedPort *= -0.5;
 						tilesYPort = 0;
 

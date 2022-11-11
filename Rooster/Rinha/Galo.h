@@ -203,7 +203,9 @@ namespace Rooster {
 		int getPower() {
 			return power;
 		}
-
+		void resetBarHp() {
+			update(Maxhp);
+		}
 		void draw(RenderWindow* window) {
 			for (int i = 0; i < 10; i++) {
 				window->draw(combo[i]);
@@ -273,6 +275,7 @@ namespace Rooster {
 
 
 		}
+		
 		void update(int hp) {
 
 			int oldTam = life.getGlobalBounds().width;
@@ -858,7 +861,6 @@ namespace Rooster {
 
 		virtual void updateAnimations() = 0;
 
-
 		virtual void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) {
 
 		}
@@ -1051,6 +1053,45 @@ namespace Rooster {
 
 
 		}
+		void explodir() {
+			static int  thisFrames = 0;
+			if (thisFrames < 100) {
+				for (int i = 0; i < model.allBones.size(); i++) {
+					if (model.at(i) == model.at("Head")) {
+						continue;
+					}
+					model.at(i)->offset.x += (i % 2 - 4);
+					model.at(i)->offset.y += (i % 4 - 8) * 2;
+				}
+				if (model.at("Head")->drawPos.x > SCREEN_WIDTH / 2) {
+					model.at("Head")->offset.x -= 1;
+				}
+				else if (model.at("Head")->drawPos.x < SCREEN_WIDTH / 2)  {
+					model.at("Head")->offset.x += 1;
+				}
+				
+				if (model.at("Head")->drawPos.y < floorY) {
+					model.at("Head")->offset.y += 1;
+				}
+
+			}
+			else {
+				for (int i = 0; i < model.allBones.size(); i++) {
+					if (model.at(i) == model.at("Head")) {
+						continue;
+					}
+					model.at(i)->offset.x += (i % 4 - 2);
+					model.at(i)->offset.y += 9;
+				}
+			
+				
+					model.at("Head")->angle += thisFrames % 20 - 10;
+				
+
+			}
+			thisFrames++;
+		}
+
 
 		void getHitByKalsaFatalityBody(RenderWindow* window, Galo* g2) {
 

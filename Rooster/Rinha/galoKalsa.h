@@ -276,7 +276,9 @@ namespace Rooster {
 				superIsOn = false;
 				
 			}
-			position.x += 1;
+			
+			position.x += facingRight ? 1 : -1;
+
 
 			if (vspeed > 0) {
 

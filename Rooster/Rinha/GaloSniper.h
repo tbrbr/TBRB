@@ -879,6 +879,114 @@ namespace Rooster {
 			thisFrames++;
 
 		}
+
+		void shitAtack() {
+
+			static int thisFrames = 0;
+			int maxFrames = 30;
+
+			if (thisFrames > maxFrames) {
+				
+				thisFrames = 0;
+			}
+
+			float percentage = (float) thisFrames / maxFrames;
+
+			int angFix = -1;
+
+			if (percentage < 0.5f / 3.f) {
+
+
+				float thisPercentage = percentage * 3;
+
+				model.at("Sniper")->angle += 45;
+				model.at(ASA_ATRAS)->angle = angFix * 45 * -sin(thisPercentage * PI / 2);
+				model.at(ASA_FRENTE)->angle = angFix * 90 * sin(thisPercentage * PI / 2);
+
+			}
+			else if (percentage < 2.f / 3.f) {
+				float thisPercentage = percentage * 3;
+
+				model.at("Sniper")->angle = -10;
+				model.at(ASA_ATRAS)->angle = 0;
+				model.at(ASA_FRENTE)->angle = 0;
+				model.at(CABECA)->angle = -10;
+				model.at(PERNA_ATRAS)->offset.y = -10;
+				model.at(PERNA_FRENTE)->offset.y = -10;
+				model.at(PERNA_ATRAS)->angle = -10;
+				model.at(PERNA_FRENTE)->angle = -10;
+				model.at(PE_ATRAS)->angle = 10;
+				model.at(PE_FRENTE)->angle = 10;
+				position.y += 10;
+
+			}
+			else if (percentage < 2.05f / 3.f) {
+				ultimateShot->playSound();
+			}
+			else if (percentage < 2.2f / 3.f) {
+
+
+
+				projectiles[0].setVisibility(true);
+				projectiles[0].setScale(Vector2f(1, 1));
+
+				projectiles[0].setPosition(
+					Vector2f(model.at("Sniper")->drawPos.x,
+						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+					)
+				);
+
+				if (facingRight) {
+					projectiles[0].setImpulse(90, 30);
+					projectiles[0].setScale(Vector2f(0.1, 0.1));
+				}
+
+				else {
+					projectiles[0].setImpulse(-90, 30);
+					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+				}
+
+				projectiles[0].setSpriteAngle(15);
+
+				ultimateShot->isAtacking = true;
+			}
+			else if (percentage < 2.5f / 3.f) {
+
+				model.at("Sniper")->angle += 5;
+				model.at(ASA_ATRAS)->angle += 5;
+				model.at(ASA_FRENTE)->angle += 5;
+				model.at(CABECA)->angle += 5;
+				model.at(BIGODE_FRENTE)->angle += -90;
+				model.at(BIGODE_ATRAS)->angle += -90;
+
+				if (facingRight)
+					position.x -= 2;
+				else
+					position.x += 2;
+
+
+			}
+			else if (percentage < 2.9 / 3.f) {
+				model.at("Sniper")->angle *= 0.9;
+				model.at(ASA_ATRAS)->angle *= 0.9;
+				model.at(ASA_FRENTE)->angle *= 0.9;
+				model.at(BIGODE_FRENTE)->angle *= 0.9;
+				model.at(BIGODE_ATRAS)->angle *= 0.9;
+				model.at(CABECA)->angle *= 0.9;
+			}
+			else {
+				model.at("Sniper")->angle = 0;
+				model.at(ASA_ATRAS)->angle = 0;
+				model.at(ASA_FRENTE)->angle = 0;
+				model.at(CABECA)->angle = 0;
+			}
+
+			thisFrames++;
+		}
+
+
+
+
 		void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
 			Clock Timer;
 			Timer.restart();
@@ -959,14 +1067,9 @@ namespace Rooster {
 			Sound whowins;
 			whowins.setBuffer(whowinsBuf);
 
-			ExplosionEffect* exp = new ExplosionEffect(Vector2f(0, 0), 10);
-			exp->sanguePreset();
-			exp->depthSpdMin = -1;
-			exp->depthSpdMax = 4;
-			exp->depthMin = 100;
-			exp->depthMax = 100;
+			
 
-			exp->mortal = false;
+			
 
 			int explosionSizex = 256;
 			int explosionSizey = 248;
@@ -979,13 +1082,36 @@ namespace Rooster {
 			explosionSpr.setTexture(explosion);
 			
 
+			bool lets = true;
+
+			ExplosionEffect* axp = new ExplosionEffect(Vector2f(0, 0), 10);
+			ExplosionEffect* exp = new ExplosionEffect(Vector2f(0, 0), 10);
+			exp->sanguePreset();
+			exp->depthSpdMin = -1;
+			exp->depthSpdMax = 1;
+			exp->depthMin = 100;
+			exp->depthMax = 100;
+
+			exp->mortal = false;
+
+			axp->sanguePreset();
+			axp->depthSpdMin = -1;
+			axp->depthSpdMax = 4;
+			axp->depthMin = 100;
+			axp->depthMax = 300;
+
+			axp->mortal = false;
+
+			SoundBuffer avita;
+			avita.loadFromFile("sounds\\avista.ogg");
+			Sound hastalavista(avita);
 			
-
-
+			bool tome = true;
 
 			while (window->isOpen()) {
 
 				float time = Timer.getElapsedTime().asMilliseconds();
+
 
 				window->clear();
 				window->draw(fundo);
@@ -993,6 +1119,9 @@ namespace Rooster {
 
 				exp->update();
 				exp->draw(*window);
+
+				axp->update();
+				axp->draw(*window);
 
 				galo2->show(*window);
 
@@ -1009,7 +1138,10 @@ namespace Rooster {
 
 				if (time < 6000) {
 
-
+					if (tome) {
+						hastalavista.play();
+						tome = false;
+					}
 					estado = STOPPED;
 					jogarGranada(window);
 					update();
@@ -1047,10 +1179,74 @@ namespace Rooster {
 						galo2->position.y - explosionSpr.getGlobalBounds().height/2
 					);
 
+					galo2->explodir();
+					galo2->update();
+					update();
 					window->draw(explosionSpr);
+
+					if (frames % 20 == 0) {
+
+						Model model = galo2->getModel();
+
+						exp->position = model.at("Body")->drawPos;
+
+						exp->createMultipleParticles(500);
+					}
+
+				}
+				else {
+					shitAtack();
+					update();
+					
+
+
+					if (frames % 15 == 0) {
+
+						Model model = galo2->getModel();
+
+						axp->position = model.at("Head")->drawPos;
+
+						axp->createMultipleParticles(100);
+					}
+				
+					galo2->update();
+
+
+					if (time > 14000) {
+
+
+						if (lets)
+							fatalitysound.play();
+						lets = false;
+						window->draw(fatal);
+
+						if (time < 18000) {
+							static bool letsgo = true;
+
+							if (letsgo)
+								whowins.play();
+							letsgo = false;
+							opening.setSize(Vector2f(ruleOfThree(time, 12000, SCREEN_WIDTH / 10), (float)SCREEN_HEIGHT / 100));
+						}
+						else {
+							opening.setSize(Vector2f((float)SCREEN_WIDTH / 10, (float)SCREEN_HEIGHT / 100));
+
+						}
+						garra1.setPosition(opening.getPosition().x, garra1.getPosition().y);
+						garra2.setPosition(opening.getPosition().x + opening.getSize().x, garra1.getPosition().y);
+						opening.setPosition(
+							SCREEN_WIDTH / 2 - opening.getSize().x / 2,
+							garra2.getPosition().y + garra2.getGlobalBounds().height / 1.5);
+
+						window->draw(opening);
+						window->draw(garra1);
+						window->draw(garra2);
+						window->draw(kalsawins);
+					}
 				}
 				
-				if (time > 30000) {
+				
+				if (time > 22000) {
 					return;
 				}
 

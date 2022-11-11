@@ -201,9 +201,10 @@ namespace Rooster {
         }
 
         void super() override {
-            if (atacking == NOT_ATTACK)
+            if (atacking == NOT_ATTACK){
                 atacking = SUPER;
-            superAtack->init.restart();
+                superAtack->init.restart();
+            }
         }
 
         void superAnim() {
@@ -212,6 +213,7 @@ namespace Rooster {
 
             if (t > superAtack->timeLapse) {
                 superAtack->isAtacking = false;
+                superAtack->getHitted = false;
                 atacking = NOT_ATTACK;
             }
 

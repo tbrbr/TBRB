@@ -148,7 +148,7 @@ protected:
 
 
 
-	static void UpdateGalo2(Galo** galop2, TcpSocket* socket, int* p2, bool* isready) {
+	static void UpdateGalo2(Galo** galop2, TcpSocket* socket, int* p2, bool* isready, bool * closs) {
 
 		/*
 		struct GaloStats {
@@ -208,13 +208,12 @@ protected:
 				else if (data[0] == 'o') {
 					*isready = true;
 				}
-				else if (data[0] == 'n') {
-
+				else if (data[0] == 'y') {
+					*closs = true;
 				}
-
+				
 			}
 
-			println(data[0]);
 			data[0] = '\0';
 		}
 
@@ -789,11 +788,12 @@ public:
 
 		bool isready1 = false;
 		bool isready2 = false;
-
-		sf::Thread th(std::bind(&UpdateGalo2, galop2, socket, &p2, &isready2));
+		bool closs = false;
+		sf::Thread th(std::bind(&UpdateGalo2, galop2, socket, &p2, &isready2, &closs));
 		th.launch();
 
 		char data[10] = "\0";
+		socket->send(data, 10);
 
 		RectangleShape cancel2;
 		Vector2f buttonSize;
@@ -847,10 +847,9 @@ public:
 				if (e.type == Event::Closed)
 				{
 					window->close();
+					socket->disconnect();
 					th.terminate();
 				}
-
-
 
 				if (e.type == Event::MouseButtonPressed) {
 					if (e.mouseButton.button == Mouse::Left) {
@@ -872,13 +871,15 @@ public:
 						}
 
 						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
-							data[0] = 'o';
-							socket->send(data, sizeof(data));
-							isready1 = true;
+							if (*galop1 != NULL) {
+								data[0] = 'o';
+								socket->send(data, sizeof(data));
+								isready1 = true;
+							}
 
 						}
 
-						if(isready1 && !isready2)
+						if (isready1 && !isready2) {
 							if (ButtonCheck::isButtonComMouseNele(cancel2, mousex, mousey)) {
 								data[0] = 'c';
 								socket->send(data, sizeof(data));
@@ -886,6 +887,25 @@ public:
 								p1 = -1;
 								isready1 = false;
 							}
+						}
+						else {
+							if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
+								if (p1 != -1) {
+									data[0] = 'c';
+									socket->send(data, sizeof(data));
+									delete* galop1;
+									p1 = -1;
+									isready1 = false;
+								}
+								else {
+									data[0] = 'y';
+									socket->send(data, sizeof(data));
+									th.terminate();
+									println("insano");
+									return MULTI_MODE;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -902,15 +922,21 @@ public:
 
 			}
 
+			if (closs) {
+				th.terminate();
+				socket->disconnect();
+				this->reset();
+				return MULTI_MODE;
+			}
+
+
 			if (p2 != -1) {
 				galop2[0]->facingRight = false;
 				galop2[0]->noGravity = true;
 				galop2[0]->setPosition(Vector2f(podiumP2.getGlobalBounds().width / 2 + podiumP2.getPosition().x, podiumP2.getPosition().y + podiumP2.getGlobalBounds().height * 0.3));
 
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-				window->close();
-			}
+			
 
 			if (!isready1) {
 				if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
@@ -967,12 +993,12 @@ public:
 			//statusPlayer1.draw(window);
 			//statusPlayer2.draw(window);
 
-			if (p1 != -1) {
-				window->draw(OKbutton);
-				window->draw(cancelButton);
-				window->draw(t_x);
-				window->draw(t_ok);
-			}
+			
+			window->draw(OKbutton);
+			window->draw(cancelButton);
+			window->draw(t_x);
+			window->draw(t_ok);
+
 
 			if (isready1 && !isready2) {
 				window->draw(rectangle);

@@ -222,10 +222,12 @@ namespace Rooster {
                 if (superAtack->getHitted || !air) {
                     atacking = NOT_ATTACK;
 
-                    vspeed = -5;
-                    println("super atk botas");
+                    vspeed = -4;
 
                     if (!air) {
+
+                        vspeed = 0;
+
                         float xx = model.pos.x;
                         float yy = model.pos.y;
                         projectiles[0].setPosition(xx, Rooster::floorY);
@@ -331,7 +333,6 @@ namespace Rooster {
                     atacking = NOT_ATTACK;
 
 
-                    println("ultimate shot atk botas");
                     vspeed = -10;
                     //println("Bateu " << ultimateShot->getHitted);
 

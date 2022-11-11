@@ -392,6 +392,7 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 
 			if (e.type == Event::Closed)
 			{
+				socket->send("n", 1);
 				window->close();
 			}
 
@@ -426,12 +427,13 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 					}
 
 					else if (ButtonCheck::isButtonComMouseNele(cancel, mousex, mousey)) {
-						return NULL;
+						data = 'n';
 					}
 
 					if (isp1ready && !isp2ready) {
 						if (ButtonCheck::isButtonComMouseNele(cancel2, mousex, mousey)) {
 							if (selectedMap != -1) {
+
 								isp1ready = false;
 								data = '-';
 							}
@@ -446,11 +448,18 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 		socket->send(&data, 1);
 		socket->receive(&rdata, 1, r);
 
-		if (rdata != '-') {
+		if (rdata != '-'  && rdata != 'n') {
 			isp2ready = true;
+		}
+		else if(rdata == 'n') {
+			return NULL;
 		}
 		else {
 			isp2ready = false;
+		}
+
+		if (data == 'n') {
+			return NULL;
 		}
 
 		if (isp2ready && isp1ready) {

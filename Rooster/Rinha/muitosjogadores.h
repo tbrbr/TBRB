@@ -5,12 +5,16 @@
 
 #include "server_connect.h"
 
-void galo2thread(Galo * galo2, TcpSocket * socket) {
+void galo2thread(Galo * galo2, TcpSocket * socket, bool * loss) {
 	char data[10] = "\0";
 	size_t received;
 	while (1) {
 
 		socket->receive(data, 10, received);
+		if (data[0] == 'x') {
+			*loss = true;
+		}
+		
 		if (data[0] == 'w')
 		{
 			galo2->jump();
@@ -60,7 +64,7 @@ void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 
 
 	char data[10] = "\0";
-	while (1) {
+	//while (1) {
 		if (*pauseFrames <= 0) {
 			if (mainInput.inputState[0][GOUP][1])
 			{
@@ -112,15 +116,15 @@ void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 			}
 		}
 		else {
-			*pauseFrames--;
+			(*pauseFrames)--;
 		}
 
 		socket->send(data, 10);
 		data[0] = '\0';
 		data[1] = '\0';
 		data[5] = '\0';
-		mainInput.update();
-	}
+		///mainInput.update();
+	//}
 }
 
 void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleShape fundo, TcpSocket * socket) {
@@ -239,10 +243,13 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 
 	char data[10] = "\0";
 
-	Thread send(std::bind(&galo1thread, &galo ,socket, &pauseFrames));
-	Thread receive(std::bind(&galo2thread, &galo2, socket));
+	bool connectionLoss = false;
 
-	send.launch();
+	Thread send(std::bind(&galo1thread, &galo ,socket, &pauseFrames));
+	Thread receive(std::bind(&galo2thread, &galo2, socket, &connectionLoss));
+	
+
+	//send.launch();
 	receive.launch();
 
 	while (window->isOpen()) {
@@ -253,6 +260,13 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 		galo.fatality(window,&galo2,fundo);
 		*/
 
+		if (connectionLoss) {
+			send.terminate();
+			receive.terminate();
+			socket->disconnect();
+			option = MULTI_MODE;
+			return;
+		}
 
 		window->clear();
 		window->setView(window->getDefaultView());
@@ -268,6 +282,8 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 		{
 			if (e.type == Event::Closed)
 			{
+				socket->send("x", 2);
+				socket->disconnect();
 				send.terminate();
 				receive.terminate();
 				window->close();
@@ -283,10 +299,15 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 			}
 		}
 
+		mainInput.update();
 
 		// PLAYER CONTROLES
 
 		if (!fightWon) {
+
+			
+			galo1thread(&galo, socket, &pauseFrames);
+		
 
 			// GALO ATAQUES
 			galoAttacks(galo, galo2);

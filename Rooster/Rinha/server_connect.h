@@ -1,44 +1,9 @@
 #ifndef KKKKKKKKKKKKKKKKKKKKK  
 #define KKKKKKKKKKKKKKKKKKKKK
 #include <functional> 
+#include "textBox.h"
 
 bool isHost = false;
-
-bool validarIp(char* ip) {
-
-	int pontos = 0;
-	if (ip[strlen(ip) - 1] == '.' || ip[0] == '.') {
-		return false;
-	}
-	for (int i = 0; i < strlen(ip); i++) {
-		if (ip[i] == '.') {
-			if (ip[i + 1] == '.') {
-				return false;
-			}
-			pontos++;
-		}
-	}
-
-	if (pontos != 3) {
-		return false;
-	}
-	char a[4][4];
-
-	strcpy(a[0], strtok(ip, "."));
-
-	for (int i = 1; i < 4; i++) {
-		strcpy(a[i], strtok(NULL, "."));
-	}
-
-	for (int i = 0; i < 4; i++) {
-		if (atoi(a[i]) > 255) {
-			return false;
-		}
-	}
-
-	return true;
-
-}
 
 void waitConnection(TcpSocket* socket, TcpListener* listener, bool* connect) {
 	socket->setBlocking(true);
@@ -49,6 +14,8 @@ void waitConnection(TcpSocket* socket, TcpListener* listener, bool* connect) {
 }
 
 int create(RenderWindow* window, RectangleShape& background, TcpSocket* socket, TcpListener* listener) {
+	socket->disconnect();
+	listener->close();
 	Text* t[3];
 
 	Font font;
@@ -160,7 +127,49 @@ int create(RenderWindow* window, RectangleShape& background, TcpSocket* socket, 
 	}
 }
 
-int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket) {
+int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, TcpListener* listener) {
+	listener->close();
+	socket->disconnect();
+
+	RectangleShape area;
+	Vector2f area_size;
+	Vector2f area_position;
+	area_size.x = window->getSize().x * 0.4;
+	area_size.y = window->getSize().y * 0.4;
+
+	area_position.x = window->getSize().x / 2 - area_size.x / 2;
+	area_position.y = window->getSize().y / 2 - area_size.y / 2;
+
+	area.setSize(area_size);
+	area.setPosition(area_position);
+	area.setFillColor(Color::Black);
+	area.setOutlineColor(Color::Red);
+	area.setOutlineThickness(4);
+
+	
+
+	while (window->isOpen()) {
+		Event e;
+		while (window->pollEvent(e))
+		{
+			if (e.type == Event::Closed) {
+				window->close();
+				return INTRO;
+			}
+
+			if(e.type == Event::MouseButtonPressed) {
+				if (e.mouseButton.button == Mouse::Left)
+				{
+
+				}
+			}
+		}
+
+		window->draw(area);
+		window->display();
+
+	}
+
 	socket->connect(IpAddress::getLocalAddress(), 59000);
 	return MULTI_SELECT;
 }

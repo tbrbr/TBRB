@@ -1,5 +1,9 @@
+#ifndef  CHECK
+#define CHECK
+
 
 #include "Math2.h"
+
 class ButtonCheck {
 
 public:
@@ -38,3 +42,5 @@ public:
  
     }
 };
+
+#endif // ! CHECK

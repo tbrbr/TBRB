@@ -3,6 +3,15 @@
 #include <SFML/Graphics.hpp>
 class Pause {
 
+	static bool updateoption(float xspeed, float yspeed, RectangleShape* option) {
+		option->move(xspeed, yspeed);
+		if (yspeed > 0) {
+			if (option->getPosition().y > 0) {
+				option->setPosition(0, 0);
+			}
+		}
+		return option->getPosition().y == 0;
+	}
 
 public:
 	
@@ -104,129 +113,222 @@ public:
 	}
 
 
-	static int rematchScreen(RenderWindow* window, Galo& winner, Galo& loser, RectangleShape & fundo, int comboCounter, Clock timeElapsed) {
-	
-		
-		RectangleShape body;
-		body.setSize(Vector2f(window->getSize().x * 0.8, window->getSize().y * 0.8));
-		body.setPosition(window->getSize().x * 0.1, window->getSize().y * 0.1);
-		body.setFillColor(Color::Color(0, 0, 0, 150));
-		body.setOutlineThickness(3);
-		body.setOutlineColor(Color::Red);
-
-		RectangleShape lines[4];
-
-		int lineSpace = body.getSize().y * 0.15;
-		for (int i = 0; i < 4; i++) {
-			lines[i].setSize(Vector2f(body.getSize().x * 0.8, 3));
-			lines[i].setFillColor(Color::Red);
-			(lines + i)->setPosition(body.getPosition().x + body.getSize().x / 2 - (lines + i)->getSize().x / 2, body.getPosition().y + (i > 0 ? -body.getPosition().y + (lines - 1 + i)->getPosition().y + (lines - 1 + i)->getSize().y + lineSpace : body.getSize().y * 0.2));
-		}
-
-		
-		struct Minute {
-			int minute;
-			int seconds;
-			int milisec;
-
-			Minute() {
-				minute = 0;
-				seconds = 0;
-				milisec = 0;
-			}
-
-			void addMinute(int minutes) {
-				minute += minutes;
-			}
-
-			void addSeconds(int seconds) {
-				for (int i = 0; i < seconds; i++) {
-					if (this->seconds < 59) {
-						this->seconds++;
-					}
-					else {
-						addMinute(1);
-						this->seconds = 0;
-					}
-				}
-			}
-			void addCen(int c) {
-				for (int i = 0; i < c; i++) {
-					if (milisec < 999) {
-						milisec++;
-					}
-					else {
-						addSeconds(1);
-						milisec = 0;
-					}
-				}
-			}
-
-			string to_string() {
-				string s = "";
-				s += minute > 9 ? std::to_string(minute) : "0" + std::to_string(minute);
-				s += ":";
-				s += seconds > 9 ? std::to_string(seconds) : "0" + std::to_string(seconds);
-				s += ":";
-				s += std::to_string(milisec);
-				return s;
-			}
-		};
-
-		Minute minute;
-		minute.addCen(timeElapsed.getElapsedTime().asMilliseconds());
+	static int rematchScreen(RenderWindow& window, Galo& winner, Galo& loser, RectangleShape& fundo) {
 
 
-		Font f;
-		f.loadFromFile("fonts/blops.ttf");
+		Texture __base;
+		Texture __filtro;
+		Texture __live;
+		Texture __logo;
+		Texture __opcoes;
+		Texture __naoHover;
+		Texture __simHover;
 
-		Text time("TIME", f, SCREEN_HEIGHT / 30);
-		Text maxCombo("MAX COMBO", f, SCREEN_HEIGHT / 30);
-		
-		
+		__base.loadFromFile("rematch\\base.png");
+		__filtro.loadFromFile("rematch\\filtro.png");
+		__live.loadFromFile("rematch\\live.png");
+		__logo.loadFromFile("rematch\\logo.png");
+		__opcoes.loadFromFile("rematch\\opcoes.png");
+		__naoHover.loadFromFile("rematch\\nao.png");
+		__simHover.loadFromFile("rematch\\sim.png");
 
+
+		Vector2f textPosition;
+		textPosition.x = window.getSize().x * 0.07;
+		textPosition.y = window.getSize().y * 0.805;
+
+		RectangleShape base;
+		RectangleShape filtro;
+		RectangleShape live;
+		RectangleShape logo;
+		RectangleShape opcoes;
+
+		Vector2f size((Vector2f)window.getSize());
+
+		base.setTexture(&__base);
+		base.setSize(size);
+		base.setPosition(size.x, 0);
+
+		Color filtroColor(255, 255, 255, 0);
+		filtro.setTexture(&__filtro);
+		filtro.setSize(size);
+		filtro.setPosition(0, 0);
+		filtro.setFillColor(filtroColor);
+
+		live.setTexture(&__live);
+		live.setSize(size);
+		live.setPosition(size.x, 0);
+
+		logo.setTexture(&__logo);
+		logo.setSize(size);
+		logo.setPosition(size.x, 0);
+
+		opcoes.setTexture(&__opcoes);
+		opcoes.setSize(size);
+		opcoes.setPosition(0, size.y * 0.3);
+
+		Vector2f opciosSpeed(0, -30);
+
+		Clock liveClock;
+		liveClock.restart();
+
+		bool isVindoAnimation = true;
+		Clock vindoAnim;
+		vindoAnim.restart();
+
+		float moveFactor = window.getSize().x / 90;
+		bool updateOpcoes = false;
+
+		RectangleShape sim;
+		RectangleShape nao;
+
+		nao.setPosition(window.getSize().x * 0.37, window.getSize().y * 0.908);
+
+		Vector2f btnSize;
+		btnSize.x = window.getSize().x * 0.12;
+		btnSize.y = window.getSize().y * 0.08;
+
+		nao.setSize(btnSize);
+
+		sim.setPosition(window.getSize().x * 0.51, window.getSize().y * 0.908);
+		sim.setSize(btnSize);
+
+		Text text;
+		Font font;
+		font.loadFromFile("fonts\\MSSERIF.TTF");
+		text.setFont(font);
+		text.setCharacterSize(window.getSize().y / 25);
+		text.setFillColor(Color::Black);
+
+
+		text.setPosition(textPosition + base.getPosition());
+
+		std::string galonome = "Galo " + winner.getName();
+		std::string a = " derrota o adversário em combate pena a pena";
+
+		text.setString(galonome + a);
 
 		winner.setState(DANCING);
 
-		while (window->isOpen()) {
+		while (window.isOpen()) {
 
-			window->clear();
+			int mousex = Mouse::getPosition(window).x;
+			int mousey = Mouse::getPosition(window).y;
 
 			Event e;
-			mainInput.update();
-			while (window->pollEvent(e))
+			while (window.pollEvent(e))
 			{
-				if (e.type == Event::Closed)
-				{
-					window->close();
+				if (e.type == Event::Closed) {
+					window.close();
 				}
 
-				if (mainInput.keyboardState[Keyboard::Space][1]) {
-					return 0;
+				if (e.type == Event::KeyPressed)
+				{
+					if (e.key.code == Keyboard::Enter) {
+						return GAMEMODE;
+					}
+					else if (e.key.code == Keyboard::Escape) {
+						if (mode == LOCAL) {
+							return UMJOGADORES;
+						}
+						else {
+							return UMJOGADORES;
+						}
+						
+					}
+				}
+
+				if (e.type == Event::MouseButtonPressed) {
+					if (e.mouseButton.button == Mouse::Left) {
+						if (nao.getGlobalBounds().contains(mousex, mousey)) {
+							return GAMEMODE;
+						}
+						else if (sim.getGlobalBounds().contains(mousex, mousey)) {
+							if (mode == LOCAL) {
+								return UMJOGADORES;
+							}
+							else {
+								return UMJOGADORES;
+							}
+						}
+
+					}
+				}
+
+
+
+			}
+
+			if (nao.getGlobalBounds().contains(mousex, mousey)) {
+				opcoes.setTexture(&__naoHover);
+			}
+			else if (sim.getGlobalBounds().contains(mousex, mousey)) {
+				opcoes.setTexture(&__simHover);
+			}
+			else {
+				opcoes.setTexture(&__opcoes);
+			}
+
+			if (Mouse::isButtonPressed(Mouse::Left)) {
+				printf("X: %f\n", (float)mousex / window.getSize().x);
+				printf("Y: %f\n", (float)mousey / window.getSize().y);
+			}
+
+			if (isVindoAnimation) {
+				if (vindoAnim.getElapsedTime().asMilliseconds() >= 10) {
+					if (base.getPosition().x - moveFactor > 0) {
+						base.move(-moveFactor, 0);
+						live.move(-moveFactor, 0);
+						logo.move(-moveFactor, 0);
+						text.move(-moveFactor, 0);
+					}
+					else {
+						base.setPosition(0, 0);
+						live.setPosition(0, 0);
+						logo.setPosition(0, 0);
+						text.setPosition(textPosition);
+						updateOpcoes = true;
+						isVindoAnimation = false;
+					}
+					if (filtroColor.a < 255) {
+						float temp = filtroColor.a + moveFactor / 4;
+						filtroColor.a = temp > 255 ? 255 : temp;
+						filtro.setFillColor(filtroColor);
+
+					}
+					vindoAnim.restart();
+
 				}
 			}
 
+			if (updateOpcoes) {
+				updateOpcoes = !updateoption(opciosSpeed.x, opciosSpeed.y, &opcoes);
+				opciosSpeed.y += 1;
+			}
+			
 			winner.update();
 			loser.update();
 
-			window->clear();
+			window.clear(Color::Black);
+			window.draw(fundo);
+			window.draw(filtro);
+			loser.show(window);
+			winner.show(window);
+			window.draw(base);
+			window.draw(logo);
 
-			window->draw(fundo);
-			
-			winner.show(*window);
-			loser.show(*window);
-
-			window->draw(body);
-			for (int i = 0; i < 4; i++) {
-				window->draw(lines[i]);
+			if (liveClock.getElapsedTime().asMilliseconds() >= 500) {
+				window.draw(live);
+				if (liveClock.getElapsedTime().asMilliseconds() >= 1000) {
+					liveClock.restart();
+				}
 			}
-			window->display();
+			window.draw(text);
+			window.draw(opcoes);
+			window.display();
 
 		}
 	}
-
-
-
 
 };
 

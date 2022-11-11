@@ -39,5 +39,6 @@
     <ClInclude Include="TilesDoArrocha.h" />
     <ClInclude Include="varios_idiomas.h" />
     <ClInclude Include="versus.h" />
+    <ClInclude Include="brain.h" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ int mode = SINGLE;
 #include "importados.h"
 
 
-void menuSong(int * option, RenderWindow * window) {
+void menuSong(int* option, RenderWindow* window) {
 
 	SoundBuffer buffer;
 	buffer.loadFromFile("sounds\\freefires.ogg");
@@ -31,7 +31,7 @@ void menuSong(int * option, RenderWindow * window) {
 			s.play();
 			play = true;
 		}
-		else 
+		else
 		{
 			if (!e && play) {
 				play = false;
@@ -42,6 +42,40 @@ void menuSong(int * option, RenderWindow * window) {
 
 
 }
+
+void top10formasdereiniciarumaclassefullhd4ktorrentdownload(string a, Galo** galo, bool isp1) {
+
+	struct GaloStats sniperSt;
+	struct GaloStats kalsaSt;
+	struct GaloStats bruxoSt;
+	struct GaloStats pesteSt;
+	struct GaloStats botaSt;
+
+	sniperSt = { 100, 10, 15,  5, 5 , 15 };
+	kalsaSt = { 100, 12, 12,  5, 6 , 20 };
+	bruxoSt = { 60 , 15, 12,  5, 5 , 20 };
+	pesteSt = { 120, 12, 10,  5, 6 , 12 };
+	botaSt = { 80 , 13, 10,  5, 4 , 20 };
+
+	if (!a.compare("Bota")) {
+		*galo = new Bota(botaSt, STOPPED, isp1);
+	}
+
+	if (!a.compare("Sniper")) {
+		*galo = new Sniper(sniperSt, STOPPED, isp1);
+
+	}if (!a.compare("Peste")) {
+		*galo = new Peste(pesteSt, STOPPED, isp1);
+	}
+	if (!a.compare("Bruxo")) {
+		*galo = new Bruxo(bruxoSt, STOPPED, isp1);
+	}
+	if (!a.compare("Kalsa")) {
+		*galo = new Kalsa(kalsaSt, STOPPED, isp1);
+	}
+
+}
+
 int main() {
 
 
@@ -49,7 +83,7 @@ int main() {
 	{
 		FILE* file = fopen("lang/start_lang.ini", "r");
 		if (file != NULL) {
-			if(fscanf(file, "%d", (int *) & lang))
+			if (fscanf(file, "%d", (int*)&lang))
 				fclose(file);
 		}
 	}
@@ -157,7 +191,7 @@ int main() {
 	Galo* galo2 = NULL;
 
 
-	Pato *miniGame1 = new Pato((*window));
+	Pato* miniGame1 = new Pato((*window));
 
 	RectangleShape fundo;
 
@@ -181,29 +215,49 @@ int main() {
 	sf::Thread t(std::bind(&menuSong, &option, window));
 	t.launch();
 	int __map = -1;
+
+	if (mainInput.isJoystickConnected) {
+		mainInput.sethudselected((hud)2);
+	}
+
+	mainInput.p2Hud = 0;
 	while (window->isOpen())
 	{
 		switch (option)
 		{
 
 		case UMJOGADORES:
-			singlePlayer(window,*galo,*galo2,option,fundo);
-			delete galo;
-			delete galo2;
-			__mapa = NULL;
+			if (SINGLE == mode) {
+				singlePlayer(window, *galo, *galo2, option, fundo);
+			}
+			else {
+				multiPlayerLocal(window, *galo, *galo2, option, fundo);
+			}
+			if (option != UMJOGADORES) {
+				delete galo;
+				delete galo2;
+				__mapa = NULL;
+				selector->reset();
+			}
+			else {
+				string a = galo->getName();
+				string b = galo2->getName();
 
-			selector->reset();
+				delete galo;
+				delete galo2;
+
+				top10formasdereiniciarumaclassefullhd4ktorrentdownload(a, &galo, galo->isp1);
+				top10formasdereiniciarumaclassefullhd4ktorrentdownload(b, &galo2, galo2->isp1);
+
+			}
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-			
-			selector->show(window,option,&galo,&galo2);
+			selector->show(window, option, &galo, &galo2);
 			break;
 		case VERSUS:
-			
-			
 			if (mode == SINGLE) {
 				option = UMJOGADORES;
 				versus(*window, *galo, *galo2, fundo, __map);
@@ -230,7 +284,7 @@ int main() {
 				versus(*window, *galo, *galo2, fundo, __map);
 				option = UMJOGADORES;
 			}
-			
+
 			break;
 
 
@@ -249,7 +303,7 @@ int main() {
 			option = MULTI_MODE;
 			break;
 		case MAPA_FALIDO_E_ACHE_RUIM_WALTER:
-			
+
 			if (mode == LAN) {
 				__mapa = selecionarMapa(window, socket, __map);
 			}
@@ -275,7 +329,7 @@ int main() {
 				delete galo;
 				delete galo2;
 			}
-			
+
 
 			break;
 		case JOIN:
@@ -286,7 +340,7 @@ int main() {
 			option = create(window, background, socket, listener);
 			break;
 
-		case MULTI: 
+		case MULTI:
 			option = muitoJogadores(window, background);
 			break;
 		case MULTI_MODE:
@@ -315,15 +369,15 @@ int main() {
 				socket->disconnect();
 				selector->reset();
 			}
-		
+
 		default:
 
 			break;
 		}
-		
-		
-	}
 
+
+	}
+	t.terminate();
 	delete listener;
 	delete socket;
 	delete galo;

@@ -608,7 +608,7 @@ int minigame(RenderWindow* window, RectangleShape& background) {
 
 			if (e.type == Event::KeyPressed) {
 				if (e.key.code == Keyboard::Escape) {
-					return -1;
+					return GAMEMODE;
 				}
 			}
 
@@ -869,27 +869,211 @@ int muitoJogadores(RenderWindow* window, RectangleShape& background) {
 
 }
 
-void updateInput(RenderWindow* window, RectangleShape& background, int player) {
 
-	RectangleShape  teclas[3][7];
-	int wid = SCREEN_WIDTH / 15;
-	int hei = SCREEN_HEIGHT / 10;
+#define MOVE 0
+#define STRONG 1
+#define LIGHT 2
+#define DANCE 3
+
+void vendoCelta(RectangleShape * icons, Texture * textures, int player) {
 
 
-	Vector2f pos;
-	pos.x = window->getSize().x * 0.05;
-	pos.y = window->getSize().y * 0.3;
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 7; j++) {
-			teclas[i][j].setSize(Vector2f(wid, hei));
-			teclas[i][j].setPosition(pos);
-			pos.x += wid * 2;
+
+	if (player == 0) {
+		if (mainInput.p1Hud == 0) {
+
+			textures[STRONG].loadFromFile("controlsIcons/g.png");
+			textures[LIGHT].loadFromFile("controlsIcons/f.png");
+
 		}
 
-		pos.x = window->getSize().x * 0.05;
+		else if (mainInput.p1Hud == 1) {
+			textures[STRONG].loadFromFile("controlsIcons/mrb.png");
+			textures[LIGHT].loadFromFile("controlsIcons/mlb.png");
+		}
+		textures[MOVE].loadFromFile("controlsIcons/wasd.png");
+		textures[DANCE].loadFromFile("controlsIcons/q.png");
+
+		for (int i = 0; i < 4; i++)
+		{
+			icons[i].setTexture(textures + i);
+		}
 	}
+
+	else
+	{
+		if (mainInput.p2Hud == 0) {
+
+			textures[STRONG].loadFromFile("controlsIcons/k.png");
+			textures[LIGHT].loadFromFile("controlsIcons/l.png");
+
+		}
+		textures[MOVE].loadFromFile("controlsIcons/setas.png");
+		textures[DANCE].loadFromFile("controlsIcons/p.png");
+
+		for (int i = 0; i < 4; i++)
+		{
+			icons[i].setTexture(textures + i);
+		}
+	}
+}
+
+void controle(RenderWindow * window) {
+
+	RectangleShape fundo;
+	Texture tfundo;
+	tfundo.loadFromFile("controlsIcons/controle.png");
+	fundo.setSize((Vector2f)window->getSize());
+	fundo.setTexture(&tfundo);
+
+	
+	Font f;
+	f.loadFromFile("fonts/blops.ttf");
+
+	RectangleShape back;
+	Vector2f btnsize;
+	Vector2f btnpos;
+
+	btnsize.x = window->getSize().x * 0.2;
+	btnsize.y = window->getSize().y * 0.1;
+
+	btnpos.x = window->getSize().x / 2 - btnsize.x / 2;
+	btnpos.y = window->getSize().y * 0.8;
+
+	back.setSize(btnsize);
+	back.setPosition(btnpos);
+	back.setFillColor(Color::Black);
+	back.setOutlineColor(Color::Red);
+	back.setOutlineThickness(3);
+
+
+	Text _back(LANG.getLine(LANGUAGE::BACK), f, SCREEN_HEIGHT / 40);
+
+	_back.setFillColor(Color::Red);
+	_back.setPosition(back.getPosition().x + back.getSize().x / 2 - _back.getGlobalBounds().width / 2, back.getPosition().y + back.getSize().y / 2 - _back.getGlobalBounds().height / 2);
+
+
+
+	while (window->isOpen())
+	{
+		Event e;
+		while (window->pollEvent(e) ){
+			if (e.type == Event::Closed) {
+				window->close();
+			}
+		}
+		if (Mouse::isButtonPressed(Mouse::Left)) {
+			if (ButtonCheck::isButtonComMouseNele(back, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y)) {
+				return;
+			}
+		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+			return;
+		}
+		window->clear();
+		window->draw(fundo);
+		window->draw(back);
+		window->draw(_back);
+		window->display();
+	}
+}
+void updateInput(RenderWindow* window, RectangleShape& background, int player) {
+	println(mainInput.gethudslected());
+	if (mainInput.p1Hud == 2 && player == 1) {
+		controle(window);
+		return;
+	}
+	RectangleShape icons[4];
+	Texture textures[4];
+	vendoCelta(icons, textures, player);
+
+	Vector2f size;
+	Vector2f pos;
+
+	size.x = window->getSize().x * 0.08;
+	size.y = window->getSize().y * 0.1;
+
+	for (int i = 0; i < 4; i++) {
+		icons[i].setSize(size);
+		
+	}
+	icons[MOVE].setSize(Vector2f(size.x * 3, size.y * 3));
+
+	pos.x = window->getSize().x * 0.2;
+	pos.y = window->getSize().y * 0.15;
+
+	for (int i = 0; i < 4; i++) {
+		icons[i].setPosition(pos);
+		
+		pos.y = icons[i].getSize().y + icons[i].getPosition().y + window->getSize().y * 0.03;
+	}
+
+	icons[MOVE].move(-size.x, 0);
+
+	Font f;
+	f.loadFromFile("fonts/blops.ttf");
+	Text b[4];
+
+	Vector2f tpos;
+	tpos.x = window->getSize().x * 0.4;
+
+	b[0].setString("MOVE");
+	b[1].setString("STRONG ATTACK");
+	b[2].setString("LIGHT ATTACK");
+	b[3].setString("DANCE");
+
+	for (int i = 0; i < 4; i++) {
+		b[i].setCharacterSize(window->getSize().y / 40);
+		b[i].setFont(f);
+		b[i].setPosition(tpos.x, icons[i].getPosition().y + icons[i].getSize().y / 2);
+	}
+	
+	RectangleShape mouse;
+	RectangleShape back;
+	Vector2f btnsize;
+	Vector2f btnpos;
+
+	btnsize.x = window->getSize().x * 0.2;
+	btnsize.y = window->getSize().y * 0.1;
+
+	btnpos.x = window->getSize().x * 0.7;
+	btnpos.y = window->getSize().y * 0.5;
+
+
+	mouse.setSize(btnsize);
+	back.setSize(btnsize);
+
+	mouse.setPosition(btnpos);
+	back.setPosition(btnpos.x, btnpos.y + btnsize.y * 1.5);
+
+	mouse.setFillColor(Color::Black);
+	back.setFillColor(Color::Black);
+
+	mouse.setOutlineColor(Color::Red);
+	back.setOutlineColor(Color::Red);
+
+	mouse.setOutlineThickness(3);
+	back.setOutlineThickness(3);
+	string mode = "MOUSE";
+	if (mainInput.p1Hud == 0) {
+		mode = "KEYBOARD";
+	}
+	Text _mouse("MOUSE", f, SCREEN_HEIGHT / 40);
+	Text _back(LANG.getLine(LANGUAGE::BACK), f, SCREEN_HEIGHT / 40);
+
+	_mouse.setFillColor(Color::Red);
+	_back.setFillColor(Color::Red);
+
+	_mouse.setPosition(mouse.getPosition().x + mouse.getSize().x / 2 - _mouse.getGlobalBounds().width / 2, mouse.getPosition().y + mouse.getSize().y / 2 - _mouse.getGlobalBounds().height / 2);
+	_back.setPosition(back.getPosition().x + back.getSize().x / 2 - _back.getGlobalBounds().width / 2, back.getPosition().y + back.getSize().y / 2 - _back.getGlobalBounds().height / 2);
+
+
+
 	while (window->isOpen()) {
 		Event e;
+		int mousex = Mouse::getPosition(*window).x;
+		int mousey = Mouse::getPosition(*window).y;
 		while (window->pollEvent(e)) {
 			if (e.type == Event::Closed) {
 				window->close();
@@ -900,17 +1084,65 @@ void updateInput(RenderWindow* window, RectangleShape& background, int player) {
 					return;
 				}
 			}
-		}
 
+			if (e.type == Event::MouseButtonPressed) {
+				if (e.mouseButton.button == Mouse::Left) {
+					if (player == 0)
+						if (ButtonCheck::isButtonComMouseNele(mouse, mousex, mousey)) {
+							if (mainInput.p1Hud == 0) {
+								mainInput.p1Hud = 1;
+								vendoCelta(icons, textures, player);
 
+								mode = "MOUSE";
+								if (mainInput.p1Hud == 0) {
+									mode = "KEYBOARD";
+								}
+								_mouse.setString(mode);
+								_mouse.setPosition(mouse.getPosition().x + mouse.getSize().x / 2 - _mouse.getGlobalBounds().width / 2, mouse.getPosition().y + mouse.getSize().y / 2 - _mouse.getGlobalBounds().height / 2);
+							}
+							else if (mainInput.p1Hud == 1) {
+								mainInput.p1Hud = 0;
+								vendoCelta(icons, textures, player);
 
-
-		window->clear();
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 7; j++) {
-				window->draw(teclas[i][j]);
+								mode = "MOUSE";
+								if (mainInput.p1Hud == 0) {
+									mode = "KEYBOARD";
+								}
+								_mouse.setString(mode);
+								_mouse.setPosition(mouse.getPosition().x + mouse.getSize().x / 2 - _mouse.getGlobalBounds().width / 2, mouse.getPosition().y + mouse.getSize().y / 2 - _mouse.getGlobalBounds().height / 2);
+							}
+						}
+				}
 			}
+
+			
 		}
+
+		if (Mouse::isButtonPressed(Mouse::Left)) {
+			if (ButtonCheck::isButtonComMouseNele(back, mousex, mousey)) {
+				return;
+			}
+
+			
+		}
+
+
+
+	window->clear(Color::Black);
+	if(mainInput.gethudslected() != 2)
+		for (int i = 0; i < 4; i++) {
+			window->draw(icons[i]);
+			window->draw(b[i]);
+
+		}
+	if (player == 0)
+	window->draw(mouse);
+
+		window->draw(back);
+		if (player == 0)
+	window->draw(_mouse);
+
+		window->draw(_back);
 		window->display();
 	}
 

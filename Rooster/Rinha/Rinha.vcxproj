@@ -137,6 +137,7 @@
     <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="brain.h" />
     <ClInclude Include="Briga.h" />
     <ClInclude Include="cardapio.h" />
     <ClInclude Include="checador_de_posicao.h" />

@@ -44,7 +44,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	if (__map == 3)
 		buffer.loadFromFile("sounds/audiofeira.ogg");
 	else {
-		buffer.loadFromFile("sounds/audiofeira.ogg");
+		buffer.loadFromFile("");
 	}
 
 	Sound sound(buffer);
@@ -59,10 +59,10 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 
 	Texture* __versus = new Texture();
 
-	__fundo->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontobase.png");
-	__azul->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontoazul.png");
-	__vermelho->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontovermelho.png");
-	__versus->loadFromFile("C:\\TBRB\\Rooster\\Rinha\\sprites\\confrontoversus.png");
+	__fundo->loadFromFile("sprites\\confrontobase.png");
+	__azul->loadFromFile("sprites\\confrontoazul.png");
+	__vermelho->loadFromFile("sprites\\confrontovermelho.png");
+	__versus->loadFromFile("sprites\\confrontoversus.png");
 	
 
 	RectangleShape azul;
@@ -70,7 +70,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	RectangleShape fundo;
 	RectangleShape versus;
 	Font font;
-	font.loadFromFile("C:\\TBRB\\Rooster\\Rinha\\fonts\\blops.ttf");
+	font.loadFromFile("fonts\\blops.ttf");
 
 	string __galo1 = p1.getName();
 	string __galo2 = p2.getName();

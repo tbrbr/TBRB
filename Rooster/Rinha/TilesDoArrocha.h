@@ -271,8 +271,6 @@ public:
 
 
 		loadMusica(0);
-
-		musTeste.music.openFromFile("PianoFiles/sounds/latitude.ogg");
 		//musTeste.music.play();
 
 		base = 400;

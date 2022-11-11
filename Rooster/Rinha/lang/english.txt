@@ -1,6 +1,6 @@
 MAIN MENU
 start 
-setitngs
+settings
 quit
 back
 singleplayer
@@ -8,7 +8,7 @@ multiplayer
 resume
 aim color
 sensibility 
-minigames
+MINIGAMES
 GAME MODE
 language
 EN

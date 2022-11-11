@@ -509,11 +509,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					galo.resetPosition();
 					galo2.resetPosition();
 					
-					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo2.getMaxhp());
-					
-					galo.bar->resetBarHp();
-					galo2.bar->resetBarHp();
+					galo.resetHp();
+					galo2.resetHp();
 
 				}
 			}
@@ -539,10 +536,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					pauseFrames = 120;
 					galo.resetPosition();
 					galo2.resetPosition();				
-					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo2.getMaxhp());
-					galo.bar->resetBarHp();
-					galo2.bar->resetBarHp();
+					
+					galo.resetHp();
+					galo2.resetHp();
 				}
 			}
 

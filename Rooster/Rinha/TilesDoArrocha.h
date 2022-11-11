@@ -227,7 +227,7 @@ public:
 
 
 
-		musTeste.music.openFromFile("PianoFiles/sounds/zerebolabola.ogg");
+		musTeste.music.openFromFile("PianoFiles/sounds/latitude.ogg");
 		//musTeste.music.play();
 
 		base = 400;

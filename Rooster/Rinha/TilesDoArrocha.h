@@ -254,12 +254,18 @@ public:
 
 		musicas.push_back(musEscoces);
 
+		struct TilesMusica musLatitude;
+		musEscoces.soundPath = "PianoFiles/sounds/latitude.ogg";
+		musEscoces.notasPath = "PianoFiles/latitude.txt";
+
+		musicas.push_back(musLatitude);
 
 
 
 
 
-		musica.openFromFile("PianoFiles/sounds/zerebolabola.ogg");
+
+		musica.openFromFile("PianoFiles/sounds/latitude.ogg");
 		loadNotas(autoSavePath);
 
 

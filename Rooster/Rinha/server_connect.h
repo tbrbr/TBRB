@@ -148,7 +148,7 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 
 	
 
-	while (window->isOpen()) {
+	while (window->isOpen() && false) {
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -170,7 +170,7 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 
 	}
 
-	socket->connect(IpAddress::getLocalAddress(), 59000);
+	socket->connect("10.50.208.56", 59000);
 	return MULTI_SELECT;
 }
 #endif // ! 

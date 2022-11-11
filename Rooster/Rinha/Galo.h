@@ -212,8 +212,9 @@ namespace Rooster {
 		int getPower() {
 			return power;
 		}
-		void resetBarHp() {
-			update(Maxhp);
+
+		void setPower(int power) {
+			this->power = power;
 		}
 		void draw(RenderWindow* window) {
 			for (int i = 0; i < 10; i++) {
@@ -283,18 +284,6 @@ namespace Rooster {
 			}
 
 
-		}
-
-
-		void reset() {
-			life.setSize(Vector2f(tam.x, tam.y));
-			Damage.setSize(Vector2f(0, tam.y));
-			if (isP1) {
-				Damage.setPosition(Vector2f(life.getGlobalBounds().left, life.getGlobalBounds().top));
-			}
-			else {
-				Damage.setPosition(Vector2f(life.getGlobalBounds().left, life.getGlobalBounds().top));
-			}
 		}
 
 		void update(int hp) {
@@ -573,7 +562,8 @@ namespace Rooster {
 		void inline setHspeed(float spd) {
 			hspeed = spd;
 		}
-
+		
+		
 
 
 		int inline getFrames() {
@@ -635,6 +625,13 @@ namespace Rooster {
 			}
 
 
+		}
+		void resetHp() {
+			this->hp = maxHp;
+			int a = bar->getPower();
+			free(bar);
+			bar = new LifeBar(maxHp, isp1, name.c_str());
+			bar->setPower(a);
 		}
 		virtual void apanharByKalsa(Galo* g2, RenderWindow* af) {
 

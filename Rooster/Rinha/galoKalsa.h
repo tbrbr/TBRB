@@ -36,11 +36,16 @@ namespace Rooster {
 				20, 10, PI / 4, milliseconds(500), "sounds\\rooster-crowing-80322.ogg"
 			);
 
+			this->louKick->soundCollision.setVolume(25);
+
 			this->ultimateShot = new Ataques(
 				5, 70, HitBox{ Vector2f(0, 0),0 },
 				5, 3, 0, milliseconds(750),
 				"sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
 			);
+			this->ultimateShot->soundCollision.setVolume(75);
+
+
 			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
 			Projectile* cinto = new Projectile(

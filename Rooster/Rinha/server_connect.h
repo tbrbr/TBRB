@@ -244,6 +244,7 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 			else if (e.type == Event::KeyPressed) {
 				if (e.key.code == sf::Keyboard::Enter) {
 					inputType = 1;
+					ip = sf::IpAddress::IpAddress(ipBox.sVal);
 
 					if (socket->connect(ip, 59000) == Socket::Done) {
 						return MULTI_SELECT;
@@ -252,6 +253,12 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 						return MULTI_MODE;
 					}
 				}
+
+				if (e.key.code == sf::Keyboard::Escape) {
+					return MULTI_MODE;
+				}
+
+
 			}
 			
 		}

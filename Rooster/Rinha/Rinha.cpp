@@ -61,8 +61,13 @@ int main() {
 
 	// Carregando texturas pra particulas
 	Rooster::partTextures.init();
-
 	basicFont.loadFromFile("fonts/whitrabt.ttf");
+
+	// Carregando as infos das Musicas do tiles
+	initTilesMusica();
+
+
+
 
 	int option = MENU_PRINCIPAL;
 
@@ -234,7 +239,8 @@ int main() {
 			break;
 		}
 		case BOTAPRAARROCHAR:
-			pianoTiles(window);
+			tilesMenu(window);
+			option = MINIGAME;
 			break;
 		case DOISJODADOR:
 			lan(window, *galo, *galo2, option, fundo, socket);
@@ -310,6 +316,8 @@ int main() {
 				selector->reset();
 			}
 		default:
+			window->close();
+			t.terminate();
 			break;
 		}
 		
@@ -318,6 +326,13 @@ int main() {
 
 	delete listener;
 	delete socket;
+	delete galo;
+	delete galo2;
+	delete miniGame1;
+	delete __mapa;
+	delete window;
+	delete selector;
 
 	return 0;
+	//Fim da main
 }

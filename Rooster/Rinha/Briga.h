@@ -528,12 +528,11 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		//-------------------------------------------------------------------------------
 		if (fightWon) {
 
-			println("Yamahou");
 			float yamahaX = winner->model.at("Body")->drawPos.x - winner->model.xScl * 120;
 			yamahaSpr.setScale(-winner->model.xScl * 0.75, winner->model.yScl * 0.75);
 
 			yamahaY += yamahaVspeed;
-			yamahaSpr.setPosition(yamahaX, yamahaY);
+			
 
 			if (yamahaY > Rooster::floorY) {
 				yamahaVspeed = 0;
@@ -553,6 +552,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 			else if (yamahaY < Rooster::floorY) {
 				yamahaVspeed = constrain(yamahaVspeed + 0.2, -40, 40);
 			}
+			yamahaSpr.setPosition(yamahaX, yamahaY);
 
 			if (framesWin > 0) {
 				window->draw(finishHim);

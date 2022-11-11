@@ -263,7 +263,7 @@ public:
 		loadNotas(autoSavePath);
 
 
-		loadMusica(3);
+		loadMusica(0);
 
 
 
@@ -1445,8 +1445,16 @@ class BregaMeter {
 	SoundBuffer sndBufExplosion;
 	Sound sndExplosion;
 
+	int pontBreakTimer = 250;
+
+	bool pontBroken = false;
 	float pontAngle = 0;
 	float pontAngleSpeed = 0;
+
+	Vector2f pontSize;
+	Vector2f pontOrigin;
+
+
 	Vector2f pontPos;
 	Vector2f pontSpeed;
 	
@@ -1481,7 +1489,12 @@ public:
 		y = roomSize.y - (bregaSprHei * yScl);
 
 		
+		pontSize = Vector2f(wid * 0.4, yScl * 20);
+		pontOrigin = Vector2f(wid * 0.4, xScl * 10);
+
+
 		effect = new Rooster::Effect();
+		
 		
 		
 
@@ -1522,6 +1535,21 @@ public:
 
 	void update() {
 		if (broken) {
+
+			
+
+			if (!pontBroken) {
+				if (pontBreakTimer > 0) {
+
+					pontAngleSpeed += 0.5;
+
+					pontBreakTimer--;
+				}
+				else {
+					breakPointer();
+				}
+			}
+
 			tick++;
 			if (tick > 50) {
 				
@@ -1530,7 +1558,10 @@ public:
 			
 			}
 
-			pontSpeed.y += 0.1;
+			if (pontBroken) {
+				pontSpeed.y += 0.1;
+			}
+
 
 			pontAngle += pontAngleSpeed;
 			pontPos += pontSpeed;
@@ -1550,12 +1581,29 @@ public:
 
 		effect->createMultipleParticles(randIntRange(20, 30));
 
-		pontSpeed.y = randFloatRange(-6, -3);
-		pontSpeed.x = randFloatRange(-2, 2);
-
-		pontAngleSpeed = randFloatRange(-4, 4);
+		pontAngleSpeed = 5;
 
 		sndExplosion.play();
+	}
+
+	void breakPointer() {
+		pontBroken = true;
+
+
+		float rotX = pontSize.x * cos(toRadiAnus(pontAngle));
+		float rotY = pontSize.y * sin(toRadiAnus(pontAngle));
+
+		pontOrigin.x = pontSize.x / 2;
+
+		pontPos.x -= rotX;
+		pontPos.y -= rotY;
+
+		pontSpeed.y = 0.25*sin(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
+		pontSpeed.x = 0.25*cos(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
+
+		pontAngleSpeed = constrain(pontAngleSpeed, -20, 20);
+
+		effect->createMultipleParticles(randIntRange(5, 10));
 	}
 
 
@@ -1575,13 +1623,14 @@ public:
 
 
 		
-		RectangleShape ponteiro(Vector2f(wid * 0.4, yScl * 20));
+		RectangleShape ponteiro(pontSize);
 		ponteiro.setFillColor(Color(0, 0, 0));
 
 	
+		
 
 		ponteiro.setPosition(pontPos.x + x + wid / 2 + xScl * 18,pontPos.y + y + (sprite.getLocalBounds().height - 112) * xScl);
-		ponteiro.setOrigin(wid * 0.4, xScl * 10);
+		ponteiro.setOrigin(pontOrigin);
 		ponteiro.setRotation(pontAngle);
 
 		window.draw(ponteiro);
@@ -1606,6 +1655,8 @@ struct TilesInfo {
 	Rooster::Galo* galoPeste;
 	Rooster::Galo* galoKalsa;
 	Rooster::Galo* galoSniper;
+	Rooster::Galo* galoBruxo;
+	Rooster::Galo* galoBota;
 
 	Texture fundao;
 	Texture bregaMeterTex;
@@ -1629,12 +1680,24 @@ struct TilesInfo {
 		galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
 		galoKalsa = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
 		galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
+		galoBruxo = new Rooster::Bruxo(kalsaSt, Rooster::state::DANCING, false);
+		galoBota = new Rooster::Bota(kalsaSt, Rooster::state::DANCING, false);
 
-
-		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.25, roomSize.y * 0.9));
+		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y * 0.9));
 		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y * 0.9));
-		galoSniper->setPosition(Vector2f((float)roomSize.x / 1.05, roomSize.y*0.9));
+		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y*0.9));
+		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y * 0.9));
+		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y * 0.9));
+
+		galoKalsa->noCollision = true;
+		galoSniper->noCollision = true;
+		galoPeste->noCollision = true;
+		galoBruxo->noCollision = true;
+		galoBota->noCollision = true;
+
 		galoKalsa->facingRight = true;
+		galoBota->facingRight = true;
+		galoBruxo->facingRight = true;
 
 		fundao.loadFromFile("sprites/tiringa.png");
 
@@ -1655,6 +1718,11 @@ struct TilesInfo {
 
 		galoSniper->update();
 
+		galoBruxo->update();
+
+		galoBota->update();
+
+
 		alcides->update(Vector2f(0, 0));
 
 	}
@@ -1663,6 +1731,8 @@ struct TilesInfo {
 		delete galoPeste;
 		delete galoKalsa;
 		delete galoSniper;
+		delete galoBruxo;
+		delete galoBota;
 		delete bregaMeter;
 		delete alcides;
 	}
@@ -1675,6 +1745,8 @@ struct TilesInfo {
 		galoPeste->show(window);
 		galoKalsa->show(window);
 		galoSniper->show(window);
+		galoBruxo->show(window);
+		galoBota->show(window);
 
 		bregaMeter->draw(window);
 	}
@@ -1713,6 +1785,10 @@ struct TilesInfo {
 			galoKalsa->update();
 
 			galoSniper->update();
+
+			galoBruxo->update();
+
+			galoBota->update();
 		}
 
 		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;

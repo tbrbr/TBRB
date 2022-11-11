@@ -107,6 +107,12 @@ namespace Rooster {
 			agacharAnim.connectLoop = false;
 			animations.push_back(agacharAnim);
 
+			struct Animation danceAnim;
+			danceAnim.init("animations/bruxoDance3.txt");
+			danceAnim.playingSpeed = 0.1;
+			danceAnim.connectLoop = true;
+			animations.push_back(danceAnim);
+
 
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 
@@ -792,6 +798,10 @@ namespace Rooster {
 				else if (atacking == SUPER) {
 					superAnim();
 					isDefending = false;
+				}
+				else if (estado == DANCING) { // nao tanko kkkkkkkkkkkkk
+					animations[1].update();
+					model.updateWithAnimation(animations[1]);
 				}
 				
 			}

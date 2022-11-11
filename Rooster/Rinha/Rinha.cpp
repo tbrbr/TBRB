@@ -333,6 +333,8 @@ int main() {
 	delete window;
 	delete selector;
 
+	window->close();
+
 	return 0;
 	//Fim da main
 }

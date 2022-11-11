@@ -123,7 +123,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 	// Dev tools
-	bool skipToWin = true;
+	bool skipToWin = false;
 	bool skipToFatality = false;
 
 

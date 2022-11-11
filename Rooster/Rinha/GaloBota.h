@@ -39,7 +39,7 @@ namespace Rooster {
             model.tex = &t;
             model.loadModel("models/botaModel.txt");
             model.autoSetBounds(model.at("Body"),  model.at("Body"), model.at("Head"));
-            println("Bota Carregou");
+            //println("Bota Carregou");
 
 
 
@@ -69,10 +69,10 @@ namespace Rooster {
             this->louKick = new Ataques( 12, 5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, -PI / 3, milliseconds(500), "");
             louKick->hitbox.radius = 25 * abs(model.xScl);
 
-            this->ultimateShot = new Ataques( 13, 10, HitBox{ Vector2f(0, 0), 0 },10, 10, PI / 2, milliseconds(500),"");
+            this->ultimateShot = new Ataques( 13, 10, HitBox{ Vector2f(0, 0), 0 },10, 10, PI / 2, milliseconds(500),"sounds\\Hit.ogg");
             ultimateShot->hitbox.radius = 5 * abs(model.xScl);
 
-            this->superAtack = new Ataques(14, 20, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(800), "sounds\\mg34.ogg");
+            this->superAtack = new Ataques(14, 20, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(800), "sounds\\Hit.ogg");
             superAtack->hitbox.radius = 5 * abs(model.xScl);
 
 

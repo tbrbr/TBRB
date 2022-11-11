@@ -1521,7 +1521,7 @@ public:
 		rect.setOutlineThickness(0);
 		rect.setFillColor(Color::Green);
 		rect.setPosition(x + outLine + offSet, y + outLine + offSet);
-		rect.setSize(Vector2f((wid - 2 * (outLine + offSet)) * (float)life / maxLife, hei - 2 * (outLine + offSet)));
+		rect.setSize(Vector2f((wid - 2 * (outLine + offSet)) * constrain((float)life / maxLife, 0, 1), hei - 2 * (outLine + offSet)));
 		window->draw(rect);
 
 		sf::Text scoreText;

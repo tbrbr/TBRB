@@ -263,16 +263,13 @@ public:
 
 
 
-
-
-
 		musica.openFromFile("PianoFiles/sounds/latitude.ogg");
 		loadNotas(autoSavePath);
 
 
 		loadMusica(0);
 
-		musTeste.music.openFromFile("PianoFiles/sounds/latitude.ogg");
+		
 		//musTeste.music.play();
 
 		base = 400;

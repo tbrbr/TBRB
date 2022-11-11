@@ -136,11 +136,6 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 			if (e.type == Event::Closed) {
 				window.close();
 			}
-
-			if (e.type == Event::KeyPressed) {
-
-				return 0;
-			}
 		}
 
 		

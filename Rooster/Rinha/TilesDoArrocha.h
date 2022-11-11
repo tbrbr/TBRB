@@ -1957,16 +1957,13 @@ bool pianoTiles(RenderWindow* window) {
 			}
 			else if (e.type == Event::TextEntered) {
 				if (e.text.unicode < 128) {
-					//std::cout << "Arcor" << std::endl;
+
 					if (e.text.unicode > 31) {
 						lastChar = (static_cast<char>(e.text.unicode));
-						//std::cout << info.lastChar << std::endl;
 						inputType = 0;
-
 					}
 					else if (e.text.unicode == 3 || e.text.unicode == 8) {
 						inputType = 2;
-						//std::cout << "Delete" << std::endl;
 					}
 				}
 			}

@@ -146,9 +146,30 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 	area.setOutlineColor(Color::Red);
 	area.setOutlineThickness(4);
 
+	// É agr que eu me esbaldo
+	// Com usa lissenssa mota
+
+	// Detector de texto
+	int inputType = -1;
+	char lastChar = ' ';
+
+	struct ValBox ipBox;
+	float boxWid = area_size.x /1.5;
+	float boxHei = 40;
+	float boxX = area_position.x + area_size.x/2  - boxWid/2;
+	float boxY = area_position.y + area_size.y / 2 - boxHei / 2;
+
+	ipBox.init(2, boxX, boxY, boxWid, boxHei, "");
+	ipBox.textLimit = 30;
+	ipBox.label = "Digite o ip Ex.: 154.21.158.367";
+
+	sf::IpAddress ip;
 	
 
 	while (window->isOpen()) {
+
+		inputType = -1;
+
 		Event e;
 		while (window->pollEvent(e))
 		{
@@ -157,20 +178,59 @@ int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, Tc
 				return INTRO;
 			}
 
+			if (e.type == Event::MouseMoved) {
+				mainInput.mousePos = Vector2f( e.mouseMove.x, e.mouseMove.y);
+			}
+
 			if(e.type == Event::MouseButtonPressed) {
 				if (e.mouseButton.button == Mouse::Left)
 				{
 
 				}
 			}
+
+			// Pegando o texto
+			else if (e.type == Event::TextEntered) {
+				if (e.text.unicode < 128) {
+
+					if (e.text.unicode > 31) {
+						lastChar = (static_cast<char>(e.text.unicode));
+						inputType = 0;
+					}
+					else if (e.text.unicode == 3 || e.text.unicode == 8) {
+						inputType = 2;
+					}
+				}
+			}
+			else if (e.type == Event::KeyPressed) {
+				if (e.key.code == sf::Keyboard::Enter) {
+					inputType = 1;
+				}
+			}
+			
 		}
 
+		mainInput.update();
+
+		Vector2f mousePos = mainInput.mousePos;
+
 		window->draw(area);
+		
+		ipBox.update(mousePos, inputType, lastChar);
+		ipBox.draw(*window);
+
+		if (ipBox.confirmed) {
+			ip = sf::IpAddress::IpAddress(ipBox.sVal);
+			break;
+		}
+
+		
+
 		window->display();
 
 	}
 
-	socket->connect(IpAddress::getLocalAddress(), 59000);
+	socket->connect(ip, 59000);
 	return MULTI_SELECT;
 }
 #endif // ! 

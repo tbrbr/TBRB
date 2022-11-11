@@ -569,7 +569,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 
-
+		// Isso embaixo é um pesadelo
 		// Yamaha Falling
 		//-------------------------------------------------------------------------------
 		if (fightWon) {

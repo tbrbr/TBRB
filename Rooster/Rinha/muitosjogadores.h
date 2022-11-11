@@ -384,8 +384,9 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 					pauseFrames = 120;
 					galo.resetPosition();
 					galo2.resetPosition();
-					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo2.getMaxhp());
+
+					galo.resetHp();
+					galo2.resetHp();
 				}
 			}
 			else if (galo2.gethp() < 0) {
@@ -410,8 +411,8 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 					pauseFrames = 120;
 					galo.resetPosition();
 					galo2.resetPosition();
-					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo2.getMaxhp());
+					galo.resetHp();
+					galo2.resetHp();
 				}
 			}
 

@@ -5,7 +5,8 @@
 using namespace sf;
 
 int muitoJogadores(RenderWindow*, RectangleShape&);
-int minigame(RenderWindow* window, RectangleShape& background);
+int minigame(RenderWindow*, RectangleShape& );
+void selectInput(RenderWindow*, RectangleShape& );
 
 struct WarningBox {
 public:
@@ -246,7 +247,7 @@ void selectLang(RenderWindow* window, RectangleShape& background) {
 }
 
 int configScreen(RenderWindow* window, RectangleShape& background) {
-	Text* t[2];
+	Text* t[3];
 	Font font;
 	Font titleFont;
 	titleFont.loadFromFile("fonts/CloisterBlack.ttf");
@@ -259,20 +260,21 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 
 
 	t[0] = new Text(LANG.getLine(LANGUAGE::SELECT_LANG), font, SCREEN_HEIGHT / 30);
-	t[1] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
+	t[1] = new Text("INPUT", font, SCREEN_HEIGHT / 30);
+	t[2] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
 
 	int textXPosition = SCREEN_WIDTH * 0.6;
 	int textyPosition = SCREEN_HEIGHT * 0.5;
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		t[i]->setPosition(textXPosition, textyPosition);
 		t[i]->setFillColor(Color::Red);
 		textyPosition = textyPosition + SCREEN_HEIGHT * 0.10;
 	}
 
 
-	RectangleShape divs[2];
-	for (int i = 0; i < 2; i++) {
+	RectangleShape divs[3];
+	for (int i = 0; i < 3; i++) {
 		divs[i].setPosition(t[i]->getPosition().x, t[i]->getPosition().y - t[i]->getGlobalBounds().height / 2);
 		divs[i].setSize(Vector2f(t[i]->getGlobalBounds().width, t[i]->getGlobalBounds().height * 2));
 		divs[i].setFillColor(Color::Transparent);
@@ -281,7 +283,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 
 
 	while (window->isOpen()) {
-		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 1);
+		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
 		Event e;
 
 		while (window->pollEvent(e)) {
@@ -302,7 +304,10 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 						if (__temp == 0) {		
 							selectLang(window, background);
 						}
-						else if (__temp == 1)
+						else if (__temp == 1) {
+							selectInput(window, background);
+						}
+						else if (__temp == 2)
 						{
 							for (int i = 0; i < 2; i++) {
 								delete t[i];
@@ -315,7 +320,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 		}
 
 		if (__temp != -1) {
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < 3; i++) {
 				if (__temp != i)
 					t[i]->setFillColor(Color::Red);
 				else
@@ -324,7 +329,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 
 		}
 		else {
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < 3; i++) {
 				t[i]->setFillColor(Color::Red);
 			}
 		}
@@ -333,7 +338,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 		window->draw(background);
 		window->draw(title);
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 3; i++) {
 			window->draw(*t[i]);
 			window->draw(divs[i]);
 		}
@@ -861,5 +866,154 @@ int muitoJogadores(RenderWindow* window, RectangleShape& background) {
 		window->display();
 
 	}
+
+}
+
+void updateInput(RenderWindow* window, RectangleShape& background, int player) {
+
+	RectangleShape  teclas[3][7];
+	int wid = SCREEN_WIDTH / 15;
+	int hei = SCREEN_HEIGHT / 10;
+
+
+	Vector2f pos;
+	pos.x = window->getSize().x * 0.05;
+	pos.y = window->getSize().y * 0.3;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 7; j++) {
+			teclas[i][j].setSize(Vector2f(wid, hei));
+			teclas[i][j].setPosition(pos);
+			pos.x += wid * 2;
+		}
+
+		pos.x = window->getSize().x * 0.05;
+	}
+	while (window->isOpen()) {
+		Event e;
+		while (window->pollEvent(e)) {
+			if (e.type == Event::Closed) {
+				window->close();
+			}
+
+			if (e.type == Event::KeyPressed) {
+				if (e.key.code == Keyboard::Escape) {
+					return;
+				}
+			}
+		}
+
+
+
+
+		window->clear();
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 7; j++) {
+				window->draw(teclas[i][j]);
+			}
+		}
+		window->display();
+	}
+
+}
+
+void selectInput(RenderWindow * window, RectangleShape & background) {
+
+	Text* t[3];
+
+	Font font;
+	Font titleFont;
+	titleFont.loadFromFile("fonts/CloisterBlack.ttf");
+	font.loadFromFile("fonts/blops.ttf");
+
+
+	Text title("INPUT", titleFont, SCREEN_HEIGHT / 13);
+	title.setPosition(SCREEN_WIDTH * 0.6, SCREEN_HEIGHT * 0.15);
+	title.setFillColor(Color::Red);
+
+
+	t[0] = new Text("PLAYER 1", font, SCREEN_HEIGHT / 30);
+	t[1] = new Text("PLAYER 2", font, SCREEN_HEIGHT / 30);
+	t[2] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
+
+	int textXPosition = SCREEN_WIDTH * 0.6;
+	int textyPosition = SCREEN_HEIGHT * 0.5;
+
+	for (int i = 0; i < 3; i++) {
+		t[i]->setPosition(textXPosition, textyPosition);
+		t[i]->setFillColor(Color::Red);
+		textyPosition = textyPosition + SCREEN_HEIGHT * 0.10;
+	}
+
+
+	RectangleShape divs[3];
+	for (int i = 0; i < 3; i++) {
+		divs[i].setPosition(t[i]->getPosition().x, t[i]->getPosition().y - t[i]->getGlobalBounds().height / 2);
+		divs[i].setSize(Vector2f(t[i]->getGlobalBounds().width, t[i]->getGlobalBounds().height * 2));
+		divs[i].setFillColor(Color::Transparent);
+	}
+
+
+
+	while (window->isOpen()) {
+		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
+		Event e;
+
+		while (window->pollEvent(e)) {
+			if (e.type == Event::Closed) {
+				window->close();
+			}
+
+			if (e.type == Event::KeyPressed) {
+				if (e.key.code == Keyboard::Escape) {
+					return;
+				}
+			}
+
+			if (e.type == Event::MouseButtonPressed) {
+				if (e.mouseButton.button == Mouse::Left) {
+
+					if (__temp != -1) {
+						if (__temp == 2)
+						{
+							for (int i = 0; i < 2; i++) {
+								delete t[i];
+							}
+							return;
+						}
+						else {
+							updateInput(window, background, __temp);
+						}
+					}
+				}
+			}
+		}
+
+		if (__temp != -1) {
+			for (int i = 0; i < 3; i++) {
+				if (__temp != i)
+					t[i]->setFillColor(Color::Red);
+				else
+					t[__temp]->setFillColor(Color::Color(64, 14, 24));
+			}
+
+		}
+		else {
+			for (int i = 0; i < 3; i++) {
+				t[i]->setFillColor(Color::Red);
+			}
+		}
+
+		window->clear();
+		window->draw(background);
+		window->draw(title);
+
+		for (int i = 0; i < 3; i++) {
+			window->draw(*t[i]);
+			window->draw(divs[i]);
+		}
+		window->display();
+
+	}
+
 
 }

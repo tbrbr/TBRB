@@ -381,6 +381,15 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 	char data = '-';
 	char rdata = '-';
 
+	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	Texture fundao;
+	fundao.loadFromFile("sprites\\fodahart.png");
+	fundo.setTexture(&fundao);
+	fundo.setPosition(0, 0);
+
+
+
+
 	while (window->isOpen())
 	{
 		Event e;
@@ -469,6 +478,7 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 		}
 
 		window->clear();
+		window->draw(fundo);
 		window->draw(NORDESTE);
 		for (int i = 0; i < 4; i++) {
 			window->draw(circles[i]);

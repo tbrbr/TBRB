@@ -52,8 +52,6 @@ void galo2thread(Galo * galo2, TcpSocket * socket, bool * loss) {
 		else {
 			galo2->setState(Rooster::state::STOPPED);
 		}
-
-		data[0] = '\0';
 		data[1] = '\0';
 		data[5] = '\0';
 	}
@@ -63,7 +61,7 @@ void galo2thread(Galo * galo2, TcpSocket * socket, bool * loss) {
 void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 
 
-	char data[10] = "\0";
+	static char data[10] = "\0";
 	//while (1) {
 		if (*pauseFrames <= 0) {
 			if (mainInput.inputState[0][GOUP][1])
@@ -78,6 +76,7 @@ void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 					galo->lowKick();
 				}
 				else {
+					data[1] = '0';
 					galo->highKick();
 				}
 
@@ -88,6 +87,9 @@ void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 					galo->super();
 				else
 					galo->especial();
+			}
+			else {
+				data[0] = '0';
 			}
 
 			if (mainInput.inputState[0][GORIGHT][0])
@@ -116,13 +118,14 @@ void galo1thread(Galo * galo, TcpSocket* socket, int * pauseFrames) {
 			}
 		}
 		else {
+			data[0] = '0';
+			data[1] = '0';
+			data[5] = '0';
 			(*pauseFrames)--;
 		}
 
 		socket->send(data, 10);
-		data[0] = '\0';
-		data[1] = '\0';
-		data[5] = '\0';
+		
 		///mainInput.update();
 	//}
 }
@@ -381,8 +384,9 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 					pauseFrames = 120;
 					galo.resetPosition();
 					galo2.resetPosition();
-					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo2.getMaxhp());
+
+					galo.resetHp();
+					galo2.resetHp();
 				}
 			}
 			else if (galo2.gethp() < 0) {
@@ -407,8 +411,8 @@ void lan(RenderWindow* window, Galo& galo, Galo& galo2, int& option, RectangleSh
 					pauseFrames = 120;
 					galo.resetPosition();
 					galo2.resetPosition();
-					galo.sethp(galo.getMaxhp());
-					galo2.sethp(galo2.getMaxhp());
+					galo.resetHp();
+					galo2.resetHp();
 				}
 			}
 

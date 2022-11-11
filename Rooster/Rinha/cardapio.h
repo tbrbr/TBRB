@@ -665,6 +665,7 @@ public:
 		{
 			if (e.type == Event::Closed)
 			{
+				option = -1;
 				window->close();
 			}
 
@@ -672,8 +673,21 @@ public:
 			if (e.type == Event::MouseButtonPressed) {
 				if (e.mouseButton.button == Mouse::Left) {
 
-					if (p2 != -1) {
+					if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey) && isp1Time) {
+						option = GAMEMODE;
+						return;
+					}
 
+					
+					if (p2 == -1) {
+						if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey) && p1 != -1) {
+							delete* galop1;
+							p1 = -1;
+							isp1Time = true;
+							
+						}
+					}
+					if (p2 != -1) {
 						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
 							option = MAPA_FALIDO_E_ACHE_RUIM_WALTER;
 							return;
@@ -690,6 +704,7 @@ public:
 						}
 
 					}
+					
 					else {
 						for (int i = 0; i < 5; i++) {
 							if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey)) {
@@ -714,6 +729,8 @@ public:
 				}
 			}
 		}
+
+		
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			window->close();
@@ -773,12 +790,11 @@ public:
 		statusPlayer1.draw(window);
 		statusPlayer2.draw(window);
 
-		if (p2 != -1) {
-			window->draw(OKbutton);
-			window->draw(cancelButton);
-			window->draw(t_x);
-			window->draw(t_ok);
-		}
+		window->draw(OKbutton);
+		window->draw(cancelButton);
+		window->draw(t_x);
+		window->draw(t_ok);
+		
 
 		window->display();
 

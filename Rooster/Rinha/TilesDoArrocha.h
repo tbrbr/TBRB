@@ -4,10 +4,10 @@ struct TilesMusica {
 	std::string notasPath;
 
 	std::string name;
-	
+
 	sf::Sprite sprite;
 
-	
+
 };
 
 // Variavel global com as informações das musicas
@@ -66,15 +66,15 @@ ConvexShape rectToConvexShape(float x, float y, float wid, float hei) {
 	ConvexShape newShape(4);
 
 	newShape.setPoint(0, Vector2f(x, y));
-	newShape.setPoint(1, Vector2f(x+wid, y));
-	newShape.setPoint(2, Vector2f(x+wid, y+hei));
-	newShape.setPoint(3, Vector2f(x, y+hei));
+	newShape.setPoint(1, Vector2f(x + wid, y));
+	newShape.setPoint(2, Vector2f(x + wid, y + hei));
+	newShape.setPoint(3, Vector2f(x, y + hei));
 
 	return newShape;
 }
 
 ConvexShape rectToConvexShape(float wid, float hei) {
-	return rectToConvexShape(-wid/2, -hei/2, wid, hei);
+	return rectToConvexShape(-wid / 2, -hei / 2, wid, hei);
 }
 
 
@@ -197,7 +197,7 @@ class Yamaha {
 	int maxLife = 200;
 	int life = 200;
 
-	
+
 
 	float teclaXScl = 1;
 	float teclaYScl = 1;
@@ -219,7 +219,7 @@ class Yamaha {
 
 
 	// Armazenando as musicas
-	
+
 	Music musica;
 
 
@@ -269,7 +269,7 @@ public:
 	float holdingNoteY = 0;
 	*/
 	float holdingY = 0;
-	
+
 
 	float roomWid = 1280;
 	float roomHei = 720;
@@ -333,9 +333,9 @@ public:
 
 
 
-	
 
-		rect = rectToConvexShape(-base/2, 0, base, altura);
+
+		rect = rectToConvexShape(-base / 2, 0, base, altura);
 
 
 
@@ -349,7 +349,7 @@ public:
 		// TrackBars
 		float baseQuart = base / 4;
 		for (int i = 0; i < 4; i++) {
-			float baseAdd = (baseQuart * (i-2));
+			float baseAdd = (baseQuart * (i - 2));
 			bars[i] = rectToConvexShape(baseAdd, 0, baseQuart, altura);
 		}
 
@@ -358,7 +358,7 @@ public:
 		teclado.loadFromFile("sprites/teclas.png");
 		trapezioTexture.loadFromFile("");
 
-		
+
 
 
 		for (int i = 0; i < 4; i++) {
@@ -380,10 +380,10 @@ public:
 			tecPos.y += pos.y;
 
 			teclas[i].setPosition(tecPos);
-			teclas[i].setScale(xScl*teclaXScl, yScl*teclaYScl);
+			teclas[i].setScale(xScl * teclaXScl, yScl * teclaYScl);
 
 
-			teclas[i].setOrigin(teclas[i].getLocalBounds().width/2, teclas[i].getLocalBounds().height / 2);
+			teclas[i].setOrigin(teclas[i].getLocalBounds().width / 2, teclas[i].getLocalBounds().height / 2);
 
 			teclaPressed[i] = false;
 
@@ -415,10 +415,10 @@ public:
 			Rooster::AreaEffect* areaEffect = new Rooster::AreaEffect(area, partColor);
 			areaEffect->tilesPreset();
 			areaEffect->color = partColor;
-		
 
 
-			slideEffects.push_back( areaEffect);
+
+			slideEffects.push_back(areaEffect);
 
 		}
 
@@ -441,10 +441,10 @@ public:
 		textEffects->mortal = false;
 
 
-		
 
-		
-		
+
+
+
 	}
 
 
@@ -474,7 +474,7 @@ public:
 
 
 		float x = point.x;
-		
+
 		if (base - baseMenor != 0) {
 			float hSmall = baseMenor * altura / (base - baseMenor);
 
@@ -506,7 +506,7 @@ public:
 		actions.clear();
 	}
 
-	
+
 
 
 	void saveNotas(std::string str) {
@@ -545,12 +545,12 @@ public:
 
 				hardClearNotas();
 				setScroll(0);
-				
+
 
 				std::getline(file, line); // Nota 0
 				while (line != "End" || file.eof() != 0) {
 
-					
+
 
 					std::getline(file, line);
 					int coluna = std::stoi(line);
@@ -711,7 +711,7 @@ public:
 		notas[index]->y = y;
 	}
 
-	void updateNotaNoAction(int index, Nota nota){
+	void updateNotaNoAction(int index, Nota nota) {
 		updateNotaNoAction(index, nota.coluna, nota.length, nota.y);
 	}
 
@@ -721,10 +721,10 @@ public:
 			action.actionType = 0;
 			action.notaAntes = *notas[index];
 			//println("L antes " << action.notaAntes.length);
-			
+
 			updateNotaNoAction(index, coluna, length, y);
 
-			
+
 
 			action.notaDepois = *notas[index];
 
@@ -852,14 +852,14 @@ public:
 
 	void update(Vector2f mouse) {
 
-		
+
 		if (editing) {
 
 			if (autoSaveTimer.getElapsedTime() > autoSaveTime) {
 				saveNotas(autoSavePath);
 				autoSaveTimer.restart();
 				println("TILES AUTO-SAVE on " << autoSavePath);
-				
+
 			}
 
 
@@ -934,7 +934,7 @@ public:
 						}
 
 						if (!achou) {
-							createNota(coluna, 1, (int)(yy-1));
+							createNota(coluna, 1, (int)(yy - 1));
 						}
 
 					}
@@ -994,9 +994,9 @@ public:
 				}
 			}
 		}
-		
 
-		
+
+
 		if (playing) {
 			scrollY = bps * getPlayingSeconds();
 
@@ -1094,7 +1094,7 @@ public:
 				if (teclaPressed[i]) {
 					if (teclaMissed[i]) {
 						life -= 5;
-						
+
 						comboBreak();
 						bregaPower -= 70;
 					}
@@ -1111,13 +1111,13 @@ public:
 			}
 
 		}
-		
+
 
 
 		textEffects->update();
 
 		if (finished) {
-			
+
 			if (fadeFrames <= 0) {
 				exit = true;
 			}
@@ -1125,7 +1125,7 @@ public:
 
 				fadeFrames--;
 
-				musica.setVolume(100*((float)fadeFrames/fadeFramesTotal));
+				musica.setVolume(100 * ((float)fadeFrames / fadeFramesTotal));
 			}
 		}
 	}
@@ -1166,9 +1166,9 @@ public:
 			std::string str = "Combo ";
 			str += std::to_string(combo);
 
-			textEffects->position.x = roomWid*0.75 + randFloat(roomWid/10);
-			textEffects->position.y = roomHei*0.5  + randFloat(roomHei/10);
-			textEffects->color = Rooster::hsv(combo*5, 1, 1);
+			textEffects->position.x = roomWid * 0.75 + randFloat(roomWid / 10);
+			textEffects->position.y = roomHei * 0.5 + randFloat(roomHei / 10);
+			textEffects->color = Rooster::hsv(combo * 5, 1, 1);
 			textEffects->text.setString(str);
 			textEffects->createParticle();
 
@@ -1176,7 +1176,7 @@ public:
 		}
 
 
-		
+
 	}
 
 	void comboMerit() {
@@ -1293,7 +1293,7 @@ public:
 
 
 
-			bar.setFillColor(Color(0,0,255,10));
+			bar.setFillColor(Color(0, 0, 255, 10));
 			bar.setScale(xScl, yScl);
 			bar.setPosition(pos);
 
@@ -1311,7 +1311,7 @@ public:
 		notaIndex.setScale(xScl, yScl);
 
 		for (int i = 0; i < notas.size(); i++) {
-			
+
 			ConvexShape noteShape;
 
 			noteShape.setPointCount(4);
@@ -1322,10 +1322,10 @@ public:
 			float baseQuart = base / 4;
 			float noteX = (baseQuart * (coluna - 2));
 
-			float noteY = (notas[i]->y + scrollY)*notaSize   + altura;
+			float noteY = (notas[i]->y + scrollY) * notaSize + altura;
 			float noteLen = notaSize * notas[i]->length;
 
-			
+
 			noteShape = rectToConvexShape(noteX, noteY, baseQuart, noteLen);
 
 			convertNoteToTrap(noteShape, baseMenor);
@@ -1439,7 +1439,7 @@ public:
 
 
 
-			
+
 
 		}
 
@@ -1509,9 +1509,9 @@ public:
 
 		
 
-		rect.setFillColor(Color(250, 250 ,250, 255));
-		rect.setSize(Vector2f(wid - 2*outLine, hei- 2*outLine));
-		rect.setPosition(x+outLine, y+outLine);
+		rect.setFillColor(Color(250, 250, 250, 255));
+		rect.setSize(Vector2f(wid - 2 * outLine, hei - 2 * outLine));
+		rect.setPosition(x + outLine, y + outLine);
 		rect.setFillColor(Color(0, 0, 0, 0));
 		rect.setOutlineColor(Color::White);
 		rect.setOutlineThickness(outLine);
@@ -1521,7 +1521,7 @@ public:
 		rect.setOutlineThickness(0);
 		rect.setFillColor(Color::Green);
 		rect.setPosition(x + outLine + offSet, y + outLine + offSet);
-		rect.setSize(Vector2f((wid - 2*(outLine + offSet)) * (float)life/maxLife, hei - 2*(outLine+offSet)));
+		rect.setSize(Vector2f((wid - 2 * (outLine + offSet)) * (float)life / maxLife, hei - 2 * (outLine + offSet)));
 		window->draw(rect);
 
 		sf::Text scoreText;
@@ -1541,7 +1541,7 @@ public:
 
 
 
-		
+
 		for (int i = 0; i < 4; i++) {
 			slideEffects[i]->draw(*window);
 		}
@@ -1550,7 +1550,7 @@ public:
 
 		if (finished) {
 			RectangleShape fade(Vector2f(roomWid, roomHei));
-			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/fadeFramesTotal))));
+			fade.setFillColor(Color(0, 0, 0, 255 * (1 - ((float)fadeFrames / fadeFramesTotal))));
 			//println(fadeFrames);
 			window->draw(fade);
 		}
@@ -1593,7 +1593,7 @@ class BregaMeter {
 
 	Vector2f pontPos;
 	Vector2f pontSpeed;
-	
+
 
 public:
 	float percentage = 0;
@@ -1624,15 +1624,15 @@ public:
 		x = roomSize.x - wid;
 		y = roomSize.y - (bregaSprHei * yScl);
 
-		
+
 		pontSize = Vector2f(wid * 0.4, yScl * 20);
 		pontOrigin = Vector2f(wid * 0.4, xScl * 10);
 
 
 		effect = new Rooster::Effect();
-		
-		
-		
+
+
+
 
 
 		effect->sanguePreset();
@@ -1658,11 +1658,11 @@ public:
 		effect->mortal = false;
 
 		effect->position.x = x + wid / 2;
-		effect->position.y = y + hei/2;
+		effect->position.y = y + hei / 2;
 
-		
-		effect->spreadPreset(wid/1.5, hei/1.5);
-		
+
+		effect->spreadPreset(wid / 1.5, hei / 1.5);
+
 
 		sndBufExplosion.loadFromFile("sounds/Explosion.ogg");
 
@@ -1672,7 +1672,7 @@ public:
 	void update() {
 		if (broken) {
 
-			
+
 
 			if (!pontBroken) {
 				if (pontBreakTimer > 0) {
@@ -1688,10 +1688,10 @@ public:
 
 			tick++;
 			if (tick > 50) {
-				
+
 				effect->createMultipleParticles(randInt(4));
 				tick = randInt(30);
-			
+
 			}
 
 			if (pontBroken) {
@@ -1734,8 +1734,8 @@ public:
 		pontPos.x -= rotX;
 		pontPos.y -= rotY;
 
-		pontSpeed.y = 0.25*sin(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
-		pontSpeed.x = 0.25*cos(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
+		pontSpeed.y = 0.25 * sin(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
+		pontSpeed.x = 0.25 * cos(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
 
 		pontAngleSpeed = constrain(pontAngleSpeed, -20, 20);
 
@@ -1750,7 +1750,7 @@ public:
 		sprite.setScale(xScl, yScl);
 		sprite.setPosition(x, y);
 
-		sprite.setTextureRect(IntRect(bregaSprWid*broken, 0, bregaSprWid, bregaSprHei));
+		sprite.setTextureRect(IntRect(bregaSprWid * broken, 0, bregaSprWid, bregaSprHei));
 
 		window.draw(sprite);
 
@@ -1758,14 +1758,14 @@ public:
 
 
 
-		
+
 		RectangleShape ponteiro(pontSize);
 		ponteiro.setFillColor(Color(0, 0, 0));
 
-	
-		
 
-		ponteiro.setPosition(pontPos.x + x + wid / 2 + xScl * 18,pontPos.y + y + (sprite.getLocalBounds().height - 112) * xScl);
+
+
+		ponteiro.setPosition(pontPos.x + x + wid / 2 + xScl * 18, pontPos.y + y + (sprite.getLocalBounds().height - 112) * xScl);
 		ponteiro.setOrigin(pontOrigin);
 		ponteiro.setRotation(pontAngle);
 
@@ -1776,7 +1776,7 @@ public:
 
 	}
 
-	
+
 
 
 };
@@ -1821,7 +1821,7 @@ struct TilesInfo {
 
 		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y * 0.9));
 		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y * 0.9));
-		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y*0.9));
+		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y * 0.9));
 		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y * 0.9));
 		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y * 0.9));
 
@@ -1945,7 +1945,7 @@ struct TilesInfo {
 };
 
 
-bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
+bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 
 
 	float roomWid = 1280;
@@ -1988,7 +1988,7 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 
 		sf::FloatRect area(0.f, 0.f, 1280, 720);
 		view.setSize(area.width, area.height);
-		view.setCenter(area.width/2, area.height/2);
+		view.setCenter(area.width / 2, area.height / 2);
 		view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
 		window->setView(view);
 	}
@@ -2013,7 +2013,7 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 	bpsBox.label = "Batidas por segundo";
 
 	struct Button playButton;
-	playButton.init(0, roomHei-40, 80, 20);
+	playButton.init(0, roomHei - 40, 80, 20);
 	playButton.color = Color(250, 100, 150);
 	playButton.label = "play";
 
@@ -2050,7 +2050,8 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 					window->setView(window->getDefaultView());
 
 					return false;
-				} else if(e.key.code == Keyboard::Enter) {
+				}
+				else if (e.key.code == Keyboard::Enter) {
 					inputType = 1;
 				}
 			}
@@ -2085,12 +2086,12 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 				}
 
 				xScl = wid / (float)e.size.width;
-				yScl = hei/(float)e.size.height;
+				yScl = hei / (float)e.size.height;
 
 				sf::FloatRect area(0.f, 0.f, roomWid, roomHei);
 				view.setSize(area.width, area.height);
 				view.setCenter(area.width / 2, area.height / 2);
-				view.setViewport(FloatRect((1-xScl)/2,(1-yScl)/2, xScl, yScl));
+				view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
 				window->setView(view);
 			}
 			else if (e.type == Event::TextEntered) {
@@ -2107,12 +2108,12 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 			}
 		}
 
-		
+
 
 		window->clear();
 
-		
-		
+
+
 		info.update(*window);
 		info.draw(*window);
 
@@ -2127,14 +2128,14 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 			saveBox.draw(*window);
 
 			bpsBox.update(mouseViewPos, inputType, lastChar);
-			
+
 			if (bpsBox.confirmed) {
 				info.alcides->setBPS(bpsBox.fVal);
 			}
 			if (!bpsBox.selected) {
 				bpsBox.setValue(info.alcides->getBPS());
 			}
-			
+
 			bpsBox.draw(*window);
 
 			//playButton.color = info.alcides->playing ? Color(100, 100, 100) : Color(180, 180, 180);
@@ -2225,13 +2226,13 @@ bool pianoTiles(RenderWindow* window, int musicaSelecionada) {
 
 	info.clear();
 	return true;
-	
-	
+
+
 }
 
 
 
-void tilesMenu(RenderWindow* window) {
+void tilesMenu(RenderWindow * window) {
 
 	float roomWid = 1280;
 	float roomHei = 720;
@@ -2283,12 +2284,12 @@ void tilesMenu(RenderWindow* window) {
 
 	for (int i = 0; i < tilesMusicas.size(); i++) {
 		struct Button playButton;
-		playButton.init(roomWid / 2 - buttonWid / 2, roomHei / 2 - tilesMusicas.size()*(yOffset+buttonHei)/2 - buttonHei/2 + (buttonHei + yOffset)*i , buttonWid, buttonHei);
+		playButton.init(roomWid / 2 - buttonWid / 2, roomHei / 2 - tilesMusicas.size() * (yOffset + buttonHei) / 2 - buttonHei / 2 + (buttonHei + yOffset) * i, buttonWid, buttonHei);
 		playButton.color = Color(250, 100, 150);
 		playButton.label = tilesMusicas[i].name;
 		buttons.push_back(playButton);
 	}
-	
+
 
 
 
@@ -2414,7 +2415,7 @@ void tilesMenu(RenderWindow* window) {
 			}
 		}
 
-		
+
 
 
 		mainPartSystem.update();

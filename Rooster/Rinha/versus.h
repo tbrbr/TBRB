@@ -115,6 +115,7 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 	p2.setState(DANCING);
 
 	float pauseMilisec = 8000;
+	
 	int animState = 1;
 	int opacity = 0;
 	int fundoopacity = 0;
@@ -135,13 +136,6 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 		while (window.pollEvent(e)) {
 			if (e.type == Event::Closed) {
 				window.close();
-			}
-
-			if (e.type == Event::KeyPressed) {
-				p2.noGravity = false;
-				p1.noGravity = false;
-				fundoluta.setFillColor(Color::White);
-				return 0;
 			}
 		}
 

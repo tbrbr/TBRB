@@ -36,7 +36,7 @@ namespace Rooster {
 			this->ultimateShot = new Ataques(
 				10, 0.9, HitBox{ Vector2f(0, 0), 0 },
 				10, 3, 0, milliseconds(1500),
-				"sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
+				"sounds\\doctorStrangeMagicShorter.ogg"
 			);
 
 			this->superAtack = new Ataques(15, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(2000), "sounds\\mg34.ogg");
@@ -419,6 +419,30 @@ namespace Rooster {
 			static int angle = 0;
 			angle++;
 
+
+			
+			if (percentage > 2.f / 3.f && percentage < 2.9f/3.f) {
+				if (!ultimateShot->soundPlayed) {
+					ultimateShot->playSound();
+					ultimateShot->soundPlayed = true;
+				}
+				
+			}
+			else if (percentage > 1.75f / 3.f) {
+				
+				ultimateShot->soundPlayed = false;
+				
+			}
+			else if (percentage > 1.5f / 3.f){
+				if (!ultimateShot->soundPlayed) {
+					ultimateShot->playSound();
+					ultimateShot->soundPlayed = true;
+				}
+				
+
+			}
+
+
 			if (percentage < 0.5f / 3.f) {
 
 				float thisPercentage = percentage * 6;
@@ -452,6 +476,7 @@ namespace Rooster {
 				projectiles[1].setVisibility(true);
 				projectiles[1].update();
 
+				
 
 			}
 			else if (percentage < 1.5f / 3.f) {
@@ -487,10 +512,10 @@ namespace Rooster {
 				projectiles[1].setVisibility(true);
 				projectiles[1].update();
 
-
+				
 			}
 			else if (percentage < 1.55f / 3.f) {
-				ultimateShot->playSound();
+				
 			}
 			else if (percentage < 2.f / 3.f) {
 
@@ -525,7 +550,7 @@ namespace Rooster {
 
 				static bool go = true;
 				if (go) {
-					ultimateShot->playSound();
+					//ultimateShot->playSound();
 				}
 				model.at("FrontArm")->angle = percentage * 90;
 
@@ -571,6 +596,7 @@ namespace Rooster {
 
 				projectiles[1].setVisibility(false);
 				ultimateShot->isAtacking = false;
+				ultimateShot->soundPlayed = false;
 
 				model.at("FrontArm")->angle = 0;
 				model.at("BackArm")->angle = 0;
@@ -580,6 +606,7 @@ namespace Rooster {
 				model.at("FrontBigode")->angle = 0;
 				model.at("BackBigode")->angle = 0;
 			}
+
 		}
 
 		void louKickAnim() {

@@ -339,6 +339,8 @@ namespace Rooster {
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
 
+		bool soundPlayed = false;
+
 
 		Ataques(int id, float Stun, HitBox hitbox, int Damage, float KnockBack, float angle, Time timelapse, const char* txt) {
 			this->id = id;

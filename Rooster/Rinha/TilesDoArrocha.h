@@ -153,6 +153,7 @@ class Yamaha {
 	float finishLineY = 0;
 
 	int fadeFrames = 100;
+	int fadeFramesTotal = 100;
 
 	int uniqueId = 0;
 
@@ -709,7 +710,9 @@ public:
 
 	void pause() {
 		musica.pause();
+
 		resetNotesState();
+
 		playing = false;
 	}
 
@@ -955,7 +958,7 @@ public:
 			scrollY = bps * getPlayingSeconds();
 
 			if (scrollY > finishLineY) {
-				if (!finished) {
+				if (!finished && !editing) {
 					finish();
 				}
 			}
@@ -1073,6 +1076,8 @@ public:
 			else {
 
 				fadeFrames--;
+
+				musica.setVolume(100*((float)fadeFrames/fadeFramesTotal));
 			}
 		}
 	}
@@ -1420,7 +1425,7 @@ public:
 
 		if (finished) {
 			RectangleShape fade(Vector2f(roomWid, roomHei));
-			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/100))));
+			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/fadeFramesTotal))));
 			//println(fadeFrames);
 			window->draw(fade);
 		}
@@ -1958,16 +1963,13 @@ bool pianoTiles(RenderWindow* window) {
 			}
 			else if (e.type == Event::TextEntered) {
 				if (e.text.unicode < 128) {
-					//std::cout << "Arcor" << std::endl;
+
 					if (e.text.unicode > 31) {
 						lastChar = (static_cast<char>(e.text.unicode));
-						//std::cout << info.lastChar << std::endl;
 						inputType = 0;
-
 					}
 					else if (e.text.unicode == 3 || e.text.unicode == 8) {
 						inputType = 2;
-						//std::cout << "Delete" << std::endl;
 					}
 				}
 			}

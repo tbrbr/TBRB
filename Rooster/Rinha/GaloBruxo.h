@@ -36,7 +36,7 @@ namespace Rooster {
 			this->ultimateShot = new Ataques(
 				10, 0.9, HitBox{ Vector2f(0, 0), 0 },
 				10, 3, 0, milliseconds(1500),
-				"sounds\\doctor-strange-magic-circle-shield-sound-effect-38335.ogg"
+				"sounds\\doctorStrangeMagicShorter.ogg"
 			);
 
 			this->superAtack = new Ataques(15, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(2000), "sounds\\mg34.ogg");
@@ -106,6 +106,12 @@ namespace Rooster {
 			agacharAnim.playingSpeed = 1;
 			agacharAnim.connectLoop = false;
 			animations.push_back(agacharAnim);
+
+			struct Animation danceAnim;
+			danceAnim.init("animations/bruxoDance3.txt");
+			danceAnim.playingSpeed = 0.1;
+			danceAnim.connectLoop = true;
+			animations.push_back(danceAnim);
 
 
 			bar = new LifeBar(maxHp, isp1, name.c_str());
@@ -247,8 +253,8 @@ namespace Rooster {
 
 			Transform trans;
 
-			float xScale = model.xScl*0.1;//(float)SCREEN_WIDTH / 15360;
-			float yScale = model.yScl*0.2;//(float)SCREEN_HEIGHT / 4320;
+			float xScale = model.xScl*0.1;
+			float yScale = model.yScl*0.2;
 
 
 			projectiles[0].setSpriteAngle(angle*sign(xScale));
@@ -261,18 +267,19 @@ namespace Rooster {
 			trans.scale(xScale, yScale);
 			
 			
-			
-				
-			// projectiles[0].setPosition(Vector2f(0, 0));
 			projectiles[0].setPosition(shieldPos);
 			projectiles[0].setTransfrom(trans);
-
-
 
 			
 			projectiles[0].setImpulse(0, 0);
 			projectiles[0].setVisibility(true);
 			projectiles[0].update();
+
+			
+			defense.center = shieldPos;		
+			defense.radius = (projectiles[0].getSize().y /2) * xScale;
+
+
 		}
 
 
@@ -412,6 +419,30 @@ namespace Rooster {
 			static int angle = 0;
 			angle++;
 
+
+			
+			if (percentage > 2.f / 3.f && percentage < 2.9f/3.f) {
+				if (!ultimateShot->soundPlayed) {
+					ultimateShot->playSound();
+					ultimateShot->soundPlayed = true;
+				}
+				
+			}
+			else if (percentage > 1.75f / 3.f) {
+				
+				ultimateShot->soundPlayed = false;
+				
+			}
+			else if (percentage > 1.5f / 3.f){
+				if (!ultimateShot->soundPlayed) {
+					ultimateShot->playSound();
+					ultimateShot->soundPlayed = true;
+				}
+				
+
+			}
+
+
 			if (percentage < 0.5f / 3.f) {
 
 				float thisPercentage = percentage * 6;
@@ -445,6 +476,7 @@ namespace Rooster {
 				projectiles[1].setVisibility(true);
 				projectiles[1].update();
 
+				
 
 			}
 			else if (percentage < 1.5f / 3.f) {
@@ -480,10 +512,10 @@ namespace Rooster {
 				projectiles[1].setVisibility(true);
 				projectiles[1].update();
 
-
+				
 			}
 			else if (percentage < 1.55f / 3.f) {
-				ultimateShot->playSound();
+				
 			}
 			else if (percentage < 2.f / 3.f) {
 
@@ -518,7 +550,7 @@ namespace Rooster {
 
 				static bool go = true;
 				if (go) {
-					ultimateShot->playSound();
+					//ultimateShot->playSound();
 				}
 				model.at("FrontArm")->angle = percentage * 90;
 
@@ -564,6 +596,7 @@ namespace Rooster {
 
 				projectiles[1].setVisibility(false);
 				ultimateShot->isAtacking = false;
+				ultimateShot->soundPlayed = false;
 
 				model.at("FrontArm")->angle = 0;
 				model.at("BackArm")->angle = 0;
@@ -573,6 +606,7 @@ namespace Rooster {
 				model.at("FrontBigode")->angle = 0;
 				model.at("BackBigode")->angle = 0;
 			}
+
 		}
 
 		void louKickAnim() {
@@ -680,11 +714,11 @@ namespace Rooster {
 				float thisPercentage = (percentage * 3) / 2;
 
 
-				static int hspeed = facingRight ? 20 : -20;
+				static int hspeed = -20;
 				static int vspeed = 10;
 
 
-				model.at("Hat")->offset.x -= hspeed;
+				model.at("Hat")->offset.x += hspeed;
 				model.at("Hat")->offset.y += vspeed;
 
 				if (frames % 4 == 0)
@@ -695,8 +729,8 @@ namespace Rooster {
 				model.at("Head")->angle = -20 * thisPercentage;
 				model.at("Body")->angle = 10 * thisPercentage;
 				model.at("Hat")->angle = frames % 60;
-				louKick->isAtacking = true;
-				louKick->hitbox = hurtBox[2];
+				hiKick->isAtacking = true;
+				hiKick->hitbox = hurtBox[2];
 			}
 			else if (percentage < 2.9f / 3.f) {
 
@@ -711,18 +745,18 @@ namespace Rooster {
 
 				model.at("Hat")->offset.x *= 0.99;
 				model.at("Hat")->offset.y *= 0.99;
-				louKick->isAtacking = true;
-				louKick->hitbox = hurtBox[2];
+
+				hiKick->isAtacking = true;
+				hiKick->hitbox = hurtBox[2];
 			}
 			else {
-				louKick->isAtacking = false;
+				hiKick->isAtacking = false;
 
 				model.at("FrontArm")->angle = 0;
 				model.at("BackArm")->angle = 0;
 				model.at("Head")->angle = 0;
 				model.at("Body")->angle = 0;
 				model.at("Hat")->angle = 0;
-
 
 				model.at("Hat")->xScl *= model.at("Hat")->xScl < 0 ? -1 : 1;
 
@@ -742,6 +776,7 @@ namespace Rooster {
 
 				if (estado == RUNNING) {
 					runAnim();
+					isDefending = false;
 				}
 				else if (estado == DEFENDING) {
 
@@ -754,11 +789,14 @@ namespace Rooster {
 							animations[0].playingFrame = 15;
 						}
 						model.updateWithAnimation(animations[0]);
+
+						isDefending = true;
 					}
 
 				}
 				else if (estado == STOPPED) {
 					runReset();
+					isDefending = false;
 				}
 
 
@@ -774,15 +812,23 @@ namespace Rooster {
 
 				if (atacking == HIGH_KICK) {
 					highAtackAnim();
+					isDefending = false;
 				}
 				else if (atacking == LOW_KICK) {
 					louKickAnim();
+					isDefending = false;
 				}
 				else if (atacking == SPECIAL) {
 					especialAnim();
+					isDefending = false;
 				}
 				else if (atacking == SUPER) {
 					superAnim();
+					isDefending = false;
+				}
+				else if (estado == DANCING) { // nao tanko kkkkkkkkkkkkk
+					animations[1].update();
+					model.updateWithAnimation(animations[1]);
 				}
 				
 			}
@@ -796,6 +842,13 @@ namespace Rooster {
 			// projectiles[0].update();
 
 		}
+
+		/*
+		void defended(Galo& galo2, Ataques* atk, bool facingRight) override {
+
+			galo2.apanhar(*ultimateShot,facingRight);
+
+		}*/
 
 		void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) override {
 

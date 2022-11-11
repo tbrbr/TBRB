@@ -1,8 +1,7 @@
 
-struct Musica {
-	Music music;
-	float duracao;
-	
+struct TilesMusica {
+	std::string soundPath;
+	std::string notasPath;
 	//mapa de teclas que eu vou implementar nstt
 };
 
@@ -140,8 +139,8 @@ class Yamaha {
 	Sprite teclas[4];
 
 
-	int maxLife = 300;
-	int life = 300;
+	int maxLife = 100;
+	int life = 100;
 
 	
 
@@ -154,12 +153,21 @@ class Yamaha {
 	float finishLineY = 0;
 
 	int fadeFrames = 100;
+	int fadeFramesTotal = 100;
 
 	int uniqueId = 0;
 
 	sf::Clock autoSaveTimer;
 	sf::Time autoSaveTime;
 	const string autoSavePath = "PianoFiles/_tilesAutoSave.txt";
+
+
+
+	// Armazenando as musicas
+	std::vector<struct TilesMusica> musicas;
+	Music musica;
+
+
 
 
 	std::vector<struct YamahaAction> actions;
@@ -170,14 +178,14 @@ class Yamaha {
 
 public:
 	int combo = 0;
-	int comboMax = 100;
+	int comboMax = 200;
 
 	bool exit = false;
 	bool finished = false;
 	bool success = false;
 
 	float bregaPower = 0;
-	float bregaMax = 1000;
+	float bregaMax = 1500;
 	bool editing = true;
 	bool playing = false;
 
@@ -200,9 +208,6 @@ public:
 
 
 
-	struct Musica musTeste;
-
-
 	vector<Rooster::AreaEffect*> slideEffects;
 	Rooster::Effect* textEffects;
 
@@ -216,7 +221,7 @@ public:
 
 		delete textEffects;
 
-		musTeste.music.stop();
+		musica.stop();
 		//musTeste.music.~Music();
 	}
 
@@ -226,6 +231,46 @@ public:
 		roomHei = roomSize.y;
 
 
+		struct TilesMusica musLindinho;
+		musLindinho.soundPath = "PianoFiles/sounds/teclado lindinho.ogg";
+		musLindinho.notasPath = "PianoFiles/tecladoLindinho.txt";
+
+		musicas.push_back(musLindinho);
+
+		struct TilesMusica musMorango;
+		musMorango.soundPath = "PianoFiles/sounds/morango.ogg";
+		musMorango.notasPath = "PianoFiles/morango.txt";
+
+		musicas.push_back(musMorango);
+
+		struct TilesMusica musZe;
+		musZe.soundPath = "PianoFiles/sounds/zerebolabola.ogg";
+		musZe.notasPath = "PianoFiles/ze.txt";
+
+		musicas.push_back(musZe);
+
+		struct TilesMusica musEscoces;
+		musEscoces.soundPath = "PianoFiles/sounds/escoces.ogg";
+		musEscoces.notasPath = "PianoFiles/mama.txt";
+
+		musicas.push_back(musEscoces);
+
+		struct TilesMusica musLatitude;
+		musEscoces.soundPath = "PianoFiles/sounds/latitude.ogg";
+		musEscoces.notasPath = "PianoFiles/latitude.txt";
+
+		musicas.push_back(musLatitude);
+
+
+
+
+
+
+		musica.openFromFile("PianoFiles/sounds/latitude.ogg");
+		loadNotas(autoSavePath);
+
+
+		loadMusica(0);
 
 		musTeste.music.openFromFile("PianoFiles/sounds/latitude.ogg");
 		//musTeste.music.play();
@@ -345,16 +390,21 @@ public:
 		textEffects->friction = 0.95;
 		textEffects->lifeMin = 350;
 		textEffects->lifeMax = 350;
-		textEffects->fadeInAlpha = true;
 		textEffects->textPreset();
+		textEffects->fadeOutAlpha = false;
+		textEffects->fadeInAlpha = true;
+
 		textEffects->mortal = false;
 
 
 		
 
-		loadNotas(autoSavePath);
+		
 		
 	}
+
+
+
 
 
 	void convertNoteToTrap(ConvexShape& note, float baseMenor) {
@@ -399,7 +449,7 @@ public:
 	}
 
 	float getPlayingSeconds() {
-		return musTeste.music.getPlayingOffset().asSeconds();
+		return musica.getPlayingOffset().asSeconds();
 	}
 
 
@@ -507,6 +557,24 @@ public:
 
 		file.close();
 	}
+
+
+
+
+
+	void loadMusica(int tilesMusicaIndex) {
+
+		musica.openFromFile(musicas[tilesMusicaIndex].soundPath);
+		loadNotas(musicas[tilesMusicaIndex].notasPath);
+	}
+
+
+
+
+
+
+
+
 
 
 
@@ -635,19 +703,21 @@ public:
 
 
 	void play() {
-		musTeste.music.play();
+		musica.play();
 		playing = true;
 	}
 
 	void pause() {
-		musTeste.music.pause();
+		musica.pause();
+
 		resetNotesState();
+
 		playing = false;
 	}
 
 	void setScroll(float amount) {
 		scrollY = maximum(amount, 0);
-		musTeste.music.setPlayingOffset(sf::seconds(scrollY / bps));
+		musica.setPlayingOffset(sf::seconds(scrollY / bps));
 	}
 
 	void moveScroll(float amount) {
@@ -884,15 +954,11 @@ public:
 
 		
 		if (playing) {
-
-
-			//scrollY += scrollSpd;
-			scrollY = bps*musTeste.music.getPlayingOffset().asSeconds();
+			scrollY = bps * getPlayingSeconds();
 
 			if (scrollY > finishLineY) {
-				finished = true;
-				if(life > 0){ 
-					success = true;
+				if (!finished && !editing) {
+					finish();
 				}
 			}
 
@@ -957,7 +1023,7 @@ public:
 								teclaMissed[coluna] = false;
 
 								comboAdd();
-								bregaPower += 15 + combo*2;
+								bregaPower += 15 + combo*0.25;
 							}
 						}
 					}
@@ -1001,10 +1067,16 @@ public:
 
 		textEffects->update();
 
-		if (finished && !editing) {
-			fadeFrames--;
+		if (finished) {
+			
 			if (fadeFrames <= 0) {
 				exit = true;
+			}
+			else {
+
+				fadeFrames--;
+
+				musica.setVolume(100*((float)fadeFrames/fadeFramesTotal));
 			}
 		}
 	}
@@ -1044,6 +1116,23 @@ public:
 		
 	}
 
+	void finish() {
+		finished = true;
+
+		if (life > 0) {
+			success = true;
+		}
+
+
+		std::string str = "Finished!";
+
+		textEffects->position.x = roomWid * 0.75 + randFloat(roomWid / 10);
+		textEffects->position.y = roomHei * 0.5 + randFloat(roomHei / 10);
+		textEffects->color = Color::White;
+		textEffects->text.setString(str);
+		textEffects->createParticle();
+	}
+
 
 	void resetNotesState() {
 		for (int i = 0; i < notas.size(); i++) {
@@ -1052,6 +1141,8 @@ public:
 		}
 		finished = false;
 		success = false;
+		exit = false;
+		fadeFrames = 100;
 	}
 
 
@@ -1333,7 +1424,7 @@ public:
 
 		if (finished) {
 			RectangleShape fade(Vector2f(roomWid, roomHei));
-			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/100))));
+			fade.setFillColor(Color(0, 0, 0, 255*(1-((float)fadeFrames/fadeFramesTotal))));
 			//println(fadeFrames);
 			window->draw(fade);
 		}
@@ -1360,6 +1451,23 @@ class BregaMeter {
 	Rooster::Effect* effect;
 
 	int tick = 0;
+
+	SoundBuffer sndBufExplosion;
+	Sound sndExplosion;
+
+	int pontBreakTimer = 250;
+
+	bool pontBroken = false;
+	float pontAngle = 0;
+	float pontAngleSpeed = 0;
+
+	Vector2f pontSize;
+	Vector2f pontOrigin;
+
+
+	Vector2f pontPos;
+	Vector2f pontSpeed;
+	
 
 public:
 	float percentage = 0;
@@ -1390,20 +1498,122 @@ public:
 		x = roomSize.x - wid;
 		y = roomSize.y - (bregaSprHei * yScl);
 
+		
+		pontSize = Vector2f(wid * 0.4, yScl * 20);
+		pontOrigin = Vector2f(wid * 0.4, xScl * 10);
+
+
 		effect = new Rooster::Effect();
+		
+		
+		
+
+
 		effect->sanguePreset();
+		effect->poeiraPreset();
+		effect->gravity.y = -0.1;
+		effect->lifeMin = 80;
+		effect->lifeMax = 150;
+		effect->sclMin = 1;
+		effect->sclMax = 2.5;
 
 
+		effect->vspeedMax = -2;
+		effect->vspeedMin = -0.5;
+		effect->hspeedMax = 1;
+		effect->hspeedMin = -1;
+		effect->hspeedLimit = 4;
+		effect->vspeedLimit = 3;
+		effect->friction = 0.96;
+		effect->fadeInAlpha = false;
+		effect->fadeOutAlpha = true;
+		effect->satMax = 0;
+		effect->satMin = 0;
+		effect->mortal = false;
+
+		effect->position.x = x + wid / 2;
+		effect->position.y = y + hei/2;
+
+		
+		effect->spreadPreset(wid/1.5, hei/1.5);
+		
+
+		sndBufExplosion.loadFromFile("sounds/Explosion.ogg");
+
+		sndExplosion.setBuffer(sndBufExplosion);
 	}
 
 	void update() {
 		if (broken) {
-			tick++;
-			if (tick > 60) {
-				//effect.createParticle();
-				tick = randInt(30);
+
+			
+
+			if (!pontBroken) {
+				if (pontBreakTimer > 0) {
+
+					pontAngleSpeed += 0.5;
+
+					pontBreakTimer--;
+				}
+				else {
+					breakPointer();
+				}
 			}
+
+			tick++;
+			if (tick > 50) {
+				
+				effect->createMultipleParticles(randInt(4));
+				tick = randInt(30);
+			
+			}
+
+			if (pontBroken) {
+				pontSpeed.y += 0.1;
+			}
+
+
+			pontAngle += pontAngleSpeed;
+			pontPos += pontSpeed;
+
 		}
+		else {
+			pontAngle = (-5 + 185 * percentage);
+		}
+
+		effect->update();
+	}
+
+	void explode() {
+		broken = true;
+
+
+
+		effect->createMultipleParticles(randIntRange(20, 30));
+
+		pontAngleSpeed = 5;
+
+		sndExplosion.play();
+	}
+
+	void breakPointer() {
+		pontBroken = true;
+
+
+		float rotX = pontSize.x * cos(toRadiAnus(pontAngle));
+		float rotY = pontSize.y * sin(toRadiAnus(pontAngle));
+
+		pontOrigin.x = pontSize.x / 2;
+
+		pontPos.x -= rotX;
+		pontPos.y -= rotY;
+
+		pontSpeed.y = 0.25*sin(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
+		pontSpeed.x = 0.25*cos(toRadiAnus(pontAngle)) * toRadiAnus(pontAngleSpeed) * pontSize.x / 2;
+
+		pontAngleSpeed = constrain(pontAngleSpeed, -20, 20);
+
+		effect->createMultipleParticles(randIntRange(5, 10));
 	}
 
 
@@ -1422,13 +1632,22 @@ public:
 
 
 
-		RectangleShape ponteiro(Vector2f(wid * 0.4, yScl * 20));
+		
+		RectangleShape ponteiro(pontSize);
 		ponteiro.setFillColor(Color(0, 0, 0));
-		ponteiro.setPosition(x + wid / 2 + xScl * 18, y + (sprite.getLocalBounds().height - 112) * xScl);
-		ponteiro.setOrigin(wid * 0.4, xScl * 10);
-		ponteiro.setRotation(-5 + 185 * percentage);
+
+	
+		
+
+		ponteiro.setPosition(pontPos.x + x + wid / 2 + xScl * 18,pontPos.y + y + (sprite.getLocalBounds().height - 112) * xScl);
+		ponteiro.setOrigin(pontOrigin);
+		ponteiro.setRotation(pontAngle);
 
 		window.draw(ponteiro);
+
+
+		effect->draw(window);
+
 	}
 
 	
@@ -1446,6 +1665,8 @@ struct TilesInfo {
 	Rooster::Galo* galoPeste;
 	Rooster::Galo* galoKalsa;
 	Rooster::Galo* galoSniper;
+	Rooster::Galo* galoBruxo;
+	Rooster::Galo* galoBota;
 
 	Texture fundao;
 	Texture bregaMeterTex;
@@ -1469,9 +1690,24 @@ struct TilesInfo {
 		galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
 		galoKalsa = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
 		galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
+		galoBruxo = new Rooster::Bruxo(kalsaSt, Rooster::state::DANCING, false);
+		galoBota = new Rooster::Bota(kalsaSt, Rooster::state::DANCING, false);
 
-		galoSniper->setPosition(Vector2f((float)roomSize.x / 1.05, Rooster::floorY));
+		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y * 0.9));
+		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y * 0.9));
+		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y*0.9));
+		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y * 0.9));
+		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y * 0.9));
+
+		galoKalsa->noCollision = true;
+		galoSniper->noCollision = true;
+		galoPeste->noCollision = true;
+		galoBruxo->noCollision = true;
+		galoBota->noCollision = true;
+
 		galoKalsa->facingRight = true;
+		galoBota->facingRight = true;
+		galoBruxo->facingRight = true;
 
 		fundao.loadFromFile("sprites/tiringa.png");
 
@@ -1492,6 +1728,11 @@ struct TilesInfo {
 
 		galoSniper->update();
 
+		galoBruxo->update();
+
+		galoBota->update();
+
+
 		alcides->update(Vector2f(0, 0));
 
 	}
@@ -1500,6 +1741,8 @@ struct TilesInfo {
 		delete galoPeste;
 		delete galoKalsa;
 		delete galoSniper;
+		delete galoBruxo;
+		delete galoBota;
 		delete bregaMeter;
 		delete alcides;
 	}
@@ -1512,6 +1755,8 @@ struct TilesInfo {
 		galoPeste->show(window);
 		galoKalsa->show(window);
 		galoSniper->show(window);
+		galoBruxo->show(window);
+		galoBota->show(window);
 
 		bregaMeter->draw(window);
 	}
@@ -1550,9 +1795,21 @@ struct TilesInfo {
 			galoKalsa->update();
 
 			galoSniper->update();
+
+			galoBruxo->update();
+
+			galoBota->update();
 		}
 
 		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
+		bregaMeter->update();
+
+
+		if (!bregaMeter->broken) {
+			if (bregaMeter->percentage > 1.25) {
+				bregaMeter->explode();
+			}
+		}
 
 		if (alcides->exit) {
 			result = alcides->success;
@@ -1705,16 +1962,13 @@ bool pianoTiles(RenderWindow* window) {
 			}
 			else if (e.type == Event::TextEntered) {
 				if (e.text.unicode < 128) {
-					//std::cout << "Arcor" << std::endl;
+
 					if (e.text.unicode > 31) {
 						lastChar = (static_cast<char>(e.text.unicode));
-						//std::cout << info.lastChar << std::endl;
 						inputType = 0;
-
 					}
 					else if (e.text.unicode == 3 || e.text.unicode == 8) {
 						inputType = 2;
-						//std::cout << "Delete" << std::endl;
 					}
 				}
 			}

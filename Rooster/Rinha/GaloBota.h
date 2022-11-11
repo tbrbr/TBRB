@@ -110,6 +110,12 @@ namespace Rooster {
             agacharAnim.connectLoop = false;
             animations.push_back(agacharAnim);
 
+            struct Animation danceAnim;
+            danceAnim.init("animations/botaDance.txt");
+            danceAnim.playingSpeed = 0.1;
+            danceAnim.connectLoop = true;
+            animations.push_back(danceAnim);
+
         }
 
 
@@ -222,10 +228,12 @@ namespace Rooster {
                 if (superAtack->getHitted || !air) {
                     atacking = NOT_ATTACK;
 
-                    vspeed = -5;
-                    println("super atk botas");
+                    vspeed = -4;
 
                     if (!air) {
+
+                        vspeed = 0;
+
                         float xx = model.pos.x;
                         float yy = model.pos.y;
                         projectiles[0].setPosition(xx, Rooster::floorY);
@@ -331,7 +339,6 @@ namespace Rooster {
                     atacking = NOT_ATTACK;
 
 
-                    println("ultimate shot atk botas");
                     vspeed = -10;
                     //println("Bateu " << ultimateShot->getHitted);
 
@@ -555,6 +562,10 @@ namespace Rooster {
                 }
                 else if (atacking == SUPER) {
                     superAnim();
+                }
+                else if (estado == DANCING) { // nao tanko kkkkkkkkkkkkk
+                    animations[1].update();
+                    model.updateWithAnimation(animations[1]);
                 }
                 
             }

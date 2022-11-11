@@ -177,23 +177,29 @@ namespace Rooster {
 
 
 
+				float third = (float)1 / 3;
+				float lifePerc = 1 - (float)life / maxLife;
+
+				float alphaMult = 1;
+
+				if (lifePerc <= third && fadeInAlpha) {
+					alphaMult = ruleOfThree(lifePerc, 0, third, 0, 1);
+				}
+				
+				if (lifePerc > 2*third && fadeOutAlpha) {
+					alphaMult = ruleOfThree(lifePerc, 2*third, 1, 1, 0);
+				}
+
+			
 
 
-				if (fadeInAlpha && life < maxLife/3) {
-					alpha = minimum((float)life / ((float)maxLife / 3), 1);
-				} else if (fadeOutAlpha && life > 2*maxLife/3) {
-					alpha = 1 - minimum((float)life-(2*(float)maxLife/3) / ((float)maxLife / 3), 1);
-				}
-				else {
-					alpha = 1;
-				}
 
 
 
 
 
 				Color col = color;
-				col.a = 255 * alpha;
+				col.a = 255 * alpha * alphaMult;
 
 				float depthFactor = (1 + (depthChange * (1 - (depth / depthStart))));
 
@@ -280,8 +286,18 @@ namespace Rooster {
 		float vspeedMin = 0;
 		float vspeedMax = 0;
 
+		float hspeedLimit = 10;
+		float vspeedLimit = 10;
+
 		float lifeMin = 10;
 		float lifeMax = 10;
+
+		float xOffsetMin = 0;
+		float xOffsetMax = 0;
+
+		float yOffsetMin = 0;
+		float yOffsetMax = 0;
+
 
 		bool partMortal = true;
 
@@ -500,8 +516,14 @@ namespace Rooster {
 			satMin = 0.2;
 			lightMax = 1;
 			lightMin = 0.8;
+		}
 
+		void spreadPreset(float xSpread, float ySpread) {
+			xOffsetMax = xSpread / 2;
+			xOffsetMin = -xOffsetMax;
 
+			yOffsetMax = ySpread / 2;
+			yOffsetMin = -yOffsetMax;
 
 		}
 
@@ -516,7 +538,9 @@ namespace Rooster {
 
 			if (gotas.size() < 2000) {
 				struct Particle p;
-				p.position = position;
+				p.position.x = position.x + randFloatRange(xOffsetMin, xOffsetMax);
+				p.position.y = position.y + randFloatRange(yOffsetMin, yOffsetMax);
+
 				p.scl = randFloatRange(sclMin, sclMax);
 				
 
@@ -528,8 +552,12 @@ namespace Rooster {
 
 
 				p.life = randFloatRange(lifeMin, lifeMax);
+				p.maxLife = p.life;
 				p.hSpeed = randFloatRange(hspeedMin, hspeedMax);
 				p.vSpeed = randFloatRange(vspeedMin, vspeedMax);
+
+				p.maxHspd = hspeedLimit;
+				p.maxVspd = vspeedLimit;
 
 
 				p.vAcc = gravity.y;
@@ -723,9 +751,6 @@ namespace Rooster {
 
 
 			p.position = position;
-
-			p.fadeOutAlpha = false;
-			p.fadeInAlpha = true;
 
 			p.mortal = true;
 

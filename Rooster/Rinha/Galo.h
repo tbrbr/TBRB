@@ -96,11 +96,13 @@ namespace Rooster {
 			playerName.setString(galoName);
 			playerName.setCharacterSize(SCREEN_WIDTH / 50);
 
+			// Full life
 			fullLife.setOutlineThickness(SCREEN_WIDTH / 300);
 			fullLife.setOutlineColor(Color::Black);
 			fullLife.setFillColor(Color::Black);
-			fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
-			fillBar.setOutlineColor(Color::Black);
+
+		
+			
 
 			for (int i = 0; i < 10; i++) {
 				combo[i].setSize(Vector2f(tam.x / 20, tam.y));
@@ -110,6 +112,12 @@ namespace Rooster {
 			}
 			int comboy = (tam.y * 2) + yposition;
 
+
+
+			// Fill Bar
+			fillBar.setOutlineThickness(SCREEN_WIDTH / 300);
+			fillBar.setOutlineColor(Color::Black);
+	
 			if (isP1) {
 				xposition = SCREEN_WIDTH / 12;
 				fillBar.setPoint(0, sf::Vector2f(-recLine * 2, 0));
@@ -158,6 +166,7 @@ namespace Rooster {
 
 			Color niceyellow(245, 205, 80);
 
+
 			life.setFillColor(niceyellow);
 			life.setSize(Vector2f((tam.x * hp) / Maxhp, tam.y));
 			fullLife.setSize(Vector2f(tam.x, tam.y));
@@ -204,6 +213,9 @@ namespace Rooster {
 			return power;
 		}
 
+		void setPower(int power) {
+			this->power = power;
+		}
 		void draw(RenderWindow* window) {
 			for (int i = 0; i < 10; i++) {
 				window->draw(combo[i]);
@@ -273,8 +285,10 @@ namespace Rooster {
 
 
 		}
+
 		void update(int hp) {
 
+			// Rapaz q bug dificil
 			int oldTam = life.getGlobalBounds().width;
 			int newTam = (tam.x * hp) / Maxhp;
 
@@ -409,6 +423,7 @@ namespace Rooster {
 		Ataques* superAtack;
 
 		bool noGravity = true;
+		bool noCollision = false;
 
 
 		// Lifebar
@@ -547,7 +562,8 @@ namespace Rooster {
 		void inline setHspeed(float spd) {
 			hspeed = spd;
 		}
-
+		
+		
 
 
 		int inline getFrames() {
@@ -609,6 +625,13 @@ namespace Rooster {
 			}
 
 
+		}
+		void resetHp() {
+			this->hp = maxHp;
+			int a = bar->getPower();
+			free(bar);
+			bar = new LifeBar(maxHp, isp1, name.c_str());
+			bar->setPower(a);
 		}
 		virtual void apanharByKalsa(Galo* g2, RenderWindow* af) {
 
@@ -804,35 +827,38 @@ namespace Rooster {
 
 			FloatRect galoBounds = model.getBounds();
 
-			if (position.y > floorY) {
-				vspeed = 0;
-				position.y = floorY;
-				air = false;
-			}
 
-			// Wall collision
-
-
-			if (position.x > SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl))) {
-
-				if (stunned) {
-					hspeed *= -0.8;
-				}
-				else {
-					hspeed = 0;
+			if (!noCollision) {
+				if (position.y > floorY) {
+					vspeed = 0;
+					position.y = floorY;
+					air = false;
 				}
 
-				position.x = SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl));
-			}
+				// Wall collision
 
-			if (position.x < model.center.x * abs(model.xScl)) {
-				if (stunned) {
-					hspeed *= -0.8;
+
+				if (position.x > SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl))) {
+
+					if (stunned) {
+						hspeed *= -0.8;
+					}
+					else {
+						hspeed = 0;
+					}
+
+					position.x = SCREEN_WIDTH - ((model.bounds.width - model.center.x) * abs(model.xScl));
 				}
-				else {
-					hspeed = 0;
+
+				if (position.x < model.center.x * abs(model.xScl)) {
+					if (stunned) {
+						hspeed *= -0.8;
+					}
+					else {
+						hspeed = 0;
+					}
+					position.x = model.center.x * abs(model.xScl);
 				}
-				position.x = model.center.x * abs(model.xScl);
 			}
 
 
@@ -857,7 +883,6 @@ namespace Rooster {
 
 
 		virtual void updateAnimations() = 0;
-
 
 		virtual void fatality(RenderWindow* window, Galo* galo2, RectangleShape fundo) {
 
@@ -1051,6 +1076,45 @@ namespace Rooster {
 
 
 		}
+		void explodir() {
+			static int  thisFrames = 0;
+			if (thisFrames < 100) {
+				for (int i = 0; i < model.allBones.size(); i++) {
+					if (model.at(i) == model.at("Head")) {
+						continue;
+					}
+					model.at(i)->offset.x += (i % 2 - 4);
+					model.at(i)->offset.y += (i % 4 - 8) * 2;
+				}
+				if (model.at("Head")->drawPos.x > SCREEN_WIDTH / 2) {
+					model.at("Head")->offset.x -= 1;
+				}
+				else if (model.at("Head")->drawPos.x < SCREEN_WIDTH / 2)  {
+					model.at("Head")->offset.x += 1;
+				}
+				
+				if (model.at("Head")->drawPos.y < floorY) {
+					model.at("Head")->offset.y += 1;
+				}
+
+			}
+			else {
+				for (int i = 0; i < model.allBones.size(); i++) {
+					if (model.at(i) == model.at("Head")) {
+						continue;
+					}
+					model.at(i)->offset.x += (i % 4 - 2);
+					model.at(i)->offset.y += 9;
+				}
+			
+				
+					model.at("Head")->angle += thisFrames % 20 - 10;
+				
+
+			}
+			thisFrames++;
+		}
+
 
 		void getHitByKalsaFatalityBody(RenderWindow* window, Galo* g2) {
 

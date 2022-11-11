@@ -64,8 +64,13 @@ namespace Rooster {
             n2->setOriginCenter();
             projectiles.push_back(*n2);
 
-
-
+            Projectile* corvinho = new Projectile(
+                Vector2f(0, 0),
+                "sprites\\corvo.png",
+                0, 0, Vector2f(1, 1),
+                IntRect(0, 0, 500, 829)
+            );
+            projectiles.push_back(*corvinho);
 
 
             textura.loadFromFile("sprites/galoPeste.png");
@@ -74,7 +79,6 @@ namespace Rooster {
             model.loadModel("models/pesteModel.txt");
             model.autoSetBounds(model.at("Body"), model.at("BackLeg"), model.at("Head"));
 
-            println("A Peste Carregou");
 
             HitBox* hit = new HitBox;
             for (int i = 0; i < model.allBones.size(); i++) {
@@ -207,8 +211,13 @@ namespace Rooster {
             int time = t.asMilliseconds();
 
             if (t > superAtack->timeLapse) {
+                superAtack->isAtacking = false;
                 atacking = NOT_ATTACK;
             }
+
+
+            int sizeCorvo[3] = { 500,748,643 };
+
 
             float percentage = (float)t.asMilliseconds() / (superAtack->timeLapse.asMilliseconds());
 
@@ -216,24 +225,87 @@ namespace Rooster {
             if (percentage < 1.f / 3.f) {
 
                 float thisPercentage = percentage * 3;
-
-
+                model.at("FrontArm")->angle = -30;
+                model.at("BackArm")->angle = 60 * thisPercentage;
+                model.at("Body")->angle = 7;
+                
             }
-            else if (percentage < 2.f / 3.f) {
+            else if (percentage < 1.25f / 3.f) {
                 float thisPercentage = (percentage * 3) / 2;
+                projectiles[2].setVisibility(true);
 
+                if (facingRight) {
+                    projectiles[2].setImpulse(30, 0);
+                    projectiles[2].setScale(Vector2f(-0.5, 0.5));
+                    projectiles[2].facingRight = true;
+                }
+                else {
+                    projectiles[2].setImpulse(-30, 10);
+                    projectiles[2].setScale(Vector2f(0.5, 0.5));
+                    projectiles[2].facingRight = false;
+                }
 
+                projectiles[2].setPosition(model.at("BackArm")->drawPos.x, model.at("BackArm")->drawPos.y - projectiles[2].getSize().y/2);
 
+              
+                int sprSelected = frames % 3;
+                int sprx = 0;
 
+                if (sprSelected == 0) {
+                    sprx = 0;
+                }
+                else if (sprSelected == 1) {
+                    sprx = 500;
+                }
+                else if (sprSelected == 2) {
+                    sprx = 500 + 748;
+                }
+
+                projectiles[2].setTextureRec(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
+                projectiles[2].update();
+
+                superAtack->isAtacking = true;
+                projectiles[2].facingRight ?
+                    superAtack->hitbox.center.x = projectiles[2].getPosition().x - projectiles[2].getSize().x / 2 :
+                    superAtack->hitbox.center.x = projectiles[2].getPosition().x + projectiles[2].getSize().x / 2;
+                superAtack->hitbox.center.y = projectiles[2].getPosition().y + projectiles[2].getSize().y / 2;
+                superAtack->hitbox.radius = projectiles[2].getSize().y / 2;
             }
             else if (percentage < 2.9f / 3.f) {
-                
 
+                model.at("FrontArm")->angle *= 0.999;
+                model.at("BackArm")->angle *= 0.999;
+                model.at("Body")->angle *= 0.999;
+                int sprSelected = frames % 3;
+                int sprx = 0;
 
+                if (sprSelected == 0) {
+                    sprx = 0;
+                }
+                else if (sprSelected == 1) {
+                    sprx = 500;
+                }
+                else if (sprSelected == 2) {
+                    sprx = 500 + 748;
+                }
+
+                projectiles[2].setTextureRec(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
+                projectiles[2].update();
+
+                superAtack->isAtacking = true;
+                projectiles[2].facingRight ?
+                    superAtack->hitbox.center.x = projectiles[2].getPosition().x - projectiles[2].getSize().x / 2 :
+                    superAtack->hitbox.center.x = projectiles[2].getPosition().x + projectiles[2].getSize().x / 2;
+                superAtack->hitbox.center.y = projectiles[2].getPosition().y + projectiles[2].getSize().y / 2;
+                superAtack->hitbox.radius = projectiles[2].getSize().y / 2;
             }
             else {
+                model.at("FrontArm")->angle *= 0;
+                model.at("BackArm")->angle *= 0;
+                model.at("Body")->angle *= 0;
 
-
+                
+                superAtack->isAtacking = false;
             }
 
 
@@ -582,6 +654,9 @@ namespace Rooster {
                 }
                 else if (atacking == SPECIAL) {
                     especialAnim();
+                }
+                else if (atacking == SUPER) {
+                    superAnim();
                 }
                 else if (estado == DANCING) {
                     animations[1].update();

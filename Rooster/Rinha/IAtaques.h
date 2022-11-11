@@ -339,6 +339,8 @@ namespace Rooster {
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
 
+		bool soundPlayed = false;
+
 
 		Ataques(int id, float Stun, HitBox hitbox, int Damage, float KnockBack, float angle, Time timelapse, const char* txt) {
 			this->id = id;
@@ -410,7 +412,7 @@ namespace Rooster {
 
 			exp->sanguePreset();
 
-			exp->createMultipleParticles(1 + Damage * 6);
+			exp->createMultipleParticles(1 + Damage * 5);
 			partSys.addEffect(exp);
 		}
 

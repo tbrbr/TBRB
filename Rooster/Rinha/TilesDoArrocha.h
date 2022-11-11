@@ -1827,6 +1827,8 @@ bool pianoTiles(RenderWindow* window) {
 	info.roomSize.x = roomWid;
 	info.roomSize.y = roomHei;
 	info.init();
+	info.alcides->editing = false;
+	info.alcides->play();
 
 
 	bool flores = false;

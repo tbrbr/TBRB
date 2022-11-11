@@ -138,7 +138,9 @@ int versus(RenderWindow & window, Galo & p1, Galo & p2, RectangleShape & fundolu
 			}
 
 			if (e.type == Event::KeyPressed) {
-
+				p2.noGravity = false;
+				p1.noGravity = false;
+				fundoluta.setFillColor(Color::White);
 				return 0;
 			}
 		}

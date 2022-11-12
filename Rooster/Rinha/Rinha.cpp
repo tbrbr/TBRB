@@ -103,7 +103,7 @@ int main() {
 
 
 
-	int option = MENU_PRINCIPAL;
+	int option = INTRO;
 
 
 

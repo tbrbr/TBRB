@@ -837,7 +837,7 @@ public:
 						
 						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
 							if (p1 != -1) {
-								option = UMJOGADORES;
+								option = VERSUS;
 								mode = SINGLE;
 								return;
 							}

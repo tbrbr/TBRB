@@ -118,6 +118,24 @@ void galoHandleAttack(Rooster::Galo& attacker, Rooster::Galo& defender, Rooster:
 				}
 			}
 		}
+	} else if(attack->id == 28){
+		for (int i = 0; i < defender.hurtBox.size(); i++) {
+			if (attack->CheckCollision(defender.hurtBox[i])) {
+				if (defender.isDefending) {
+					if (attack->CheckCollision(defender.defense)) {
+						defender.defended(attacker, attack, facing);
+					}
+					else if (!attack->getHitted) {
+						attack->getHitted = true;
+						defender.apanhar(*attack, facing);
+					}
+				}
+				else if (!attack->getHitted) {
+					attack->getHitted = true;
+					defender.apanhar(*attack, facing);
+				}
+			}
+		}
 	}
 	// Other Attacks
 	else {
@@ -147,6 +165,12 @@ void galoAttacks(Rooster::Galo& attacker, Rooster::Galo& defender) {
 		galoHandleAttack(attacker, defender, attacker.ultimateShot);
 
 		galoHandleAttack(attacker, defender, attacker.superAtack);
+
+		if (attacker.hasProjectileAtack) {
+			if (attacker.projectileAtack->isAtacking) {
+				galoHandleAttack(attacker, defender, attacker.projectileAtack);
+			}
+		}
 	}
 }
 
@@ -190,6 +214,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	baseTilesView.setSize(visibleArea.width, visibleArea.height);
 	baseTilesView.setCenter(visibleArea.left + visibleArea.width / 2, visibleArea.top + visibleArea.height / 2);
 	baseTilesView.setViewport(FloatRect(0, tilesYPort + 1, 1, 1));
+
 
 	bool flores = false;
 

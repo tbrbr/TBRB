@@ -108,6 +108,7 @@ Texture* selecionarMapa(RenderWindow * window, int & __mapa) {
 	descricao.setFont(arial);
 	descricao.setCharacterSize(SCREEN_WIDTH / 60);
 	descricao.setPosition(Map.getPosition().x, Map.getPosition().y + Map.getSize().y * 1.05);
+	descricao.setOutlineThickness(1);
 	
 	RectangleShape cancel;
 	RectangleShape confirm;
@@ -160,6 +161,13 @@ Texture* selecionarMapa(RenderWindow * window, int & __mapa) {
 	_cancel.setPosition(_pos);
 
 	int selectedMap = -1;
+
+	RectangleShape fundo(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	Texture fundao;
+	fundao.loadFromFile("sprites\\fodahart.png");
+	fundo.setTexture(&fundao);
+	fundo.setPosition(0, 0);
+
 
 	while (window->isOpen())
 	{
@@ -220,6 +228,7 @@ Texture* selecionarMapa(RenderWindow * window, int & __mapa) {
 		}
 
 		window->clear();
+		window->draw(fundo);
 		window->draw(NORDESTE);
 		for (int i = 0; i < 4; i++) {
 			window->draw(circles[i]);
@@ -295,6 +304,7 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 	descricao.setFont(arial);
 	descricao.setCharacterSize(SCREEN_WIDTH / 60);
 	descricao.setPosition(Map.getPosition().x, Map.getPosition().y + Map.getSize().y * 1.05);
+	descricao.setOutlineThickness(1);
 
 	RectangleShape cancel;
 	RectangleShape cancel2;
@@ -370,7 +380,7 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 	_pos.y = rectangle.getPosition().y + rectangle.getSize().y * 0.6;
 	cancel2.setPosition(_pos);
 
-	Text t("Awaiting Oponent", bops, window->getSize().y / 60);
+	Text t("Waiting Oponent", bops, window->getSize().y / 60);
 	t.setPosition(rectangle.getPosition().x + rectangle.getSize().x / 2 - t.getGlobalBounds().width / 2, rectangle.getPosition().y + rectangle.getSize().y * 0.13);
 	t.setFillColor(Color::Red);
 

@@ -123,8 +123,8 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 
 	// Dev tools
-	bool skipToWin = true;
-	bool skipToFatality = true;
+	bool skipToWin = false;
+	bool skipToFatality = false;
 
 
 
@@ -434,9 +434,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 		mainInput.update();
 
-		if (mainInput.keyboardState[Keyboard::Space][1]) {
-			int a = Pause::rematchScreen(window, galo2, galo, fundo, maxComboP1, matchTime);
-		}
+		
+
+		
 
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
 
@@ -663,8 +663,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				if (executarFatality) {
 					winner->fatality(window, looser, fundo);
 				}
-
-				option = MENU_PRINCIPAL;
+				option = Pause::rematchScreen(*window, *winner, *looser, fundo);
 				return;
 			}
 

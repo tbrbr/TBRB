@@ -167,10 +167,7 @@ int create(RenderWindow* window, RectangleShape& background, TcpSocket* socket, 
 }
 
 int join(RenderWindow* window, RectangleShape& background, TcpSocket* socket, TcpListener* listener) {
-	listener->close();
-	socket->disconnect();
-	socket->connect("10.50.208.56", 59000);
-	return MULTI_SELECT;
+
 
 	RectangleShape area;
 	Vector2f area_size;

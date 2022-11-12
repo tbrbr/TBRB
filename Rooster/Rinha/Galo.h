@@ -421,6 +421,9 @@ namespace Rooster {
 		Ataques* louKick;
 		Ataques* ultimateShot;
 		Ataques* superAtack;
+		Ataques* projectileAtack;
+		bool hasProjectileAtack = false;
+
 
 		bool noGravity = true;
 		bool noCollision = false;
@@ -1167,7 +1170,6 @@ namespace Rooster {
 	};
 
 }
-
 
 
 #endif

@@ -42,7 +42,7 @@ namespace Rooster {
 			this->superAtack = new Ataques(15, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(2000), "sounds\\mg34.ogg");
 
 			
-			println("before Defense try");
+			//println("before Defense try");
 			Projectile* defense = new Projectile(
 				Vector2f(0, 0),
 				"sprites\\escudo.png",
@@ -58,7 +58,7 @@ namespace Rooster {
 			projectiles.push_back(*defense);
 			projectiles.push_back(*defense);
 
-			println("Defense done");
+			//println("Defense done");
 
 			Projectile* fumaca = new Projectile(
 				Vector2f(0, 0),
@@ -69,7 +69,7 @@ namespace Rooster {
 			atacking = NOT_ATTACK;
 			projectiles.push_back(*fumaca);
 
-			println("Fumaca");
+			//println("Fumaca");
 
 			Projectile* flame = new Projectile(
 				Vector2f(0, 0),
@@ -78,7 +78,7 @@ namespace Rooster {
 			);
 			projectiles.push_back(*flame);
 
-			println("Flame");
+			//println("Flame");
 
 			t.loadFromFile("sprites/galoBruxo.png");
 

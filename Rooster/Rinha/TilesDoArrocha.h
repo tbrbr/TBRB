@@ -100,6 +100,9 @@ public:
 
 	bool loose = false;
 
+
+	int hoverQuality = 0;
+
 	Nota() {
 		coluna = -1;
 		length = 0;
@@ -125,11 +128,18 @@ public:
 
 	void update(float scrollY) {
 		hovered = false;
+		hoverQuality = 0;
 
 		float yy = y + scrollY;
 		if (yy < 0 && yy + length > 0) {
 			hovered = true;
+
+			if (yy + length - 1 < 0) {
+				hoverQuality = 1 + (1 - (yy + (length - 1)))*3;
+			}
+
 		}
+
 	}
 
 
@@ -184,8 +194,8 @@ class Yamaha {
 	Sprite teclas[4];
 
 
-	int maxLife = 100;
-	int life = 100;
+	int maxLife = 200;
+	int life = 200;
 
 
 
@@ -211,6 +221,7 @@ class Yamaha {
 	// Armazenando as musicas
 
 	Music musica;
+	int musicaId = -1;
 
 
 
@@ -221,9 +232,22 @@ class Yamaha {
 	Nota holdingStartState;
 
 
+	SoundBuffer excelentBuffer;
+	SoundBuffer outstandingBuffer;
+	SoundBuffer impressiveBuffer;
+	Sound excelentSnd;
+	Sound outstandingSnd;
+	Sound impressiveSnd;
+
+
 public:
 	int combo = 0;
 	int comboMax = 200;
+
+	int missedNotes = 0;
+	int totalNotes = -1;
+
+	int score = 0;
 
 	bool exit = false;
 	bool finished = false;
@@ -278,8 +302,14 @@ public:
 
 
 		// Ce ta procurando a lista de musicas do tiles, tá no inicio do TilesDoArrocha.h
+		excelentBuffer.loadFromFile("sounds/exelente.ogg");
+		excelentSnd.setBuffer(excelentBuffer);
 
+		outstandingBuffer.loadFromFile("sounds/outstanding.ogg");
+		outstandingSnd.setBuffer(outstandingBuffer);
 
+		impressiveBuffer.loadFromFile("sounds/impressive.ogg");
+		impressiveSnd.setBuffer(impressiveBuffer);
 
 
 
@@ -575,12 +605,15 @@ public:
 
 
 
-
+	int getMusicaId() {
+		return musicaId;
+	}
 
 	void loadMusica(int tilesMusicaIndex) {
 
 		musica.openFromFile(tilesMusicas[tilesMusicaIndex].soundPath);
 		loadNotas(tilesMusicas[tilesMusicaIndex].notasPath);
+		musicaId = tilesMusicaIndex;
 	}
 
 
@@ -971,7 +1004,13 @@ public:
 		if (playing) {
 			scrollY = bps * getPlayingSeconds();
 
-			if (scrollY > finishLineY) {
+			if (musica.getStatus() == sf::Music::Stopped) {
+				musica.setPlayingOffset(musica.getDuration());
+				musica.pause();
+				scrollY = bps * getPlayingSeconds();
+			}
+
+			if (scrollY > finishLineY || musica.getStatus() == sf::Music::Stopped) {
 				if (!finished && !editing) {
 					finish();
 				}
@@ -1014,8 +1053,8 @@ public:
 
 									for (int k = 0; k < (nota->slided * 10) * nota->length / 5; k++) {
 										slideEffects[coluna]->createParticle();
-										bregaPower += 1;
 									}
+									bregaPower += 1;
 
 								}
 							}
@@ -1037,8 +1076,11 @@ public:
 								}
 								teclaMissed[coluna] = false;
 
+
+								score += nota->hoverQuality;
+
 								comboAdd();
-								bregaPower += 15 + combo * 0.25;
+								bregaPower += 15 + (nota->hoverQuality-1)*2 + combo*0.5;
 							}
 						}
 					}
@@ -1049,9 +1091,11 @@ public:
 						nota->missed = true;
 						life -= 5;
 
-						comboBreak();
+						missedNotes++;
 
-						bregaPower -= 280;
+						comboBreak();
+						
+						bregaPower -= 200;
 					}
 				}
 			}
@@ -1062,7 +1106,7 @@ public:
 						life -= 5;
 
 						comboBreak();
-						bregaPower -= 50;
+						bregaPower -= 70;
 					}
 				}
 
@@ -1100,17 +1144,29 @@ public:
 
 		if (combo > 3) {
 			std::string str = "ComboBreak ";
+
+			float scl = textEffects->sclMax;
+
 			str += std::to_string(combo);
-			textEffects->position.x = randFloat(roomWid);
+			textEffects->position.x = randFloat(roomWid*0.75);
 			textEffects->position.y = randFloat(roomHei);
 			textEffects->color = Color::Red;
 			textEffects->text.setString(str);
+			textEffects->sclMax = scl * constrain(1 + ((float)combo / 200), 1, 3);
+			textEffects->sclMin = scl * constrain(1 + ((float)combo / 200), 1, 3);
 			textEffects->createParticle();
+			textEffects->sclMax = scl ;
+			textEffects->sclMin = scl ;
+
 		}
 
 
 		combo = 0;
 	}
+
+
+
+
 
 	void comboAdd() {
 
@@ -1125,10 +1181,56 @@ public:
 			textEffects->color = Rooster::hsv(combo * 5, 1, 1);
 			textEffects->text.setString(str);
 			textEffects->createParticle();
+
+			comboMerit();
 		}
 
 
 
+	}
+
+	void comboMerit() {
+
+		bool say = true;
+		std::string str = "";
+		Color col;
+
+		switch (combo) {
+		case 100:
+			str = "EXCELENT";
+			col = Color::Green;
+			excelentSnd.play();
+			break;
+
+		case 200:
+			str = "IMPRESSIVE";
+			col = Color(100, 150, 250);
+			impressiveSnd.play();
+			break;
+
+		case 250:
+			str = "OUTSTANDING";
+			col = Color(250, 150, 250);
+			outstandingSnd.play();
+			break;
+		default:
+			say = false;
+			break;
+		}
+
+		
+		if (say) {
+			float scl = textEffects->sclMax;
+			textEffects->position.x = randFloat(roomWid * 0.5);
+			textEffects->position.y = randFloat(roomHei);
+			textEffects->color = col;
+			textEffects->text.setString(str);
+			textEffects->sclMax = scl * constrain(1.5 + ((float)combo / 200), 1, 3);
+			textEffects->sclMin = scl * constrain(1.5 + ((float)combo / 200), 1, 3);
+			textEffects->createParticle();
+			textEffects->sclMax = scl;
+			textEffects->sclMin = scl;
+		}
 	}
 
 	void finish() {
@@ -1158,6 +1260,11 @@ public:
 		success = false;
 		exit = false;
 		fadeFrames = 100;
+
+		combo = 0;
+		life = maxLife;
+		score = 0;
+		missedNotes = 0;
 	}
 
 
@@ -1333,7 +1440,7 @@ public:
 			}
 
 
-			if (true) {
+			if (SHOWDEBUG) {
 				notaIndex.setPosition(noteX + pos.x, noteY + pos.y);
 				notaIndex.setString(std::to_string(i));
 				window->draw(notaIndex);
@@ -1404,11 +1511,13 @@ public:
 		int outLine = 4;
 		int offSet = 4;
 
-		int x = 0;
-		int y = 0;
-
-		int wid = roomWid;
+		int wid = roomWid - 100;
 		int hei = 40;
+
+		int x = (roomWid - wid)/2;
+		int y = 10;
+
+		
 
 		rect.setFillColor(Color(250, 250, 250, 255));
 		rect.setSize(Vector2f(wid - 2 * outLine, hei - 2 * outLine));
@@ -1417,16 +1526,28 @@ public:
 		rect.setOutlineColor(Color::White);
 		rect.setOutlineThickness(outLine);
 
-
-
-
 		window->draw(rect);
 
 		rect.setOutlineThickness(0);
 		rect.setFillColor(Color::Green);
 		rect.setPosition(x + outLine + offSet, y + outLine + offSet);
-		rect.setSize(Vector2f((wid - 2 * (outLine + offSet)) * (float)life / maxLife, hei - 2 * (outLine + offSet)));
+		rect.setSize(Vector2f((wid - 2 * (outLine + offSet)) * constrain((float)life / maxLife, 0, 1), hei - 2 * (outLine + offSet)));
 		window->draw(rect);
+
+		sf::Text scoreText;
+		std::string scoreStr = "SCORE ";
+		scoreStr += std::to_string(score);
+		scoreText.setScale(1, 1);
+		scoreText.setString(scoreStr);
+		scoreText.setFillColor(Color::White);
+		scoreText.setFont(basicFont);
+		scoreText.setPosition( x ,rect.getGlobalBounds().top + rect.getGlobalBounds().height + 20);
+		window->draw(scoreText);
+
+
+
+
+
 
 
 
@@ -1781,10 +1902,10 @@ struct TilesInfo {
 
 
 		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
-			alcides->moveScroll(-0.2);
+			alcides->moveScroll(-5);
 		}
 		if (mainInput.keyboardState[sf::Keyboard::Up][0]) {
-			alcides->moveScroll(0.2);
+			alcides->moveScroll(5);
 		}
 
 		if (mainInput.keyboardState[sf::Keyboard::Space][1]) {
@@ -1917,7 +2038,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 	clearButton.label = "clear";
 
 
-
+	int musicaId = info.alcides->getMusicaId();
 
 
 	while (window->isOpen()) {
@@ -2087,20 +2208,26 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 
 
 
+		switch(musicaId) {
+		case 0:
+			if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+				flores = true;
 
-		if (info.alcides->getPlayingSeconds() > 46 && !flores) {
-			flores = true;
+				FloatRect area(0, -1000, roomWid, 1000);
 
-			FloatRect area(0, -1000, roomWid, 1000);
+				Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
+				effect->floresPreset();
+				//effect->color = Color(200, 250, 100);
 
-			Rooster::AreaEffect* effect = new Rooster::AreaEffect(area, Color::White);
-			effect->floresPreset();
-			//effect->color = Color(200, 250, 100);
+				effect->createMultipleParticles(100);
 
-			effect->createMultipleParticles(100);
+				mainPartSystem.addEffect(effect);
+			}
+			break;
 
-			mainPartSystem.addEffect(effect);
-		}
+		case 1:
+			break;
+		} 
 
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);

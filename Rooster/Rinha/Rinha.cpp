@@ -227,7 +227,12 @@ int main() {
 		{
 
 		case UMJOGADORES:
-			singlePlayer(window, *galo, *galo2, option, fundo);
+			if (SINGLE == mode) {
+				singlePlayer(window, *galo, *galo2, option, fundo);
+			}
+			else {
+				multiPlayerLocal(window, *galo, *galo2, option, fundo);
+			}
 			if (option != UMJOGADORES) {
 				delete galo;
 				delete galo2;
@@ -250,11 +255,9 @@ int main() {
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-
 			selector->show(window, option, &galo, &galo2);
 			break;
 		case VERSUS:
-
 			if (mode == SINGLE) {
 				option = UMJOGADORES;
 				versus(*window, *galo, *galo2, fundo, __map);
@@ -383,6 +386,8 @@ int main() {
 	delete __mapa;
 	delete window;
 	delete selector;
+
+	window->close();
 
 	return 0;
 	//Fim da main

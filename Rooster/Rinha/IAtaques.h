@@ -336,8 +336,12 @@ namespace Rooster {
 		Vector2f colDif;
 		float colAngle = 0;
 
+
+		bool hasSound = false;
+
 		SoundBuffer bufferCollision;
 		Sound soundCollision;
+
 
 		bool soundPlayed = false;
 
@@ -350,8 +354,11 @@ namespace Rooster {
 			this->KnockBack = KnockBack;
 			this->timeLapse = timelapse;
 			this->angle = angle;
-			bufferCollision.loadFromFile(txt);
-			soundCollision.setBuffer(bufferCollision);
+
+			if (txt != "") {
+				hasSound = bufferCollision.loadFromFile(txt);
+				soundCollision.setBuffer(bufferCollision);
+			}
 
 			
 			colPos.x = 0;
@@ -370,8 +377,12 @@ namespace Rooster {
 			this->timeLapse = timelapse;
 			this->angle = angle;
 			this->timeLapse2 = timelapse2;
-			bufferCollision.loadFromFile(txt);
-			soundCollision.setBuffer(bufferCollision);
+
+
+			if (txt != "") {
+				hasSound = bufferCollision.loadFromFile(txt);
+				soundCollision.setBuffer(bufferCollision);
+			}
 
 			colPos.x = 0;
 			colPos.y = 0;
@@ -381,7 +392,10 @@ namespace Rooster {
 		}
 
 		void playSound() {
-			soundCollision.play();
+			if (hasSound) {
+				
+				soundCollision.play();
+			}
 		}
 		void setTimeLapse(Time timeLapse) {
 			this->timeLapse = timeLapse;
@@ -412,7 +426,7 @@ namespace Rooster {
 
 			exp->sanguePreset();
 
-			exp->createMultipleParticles(1 + Damage * 5);
+			exp->createMultipleParticles(1 + Damage);
 			partSys.addEffect(exp);
 		}
 

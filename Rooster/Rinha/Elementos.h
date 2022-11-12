@@ -965,18 +965,18 @@ struct Model {
             int version = std::stoi(line);
 
 
-            println("Checking Version");
+            //println("Checking Version");
 
             if (version == 1) {
 
                 clearModel();
 
-                println("Model Version " << version);
+                //println("Model Version " << version);
 
 
                 std::getline(file, line);
 
-                println("Ordem de Execucao");
+                //println("Ordem de Execucao");
                 if (line == "Execution Order") {
                     std::getline(file, line);
                     if (line == "{") {
@@ -989,7 +989,7 @@ struct Model {
                 }
                 std::getline(file, line);
 
-                println("Ordem de desenho");
+                //println("Ordem de desenho");
                 if (line == "Draw Order") {
                     std::getline(file, line);
                     if (line == "{") {
@@ -1004,7 +1004,7 @@ struct Model {
                 std::getline(file, line);
 
 
-                println("Carregando Elementos");
+                //println("Carregando Elementos");
                 if (line == "Elements") {
                     std::getline(file, line);
                     if (line == "{") {
@@ -1014,7 +1014,7 @@ struct Model {
 
                             int id = std::stoi(line);
 
-                            println("Loading Element " << id);
+                            //println("Loading Element " << id);
 
                             std::getline(file, line);
                             std::string name = "";
@@ -1022,7 +1022,7 @@ struct Model {
                                 name = line;
                             }
 
-                            println("Element Name " << name);
+                            //println("Element Name " << name);
 
                             bool deleted = false;
 

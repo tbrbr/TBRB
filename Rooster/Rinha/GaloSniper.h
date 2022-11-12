@@ -61,7 +61,7 @@ namespace Rooster {
 
 			model.autoSetBounds(model.at("Body"), model.at("BackShoe"), model.at("Head"));
 
-			println("Sniper Carregou");
+			//println("Sniper Carregou");
 
 			HitBox* hit = new HitBox;
 			for (int i = 0; i < model.allBones.size(); i++) {

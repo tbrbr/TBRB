@@ -19,8 +19,11 @@
 using namespace std;
 using namespace sf;
 
-const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
+//const int SCREEN_WIDTH = VideoMode::getDesktopMode().width == 1440 ? 1280 : VideoMode::getDesktopMode().width;
+//const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height == 900 ? 720 : VideoMode::getDesktopMode().height;
+
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 729;
 
 #define SHOWDEBUG false
 #define GODMODE true
@@ -66,7 +69,8 @@ Rooster::ParticleSystem mainPartSystem;
 
 using namespace Rooster;
 
-#include "pause_menu.h"
+#include "pause_menu.h"// pq eu ja esperava isso?kkkkkkkkkkkkkkkkkkkkkk perai rapidão, vou mudar um negócio aq no codigo
+#include "brain.h"
 #include "Briga.h"
 #include "muitosjogadores.h"
 #include "server_connect.h"
@@ -75,5 +79,6 @@ using namespace Rooster;
 #include "selecao_de_mapa_falida.h"
 #include "versus.h"
 #include "mapeamentos.h"
+
 
 #endif

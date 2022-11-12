@@ -516,14 +516,18 @@ Texture* selecionarMapa(RenderWindow* window, TcpSocket* socket, int & __mapa) {
 }
 
 Texture* randMapa() {
-	Mapa maps[4];
-	maps[0].finalfile = "maps/cenario faroeste.png";
-	maps[1].finalfile = "maps/shopping.png";
-	maps[2].finalfile = "maps/itabaiana.png";
-	maps[3].finalfile = "maps/ceasa.png";
+	string maps[4];
+	maps[0] = "maps/cenario faroeste.png";
+	maps[1] = "maps/shopping.png";
+	maps[2] = "maps/itabaiana.png";
+	maps[3] = "maps/ceasa.png";
 
 	Texture * t = new Texture();
-	t->loadFromFile(maps[rand() % 4].finalfile);
+
+	int numeroAleatorio = rand() % 4; //gera um número entre 0 e 3.
+	string mapaFinal = maps[numeroAleatorio];
+	t->loadFromFile(mapaFinal); 
+
 	return t;
 }
 #endif // !RECLAME_MAIS_DESSA_SELECAO_WALTER_CORNO

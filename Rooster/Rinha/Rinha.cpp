@@ -215,11 +215,6 @@ int main() {
 	sf::Thread t(std::bind(&menuSong, &option, window));
 	t.launch();
 	int __map = -1;
-
-	if (mainInput.isJoystickConnected) {
-		mainInput.sethudselected((hud)2);
-	}
-
 	mainInput.p2Hud = 0;
 
 	int galo_lvl = 0;
@@ -262,10 +257,14 @@ int main() {
 			selector->show(window, option, &galo, &galo2);
 			break;
 		case SELECTION_SINGLE_FALIDA:
+
 			selector->selecaode1galo(window, option, &galo);
 			selector->selection(&galo2, galo_lvl++, false);
 			__mapa = randMapa();
 			fundo.setTexture(__mapa);
+			if (galo_lvl == 5) {
+				galo_lvl = 0;
+			}
 			
 			break;
 
@@ -383,13 +382,13 @@ int main() {
 			}
 
 		default:
-
 			break;
 		}
 
 
 	}
 	t.terminate();
+	window->close();
 	delete listener;
 	delete socket;
 	delete galo;
@@ -399,7 +398,7 @@ int main() {
 	delete window;
 	delete selector;
 
-	window->close();
+	
 
 	return 0;
 	//Fim da main

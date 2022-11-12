@@ -66,7 +66,8 @@ Rooster::ParticleSystem mainPartSystem;
 
 using namespace Rooster;
 
-#include "pause_menu.h"
+#include "pause_menu.h"// pq eu ja esperava isso?kkkkkkkkkkkkkkkkkkkkkk perai rapidão, vou mudar um negócio aq no codigo
+#include "brain.h"
 #include "Briga.h"
 #include "muitosjogadores.h"
 #include "server_connect.h"
@@ -75,5 +76,6 @@ using namespace Rooster;
 #include "selecao_de_mapa_falida.h"
 #include "versus.h"
 #include "mapeamentos.h"
+
 
 #endif

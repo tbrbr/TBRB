@@ -191,19 +191,21 @@ int main() {
 			delete galo;
 			delete galo2;
 			__mapa = NULL;
-
+			
 			selector->reset();
 			break;
 		case ISPATOTIME:
 			miniGame1->patinho(*window, option);
 			break;
 		case SELECTION:
-			
 			selector->show(window,option,&galo,&galo2);
-			break;
+			//calma, a selector n é função kkkkkkkkkkkkk
+			
+			break; 
 		case VERSUS:
 			
-			
+			option = UMJOGADORES;
+			break;
 			if (mode == SINGLE) {
 				option = UMJOGADORES;
 				versus(*window, *galo, *galo2, fundo, __map);

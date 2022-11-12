@@ -48,6 +48,20 @@ void initTilesMusica() {
 	musLatitude.name = "Latitude";
 
 	tilesMusicas.push_back(musLatitude);
+
+	struct TilesMusica musPop100;
+	musPop100.soundPath = "PianoFiles/sounds/napop.ogg";
+	musPop100.notasPath = "PianoFiles/napop.txt";
+	musPop100.name = "Pop 100";
+
+	tilesMusicas.push_back(musPop100);
+
+	struct TilesMusica musPopozuda;
+	musPopozuda.soundPath = "PianoFiles/sounds/zepopozuda.ogg";
+	musPopozuda.notasPath = "PianoFiles/popozuda.txt";
+	musPopozuda.name = "Popozuda";
+
+	tilesMusicas.push_back(musPopozuda);
 }
 
 
@@ -2300,7 +2314,7 @@ void tilesMenu(RenderWindow * window) {
 
 	for (int i = 0; i < tilesMusicas.size(); i++) {
 		struct Button playButton;
-		playButton.init(roomWid / 2 - buttonWid / 2, roomHei / 2 - tilesMusicas.size() * (yOffset + buttonHei) / 2 - buttonHei / 2 + (buttonHei + yOffset) * i, buttonWid, buttonHei);
+		playButton.init(roomWid / 2 - buttonWid / 2, roomHei / 2 - tilesMusicas.size() * (yOffset + buttonHei) / 2 + (buttonHei + yOffset) * i, buttonWid, buttonHei);
 		playButton.color = Color(250, 100, 150);
 		playButton.label = tilesMusicas[i].name;
 		buttons.push_back(playButton);

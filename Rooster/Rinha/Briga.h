@@ -1,6 +1,6 @@
 
 void BotControls(Rooster::Galo& galo, int input) {
-	println("entra nos controles");
+	
 	if (0 == input) {
 		galo.jump();
 	}
@@ -428,14 +428,13 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 	}
 
-	system("cls");//só uma dica ah bom
-	//outra diica
+	
+	
 	//-----------------------------------------------------//
-	/*bots falidos*/
-	/*realmente quebra aqui*/
+	/*bots falidos*/	
+
 	Brain* brain = new SniperBrain(&galo2, &galo);
 
-	println("passa do constrtutor");
 	//----------------------------------------------------//
 
 

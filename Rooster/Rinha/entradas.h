@@ -22,7 +22,8 @@ namespace Rooster {
 		MULTI_MODE,
 		CONFIG,
 		MULTI,
-		VERSUS
+		VERSUS,
+		SELECTION_SINGLE_FALIDA
 	};
 
 	enum JoystickKeys {

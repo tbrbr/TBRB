@@ -801,7 +801,7 @@ namespace Rooster {
 				invFrames--;
 			}
 
-			if (stunFrames <= -100) {
+			if (stunFrames <= 0) {
 				stunned = false;
 			}
 			else {

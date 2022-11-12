@@ -42,11 +42,11 @@ namespace Rooster {
 
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 
-			this->hiKick = new Ataques(0, 15, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(500), "sounds\\fist-punch-or-kick-7171.ogg");
-			this->louKick = new Ataques(1, 17, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(500), "sounds\\punch-2-123106.ogg");
-			this->ultimateShot = new Ataques(2, 10, HitBox{ Vector2f(0, 0), 0 }, 40, 20, 0, milliseconds(1000), "sounds\\awp.ogg");
-			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
-
+			this->hiKick = new Ataques(0, 10, HitBox{ Vector2f(0, 0), 0 }, 35, 10, -PI / 4, milliseconds(500), "sounds\\fist-punch-or-kick-7171.ogg");
+			this->louKick = new Ataques(1, 10, HitBox{ Vector2f(0, 0), 0 }, 30, 10, PI / 4, milliseconds(500), "sounds\\punch-2-123106.ogg");
+			this->ultimateShot = new Ataques(2, 5, HitBox{ Vector2f(0, 0), 0 }, 40, 20, 0, milliseconds(1000), "sounds\\awp.ogg");
+			this->superAtack = new Ataques(14, 5, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
+			// o que esse stun tem que diminuir é brincadeira
 			superAtack->invFrames = 10;
 
 			Projectile* bullet = new Projectile(Vector2f(0, 0),"sprites\\bullet.png" , 0, 0, Vector2f(0, 0));

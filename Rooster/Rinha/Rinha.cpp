@@ -221,8 +221,12 @@ int main() {
 	}
 
 	mainInput.p2Hud = 0;
+
+	int galo_lvl = 0;
+
 	while (window->isOpen())
 	{
+		/*mota que bagulho mal feito do caaaaaaaaaaaaaaaanso*/
 		switch (option)
 		{
 
@@ -257,6 +261,14 @@ int main() {
 		case SELECTION:
 			selector->show(window, option, &galo, &galo2);
 			break;
+		case SELECTION_SINGLE_FALIDA:
+			selector->selecaode1galo(window, option, &galo);
+			selector->selection(&galo2, galo_lvl++, false);
+			__mapa = randMapa();
+			fundo.setTexture(__mapa);
+			
+			break;
+
 		case VERSUS:
 			if (mode == SINGLE) {
 				option = UMJOGADORES;

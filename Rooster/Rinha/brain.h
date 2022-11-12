@@ -306,6 +306,16 @@ public:
 
 };
 
+void singlePlayerMenu(int i) {
 
+	RectangleShape fundo;
+	Texture fundoSingle;
+	fundoSingle.loadFromFile("sprites\\fundoSinglePlayer.png");
+	fundo.setTexture(&fundoSingle);
+	Color cor(125, 125, 125);
+	fundo.setFillColor(cor);
+
+
+}
 #endif // BURRICE_ARTIFICIAL
 

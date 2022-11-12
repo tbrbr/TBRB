@@ -223,36 +223,7 @@ protected:
 
 	}
 
-	void selection(Galo** galop1, int i) {
-
-		if (i == 0) {
-
-			*galop1 = new Sniper(sniperSt, Rooster::state::STOPPED, isHost);
-
-		}
-		else if (i == 1) {
-
-			*galop1 = new Peste(pesteSt, Rooster::state::STOPPED, isHost);
-
-		}
-		else if (i == 2) {
-
-			*galop1 = new Kalsa(kalsaSt, Rooster::state::STOPPED, isHost);
-
-		}
-		else if (i == 3) {
-
-			*galop1 = new Bruxo(bruxoSt, Rooster::state::STOPPED, isHost);
-
-		}
-		else if (i == 4) {
-
-			*galop1 = new Bota(botaSt, Rooster::state::STOPPED, isHost);
-
-
-		}
-	}
-
+	
 	void selection(Galo** galop1, Galo** galop2, int i) {
 
 		if (i == 0) {
@@ -645,6 +616,35 @@ public:
 
 	}
 
+	void selection(Galo** galop1, int i, bool isp1 = isHost) {
+
+		if (i == 0) {
+
+			*galop1 = new Sniper(sniperSt, Rooster::state::STOPPED, isp1);
+
+		}
+		else if (i == 1) {
+
+			*galop1 = new Peste(pesteSt, Rooster::state::STOPPED, isp1);
+
+		}
+		else if (i == 2) {
+
+			*galop1 = new Kalsa(kalsaSt, Rooster::state::STOPPED, isp1);
+
+		}
+		else if (i == 3) {
+
+			*galop1 = new Bruxo(bruxoSt, Rooster::state::STOPPED, isp1);
+
+		}
+		else if (i == 4) {
+
+			*galop1 = new Bota(botaSt, Rooster::state::STOPPED, isp1);
+
+
+		}
+	}
 
 	void reset() {
 		this->p1 = -1;
@@ -798,6 +798,126 @@ public:
 
 		window->display();
 
+	}
+
+	void selecaode1galo(RenderWindow* window, int& option, Galo** galop1)
+	{
+		
+
+		while (window->isOpen()) {
+
+			Event e;
+			statusPlayer1.visibility = (p1 != -1);
+
+			int mousex = Mouse::getPosition(*window).x;
+			int mousey = Mouse::getPosition(*window).y;
+
+			while (window->pollEvent(e))
+			{
+				if (e.type == Event::Closed)
+				{
+					window->close();
+				}
+
+
+				if (e.type == Event::MouseButtonPressed) {
+					if (e.mouseButton.button == Mouse::Left) {
+
+						
+						if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
+							if (p1 == -1) {
+								option = GAMEMODE;
+								return;
+							}
+							else {
+								delete * galop1;
+								p1 = -1;
+							}
+						}
+						
+						if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
+							if (p1 != -1) {
+								option = UMJOGADORES;
+								mode = SINGLE;
+								return;
+							}
+						}
+
+						for (int i = 0; i < 5; i++) {
+							if (ButtonCheck::checkCircleHover(circlesLine[i], mousex, mousey)) {
+								this->selection(galop1, i, true);
+								galop1[0]->facingRight = true;
+								galop1[0]->setPosition(Vector2f(podiumP1.getGlobalBounds().width / 2 + podiumP1.getPosition().x, podiumP1.getPosition().y + podiumP1.getGlobalBounds().height * 0.3));
+								p1 = i;
+							}
+						}
+
+					}
+				}
+			}
+
+
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+				window->close();
+			}
+
+
+			if (ButtonCheck::isButtonComMouseNele(OKbutton, mousex, mousey)) {
+				OKbutton.setFillColor(Color::Yellow);
+			}
+			else {
+				OKbutton.setFillColor(Color::Green);
+			}
+
+			if (ButtonCheck::isButtonComMouseNele(cancelButton, mousex, mousey)) {
+				cancelButton.setFillColor(Color::Yellow);
+			}
+			else {
+				cancelButton.setFillColor(Color::Red);
+			}
+
+			window->draw(sprFundo);
+			window->draw(title);
+
+			for (int i = 0; i < 5; i++) {
+				window->draw(circlesLine[i]);
+			}
+			for (int i = 0; i < 5; i++) {
+				window->draw(roosters[i]);
+			}
+
+
+			int rooster = -1;
+			if (p2 == -1)
+				for (int i = 0; i < 5; i++) {
+					this->updateGaloView(window, i, mousex, mousey, rooster);
+				}
+
+			this->updateBars(rooster);
+
+			window->draw(podiumP1);
+			
+
+
+			if (p1 != -1) {
+
+				galop1[0]->update();
+				galop1[0]->show(*window);
+
+			}
+
+			statusPlayer1.draw(window);
+			
+
+			window->draw(OKbutton);
+			window->draw(cancelButton);
+			window->draw(t_x);
+			window->draw(t_ok);
+
+
+			window->display();
+		}
 	}
 
 	int show(RenderWindow* window, Galo** galop1, Galo** galop2, TcpSocket* socket) {

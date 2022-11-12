@@ -412,7 +412,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 
 						if (__temp == 0) {
 							mode = SINGLE;
-							return Rooster::SELECTION;
+							return Rooster::SELECTION_SINGLE_FALIDA;
 						}
 						else if (__temp == 1) {
 							return MULTI;

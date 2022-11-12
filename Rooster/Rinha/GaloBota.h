@@ -209,6 +209,7 @@ namespace Rooster {
         }
         void super() override {
             if (atacking == NOT_ATTACK && air) {
+                bar->resetPower();
                 atacking = SUPER;
                 superAtack->init.restart();
             }

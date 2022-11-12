@@ -40,7 +40,7 @@ namespace Rooster {
             this->ultimateShot = new Ataques(
                 8, 0.9, HitBox{ Vector2f(0, 0), 0 },
                 10, 3, 0, milliseconds(1000),
-                "sounds\\awp.ogg"
+                "sounds\\Lightsaber.ogg"
             );
             this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
@@ -202,6 +202,7 @@ namespace Rooster {
 
         void super() override {
             if (atacking == NOT_ATTACK){
+                bar->resetPower();
                 atacking = SUPER;
                 superAtack->init.restart();
             }

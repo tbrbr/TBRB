@@ -19,11 +19,11 @@
 using namespace std;
 using namespace sf;
 
-const int SCREEN_WIDTH =  VideoMode::getDesktopMode().width;
-const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
+//const int SCREEN_WIDTH =  VideoMode::getDesktopMode().width;
+//const int SCREEN_HEIGHT = VideoMode::getDesktopMode().height;
 
-//const int SCREEN_WIDTH = 1280;
-//const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 
 #define SHOWDEBUG false
 #define GODMODE false
@@ -35,6 +35,8 @@ Font basicFont;
 #include "efeitos_fodas.h"
 
 #include "Math2.h"
+#include "MathSfml.h"
+
 #include "entradas.h"
 
 Rooster::input mainInput;
@@ -64,11 +66,9 @@ Rooster::ParticleSystem mainPartSystem;
 #include "TilesDoArrocha.h"
 
 
-
-#include "entradas.h"
-
 using namespace Rooster;
 
+#include "Mapeamento2.h"
 #include "pause_menu.h"// pq eu ja esperava isso?kkkkkkkkkkkkkkkkkkkkkk perai rapidão, vou mudar um negócio aq no codigo
 #include "brain.h"
 #include "Briga.h"
@@ -78,7 +78,7 @@ using namespace Rooster;
 #include "menu_inicial.h"
 #include "selecao_de_mapa_falida.h"
 #include "versus.h"
-#include "mapeamentos.h"
+
 
 
 #endif

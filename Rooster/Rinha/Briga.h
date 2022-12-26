@@ -191,7 +191,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	// BREGA
 	//-------------------------------------------------------------------------------------------
 	struct TilesInfo info;
-	info.init();
+	info.init(1);
 	info.alcides->editing = false;
 
 
@@ -904,7 +904,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 	// BREGA
 	//-------------------------------------------------------------------------------------------
 	struct TilesInfo info;
-	info.init();
+	info.init(1);
 	info.alcides->editing = false;
 
 

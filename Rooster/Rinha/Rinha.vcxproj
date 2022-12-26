@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mapeamentos.h" />
     <ClCompile Include="Rinha.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,7 +155,9 @@
     <ClInclude Include="importados.h" />
     <ClInclude Include="introducoes.h" />
     <ClInclude Include="jogador_de_video.h" />
+    <ClInclude Include="Mapeamento2.h" />
     <ClInclude Include="Math2.h" />
+    <ClInclude Include="MathSfml.h" />
     <ClInclude Include="menu_inicial.h" />
     <ClInclude Include="muitosjogadores.h" />
     <ClInclude Include="particula_falida.h" />

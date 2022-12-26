@@ -23,7 +23,8 @@ namespace Rooster {
 		CONFIG,
 		MULTI,
 		VERSUS,
-		SELECTION_SINGLE_FALIDA
+		SELECTION_SINGLE_FALIDA,
+		MAPEAMENTO
 	};
 
 	enum JoystickKeys {
@@ -72,9 +73,11 @@ namespace Rooster {
 		// 0 Keyboard 1 Mouse 2 Joystick
 		int type = 0;
 		int key = 0;
+		int deviceId = 0;
 
-		struct inputInfo setKey(int key) {
+		struct inputInfo setKey(int key, int deviceId = 0) {
 			this->key = key;
+			this->deviceId = deviceId;
 			return *this;
 		}
 
@@ -100,11 +103,11 @@ namespace Rooster {
 		Vector2f mousePos;
 
 		bool isJoystickConnected = false;
-		bool joystickState[JOYTOTAL][3];
+		bool joystickState[2][JOYTOTAL][3];
 
-		struct inputInfo board[2][INPUTSTOTAL][HUDTOTAL];
+		struct inputInfo board[4][INPUTSTOTAL][HUDTOTAL];
 
-		bool inputState[2][INPUTSTOTAL][HUDTOTAL];
+		bool inputState[4][INPUTSTOTAL][HUDTOTAL];
 
 		input() {
 
@@ -139,12 +142,15 @@ namespace Rooster {
 			}
 
 			for (int i = 0; i < JOYTOTAL; i++) {
-				joystickState[i][0] = false;
-				joystickState[i][1] = false;
-				joystickState[i][2] = false;
+				joystickState[0][i][0] = false;
+				joystickState[0][i][1] = false;
+				joystickState[0][i][2] = false;
+				joystickState[1][i][0] = false;
+				joystickState[1][i][1] = false;
+				joystickState[1][i][2] = false;
 			}
 
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < 4; i++) {
 				struct inputInfo inpInf;
 				for (int j = 0; j < INPUTSTOTAL; j++) {
 					for (int k = 0; k < HUDTOTAL; k++) {
@@ -263,6 +269,18 @@ namespace Rooster {
 			board[player][TILES3][JOYSTICK] = jInput.setKey(JOYY);
 			board[player][TILES4][JOYSTICK] = jInput.setKey(JOYB);
 
+
+
+			player++;
+			//Keyboard
+
+		
+
+			board[player][TILES1][KEYBOARD] = kInput.setKey(Keyboard::U);
+			board[player][TILES2][KEYBOARD] = kInput.setKey(Keyboard::I);
+			board[player][TILES3][KEYBOARD] = kInput.setKey(Keyboard::O);
+			board[player][TILES4][KEYBOARD] = kInput.setKey(Keyboard::P);
+
 		}
 
 
@@ -337,7 +355,7 @@ namespace Rooster {
 				return mouseState[inputSpecs.key][stateType];
 
 			case 2:
-				return joystickState[inputSpecs.key][stateType];
+				return joystickState[inputSpecs.deviceId][inputSpecs.key][stateType];
 			}
 			return false;
 		}
@@ -391,26 +409,28 @@ namespace Rooster {
 
 			}
 
-			for (int i = 0; i < JOYTOTAL; i++) {
+			for (int j = 0; j < 2; j++) {
+				for (int i = 0; i < JOYTOTAL; i++) {
 
-				bool buttonState = getJoystickState(i, 0);
+					bool buttonState = getJoystickState(i, j);
 
-				if (!joystickState[i][0] && buttonState) {
-					joystickState[i][1] = true;
+					if (!joystickState[j][i][0] && buttonState) {
+						joystickState[j][i][1] = true;
+					}
+					else {
+						joystickState[j][i][1] = false;
+					}
+
+					if (joystickState[j][i][0] && !buttonState) {
+						joystickState[j][i][2] = true;
+					}
+					else {
+						joystickState[j][i][2] = false;
+					}
+
+					joystickState[j][i][0] = buttonState;
+
 				}
-				else {
-					joystickState[i][1] = false;
-				}
-
-				if (joystickState[i][0] && !buttonState) {
-					joystickState[i][2] = true;
-				}
-				else {
-					joystickState[i][2] = false;
-				}
-
-				joystickState[i][0] = buttonState;
-
 			}
 
 
@@ -422,6 +442,14 @@ namespace Rooster {
 				inputState[1][i][0] = getInputState(board[1][i][p2Hud], 0);
 				inputState[1][i][1] = getInputState(board[1][i][p2Hud], 1);
 				inputState[1][i][2] = getInputState(board[1][i][p2Hud], 2);
+
+				inputState[2][i][0] = getInputState(board[2][i][0], 0);
+				inputState[2][i][1] = getInputState(board[2][i][0], 1);
+				inputState[2][i][2] = getInputState(board[2][i][0], 2);
+
+				inputState[3][i][0] = getInputState(board[3][i][0], 0);
+				inputState[3][i][1] = getInputState(board[3][i][0], 1);
+				inputState[3][i][2] = getInputState(board[3][i][0], 2);
 			}
 
 

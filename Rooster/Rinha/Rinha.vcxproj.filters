@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Rinha.cpp" />
-    <ClCompile Include="mapeamentos.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Briga.h" />
@@ -40,5 +39,7 @@
     <ClInclude Include="varios_idiomas.h" />
     <ClInclude Include="versus.h" />
     <ClInclude Include="brain.h" />
+    <ClInclude Include="MathSfml.h" />
+    <ClInclude Include="Mapeamento2.h" />
   </ItemGroup>
 </Project>

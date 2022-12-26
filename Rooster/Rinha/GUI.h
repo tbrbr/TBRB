@@ -1,6 +1,126 @@
 #ifndef GUI_H_INCLUDED
 #define GUI_H_INCLUDED
 
+
+struct DisplayBox {
+    float x;
+    float y;
+    float wid;
+    float hei;
+
+    std::string subLabel;
+
+    std::string label;
+
+    sf::Sprite spr;
+    bool hasSprite = false;
+
+    sf::Color borderColor;
+    sf::Color fillColor;
+    float rectBorderSize = 4;
+
+    sf::Color textColor;
+    sf::Color textBorderColor;
+    float textBorderSize = 2;
+
+   // float fontSizeMult = 1;
+   // float labelSizeMult = 1 / 1.4;
+
+    bool labelSide = false;
+
+    int hAlign = -1;
+    int vAlign = -1;
+
+    int textHAlign = -1;
+    int textVAlign = -1;
+
+    void init(float xx, float yy, float ww, float hh) {
+        x = xx;
+        y = yy;
+        wid = ww;
+        hei = hh;
+
+        label = "";
+        subLabel = "";
+
+        borderColor = sf::Color::White;
+        fillColor = sf::Color(200, 100, 100);
+        textColor = sf::Color::White;
+        textBorderColor = sf::Color::Black;
+    }
+
+
+    void draw(sf::RenderWindow& window, sf::Font& font) {
+
+        RectangleShape rect(Vector2f(wid, hei));
+
+        float xx = x;
+        float yy = y;
+
+        xx += -(hAlign + 1) * 0.5 * wid;
+        yy += -(vAlign + 1) * 0.5 * hei;
+
+        rect.setPosition(xx, yy);
+
+
+        //Color col = fillColor;
+
+        rect.setFillColor(fillColor);
+        rect.setOutlineColor(borderColor);
+        rect.setOutlineThickness(rectBorderSize);
+
+        window.draw(rect);
+
+
+        float fontSize = hei / 1.4;
+        Text t(label, font, fontSize);
+
+        t.setFillColor(textColor);
+        t.setOutlineColor(textBorderColor);
+        t.setOutlineThickness(textBorderSize);
+
+        float tWid = t.getGlobalBounds().width;
+        float tHei = t.getGlobalBounds().height;
+
+        float xTextFact = (textHAlign + 1) * 0.5;
+        float yTextFact = (textVAlign + 1) * 0.5;
+
+        float addX = xTextFact * wid - xTextFact * tWid;
+        float addY = yTextFact * hei - yTextFact * tHei;
+
+
+        t.setPosition(xx + addX, yy+addY);
+
+        window.draw(t);
+
+        fontSize *= 0.8;
+
+
+        Text tLabel(subLabel, font, fontSize);
+        tLabel.setFillColor(textColor);
+        tLabel.setOutlineColor(textBorderColor);
+        tLabel.setOutlineThickness(textBorderSize);
+
+        if (labelSide) {
+            tLabel.setPosition(xx + wid * 1.1, yy);
+        }
+        else {
+            tLabel.setPosition(xx, yy + hei);
+        }
+
+        window.draw(tLabel);
+        
+    }
+
+    void draw(RenderWindow& window) {
+        draw(window, basicFont);
+    }
+
+
+};
+
+
+
 struct ValBox{
     float x;
     float y;
@@ -329,6 +449,7 @@ public:
     bool holding = false;
 
     std::string label;
+    std::string subLabel;
 
     sf::Color color;
 
@@ -353,6 +474,7 @@ public:
         hei = hh;
 
         label = "";
+        subLabel = "";
 
         color = Color::White;
     }
@@ -444,6 +566,16 @@ public:
             t.setPosition(x + wid / 2 - textWid / 2, y + hei / 2 - fontSize / 2);
 
             window.draw(t);
+
+            fontSize = hei / 3;
+            Text t2(subLabel, font, fontSize);
+            textWid = t2.getGlobalBounds().width;
+
+
+            t2.setFillColor(Color(255, 255, 255));
+            t2.setPosition(x, y + hei);
+
+            window.draw(t2);
         }
     }
 };

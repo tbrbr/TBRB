@@ -65,32 +65,6 @@ void initTilesMusica() {
 }
 
 
-// Função pra transformar retangulo em convexShape
-ConvexShape rectToConvexShape(RectangleShape rect) {
-	ConvexShape newShape(4);
-
-	for (int i = 0; i < 4; i++) {
-		newShape.setPoint(i, rect.getPoint(i));
-	}
-
-	return newShape;
-}
-
-ConvexShape rectToConvexShape(float x, float y, float wid, float hei) {
-	ConvexShape newShape(4);
-
-	newShape.setPoint(0, Vector2f(x, y));
-	newShape.setPoint(1, Vector2f(x + wid, y));
-	newShape.setPoint(2, Vector2f(x + wid, y + hei));
-	newShape.setPoint(3, Vector2f(x, y + hei));
-
-	return newShape;
-}
-
-ConvexShape rectToConvexShape(float wid, float hei) {
-	return rectToConvexShape(-wid / 2, -hei / 2, wid, hei);
-}
-
 
 
 
@@ -155,8 +129,18 @@ public:
 		}
 
 	}
+};
 
+struct NotaState {
+	int id = -1;
 
+	float slided = 0;
+
+	bool hitted = false;
+	bool missed = false;
+	bool holded = false;
+
+	bool loose = false;
 };
 
 
@@ -176,6 +160,608 @@ struct YamahaAction {
 	std::vector<Nota> notas;
 
 };
+
+
+
+
+
+struct TecladoPlayer {
+	int life;
+	int combo;
+	int bregaPower;
+	int score;
+	int missedNotes;
+};
+
+
+class TecladoYamaha {
+
+	int players = 4;
+
+	// Piano Keyboard
+	// Dimensions
+	float base;
+	float topBase;
+	float height;
+
+	//Vector2f center;
+
+	//float boardsXOffset = 0;
+
+	int coluns = 4;
+	std::vector<Color> colunColors;
+
+	std::vector<Nota*> notas;
+	std::vector<std::vector<struct NotaState>> notasState;
+	std::vector<struct TecladoPlayer> playerStats;
+
+
+	float notesPerBoard = 8;
+
+	float scrollY = 0;
+	float finishY = 0;
+
+
+	float roomWid = 1280;
+	float roomHei = 720;
+
+	int uniqueId = 0;
+	Music musica;
+	int musicaId = -1;
+
+	bool playing = false;
+	bool editing = false;
+	bool finished = false;
+
+	int maxLife = 200;
+	int bregaMax = 1000;
+
+
+
+	float beatSpeed;
+
+
+
+
+	Vector2f getBoardPos(int player) {
+		Vector2f boardPos;
+		boardPos.x = (roomWid / players) * (0.5 + player);
+		boardPos.y = 0;
+		return boardPos;
+	}
+
+	float getNoteRealY(Nota& n) {
+		return height + ((n.y + scrollY) * height / notesPerBoard);
+	}
+
+
+	void hardClearNotas() {
+		for (int i = 0; i < notas.size(); i++) {
+			delete notas[i];
+		}
+		notas.clear();
+		setPlayers(players);
+		//actions.clear();
+	}
+
+
+	void loadNotas(std::string str) {
+		std::ifstream file(str);
+
+		if (file.is_open()) {
+
+			std::string line;
+			std::getline(file, line);
+			if (line == "BPS") {
+				std::getline(file, line);
+				beatSpeed = std::stof(line);
+
+				hardClearNotas();
+				setScroll(0);
+
+
+				std::getline(file, line); // Nota 0
+				while (line != "End" || file.eof() != 0) {
+
+
+
+					std::getline(file, line);
+					int coluna = std::stoi(line);
+
+					std::getline(file, line);
+					float y = std::stof(line);
+
+					std::getline(file, line);
+					float length = std::stof(line);
+
+					if (length > 0) {
+						Nota* nota = new Nota(coluna, length, y, uniqueId);
+
+						uniqueId++;
+
+						notas.push_back(nota);
+
+					}
+
+					std::getline(file, line); // Gets End or Nota X
+				}
+
+			}
+
+			println("Notas carregadas com sucesso");
+
+
+			// Calculando a linha de chegada para vitoria
+			// Achando a ultima nota da musica
+			float yMin = 0;
+			for (int i = 0; i < notas.size(); i++) {
+				Nota* nota = notas[i];
+
+				if (nota->y < yMin) {
+					yMin = nota->y;
+				}
+			}
+
+			finishY = (-yMin) + 2;
+
+
+
+		}
+		else {
+			println("Falha ao carregar notas");
+		}
+
+
+
+
+
+		file.close();
+	}
+
+public:
+
+	TecladoYamaha(Vector2f roomSize, int playerNumber) {
+
+		roomWid = roomSize.x;
+
+		roomHei = roomSize.y;
+
+		setColuns(4);
+
+		loadMusica(0);
+
+		setPlayers(playerNumber);
+
+		base = (roomWid / 4) * 0.75 * (1+(1 - players/4)/2);
+		topBase = base;
+		height = roomHei * 0.75;
+
+		//center.x = 0;
+		//center.y = 0;
+
+		playing = true;
+
+	
+	}
+
+
+	void reloadNotaStates() {
+		notasState.clear();
+
+		for (int j = 0; j < players; j++) {
+			vector<struct NotaState> tempStates;
+			for (int i = 0; i < notas.size(); i++) {
+				struct NotaState tempState;
+				tempStates.push_back(tempState);
+			}
+			notasState.push_back(tempStates);
+		}
+	}
+
+	void setPlayers(int playerNum) {
+		players = playerNum;
+
+		
+		reloadNotaStates();
+
+
+		playerStats.clear();
+		
+		for (int j = 0; j < playerNum; j++) {
+			struct TecladoPlayer stat;
+			stat.life = maxLife;
+			stat.combo = 0;
+			stat.bregaPower = 0;
+			stat.score = 0;
+			stat.missedNotes = 0;
+			playerStats.push_back(stat);
+		}
+		
+
+
+
+		
+	}
+
+	void setColuns(int colunNum) {
+		coluns = colunNum;
+		for (int i = 0; i < coluns + 1; i++) {
+			Color color = Rooster::hsv(360 * ((float)(i + 0.5) / coluns), 0.5, 1);
+			colunColors.push_back(color);
+		}
+	}
+
+	void play() {
+		musica.play();
+		musica.setPlayingOffset(sf::seconds(0));
+		playing = true;
+	}
+
+	bool isPlaying() {
+		return playing;
+	}
+
+
+
+
+	void loadMusica(int tilesMusicaIndex) {
+
+		musica.openFromFile(tilesMusicas[tilesMusicaIndex].soundPath);
+		loadNotas(tilesMusicas[tilesMusicaIndex].notasPath);
+		reloadNotaStates();
+		musicaId = tilesMusicaIndex;
+	}
+
+
+	void setScroll(float amount) {
+		scrollY = maximum(amount, 0);
+		musica.setPlayingOffset(sf::seconds(scrollY / beatSpeed));
+	}
+
+	float getPlayingSeconds() {
+		return musica.getPlayingOffset().asSeconds();
+	}
+
+
+
+
+
+	void comboAdd(int player) {
+		playerStats[player].combo++;
+	}
+
+	void comboBreak(int player) {
+		playerStats[player].combo = 0;
+	}
+
+	float getBregaPower(int player) {
+		return playerStats[player].bregaPower;
+	}
+
+	float getBregaMax() {
+		return bregaMax;
+	}
+
+
+
+
+	void updateGameplay() {
+
+
+		scrollY = beatSpeed * getPlayingSeconds();
+
+		if (musica.getStatus() == sf::Music::Stopped) {
+			musica.setPlayingOffset(musica.getDuration());
+			musica.pause();
+			scrollY = beatSpeed * getPlayingSeconds();
+		}
+
+		if (scrollY > finishY || musica.getStatus() == sf::Music::Stopped) {
+			if (!finished && !editing) {
+				finish();
+			}
+		}
+		
+		for (int i = 0; i < notas.size(); i++) {
+			notas[i]->update(scrollY);
+		}
+
+
+
+		if (true) {
+
+			// Getting all Tiles key presses from all players
+			std::vector<std::vector<bool>> tilesKeys;
+			for (int i = 0; i < players; i++) {
+
+				std::vector<bool> temp;
+
+				// All tiles keys
+				temp.push_back(mainInput.inputState[i][Rooster::TILES1][1]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES2][1]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES3][1]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES4][1]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES1][0]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES2][0]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES3][0]);
+				temp.push_back(mainInput.inputState[i][Rooster::TILES4][0]);
+
+				// Has missed a note
+				temp.push_back(false);
+
+
+				tilesKeys.push_back(temp);
+
+			}
+
+			//bool teclaMissed[] = { true, true, true, true };
+
+			for (int j = 0; j < notas.size(); j++) {
+
+
+				struct Nota* nota = notas[j];
+
+				float notaY = nota->y + scrollY;
+
+				nota->update(scrollY);
+
+				int coluna = nota->coluna;
+
+				for (int i = 0; i < players; i++) {
+
+
+
+
+
+					struct NotaState* notaState = &notasState[i][j];
+					if (!notaState->missed) {
+						if (nota->hovered) {
+							if (tilesKeys[i][coluna + 4] && !notaState->loose) {
+								if (notaState->hitted) {
+									if (nota->length != 1) {
+										notaState->slided = 1 - constrain((-notaY) / (nota->length - 1), 0, 1);
+
+										for (int k = 0; k < (notaState->slided * 10) * nota->length / 5; k++) {
+											//slideEffects[coluna]->createParticle();
+										}
+										playerStats[i].bregaPower += 1;
+
+									}
+								}
+							}
+							else {
+								if (notaState->hitted) {
+									notaState->loose = true;
+								}
+							}
+
+							if (tilesKeys[i][coluna]) {
+								if (!notaState->hitted) {
+									notaState->hitted = true;
+
+									//slideEffects[coluna]->createMultipleParticles(30);
+
+									if (nota->length > 1) {
+										notaState->holded = true;
+									}
+									tilesKeys[i][8] = false;
+
+
+									playerStats[i].score += nota->hoverQuality;
+
+									comboAdd(i);
+									playerStats[i].bregaPower += 15 + (nota->hoverQuality - 1) * 2 + playerStats[i].combo * 0.5;
+								}
+							}
+						}
+					}
+
+					if (notaY + (nota->length - 1) > 0) {
+						if (!notaState->missed && !notaState->hitted) {
+							notaState->missed = true;
+							playerStats[i].life -= 5;
+
+							playerStats[i].missedNotes++;
+
+							comboBreak(i);
+
+							playerStats[i].bregaPower -= 200;
+						}
+					}
+				}
+
+
+			}
+
+		}
+
+
+		for (int i = 0; i < players; i++) {
+			playerStats[i].bregaPower = maximum(0, playerStats[i].bregaPower);
+			playerStats[i].life = maximum(0, playerStats[i].life);
+		}
+	
+	}
+
+
+	void update() {
+		if (playing) {
+			updateGameplay();
+		}
+	}
+
+	void finish() {
+
+	}
+
+
+
+
+	void draw(RenderWindow& window) {
+
+
+		// Desenhando Colunas
+		for (int j = 0; j < players; j++) {
+
+			// Posição do Teclado pra cada player
+			Vector2f boardPos = getBoardPos(j);
+			//println("Board " << j << " X " << boardPos.x);
+
+
+			// Desenhando as colunas
+			RectangleShape colunaRect;
+
+
+			float colunaWid = base / coluns;
+			float colunaHei = height;
+
+			colunaRect.setSize(Vector2f(colunaWid, colunaHei));
+			colunaRect.setPosition(-colunaWid/2, 0);
+
+			//ConvexShape colunaShape = rectToConvexShape(colunaWid, colunaHei);
+
+
+			for (int i = 0; i < coluns; i++) {
+
+				float colunaXOff = colunaWid * (i - (coluns / 2) + 0.5);
+				float colunaYOff = 0;
+				colunaRect.setPosition(( - colunaWid / 2) +colunaXOff, colunaYOff);
+
+				ConvexShape colunaShape = rectToConvexShape(colunaRect);
+				
+				
+
+				//colunaShape.setPosition(colunaXOff, colunaYOff);
+				colunaShape = convertShapeToTrap(colunaShape, base, topBase, height);
+
+				colunaShape.setPosition(boardPos);
+				colunaShape.setFillColor(colunColors[i]);
+
+				window.draw(colunaShape);
+			}
+
+
+
+
+			// Desenhando as notas
+			for (int i = 0; i < notas.size(); i++) {
+
+				Nota nota = *notas[i];
+
+
+				RectangleShape notaRect;
+
+				float notaWid = base / coluns;
+				float notaUnitLength = height / notesPerBoard;
+				float notaHei = nota.length * notaUnitLength;
+
+
+
+				notaRect.setSize(Vector2f(notaWid, notaHei));
+
+				float colunaXOff = notaWid * (nota.coluna - (coluns / 2) + 0.5);
+				float colunaYOff = 0;
+
+				notaRect.setPosition(( - notaWid / 2)+colunaXOff, (getNoteRealY(nota))+colunaYOff);
+
+
+				ConvexShape notaShape = rectToConvexShape(notaRect);
+
+				notaShape = convertShapeToTrap(notaShape, base, topBase, height);
+
+				notaShape.setPosition(boardPos);
+				notaShape.setOutlineColor(sf::Color::White);
+				notaShape.setOutlineThickness(2);
+
+				if (true) {
+					
+					if (notasState[j][i].missed) {
+						notaShape.setFillColor(Color::Red);
+					}
+					else if (notasState[j][i].hitted) {
+						notaShape.setFillColor(Color::Green);
+					}
+					
+					else {
+						if (notas[i]->hovered) {
+							notaShape.setFillColor(Color::Blue);
+						}
+						else {
+							notaShape.setFillColor(Color::Black);
+						}
+
+					}
+				}
+
+				window.draw(notaShape);
+
+
+
+				if (nota.length > 1) {
+					RectangleShape slideRect;
+					slideRect.setSize(Vector2f(notaWid / 3, notaHei - notaUnitLength));
+					slideRect.setPosition(notaRect.getPosition().x + notaWid / 3, notaRect.getPosition().y);
+					ConvexShape slideShape = rectToConvexShape(slideRect);
+					slideShape = convertShapeToTrap(slideShape, base, topBase, height);
+
+					slideShape.setFillColor(Color(200, 200, 200));
+					slideShape.setPosition(boardPos);
+					slideShape.setOutlineColor(sf::Color::White);
+					slideShape.setOutlineThickness(2);
+					window.draw(slideShape);
+
+					
+					slideRect.setSize(Vector2f(notaWid / 2, notaWid/2));
+					slideRect.setPosition(notaRect.getPosition().x + notaWid/2 - notaWid/4, notaRect.getPosition().y -notaWid/4 +(1-notasState[j][i].slided)*(notaHei - notaUnitLength));
+					ConvexShape sliderShape = rectToConvexShape(slideRect);
+					sliderShape = convertShapeToTrap(sliderShape, base, topBase, height);
+
+					sliderShape.setFillColor(Color(200, 200, 200));
+					sliderShape.setPosition(boardPos);
+					sliderShape.setOutlineColor(sf::Color::White);
+					sliderShape.setOutlineThickness(2);
+					window.draw(sliderShape);
+				}
+
+			}
+
+			struct DisplayBox score;
+			score.init(boardPos.x, boardPos.y, base, 20);
+			score.hAlign = 0;
+			score.vAlign = -1;
+			score.label = std::to_string(playerStats[j].score);
+			score.textHAlign = 0;
+
+			score.draw(window);
+
+
+		}
+
+	}
+
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Yamaha {
 
@@ -1809,6 +2395,7 @@ public:
 
 struct TilesInfo {
 	Yamaha* alcides;
+	TecladoYamaha* xavier;
 
 	int frames = 0;
 
@@ -1831,7 +2418,7 @@ struct TilesInfo {
 
 	int result = -1;
 
-	void init() {
+	void init(int playerNumber) {
 
 		roomSize = Vector2f(1280, 720);
 
@@ -1870,6 +2457,7 @@ struct TilesInfo {
 		rect.setFillColor(Color(255, 0, 255, 255));
 
 		alcides = new Yamaha(roomSize);
+		xavier = new TecladoYamaha(roomSize, playerNumber);
 
 
 		galoPeste->update();
@@ -1884,6 +2472,7 @@ struct TilesInfo {
 
 
 		alcides->update(Vector2f(0, 0));
+		xavier->update();
 
 	}
 
@@ -1895,12 +2484,14 @@ struct TilesInfo {
 		delete galoBota;
 		delete bregaMeter;
 		delete alcides;
+		delete xavier;
 	}
 
 	void draw(RenderWindow& window) {
 		window.draw(rect);
 
-		alcides->draw(&window, frames);
+		//alcides->draw(&window, frames);
+		xavier->draw(window);
 
 		galoPeste->show(window);
 		galoKalsa->show(window);
@@ -1937,9 +2528,10 @@ struct TilesInfo {
 
 
 		Vector2f mousePos = window.mapPixelToCoords((Vector2i)mainInput.mousePos);
-		alcides->update(mousePos);
+		//alcides->update(mousePos);
+		xavier->update();
 
-		if (alcides->playing) {
+		if (xavier->isPlaying()) {
 			galoPeste->update();
 
 			galoKalsa->update();
@@ -1951,7 +2543,7 @@ struct TilesInfo {
 			galoBota->update();
 		}
 
-		bregaMeter->percentage = (float)alcides->bregaPower / alcides->bregaMax;
+		bregaMeter->percentage = (float)xavier->getBregaPower(0) / xavier->getBregaMax();
 		bregaMeter->update();
 
 
@@ -1969,7 +2561,7 @@ struct TilesInfo {
 };
 
 
-bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
+bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) {
 
 
 	float roomWid = 1280;
@@ -1978,10 +2570,13 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada) {
 	struct TilesInfo info;
 	info.roomSize.x = roomWid;
 	info.roomSize.y = roomHei;
-	info.init();
+	info.init(playerNumber);
 	info.alcides->editing = false;
-	info.alcides->loadMusica(musicaSelecionada);
-	info.alcides->play();
+	//info.alcides->loadMusica(musicaSelecionada);
+	//info.alcides->play();
+
+	info.xavier->loadMusica(musicaSelecionada);
+	info.xavier->play();
 
 
 	bool flores = false;
@@ -2308,21 +2903,40 @@ void tilesMenu(RenderWindow * window) {
 
 	std::vector<struct Button> buttons;
 
-	float buttonWid = 400;
-	float buttonHei = 60;
-	float yOffset = 40;
+	float buttonWid = 350;
+	float buttonHei = 50;
+	float yOffset = 20;
+
+
 
 	for (int i = 0; i < tilesMusicas.size(); i++) {
 		struct Button playButton;
-		playButton.init(roomWid / 2 - buttonWid / 2, roomHei / 2 - tilesMusicas.size() * (yOffset + buttonHei) / 2 + (buttonHei + yOffset) * i, buttonWid, buttonHei);
+		playButton.init(buttonWid / 4, roomHei *0.6 - tilesMusicas.size() * (yOffset + buttonHei) / 2 + (buttonHei + yOffset) * i, buttonWid, buttonHei);
 		playButton.color = Color(250, 100, 150);
 		playButton.label = tilesMusicas[i].name;
 		buttons.push_back(playButton);
 	}
 
 
+	std::vector<struct Button> playerButtons;
+	float pButX = roomWid * 0.8;
+	float pButY = roomHei * 0.5;
+	float pButWid = 200;
+	float pButHei = 40;
+	float pButYOff = 15;
+	for (int i = 0; i < 4; i++) {
+		struct Button player;
+		player.init(pButX - pButWid/2, pButY - pButHei/2 + (pButHei + pButYOff)*(i-2.5), pButWid, pButHei);
+		player.color = Color(250, 150, 200);
+		player.label = std::to_string(i + 1);
+		player.label += " Player";
+		if (i > 0) {
+			player.label += "s";
+		}
+		playerButtons.push_back(player);
+	}
 
-
+	int selectedSong = -1;
 
 
 
@@ -2412,38 +3026,54 @@ void tilesMenu(RenderWindow * window) {
 			buttons[i].update(mouseViewPos);
 
 			if (buttons[i].clicked) {
-				pianoTiles(window, i);
-				sf::View view;
-				if (true) {
-
-					Vector2f size = (Vector2f)window->getSize();
-
-					float wid = roomWid;
-					float hei = roomHei;
-					float xScl = (float)size.x / wid;
-					float yScl = (float)size.y / hei;
-
-					if (xScl > yScl) {
-						wid *= yScl;
-						hei = size.y;
-					}
-					else {
-
-						hei *= xScl;
-						wid = size.x;
-					}
-
-					xScl = wid / (float)size.x;
-					yScl = hei / (float)size.y;
-
-					sf::FloatRect area(0.f, 0.f, 1280, 720);
-					view.setSize(area.width, area.height);
-					view.setCenter(area.width / 2, area.height / 2);
-					view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
-					window->setView(view);
-				}
+				selectedSong = i;
 			}
 		}
+
+		
+		for (int i = 0; i < playerButtons.size(); i++) {
+			playerButtons[i].update(mouseViewPos);
+			playerButtons[i].draw(*window);
+			if (playerButtons[i].clicked) {
+			
+				if (selectedSong != -1) {
+					pianoTiles(window, selectedSong, i+1);
+
+					sf::View view;
+					if (true) {
+
+						Vector2f size = (Vector2f)window->getSize();
+
+						float wid = roomWid;
+						float hei = roomHei;
+						float xScl = (float)size.x / wid;
+						float yScl = (float)size.y / hei;
+
+						if (xScl > yScl) {
+							wid *= yScl;
+							hei = size.y;
+						}
+						else {
+
+							hei *= xScl;
+							wid = size.x;
+						}
+
+						xScl = wid / (float)size.x;
+						yScl = hei / (float)size.y;
+
+						sf::FloatRect area(0.f, 0.f, 1280, 720);
+						view.setSize(area.width, area.height);
+						view.setCenter(area.width / 2, area.height / 2);
+						view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
+						window->setView(view);
+					}
+				}
+				
+			}
+		}
+		
+
 
 
 
@@ -2457,3 +3087,4 @@ void tilesMenu(RenderWindow * window) {
 
 	return;
 }
+

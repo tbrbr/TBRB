@@ -100,10 +100,10 @@ int main() {
 	// Carregando as infos das Musicas do tiles
 	initTilesMusica();
 
-	//loadKeybinds();
+	loadKeybinds();
 
 
-	int option = MAPEAMENTO;
+	int option = INTRO;
 
 
 
@@ -220,80 +220,10 @@ int main() {
 	int galo_lvl = 0;
 
 
-
-
-	// Posição do Teclado pra cada player
-	float base = 1000;
-	float coluns = 4;
-	float height = 2000;
-	float topBase = base;
-
-	Vector2f boardPos(0, 0);
-
-
-	// Desenhando as colunas
-	RectangleShape colunaRect;
-
-
-	float colunaWid = base / coluns;
-	float colunaHei = height;
-
-	
-
-	colunaRect.setSize(Vector2f(colunaWid, colunaHei));
-
-
-	println("Coluna Before");
-	println("Wid: " << colunaWid << "  Hei : " << colunaHei);
-	for (int i = 0; i < 4; i++) {
-		println("Point " << i << ": X " << colunaRect.getPoint(i).x << "  Y: " << colunaRect.getPoint(i).y);
-	}
-	println("");
-	colunaRect.setPosition(-colunaWid / 2, 0);
-
-	println("Coluna After");
-	println("Wid: " << colunaWid << "  Hei : " << colunaHei);
-	for (int i = 0; i < 4; i++) {
-		println("Point " << i << ": X " << colunaRect.getPoint(i).x << "  Y: " << colunaRect.getPoint(i).y);
-	}
-	println("");
-
-	ConvexShape colunaShape = rectToConvexShape(colunaRect);
-	println("ConvexColuna");
-	
-	for (int i = 0; i < 4; i++) {
-		println("Point " << i << ": X " << colunaShape.getPoint(i).x << "  Y: " << colunaShape.getPoint(i).y);
-	}
-	
-	/*
-	for (int i = 0; i < coluns; i++) {
-
-		float colunaXOff = colunaWid * (i - (coluns / 2));
-		float colunaYOff = 0;
-		colunaRect.setPosition((-colunaWid / 2) + colunaXOff, colunaYOff);
-
-		ConvexShape colunaShape = rectToConvexShape(colunaRect);
-
-
-
-		//colunaShape.setPosition(colunaXOff, colunaYOff);
-		colunaShape = convertShapeToTrap(colunaShape, base, topBase, height);
-
-		colunaShape.setPosition(boardPos);
-		
-	}
-	*/
-
-
-
-
-
-
-
-
 	while (window->isOpen())
 	{
 		/*mota que bagulho mal feito do caaaaaaaaaaaaaaaanso*/
+		/*Mota que absurdo*/
 		switch (option)
 		{
 

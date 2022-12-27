@@ -34,6 +34,16 @@ struct DisplayBox {
     int textHAlign = -1;
     int textVAlign = -1;
 
+
+    sf::Text labelText;
+    sf::Text subLabelText;
+
+
+    void setFont(sf::Font& font) {
+        labelText.setFont(font);
+        subLabelText.setFont(font);
+    }
+
     void init(float xx, float yy, float ww, float hh) {
         x = xx;
         y = yy;
@@ -42,6 +52,15 @@ struct DisplayBox {
 
         label = "";
         subLabel = "";
+
+
+        setFont(basicFont);
+
+        labelText.setString(label);
+        labelText.setCharacterSize(hei / 1.4);
+
+        subLabelText.setString(subLabel);
+        subLabelText.setCharacterSize(hei / 3);
 
         borderColor = sf::Color::White;
         fillColor = sf::Color(200, 100, 100);
@@ -72,15 +91,17 @@ struct DisplayBox {
         window.draw(rect);
 
 
+
+        // Label
         float fontSize = hei / 1.4;
-        Text t(label, font, fontSize);
+        labelText.setString(label);
+        labelText.setCharacterSize(fontSize);
+        labelText.setFillColor(textColor);
+        labelText.setOutlineColor(textBorderColor);
+        labelText.setOutlineThickness(textBorderSize);
 
-        t.setFillColor(textColor);
-        t.setOutlineColor(textBorderColor);
-        t.setOutlineThickness(textBorderSize);
-
-        float tWid = t.getGlobalBounds().width;
-        float tHei = t.getGlobalBounds().height;
+        float tWid = labelText.getGlobalBounds().width;
+        float tHei = labelText.getGlobalBounds().height;
 
         float xTextFact = (textHAlign + 1) * 0.5;
         float yTextFact = (textVAlign + 1) * 0.5;
@@ -89,26 +110,29 @@ struct DisplayBox {
         float addY = yTextFact * hei - yTextFact * tHei;
 
 
-        t.setPosition(xx + addX, yy+addY);
+        labelText.setPosition(xx + addX, yy + addY);
 
-        window.draw(t);
+        window.draw(labelText);
 
+
+
+        // SubLabel
         fontSize *= 0.8;
 
-
-        Text tLabel(subLabel, font, fontSize);
-        tLabel.setFillColor(textColor);
-        tLabel.setOutlineColor(textBorderColor);
-        tLabel.setOutlineThickness(textBorderSize);
+        subLabelText.setString(subLabel);
+        subLabelText.setCharacterSize(fontSize);
+        subLabelText.setFillColor(textColor);
+        subLabelText.setOutlineColor(textBorderColor);
+        subLabelText.setOutlineThickness(textBorderSize);
 
         if (labelSide) {
-            tLabel.setPosition(xx + wid * 1.1, yy);
+            subLabelText.setPosition(xx + wid * 1.1, yy);
         }
         else {
-            tLabel.setPosition(xx, yy + hei);
+            subLabelText.setPosition(xx, yy + hei);
         }
 
-        window.draw(tLabel);
+        window.draw(subLabelText);
         
     }
 
@@ -130,6 +154,7 @@ struct ValBox{
     std::string input;
 
     std::string label;
+    std::string subLabel;
 
     std::string strDisplay;
 
@@ -152,14 +177,36 @@ struct ValBox{
 
     bool labelSide = false;
 
+    sf::Text labelText;
+    sf::Text subLabelText;
+
+
+
     /// 0 == float, 1 == int, 2 == string
     int type = 2;
+
+
+    void setFont(sf::Font& font) {
+        labelText.setFont(font);
+        subLabelText.setFont(font);
+    }
 
 
     void init2(){
         if(type != 2){
             textLimit = 8;
         }
+
+        label = "";
+        subLabel = "";
+
+        setFont(basicFont);
+
+        labelText.setString(label);
+        labelText.setCharacterSize(hei / 1.4);
+
+        subLabelText.setString(subLabel);
+        subLabelText.setCharacterSize(hei / 3);
     }
 
     void init(int ttype, float xx, float yy, float ww, float hh, int val){
@@ -286,26 +333,32 @@ struct ValBox{
         window.draw(rect);
 
 
-        float fontSize =  hei/1.4;
-        Text t(input, font, fontSize);
-        t.setFillColor(Color(255, 255, 255));
-        t.setPosition(x, y + hei/2 - fontSize/2);
+       
+        
+        // Label
+        label = input;
+        
+        labelText.setString(label);
+        labelText.setFillColor(Color(255, 255, 255));
 
-        window.draw(t);
+        float fontSize = hei / 1.4;
+        labelText.setPosition(x, y + hei/2 - fontSize/2);
+
+        window.draw(labelText);
+
+        
+        // SubLabel
+        subLabelText.setString(subLabel);
+        subLabelText.setFillColor(Color(255, 255, 255));
 
         fontSize *= 0.8;
-
-
-        Text tLabel(label, font, fontSize);
-        tLabel.setFillColor(Color(255, 255, 255));
-
         if(labelSide){
-            tLabel.setPosition(x + wid*1.1, y);
+            subLabelText.setPosition(x + wid*1.1, y);
         } else {
-            tLabel.setPosition(x, y + hei);
+            subLabelText.setPosition(x, y + hei);
         }
 
-        window.draw(tLabel);
+        window.draw(subLabelText);
 
 
 
@@ -320,7 +373,7 @@ struct ValBox{
                 col.a = 0;
             }
 
-            rect.setPosition(x + t.getGlobalBounds().width +4, y + hei*0.125);
+            rect.setPosition(x + labelText.getGlobalBounds().width +4, y + hei*0.125);
             rect.setSize(Vector2f(2, hei*0.75));
             rect.setFillColor(col);
             rect.setOutlineColor(Color(150, 150, 150));
@@ -456,6 +509,10 @@ public:
     bool hasSprite = false;
     sf::Sprite sprite;
 
+    sf::Text labelText;
+    sf::Text subLabelText;
+
+
 
     void setPosition(float xx, float yy) {
         x = xx;
@@ -467,6 +524,11 @@ public:
         hei = hh;
     }
 
+    void setFont(sf::Font& font) {
+        labelText.setFont(font);
+        subLabelText.setFont(font);
+    }
+
     void init(float xx, float yy, float ww, float hh) {
         x = xx;
         y = yy;
@@ -475,6 +537,14 @@ public:
 
         label = "";
         subLabel = "";
+
+        setFont(basicFont);
+
+        labelText.setString(label);
+        labelText.setCharacterSize(hei/1.4);
+
+        subLabelText.setString(subLabel);
+        subLabelText.setCharacterSize(hei / 3);
 
         color = Color::White;
     }
@@ -516,7 +586,7 @@ public:
         update(mainInput.mousePos, mainInput.mouseState[0][0], mainInput.mouseState[0][1]);
     }
 
-
+    
 
 
 
@@ -530,8 +600,6 @@ public:
 
 
         Color col = color;
-
-
 
         if (down) {
             col.b -= 20;
@@ -551,32 +619,41 @@ public:
 
         window.draw(rect);
 
+        /*
         if (hasSprite) {
             sprite.setColor(col);
             sprite.setPosition(x, y);
             window.draw(sprite);
         }
-        else {
-            float fontSize = hei / 1.4;
-            Text t(label, font, fontSize);
-            float textWid = t.getGlobalBounds().width;
+        */
+
+        
+
+        // Label
+        float fontSize = hei / 1.4;
+        labelText.setString(label);
+        labelText.setCharacterSize(fontSize);
+
+        float textWid = labelText.getGlobalBounds().width;
+
+        labelText.setFillColor(Color(255, 255, 255));
+        labelText.setPosition(x + wid / 2 - textWid / 2, y + hei / 2 - fontSize / 2);
+
+        window.draw(labelText);
 
 
-            t.setFillColor(Color(255, 255, 255));
-            t.setPosition(x + wid / 2 - textWid / 2, y + hei / 2 - fontSize / 2);
 
-            window.draw(t);
+        // SubLabel
+        fontSize = hei / 3;
 
-            fontSize = hei / 3;
-            Text t2(subLabel, font, fontSize);
-            textWid = t2.getGlobalBounds().width;
+        subLabelText.setString(subLabel);
+        subLabelText.setCharacterSize(fontSize);
 
+        textWid = subLabelText.getGlobalBounds().width;
 
-            t2.setFillColor(Color(255, 255, 255));
-            t2.setPosition(x, y + hei);
-
-            window.draw(t2);
-        }
+        subLabelText.setFillColor(Color(255, 255, 255));
+        subLabelText.setPosition(x, y + hei);
+        window.draw(subLabelText);
     }
 };
 

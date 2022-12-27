@@ -377,6 +377,8 @@ void mapeamento(RenderWindow* window) {
 				{
 					window->close();
 				}
+
+				
 				if (e.type == sf::Event::Resized)
 				{
 					float wid = roomWid;
@@ -402,7 +404,9 @@ void mapeamento(RenderWindow* window) {
 					view.setCenter(area.width / 2, area.height / 2);
 					view.setViewport(FloatRect((1 - xScl) / 2, (1 - yScl) / 2, xScl, yScl));
 					window->setView(view);
+				
 				}
+				
 			}
 
 
@@ -411,6 +415,7 @@ void mapeamento(RenderWindow* window) {
 
 
 			fpsDisplay.label = GetFrameRate();
+			
 			
 			if (listeningForKeybind) {
 
@@ -480,14 +485,15 @@ void mapeamento(RenderWindow* window) {
 
 			}
 			
+			
 
 
 
-
+			
 			Vector2f mouseViewPos = window->mapPixelToCoords((Vector2i)mainInput.mousePos);
-
+			
 			for (int i = 0; i < buttons.size(); i++) {
-				buttons[i].draw(*window);
+				buttons[i].draw(*window); // Muito lagado, Concertei, era settar a fonte toda hora
 				buttons[i].update(mouseViewPos);
 
 				if (buttons[i].clicked) {
@@ -498,6 +504,7 @@ void mapeamento(RenderWindow* window) {
 					updateLabels = true;
 				}
 			}
+			
 
 			playerIndicator.label = "Player ";
 			playerIndicator.label += std::to_string(playerSelected+1);

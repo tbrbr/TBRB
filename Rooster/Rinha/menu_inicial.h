@@ -247,9 +247,16 @@ void selectLang(RenderWindow* window, RectangleShape& background) {
 }
 
 int configScreen(RenderWindow* window, RectangleShape& background) {
-	Text* t[3];
+
+
+	// Com sua licença vou tentar adicionar um menu para os keybinds
+
+	const int optionNum = 4;
+
+	Text* t[optionNum];
 	Font font;
 	Font titleFont;
+
 	titleFont.loadFromFile("fonts/CloisterBlack.ttf");
 	font.loadFromFile("fonts/blops.ttf");
 
@@ -259,22 +266,25 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 	title.setFillColor(Color::Red);
 
 
-	t[0] = new Text(LANG.getLine(LANGUAGE::SELECT_LANG), font, SCREEN_HEIGHT / 30);
-	t[1] = new Text("INPUT", font, SCREEN_HEIGHT / 30);
-	t[2] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
+	float textSize = SCREEN_HEIGHT / 30;
+	t[0] = new Text(LANG.getLine(LANGUAGE::SELECT_LANG), font, textSize);
+	t[1] = new Text("INPUT", font, textSize);
+	t[2] = new Text("KEYBINDINGS", font, textSize);
+	t[3] = new Text(LANG.getLine(LANGUAGE::BACK), font, textSize);
+	
 
 	int textXPosition = SCREEN_WIDTH * 0.6;
 	int textyPosition = SCREEN_HEIGHT * 0.5;
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < optionNum; i++) {
 		t[i]->setPosition(textXPosition, textyPosition);
 		t[i]->setFillColor(Color::Red);
 		textyPosition = textyPosition + SCREEN_HEIGHT * 0.10;
 	}
 
 
-	RectangleShape divs[3];
-	for (int i = 0; i < 3; i++) {
+	RectangleShape divs[optionNum];
+	for (int i = 0; i < optionNum; i++) {
 		divs[i].setPosition(t[i]->getPosition().x, t[i]->getPosition().y - t[i]->getGlobalBounds().height / 2);
 		divs[i].setSize(Vector2f(t[i]->getGlobalBounds().width, t[i]->getGlobalBounds().height * 2));
 		divs[i].setFillColor(Color::Transparent);
@@ -283,7 +293,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 
 
 	while (window->isOpen()) {
-		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 2);
+		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 3);
 		Event e;
 
 		while (window->pollEvent(e)) {
@@ -307,9 +317,12 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 						else if (__temp == 1) {
 							selectInput(window, background);
 						}
-						else if (__temp == 2)
+						else if (__temp == 2) {
+							mapeamento(window);
+						}
+						else if (__temp == 3)
 						{
-							for (int i = 0; i < 2; i++) {
+							for (int i = 0; i < optionNum; i++) {
 								delete t[i];
 							}
 							return MENU_PRINCIPAL;
@@ -320,7 +333,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 		}
 
 		if (__temp != -1) {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < optionNum; i++) {
 				if (__temp != i)
 					t[i]->setFillColor(Color::Red);
 				else
@@ -329,7 +342,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 
 		}
 		else {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < optionNum; i++) {
 				t[i]->setFillColor(Color::Red);
 			}
 		}
@@ -338,7 +351,7 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 		window->draw(background);
 		window->draw(title);
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < optionNum; i++) {
 			window->draw(*t[i]);
 			window->draw(divs[i]);
 		}

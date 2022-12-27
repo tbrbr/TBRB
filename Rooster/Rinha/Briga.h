@@ -1219,6 +1219,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 
 			if (state) {
 				info.alcides->play();
+				info.xavier->play();
 			}
 		}
 
@@ -1495,6 +1496,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 					tilesFall = false;
 
 					info.alcides->pause();
+					//info.xavier->pause();
 					tilesEnd = true;
 
 					executarFatality = ((info.result == 1) || GODMODE);
@@ -1556,7 +1558,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 				else {
 					info.update(*window);
 
-					if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+					if ((info.alcides->getPlayingSeconds() > 46 || info.xavier->getPlayingSeconds() > 46) && !flores) {
 						flores = true;
 
 						FloatRect area(0, -1000, SCREEN_WIDTH, 1000);

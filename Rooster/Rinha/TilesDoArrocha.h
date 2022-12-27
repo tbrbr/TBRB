@@ -78,13 +78,21 @@ public:
 
 	int id = -1;
 
+	
 	float slided = 0;
+
 
 	bool hitted = false;
 	bool missed = false;
 	bool holded = false;
+	
 
 	bool hovered = false;
+
+	bool visible = false;
+	bool appeared = false;
+
+
 
 	bool loose = false;
 
@@ -106,10 +114,12 @@ public:
 	}
 
 	void resetState() {
+		
 		slided = 0;
 		hitted = false;
 		missed = false;
 		holded = false;
+		
 		hovered = false;
 		loose = false;
 	}
@@ -126,6 +136,18 @@ public:
 				hoverQuality = 1 + (1 - (yy + (length - 1)))*3;
 			}
 
+		}
+
+		if(visible){
+			if (yy > 3) {
+				visible = false;
+			}
+		}
+		else if(!appeared){
+			if (yy + length > -8) {
+				visible = true;
+				appeared = true;
+			}
 		}
 
 	}
@@ -195,6 +217,8 @@ class TecladoYamaha {
 	std::vector<std::vector<struct NotaState>> notasState;
 	std::vector<struct TecladoPlayer> playerStats;
 
+	//std::vector<std::vector<Effect>>
+
 
 	float notesPerBoard = 8;
 
@@ -215,6 +239,8 @@ class TecladoYamaha {
 
 	int maxLife = 200;
 	int bregaMax = 1000;
+
+
 
 
 
@@ -320,6 +346,10 @@ class TecladoYamaha {
 
 public:
 
+	bool exit = false;
+	bool success = false;
+
+
 	TecladoYamaha(Vector2f roomSize, int playerNumber) {
 
 		roomWid = roomSize.x;
@@ -333,7 +363,7 @@ public:
 		setPlayers(playerNumber);
 
 		base = (roomWid / 4) * 0.75 * (1+(1 - players/4)/2);
-		topBase = base;
+		topBase = base*0.8;
 		height = roomHei * 0.75;
 
 		//center.x = 0;
@@ -397,6 +427,11 @@ public:
 		playing = true;
 	}
 
+	void pause() {
+		musica.pause();
+		playing = false;
+	}
+
 	bool isPlaying() {
 		return playing;
 	}
@@ -422,7 +457,9 @@ public:
 		return musica.getPlayingOffset().asSeconds();
 	}
 
-
+	int getMusicaId() {
+		return musicaId;
+	}
 
 
 
@@ -450,13 +487,17 @@ public:
 
 		scrollY = beatSpeed * getPlayingSeconds();
 
+		/*
 		if (musica.getStatus() == sf::Music::Stopped) {
 			musica.setPlayingOffset(musica.getDuration());
 			musica.pause();
 			scrollY = beatSpeed * getPlayingSeconds();
 		}
+		*/
 
-		if (scrollY > finishY || musica.getStatus() == sf::Music::Stopped) {
+		if (scrollY > finishY || musica.getPlayingOffset().asSeconds() >= musica.getDuration().asSeconds() - 1) {
+			//println(scrollY);
+			//println(finishY);
 			if (!finished && !editing) {
 				finish();
 			}
@@ -468,45 +509,44 @@ public:
 
 
 
-		if (true) {
+		// Getting all Tiles key presses from all players
+		std::vector<std::vector<bool>> tilesKeys;
+		for (int i = 0; i < players; i++) {
 
-			// Getting all Tiles key presses from all players
-			std::vector<std::vector<bool>> tilesKeys;
-			for (int i = 0; i < players; i++) {
+			std::vector<bool> temp;
 
-				std::vector<bool> temp;
+			// All tiles keys
+			temp.push_back(mainInput.inputState[i][Rooster::TILES1][1]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES2][1]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES3][1]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES4][1]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES1][0]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES2][0]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES3][0]);
+			temp.push_back(mainInput.inputState[i][Rooster::TILES4][0]);
 
-				// All tiles keys
-				temp.push_back(mainInput.inputState[i][Rooster::TILES1][1]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES2][1]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES3][1]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES4][1]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES1][0]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES2][0]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES3][0]);
-				temp.push_back(mainInput.inputState[i][Rooster::TILES4][0]);
-
-				// Has missed a note
-				temp.push_back(false);
+			// Has missed a note
+			temp.push_back(false);
 
 
-				tilesKeys.push_back(temp);
+			tilesKeys.push_back(temp);
 
-			}
+		}
 
-			//bool teclaMissed[] = { true, true, true, true };
+		//bool teclaMissed[] = { true, true, true, true };
 
-			for (int j = 0; j < notas.size(); j++) {
+		for (int j = 0; j < notas.size(); j++) {
 
 
-				struct Nota* nota = notas[j];
+			struct Nota* nota = notas[j];
 
-				float notaY = nota->y + scrollY;
+			float notaY = nota->y + scrollY;
 
-				nota->update(scrollY);
+			nota->update(scrollY);
 
-				int coluna = nota->coluna;
+			int coluna = nota->coluna;
 
+			if (nota->visible) {
 				for (int i = 0; i < players; i++) {
 
 
@@ -569,13 +609,12 @@ public:
 						}
 					}
 				}
-
-
 			}
+
 
 		}
 
-
+		
 		for (int i = 0; i < players; i++) {
 			playerStats[i].bregaPower = maximum(0, playerStats[i].bregaPower);
 			playerStats[i].life = maximum(0, playerStats[i].life);
@@ -591,7 +630,9 @@ public:
 	}
 
 	void finish() {
-
+		finished = true;
+		exit = true;
+		success = (playerStats[0].life > 0);
 	}
 
 
@@ -646,81 +687,83 @@ public:
 			// Desenhando as notas
 			for (int i = 0; i < notas.size(); i++) {
 
+				
 				Nota nota = *notas[i];
 
+				if (nota.visible) {
+					RectangleShape notaRect;
 
-				RectangleShape notaRect;
-
-				float notaWid = base / coluns;
-				float notaUnitLength = height / notesPerBoard;
-				float notaHei = nota.length * notaUnitLength;
-
-
-
-				notaRect.setSize(Vector2f(notaWid, notaHei));
-
-				float colunaXOff = notaWid * (nota.coluna - (coluns / 2) + 0.5);
-				float colunaYOff = 0;
-
-				notaRect.setPosition(( - notaWid / 2)+colunaXOff, (getNoteRealY(nota))+colunaYOff);
+					float notaWid = base / coluns;
+					float notaUnitLength = height / notesPerBoard;
+					float notaHei = nota.length * notaUnitLength;
 
 
-				ConvexShape notaShape = rectToConvexShape(notaRect);
 
-				notaShape = convertShapeToTrap(notaShape, base, topBase, height);
+					notaRect.setSize(Vector2f(notaWid, notaHei));
 
-				notaShape.setPosition(boardPos);
-				notaShape.setOutlineColor(sf::Color::White);
-				notaShape.setOutlineThickness(2);
+					float colunaXOff = notaWid * (nota.coluna - (coluns / 2) + 0.5);
+					float colunaYOff = 0;
 
-				if (true) {
-					
-					if (notasState[j][i].missed) {
-						notaShape.setFillColor(Color::Red);
-					}
-					else if (notasState[j][i].hitted) {
-						notaShape.setFillColor(Color::Green);
-					}
-					
-					else {
-						if (notas[i]->hovered) {
-							notaShape.setFillColor(Color::Blue);
+					notaRect.setPosition((-notaWid / 2) + colunaXOff, (getNoteRealY(nota)) + colunaYOff);
+
+
+					ConvexShape notaShape = rectToConvexShape(notaRect);
+
+					notaShape = convertShapeToTrap(notaShape, base, topBase, height);
+
+					notaShape.setPosition(boardPos);
+					notaShape.setOutlineColor(sf::Color::White);
+					notaShape.setOutlineThickness(2);
+
+					if (true) {
+
+						if (notasState[j][i].missed) {
+							notaShape.setFillColor(Color::Red);
 						}
+						else if (notasState[j][i].hitted) {
+							notaShape.setFillColor(Color::Green);
+						}
+
 						else {
-							notaShape.setFillColor(Color::Black);
+							if (notas[i]->hovered) {
+								notaShape.setFillColor(Color::Blue);
+							}
+							else {
+								notaShape.setFillColor(Color::Black);
+							}
+
 						}
-
 					}
-				}
 
-				window.draw(notaShape);
-
+					window.draw(notaShape);
 
 
-				if (nota.length > 1) {
-					RectangleShape slideRect;
-					slideRect.setSize(Vector2f(notaWid / 3, notaHei - notaUnitLength));
-					slideRect.setPosition(notaRect.getPosition().x + notaWid / 3, notaRect.getPosition().y);
-					ConvexShape slideShape = rectToConvexShape(slideRect);
-					slideShape = convertShapeToTrap(slideShape, base, topBase, height);
 
-					slideShape.setFillColor(Color(200, 200, 200));
-					slideShape.setPosition(boardPos);
-					slideShape.setOutlineColor(sf::Color::White);
-					slideShape.setOutlineThickness(2);
-					window.draw(slideShape);
+					if (nota.length > 1) {
+						RectangleShape slideRect;
+						slideRect.setSize(Vector2f(notaWid / 3, notaHei - notaUnitLength));
+						slideRect.setPosition(notaRect.getPosition().x + notaWid / 3, notaRect.getPosition().y);
+						ConvexShape slideShape = rectToConvexShape(slideRect);
+						slideShape = convertShapeToTrap(slideShape, base, topBase, height);
 
-					
-					slideRect.setSize(Vector2f(notaWid / 2, notaWid/2));
-					slideRect.setPosition(notaRect.getPosition().x + notaWid/2 - notaWid/4, notaRect.getPosition().y -notaWid/4 +(1-notasState[j][i].slided)*(notaHei - notaUnitLength));
-					ConvexShape sliderShape = rectToConvexShape(slideRect);
-					sliderShape = convertShapeToTrap(sliderShape, base, topBase, height);
+						slideShape.setFillColor(Color(200, 200, 200));
+						slideShape.setPosition(boardPos);
+						slideShape.setOutlineColor(sf::Color::White);
+						slideShape.setOutlineThickness(2);
+						window.draw(slideShape);
 
-					sliderShape.setFillColor(Color(200, 200, 200));
-					sliderShape.setPosition(boardPos);
-					sliderShape.setOutlineColor(sf::Color::White);
-					sliderShape.setOutlineThickness(2);
-					window.draw(sliderShape);
+
+						slideRect.setSize(Vector2f(notaWid / 2, notaWid / 2));
+						slideRect.setPosition(notaRect.getPosition().x + notaWid / 2 - notaWid / 4, notaRect.getPosition().y - notaWid / 4 + (1 - notasState[j][i].slided) * (notaHei - notaUnitLength));
+						ConvexShape sliderShape = rectToConvexShape(slideRect);
+						sliderShape = convertShapeToTrap(sliderShape, base, topBase, height);
+
+						sliderShape.setFillColor(Color(200, 200, 200));
+						sliderShape.setPosition(boardPos);
+						sliderShape.setOutlineColor(sf::Color::White);
+						sliderShape.setOutlineThickness(2);
+						window.draw(sliderShape);
+					}
 				}
 
 			}
@@ -2553,8 +2596,8 @@ struct TilesInfo {
 			}
 		}
 
-		if (alcides->exit) {
-			result = alcides->success;
+		if (xavier->exit) {
+			result = xavier->success;
 		}
 
 	}
@@ -2579,7 +2622,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 	info.xavier->play();
 
 
-	bool flores = false;
+	bool flores = true;
 
 
 	sf::View view;
@@ -2647,7 +2690,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 	clearButton.label = "clear";
 
 
-	int musicaId = info.alcides->getMusicaId();
+	int musicaId = info.xavier->getMusicaId();
 
 
 	while (window->isOpen()) {
@@ -2819,7 +2862,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 
 		switch(musicaId) {
 		case 0:
-			if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+			if ((info.alcides->getPlayingSeconds() > 46 || info.xavier->getPlayingSeconds() > 46) && !flores) {
 				flores = true;
 
 				FloatRect area(0, -1000, roomWid, 1000);
@@ -2842,6 +2885,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 		mainPartSystem.draw(*window);
 
 		if (info.result != -1) {
+			info.clear();
 			return info.result;
 		}
 

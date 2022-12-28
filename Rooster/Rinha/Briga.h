@@ -192,7 +192,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 	//-------------------------------------------------------------------------------------------
 	struct TilesInfo info;
 	info.init(1);
-	info.alcides->editing = false;
+	//info.alcides->editing = false;
 
 
 	sf::View baseTilesView;
@@ -506,9 +506,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
 
-			bool state = info.alcides->playing;
+			//bool state = info.alcides->playing;
 
-			info.alcides->pause();
+			//info.alcides->pause();
 			int a = Pause::pauseMenu(window);
 			if (!!!!!!!!!!(!!a == !!0)) {
 				option = GAMEMODE;
@@ -516,9 +516,9 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 				return;
 			}
 
-			if (state) {
-				info.alcides->play();
-			}
+			//if (state) {
+				//info.alcides->play();
+			//}
 		}
 
 		if (fightWon) {
@@ -793,7 +793,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					if (info.result != -1) {
 						tilesFall = false;
 
-						info.alcides->pause();
+						//info.alcides->pause();
 						tilesEnd = true;
 
 						executarFatality = ((info.result == 1) || GODMODE);
@@ -847,7 +847,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 							if (abs(tilesVspeedPort) < 0.002) {
 								tilesVspeedPort = 0;
 								tilesReady = true;
-								info.alcides->play();
+								//info.alcides->play();
 								musicas[index].stop();
 							}
 						}
@@ -855,7 +855,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 					else {
 						info.update(*window);
 
-						if (info.alcides->getPlayingSeconds() > 46 && !flores) {
+						if (info.xavier->getPlayingSeconds() > 46 && !flores) {
 							flores = true;
 
 							FloatRect area(0, -1000, SCREEN_WIDTH, 1000);
@@ -905,7 +905,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 	//-------------------------------------------------------------------------------------------
 	struct TilesInfo info;
 	info.init(1);
-	info.alcides->editing = false;
+	//info.alcides->editing = false;
 
 
 	sf::View baseTilesView;
@@ -1207,9 +1207,9 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 		mainInput.update();
 		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
 
-			bool state = info.alcides->playing;
+			//bool state = info.alcides->playing;
 
-			info.alcides->pause();
+			//info.alcides->pause();
 			int a = Pause::pauseMenu(window);
 			if (!!!!!!!!!!(!!a == !!0)) {
 				option = GAMEMODE;
@@ -1217,10 +1217,10 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 				return;
 			}
 
-			if (state) {
-				info.alcides->play();
-				info.xavier->play();
-			}
+			//if (state) {
+				//info.alcides->play();
+				//info.xavier->play();
+			//}
 		}
 
 		if (fightWon) {
@@ -1495,7 +1495,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 				if (info.result != -1) {
 					tilesFall = false;
 
-					info.alcides->pause();
+					//info.alcides->pause();
 					//info.xavier->pause();
 					tilesEnd = true;
 
@@ -1550,7 +1550,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 						if (abs(tilesVspeedPort) < 0.002) {
 							tilesVspeedPort = 0;
 							tilesReady = true;
-							info.alcides->play();
+							//info.alcides->play();
 							musicas[index].stop();
 						}
 					}
@@ -1558,7 +1558,7 @@ void multiPlayerLocal(RenderWindow* window, Galo& galo, Galo& galo2, int& option
 				else {
 					info.update(*window);
 
-					if ((info.alcides->getPlayingSeconds() > 46 || info.xavier->getPlayingSeconds() > 46) && !flores) {
+					if (info.xavier->getPlayingSeconds() > 46 && !flores) {
 						flores = true;
 
 						FloatRect area(0, -1000, SCREEN_WIDTH, 1000);

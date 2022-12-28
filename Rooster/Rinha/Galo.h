@@ -511,6 +511,18 @@ namespace Rooster {
 
 		}
 
+		~Galo() {
+			delete bar;
+
+			delete hiKick;
+			delete louKick;
+			delete ultimateShot;
+			delete superAtack;
+			delete projectileAtack;
+
+			//model.clearModel();
+		}
+
 		inline string getName() {
 			return this->name;
 		}

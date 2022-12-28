@@ -118,6 +118,7 @@ namespace Rooster {
 
 		}
 
+
 		Vector2f getFrontHandPos() {
 			float coordXPaint = 550;
 			float coordYPaint = 900;

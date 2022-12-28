@@ -937,17 +937,27 @@ struct Model {
 
     }
 
+    ~Model(){
+        println("Destructor Call");
+        clearModel();
+    }
 
     void clearModel() {
+        println("Cleaning Started...");
         for (int i = 0; i < allBones.size(); i++) {
-            delete allBones[i];
+          
             delete allHandles[i];
+            println("BoneHandle " << i << " Deleted");
+            //delete allBones[i];
+            println("Bone " << i << " Deleted");
         }
+        println("Pointers Deleted");
         allBones.clear();
         allHandles.clear();
         drawOrder.clear();
         executeOrder.clear();
         boneMap.clear();
+        println("Lists Cleaned");
 
     }
 

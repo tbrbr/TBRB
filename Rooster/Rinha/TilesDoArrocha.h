@@ -374,6 +374,10 @@ public:
 	
 	}
 
+	~TecladoYamaha(){
+		hardClearNotas();
+		//musica.stop();
+	}
 
 	void reloadNotaStates() {
 		notasState.clear();
@@ -526,7 +530,10 @@ public:
 			temp.push_back(mainInput.inputState[i][Rooster::TILES4][0]);
 
 			// Has missed a note
-			temp.push_back(false);
+			temp.push_back(true);
+			temp.push_back(true);
+			temp.push_back(true);
+			temp.push_back(true);
 
 
 			tilesKeys.push_back(temp);
@@ -548,10 +555,6 @@ public:
 
 			if (nota->visible) {
 				for (int i = 0; i < players; i++) {
-
-
-
-
 
 					struct NotaState* notaState = &notasState[i][j];
 					if (!notaState->missed) {
@@ -584,7 +587,8 @@ public:
 									if (nota->length > 1) {
 										notaState->holded = true;
 									}
-									tilesKeys[i][8] = false;
+									tilesKeys[i][8+coluna] = false;
+									//println("Player " << i << "   Key " << j);
 
 
 									playerStats[i].score += nota->hoverQuality;
@@ -594,6 +598,8 @@ public:
 								}
 							}
 						}
+
+						
 					}
 
 					if (notaY + (nota->length - 1) > 0) {
@@ -616,6 +622,14 @@ public:
 
 		
 		for (int i = 0; i < players; i++) {
+
+			for (int j = 0; j < 4; j++) {
+				if (tilesKeys[i][j] && tilesKeys[i][j + 8]) {
+					playerStats[i].life -= 10;
+					comboBreak(i);
+				}
+			}
+
 			playerStats[i].bregaPower = maximum(0, playerStats[i].bregaPower);
 			playerStats[i].life = maximum(0, playerStats[i].life);
 		}
@@ -768,7 +782,9 @@ public:
 
 			}
 
-			struct DisplayBox score;
+
+			// Score Displaying
+			struct DisplayBox score; //Problematic cause its setting a font every frame
 			score.init(boardPos.x, boardPos.y, base, 20);
 			score.hAlign = 0;
 			score.vAlign = -1;
@@ -776,6 +792,36 @@ public:
 			score.textHAlign = 0;
 
 			score.draw(window);
+
+
+
+			// Life bar
+
+			RectangleShape rect;
+
+			int outLine = 4;
+			int offSet = 4;
+
+			int wid = base*0.8;
+			int hei = 40;
+
+			int x = boardPos.x - wid/2;
+			int y = boardPos.y + height + 40;
+
+			rect.setFillColor(Color(250, 250, 250, 255));
+			rect.setSize(Vector2f(wid - 2 * outLine, hei - 2 * outLine));
+			rect.setPosition(x + outLine, y + outLine);
+			rect.setFillColor(Color(0, 0, 0, 0));
+			rect.setOutlineColor(Color::White);
+			rect.setOutlineThickness(outLine);
+
+			window.draw(rect);
+
+			rect.setOutlineThickness(0);
+			rect.setFillColor(Color::Green);
+			rect.setPosition(x + outLine + offSet, y + outLine + offSet);
+			rect.setSize(Vector2f((wid - 2 * (outLine + offSet)) * constrain((float)playerStats[j].life / maxLife, 0, 1), hei - 2 * (outLine + offSet)));
+			window.draw(rect);
 
 
 		}
@@ -926,6 +972,7 @@ public:
 
 
 	~Yamaha() {
+		
 		for (int i = 0; i < slideEffects.size(); i++) {
 			delete slideEffects[i];
 		}
@@ -933,7 +980,16 @@ public:
 
 		delete textEffects;
 
-		musica.stop();
+		for (int i = 0; i < notas.size(); i++) {
+			delete notas[i];
+		}
+
+		notas.clear();
+		
+
+
+		//musica.stop();
+		//delete &musica;
 		//musTeste.music.~Music();
 	}
 
@@ -2322,6 +2378,10 @@ public:
 		sndExplosion.setBuffer(sndBufExplosion);
 	}
 
+	~BregaMeter() {
+		delete effect;
+	}
+
 	void update() {
 		if (broken) {
 
@@ -2437,16 +2497,20 @@ public:
 
 
 struct TilesInfo {
-	Yamaha* alcides;
+
+
+	//Yamaha* alcides;
 	TecladoYamaha* xavier;
 
 	int frames = 0;
 
+	
 	Rooster::Galo* galoPeste;
 	Rooster::Galo* galoKalsa;
 	Rooster::Galo* galoSniper;
 	Rooster::Galo* galoBruxo;
 	Rooster::Galo* galoBota;
+	
 
 	Texture fundao;
 	Texture bregaMeterTex;
@@ -2467,17 +2531,18 @@ struct TilesInfo {
 
 		struct Rooster::GaloStats kalsaSt = { 100, 10, 10, 10, 5 };
 
-		galoPeste = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
-		galoKalsa = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
+		
+		galoPeste  = new Rooster::Peste(kalsaSt, Rooster::state::DANCING, false);
+		galoKalsa  = new Rooster::Kalsa(kalsaSt, Rooster::state::DANCING, true);
 		galoSniper = new Rooster::Sniper(kalsaSt, Rooster::state::DANCING, false);
-		galoBruxo = new Rooster::Bruxo(kalsaSt, Rooster::state::DANCING, false);
-		galoBota = new Rooster::Bota(kalsaSt, Rooster::state::DANCING, false);
+		galoBruxo  = new Rooster::Bruxo(kalsaSt, Rooster::state::DANCING, false);
+		galoBota   = new Rooster::Bota(kalsaSt, Rooster::state::DANCING, false);
 
-		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y * 0.9));
-		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y * 0.9));
-		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y * 0.9));
-		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y * 0.9));
-		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y * 0.9));
+		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y));
+		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y));
+		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y));
+		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y));
+		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y));
 
 		galoKalsa->noCollision = true;
 		galoSniper->noCollision = true;
@@ -2488,6 +2553,8 @@ struct TilesInfo {
 		galoKalsa->facingRight = true;
 		galoBota->facingRight = true;
 		galoBruxo->facingRight = true;
+		
+		
 
 		fundao.loadFromFile("sprites/tiringa.png");
 
@@ -2499,10 +2566,11 @@ struct TilesInfo {
 		rect.setTexture(&fundao);
 		rect.setFillColor(Color(255, 0, 255, 255));
 
-		alcides = new Yamaha(roomSize);
+		
+		//alcides = new Yamaha(roomSize);
 		xavier = new TecladoYamaha(roomSize, playerNumber);
 
-
+		
 		galoPeste->update();
 
 		galoKalsa->update();
@@ -2512,22 +2580,30 @@ struct TilesInfo {
 		galoBruxo->update();
 
 		galoBota->update();
+		
 
-
-		alcides->update(Vector2f(0, 0));
+		//alcides->update(Vector2f(0, 0));
 		xavier->update();
+		
 
 	}
 
 	void clear() {
+		
+		
 		delete galoPeste;
 		delete galoKalsa;
 		delete galoSniper;
 		delete galoBruxo;
 		delete galoBota;
+
 		delete bregaMeter;
-		delete alcides;
+		
+
+		//delete alcides;
 		delete xavier;
+		
+
 	}
 
 	void draw(RenderWindow& window) {
@@ -2536,6 +2612,7 @@ struct TilesInfo {
 		//alcides->draw(&window, frames);
 		xavier->draw(window);
 
+		
 		galoPeste->show(window);
 		galoKalsa->show(window);
 		galoSniper->show(window);
@@ -2543,12 +2620,13 @@ struct TilesInfo {
 		galoBota->show(window);
 
 		bregaMeter->draw(window);
+		
 	}
 
 	void update(RenderWindow& window) {
 		frames++;
 
-
+		/*
 		if (mainInput.keyboardState[sf::Keyboard::Down][0]) {
 			alcides->moveScroll(-5);
 		}
@@ -2568,12 +2646,14 @@ struct TilesInfo {
 				}
 			}
 		}
+		*/
 
 
 		Vector2f mousePos = window.mapPixelToCoords((Vector2i)mainInput.mousePos);
 		//alcides->update(mousePos);
 		xavier->update();
 
+		
 		if (xavier->isPlaying()) {
 			galoPeste->update();
 
@@ -2590,11 +2670,13 @@ struct TilesInfo {
 		bregaMeter->update();
 
 
+
 		if (!bregaMeter->broken) {
 			if (bregaMeter->percentage > 1.25) {
 				bregaMeter->explode();
 			}
 		}
+		
 
 		if (xavier->exit) {
 			result = xavier->success;
@@ -2614,7 +2696,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 	info.roomSize.x = roomWid;
 	info.roomSize.y = roomHei;
 	info.init(playerNumber);
-	info.alcides->editing = false;
+	//info.alcides->editing = false;
 	//info.alcides->loadMusica(musicaSelecionada);
 	//info.alcides->play();
 
@@ -2622,7 +2704,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 	info.xavier->play();
 
 
-	bool flores = true;
+	bool flores = false;
 
 
 	sf::View view;
@@ -2662,6 +2744,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 	int inputType = -1;
 	char lastChar = ' ';
 
+	/*
 	struct ValBox loadBox;
 	loadBox.init(2, 0, 100, 300, 40, "loadPath");
 	loadBox.label = "loadPath sem o .txt (Ctrl+L)";
@@ -2688,6 +2771,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 	clearButton.init(200, roomHei - 40, 60, 20);
 	clearButton.color = Color(0, 0, 0);
 	clearButton.label = "clear";
+	*/
 
 
 	int musicaId = info.xavier->getMusicaId();
@@ -2779,6 +2863,7 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 		info.update(*window);
 		info.draw(*window);
 
+		/*
 		if (info.alcides->editing) {
 
 			Vector2f mouseViewPos = window->mapPixelToCoords((Vector2i)mainInput.mousePos);
@@ -2857,12 +2942,13 @@ bool pianoTiles(RenderWindow * window, int musicaSelecionada, int playerNumber) 
 				info.alcides->saveNotas(str);
 			}
 		}
+		*/
 
 
 
 		switch(musicaId) {
 		case 0:
-			if ((info.alcides->getPlayingSeconds() > 46 || info.xavier->getPlayingSeconds() > 46) && !flores) {
+			if ( info.xavier->getPlayingSeconds() > 46 && !flores) {
 				flores = true;
 
 				FloatRect area(0, -1000, roomWid, 1000);

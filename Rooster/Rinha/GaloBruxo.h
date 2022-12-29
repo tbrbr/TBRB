@@ -78,6 +78,13 @@ namespace Rooster {
 			);
 			projectiles.push_back(*flame);
 
+			delete defense;
+			delete fumaca;
+			delete flame;
+
+
+
+
 			//println("Flame");
 
 			t.loadFromFile("sprites/galoBruxo.png");
@@ -117,6 +124,12 @@ namespace Rooster {
 			bar = new LifeBar(maxHp, isp1, name.c_str());
 
 		}
+
+		/*
+		~Bruxo() {
+
+		}
+		*/
 
 
 		Vector2f getFrontHandPos() {

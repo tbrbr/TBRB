@@ -102,6 +102,9 @@ namespace Rooster {
 
             projectiles.push_back(*puff);
 
+            delete puff;
+            // Até tú botas filho meu
+
 
 
 
@@ -121,9 +124,11 @@ namespace Rooster {
 
         }
 
+        /*
+        ~Bota() {
 
-
-
+        }
+        */
 
 
 

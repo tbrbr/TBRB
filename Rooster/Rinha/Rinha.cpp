@@ -102,6 +102,8 @@ int main() {
 
 	loadKeybinds();
 
+	galoResources.init();
+
 
 	int option = INTRO;
 

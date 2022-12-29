@@ -326,7 +326,13 @@ void mapeamento(RenderWindow* window) {
 		float dir = 1;
 
 
+		// TEste
+		/*
+		Texture t;
+		t.loadFromFile("sprites/galoSniper.png");
 
+		std::vector<struct Model*> modelTest;
+		*/
 		
 
 
@@ -361,6 +367,15 @@ void mapeamento(RenderWindow* window) {
 					if (e.key.code == Keyboard::Escape)
 					{
 						window->setView(window->getDefaultView());
+
+
+						/*
+						for (int i = 0; i < modelTest.size(); i++) {
+							
+						delete modelTest[i];
+						}
+						*/
+
 						return;
 					}
 				}
@@ -532,6 +547,20 @@ void mapeamento(RenderWindow* window) {
 
 
 			if (updateLabels) {
+
+				/*
+				for (int i = 0; i < 200; i++) {
+					struct Model* model = new Model();
+
+
+					model->tex = &t;
+					model->loadModel("models/SniperModel.txt");
+					modelTest.push_back(model);
+				}
+
+				println("New Model");
+				*/
+
 				for (int i = 0; i < buttons.size(); i++) {
 					if (i == buttonSelected) {
 
@@ -579,6 +608,11 @@ void mapeamento(RenderWindow* window) {
 			updateLabels = false;
 		}
 
+		/*
+		for (int i = 0; i < modelTest.size(); i++) {
+			delete modelTest[i];
+		}
+		*/
 		return;
 	
 }

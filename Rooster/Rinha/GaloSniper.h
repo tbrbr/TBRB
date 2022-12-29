@@ -54,6 +54,11 @@ namespace Rooster {
 			Projectile* n2 = new Projectile(true);
 			projectiles.push_back(*n2);
 
+			delete bullet;
+			delete n2;
+
+
+
 			t.loadFromFile("sprites/galoSniper.png");
 
 			model.tex = &t;
@@ -98,6 +103,13 @@ namespace Rooster {
 			grenade.loadFromFile("sprites\\sniperGrenade.png");
 
 		}
+
+		/*
+		~Sniper() {
+
+		}
+		*/
+
 
 
 		void weatherAnim(int frames) {

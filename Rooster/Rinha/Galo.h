@@ -346,6 +346,24 @@ namespace Rooster {
 
 
 
+
+	struct GaloResources {
+		Font comboFont;
+		SoundBuffer bufferFire;
+		Texture star;
+		Texture burned;
+
+		void init() {
+			star.loadFromFile("sprites\\estrelinhas.png");
+			comboFont.loadFromFile("fonts\\Act_Of_Rejection.ttf");
+			burned.loadFromFile("sprites\\Burning.png");
+			bufferFire.loadFromFile("sounds\\on-fire.ogg");
+		}
+	};
+
+	struct GaloResources galoResources;
+
+
 	class Galo {
 
 	protected:
@@ -387,17 +405,18 @@ namespace Rooster {
 
 		std::vector<struct Animation> animations;
 
-		Texture star;
+		
 		Sprite estrelinha;
-		Texture burned;
 		Sprite burning;
-		int hits = 0;
+		
 
-		Font comboFont;
+
 		Text comboText;
 
-		SoundBuffer bufferFire;
+
 		Sound fireSound;
+
+		int hits = 0;
 
 	public:
 
@@ -422,6 +441,7 @@ namespace Rooster {
 		Ataques* ultimateShot;
 		Ataques* superAtack;
 		Ataques* projectileAtack;
+	
 		bool hasProjectileAtack = false;
 
 
@@ -480,22 +500,22 @@ namespace Rooster {
 
 			//me desculpe por deixar feio || excuse me for leaving it looking like mota
 
-			star.loadFromFile("sprites\\estrelinhas.png");
-			estrelinha.setTexture(star);
+
+			estrelinha.setTexture(galoResources.star);
 			estrelinha.setScale((float)SCREEN_WIDTH / 7680, (float)SCREEN_HEIGHT / 4320);
 
-			comboFont.loadFromFile("fonts\\Act_Of_Rejection.ttf");
+			
 
-			comboText.setFont(comboFont);
+			comboText.setFont(galoResources.comboFont);
 			comboText.setCharacterSize(SCREEN_WIDTH / 30);
 			comboText.setFillColor(Color::Yellow);
 			comboText.setOutlineThickness(SCREEN_WIDTH / 900);
 			comboText.setOutlineColor(Color(255, 255, 10));
-			burned.loadFromFile("sprites\\Burning.png");
-			burning.setTexture(burned);
+			
+			burning.setTexture(galoResources.burned);
 
-			bufferFire.loadFromFile("sounds\\on-fire.ogg");
-			fireSound.setBuffer(bufferFire);
+			
+			fireSound.setBuffer(galoResources.bufferFire);
 
 			this->position = Vector2f(0, 0);
 
@@ -511,7 +531,7 @@ namespace Rooster {
 
 		}
 
-		~Galo() {
+		virtual ~Galo() {
 			delete bar;
 
 			delete hiKick;
@@ -520,7 +540,6 @@ namespace Rooster {
 			delete superAtack;
 			delete projectileAtack;
 
-			//model.clearModel();
 		}
 
 		inline string getName() {
@@ -730,10 +749,13 @@ namespace Rooster {
 		virtual void defend() = 0;
 
 		virtual void defended(Galo& galo2, Ataques* atk, bool facingRight) {
+
 			Ataques* ataque = new Ataques(*atk);
+
 			ataque->Damage *= 0.25;
 			ataque->KnockBack *= 0.25;
 			apanhar(*ataque, facingRight);
+			delete ataque;
 		}
 
 		virtual void highKick() = 0;
@@ -1179,6 +1201,108 @@ namespace Rooster {
 			thisFrames++;
 		}
 
+	};
+
+	class GaloTeste : public Galo {
+
+		Texture t;
+	public:
+		GaloTeste(struct GaloStats _stats, int _state, bool isp1) : Galo(_stats, _state, isp1) {
+			
+			
+			name = "Basic";
+
+
+
+			this->hiKick = new Ataques(
+				3, 15, HitBox{ Vector2f(0, 0), 0 },
+				20, 10, -PI / 4, milliseconds(650), "sounds\\fist-punch-or-kick-7171.ogg"
+			);
+			this->louKick = new Ataques(
+				4, 10, HitBox{ Vector2f(0, 0), 0 },
+				20, 10, PI / 4, milliseconds(500), "sounds\\rooster-crowing-80322.ogg"
+			);
+
+			this->louKick->soundCollision.setVolume(25);
+
+			this->ultimateShot = new Ataques(
+				5, 70, HitBox{ Vector2f(0, 0),0 },
+				5, 3, 0, milliseconds(750),
+				"sounds\\scorpion-get_over_here.ogg", milliseconds(2000)
+			);
+			this->ultimateShot->soundCollision.setVolume(75);
+
+
+			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
+
+			
+			Projectile* cinto = new Projectile(
+				Vector2f(0, 0),
+				"sprites\\Cinto.png",
+				0, 0, Vector2f(1, 1),
+				IntRect(0, 0, 603, 100)
+			);
+
+			Projectile* cintoAmarrado = new Projectile(true);
+
+			delete cinto;
+			delete cintoAmarrado;
+			
+			bar = new LifeBar(maxHp, isp1, name.c_str());
+
+			// Npop
+			
+			struct Animation agacharAnim;
+			agacharAnim.init("animations/kalsaDefend.txt");
+			agacharAnim.playingSpeed = 1;
+			agacharAnim.connectLoop = false;
+
+			animations.push_back(agacharAnim);
+
+			struct Animation danceAnim;
+			danceAnim.init("animations/kalsaDance3.txt");
+			danceAnim.playingSpeed = 0.1;
+			danceAnim.connectLoop = true;
+
+			animations.push_back(danceAnim);
+			
+			
+
+
+			t.loadFromFile("sprites/galoKalsa.png");
+
+		}
+		void defend() {}
+		void highKick() {}
+		void lowKick() {}
+		void especial(){}
+		void super(){}
+		void updateAnimations(){}
+	};
+
+	class Teste {
+		Texture t1;
+
+	public:
+		Teste() {
+			t1.loadFromFile("sprites/galoKalsa.png");
+		}
+		virtual ~Teste() {
+			println("Test");
+		}
+	};
+
+	class Testinho : public Teste {
+		
+	public:
+		Texture t2;
+		Testinho() : Teste() {
+			t2.loadFromFile("sprites/galoKalsa.png");
+		}
+		
+		~Testinho() {
+			println("Testinho");
+		}
 	};
 
 }

@@ -48,6 +48,8 @@ namespace Rooster {
 
 			this->superAtack = new Ataques(14, 10, HitBox{ Vector2f(0, 0), 0 }, 20, 10, 0, milliseconds(3000), "sounds\\mg34.ogg");
 
+
+			
 			Projectile* cinto = new Projectile(
 				Vector2f(0, 0),
 				"sprites\\Cinto.png",
@@ -60,6 +62,14 @@ namespace Rooster {
 			atacking = NOT_ATTACK;
 			projectiles.push_back(*cinto);
 			projectiles.push_back(*cintoAmarrado);
+
+			delete cinto;
+			delete cintoAmarrado;
+			// A solução?
+
+
+
+
 
 			jbl.loadFromFile("sprites\\berimbau.png");
 			berimbau.setTexture(jbl);
@@ -109,6 +119,11 @@ namespace Rooster {
 
 		}
 
+		/*
+		~Kalsa() {
+
+		}
+		*/
 
 		Vector2f getFrontFootPos() {
 			float coordXPaint = 600;

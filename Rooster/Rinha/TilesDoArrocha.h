@@ -2505,11 +2505,18 @@ struct TilesInfo {
 	int frames = 0;
 
 	
+	
 	Rooster::Galo* galoPeste;
 	Rooster::Galo* galoKalsa;
 	Rooster::Galo* galoSniper;
 	Rooster::Galo* galoBruxo;
 	Rooster::Galo* galoBota;
+	
+	
+	int testes = 30;
+	vector<Rooster::Galo*> galosTestes;
+
+	vector<Rooster::Teste*> testTestes;
 	
 
 	Texture fundao;
@@ -2555,6 +2562,11 @@ struct TilesInfo {
 		galoBruxo->facingRight = true;
 		
 		
+		/*
+		for (int i = 0; i < testes; i++) {
+			galosTestes.push_back(new Rooster::GaloTeste(kalsaSt, Rooster::state::DANCING, false));
+			//testTestes.push_back(new Rooster::Testinho());
+		}*/
 
 		fundao.loadFromFile("sprites/tiringa.png");
 
@@ -2571,6 +2583,8 @@ struct TilesInfo {
 		xavier = new TecladoYamaha(roomSize, playerNumber);
 
 		
+		
+			
 		galoPeste->update();
 
 		galoKalsa->update();
@@ -2580,6 +2594,8 @@ struct TilesInfo {
 		galoBruxo->update();
 
 		galoBota->update();
+		
+		
 		
 
 		//alcides->update(Vector2f(0, 0));
@@ -2596,6 +2612,16 @@ struct TilesInfo {
 		delete galoSniper;
 		delete galoBruxo;
 		delete galoBota;
+		
+
+		/*
+		for (int i = 0; i < testes; i++) {
+			delete galosTestes[i];
+			//delete testTestes[i];
+		}
+		*/
+		
+
 
 		delete bregaMeter;
 		
@@ -2618,6 +2644,8 @@ struct TilesInfo {
 		galoSniper->show(window);
 		galoBruxo->show(window);
 		galoBota->show(window);
+		
+		
 
 		bregaMeter->draw(window);
 		
@@ -2654,6 +2682,7 @@ struct TilesInfo {
 		xavier->update();
 
 		
+		
 		if (xavier->isPlaying()) {
 			galoPeste->update();
 
@@ -2665,6 +2694,8 @@ struct TilesInfo {
 
 			galoBota->update();
 		}
+		
+		
 
 		bregaMeter->percentage = (float)xavier->getBregaPower(0) / xavier->getBregaMax();
 		bregaMeter->update();

@@ -72,6 +72,15 @@ namespace Rooster {
             );
             projectiles.push_back(*corvinho);
 
+            delete rato;
+            delete n2;
+            delete corvinho;
+            // Vamo que vamo
+
+
+
+
+
 
             textura.loadFromFile("sprites/galoPeste.png");
 
@@ -109,7 +118,11 @@ namespace Rooster {
             bar = new LifeBar(maxHp, isp1, name.c_str());
 
         }
+        /*
+        ~Peste() {
 
+        }
+        */
 
         void weatherAnim(int frames) {
             model.at(CORPO)->angle += 0;

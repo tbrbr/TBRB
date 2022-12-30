@@ -78,6 +78,10 @@ void top10formasdereiniciarumaclassefullhd4ktorrentdownload(string a, Galo** gal
 
 int main() {
 
+	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Fullscreen);
+	window->clear(Color::Black);
+	window->display();
+
 
 	LANGUAGE::Lang lang = LANGUAGE::ENGLISH;
 	{
@@ -91,7 +95,7 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
-	RenderWindow* window = new RenderWindow(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "TBRB", SCREEN_WIDTH == 1280 ? Style::Default : Style::Fullscreen);
+	
 
 	// Carregando texturas pra particulas
 	Rooster::partTextures.init();
@@ -105,7 +109,7 @@ int main() {
 	galoResources.init();
 
 
-	int option = INTRO;
+	int option = MAPEAMENTO;
 
 
 
@@ -222,10 +226,14 @@ int main() {
 	int galo_lvl = 0;
 
 
+	
+
+
 	while (window->isOpen())
 	{
 		/*mota que bagulho mal feito do caaaaaaaaaaaaaaaanso*/
 		/*Mota que absurdo*/
+
 		switch (option)
 		{
 
@@ -396,16 +404,24 @@ int main() {
 
 
 	}
+	
 	t.terminate();
 	window->close();
+	
+	// Quando chega aqui tem 50% de chance de fechar crashando
 	delete listener;
 	delete socket;
 	delete galo;
 	delete galo2;
+	
 	delete miniGame1;
+	println("Minigame");
 	delete __mapa;
+	println("Mapa");
 	delete window;
+	println("Window");
 	delete selector;
+	println("Selector");
 
 	
 

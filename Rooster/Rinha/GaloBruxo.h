@@ -55,8 +55,21 @@ namespace Rooster {
 			te.scale(0.5, 0.75);
 			defense->setTransfrom(te);
 
-			projectiles.push_back(*defense);
-			projectiles.push_back(*defense);
+			projectiles.push_back(defense);
+
+
+			Projectile* defense2 = new Projectile(
+				Vector2f(0, 0),
+				"sprites\\escudo.png",
+				0, 0, Vector2f(0.25, 0.25)
+			);
+
+			defense2->setOriginCenter();
+			defense2->isTrans = true;
+			te.scale(0.5, 0.75);
+			defense2->setTransfrom(te);
+
+			projectiles.push_back(defense2);
 
 			//println("Defense done");
 
@@ -67,7 +80,7 @@ namespace Rooster {
 			);
 
 			atacking = NOT_ATTACK;
-			projectiles.push_back(*fumaca);
+			projectiles.push_back(fumaca);
 
 			//println("Fumaca");
 
@@ -76,11 +89,11 @@ namespace Rooster {
 				"sprites\\flame.png",
 				0, 0, Vector2f(0.25, 0.25)
 			);
-			projectiles.push_back(*flame);
+			projectiles.push_back(flame);
 
-			delete defense;
-			delete fumaca;
-			delete flame;
+			//delete defense;
+			//delete fumaca;
+			//delete flame;
 
 
 
@@ -230,7 +243,7 @@ namespace Rooster {
 
 			model.at("Hat")->angle += -sin(2 * PI * legWalkAngFase / 360);
 
-			projectiles.at(0).setVisibility(false);
+			projectiles.at(0)->setVisibility(false);
 		}
 		void runReset() {
 
@@ -247,7 +260,7 @@ namespace Rooster {
 			model.at("BackShoe")->offset.y = 0;
 			model.at("FrontShoe")->offset.y = 0;
 
-			projectiles.at(0).setVisibility(false);
+			projectiles.at(0)->setVisibility(false);
 
 		}
 
@@ -261,9 +274,9 @@ namespace Rooster {
 			static int angle = 0;
 			angle++;
 
-			projectiles[0].isTrans = true;
+			projectiles[0]->isTrans = true;
 
-			projectiles[0].setScale(1, 1);
+			projectiles[0]->setScale(1, 1);
 
 			Transform trans;
 
@@ -271,7 +284,7 @@ namespace Rooster {
 			float yScale = model.yScl*0.2;
 
 
-			projectiles[0].setSpriteAngle(angle*sign(xScale));
+			projectiles[0]->setSpriteAngle(angle*sign(xScale));
 
 			Vector2f shieldPos = model.at("Body")->drawPos;
 			shieldPos.x -= 140 * model.xScl;
@@ -281,17 +294,17 @@ namespace Rooster {
 			trans.scale(xScale, yScale);
 			
 			
-			projectiles[0].setPosition(shieldPos);
-			projectiles[0].setTransfrom(trans);
+			projectiles[0]->setPosition(shieldPos);
+			projectiles[0]->setTransfrom(trans);
 
 			
-			projectiles[0].setImpulse(0, 0);
-			projectiles[0].setVisibility(true);
-			projectiles[0].update();
+			projectiles[0]->setImpulse(0, 0);
+			projectiles[0]->setVisibility(true);
+			projectiles[0]->update();
 
 			
 			defense.center = shieldPos;		
-			defense.radius = (projectiles[0].getSize().y /2) * xScale;
+			defense.radius = (projectiles[0]->getSize().y /2) * xScale;
 
 
 		}
@@ -365,37 +378,37 @@ namespace Rooster {
 				model.at("Hat")->angle = 30;
 				
 				if (facingRight) {
-					projectiles[3].setSpriteScale((float)- thisFrames / 30, (float)SCREEN_WIDTH / 1920);
+					projectiles[3]->setSpriteScale((float)- thisFrames / 30, (float)SCREEN_WIDTH / 1920);
 
-					projectiles[3].setSpritePosition(
-						model.at("Hat")->drawPos.x + model.at("Hat")->sprite.getGlobalBounds().width/5 + projectiles[3].getSize().x,
-						model.at("Hat")->drawPos.y + model.at("Hat")->sprite.getGlobalBounds().height/2 - projectiles[3].getSize().y
+					projectiles[3]->setSpritePosition(
+						model.at("Hat")->drawPos.x + model.at("Hat")->sprite.getGlobalBounds().width/5 + projectiles[3]->getSize().x,
+						model.at("Hat")->drawPos.y + model.at("Hat")->sprite.getGlobalBounds().height/2 - projectiles[3]->getSize().y
 					);
 				}
 				else {
 
-					projectiles[3].setSpriteScale((float)thisFrames/30, (float)SCREEN_WIDTH / 1920);
+					projectiles[3]->setSpriteScale((float)thisFrames/30, (float)SCREEN_WIDTH / 1920);
 
-					projectiles[3].setSpritePosition(
-						model.at("Hat")->drawPos.x - model.at("Hat")->sprite.getGlobalBounds().width / 5 -  projectiles[3].getSize().x,
-						model.at("Hat")->drawPos.y + model.at("Hat")->sprite.getGlobalBounds().height / 2 - projectiles[3].getSize().y
+					projectiles[3]->setSpritePosition(
+						model.at("Hat")->drawPos.x - model.at("Hat")->sprite.getGlobalBounds().width / 5 -  projectiles[3]->getSize().x,
+						model.at("Hat")->drawPos.y + model.at("Hat")->sprite.getGlobalBounds().height / 2 - projectiles[3]->getSize().y
 					);
 				}
 				
-				projectiles[3].setVisibility(true);
+				projectiles[3]->setVisibility(true);
 				superAtack->isAtacking = true;
 				
 				superAtack->hitbox.center.x = (facingRight) ?
-					projectiles[3].getSpritePosition().x + projectiles[3].getSize().x / 4:
-					projectiles[3].getSpritePosition().x - projectiles[3].getSize().x / 4;
+					projectiles[3]->getSpritePosition().x + projectiles[3]->getSize().x / 4:
+					projectiles[3]->getSpritePosition().x - projectiles[3]->getSize().x / 4;
 
-				superAtack->hitbox.center.y = projectiles[3].getSpritePosition().y + projectiles[3].getSize().y / 2;
-				superAtack->hitbox.radius = projectiles[3].getSize().y / 2;
+				superAtack->hitbox.center.y = projectiles[3]->getSpritePosition().y + projectiles[3]->getSize().y / 2;
+				superAtack->hitbox.radius = projectiles[3]->getSize().y / 2;
 			}
 			else if(percentage < 2.9f / 3.f) {
 
 				thisFrames = 0;
-				projectiles[3].setVisibility(false);
+				projectiles[3]->setVisibility(false);
 
 				model.at("Body")->angle *= 0.99;
 				model.at("BackArm")->angle *= 0.99;
@@ -468,28 +481,28 @@ namespace Rooster {
 				model.at("Body")->angle = percentage * 30;
 				model.at("FrontBigode")->angle = percentage * -30;
 				model.at("BackBigode")->angle = percentage * -30;
-				projectiles[0].isTrans = false;
+				projectiles[0]->isTrans = false;
 
-				projectiles[0].setImpulse(0, 0);
-				projectiles[0].setSpriteAngle(angle);
+				projectiles[0]->setImpulse(0, 0);
+				projectiles[0]->setSpriteAngle(angle);
 
-				projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+				projectiles[0]->setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
 
-				projectiles[0].setPosition(getBackHandPos());
+				projectiles[0]->setPosition(getBackHandPos());
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].update();
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->update();
 
-				projectiles[1].isTrans = false;
-				projectiles[1].setImpulse(0, 0);
-				projectiles[1].setSpriteAngle(angle);
+				projectiles[1]->isTrans = false;
+				projectiles[1]->setImpulse(0, 0);
+				projectiles[1]->setSpriteAngle(angle);
 
-				projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+				projectiles[1]->setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
 
-				projectiles[1].setPosition(getFrontHandPos());
+				projectiles[1]->setPosition(getFrontHandPos());
 
-				projectiles[1].setVisibility(true);
-				projectiles[1].update();
+				projectiles[1]->setVisibility(true);
+				projectiles[1]->update();
 
 				
 
@@ -505,27 +518,27 @@ namespace Rooster {
 				model.at("FrontBigode")->angle = percentage * -30;
 				model.at("BackBigode")->angle = percentage * -30;
 
-				projectiles[0].isTrans = false;
-				projectiles[0].setImpulse(0, 0);
-				projectiles[0].setSpriteAngle(angle);
+				projectiles[0]->isTrans = false;
+				projectiles[0]->setImpulse(0, 0);
+				projectiles[0]->setSpriteAngle(angle);
 
-				projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+				projectiles[0]->setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
 
-				projectiles[0].setPosition(getBackHandPos());
+				projectiles[0]->setPosition(getBackHandPos());
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].update();
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->update();
 
-				projectiles[1].isTrans = false;
-				projectiles[1].setImpulse(0, 0);
-				projectiles[1].setSpriteAngle(angle);
+				projectiles[1]->isTrans = false;
+				projectiles[1]->setImpulse(0, 0);
+				projectiles[1]->setSpriteAngle(angle);
 
-				projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+				projectiles[1]->setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
 
-				projectiles[1].setPosition(getFrontHandPos());
+				projectiles[1]->setPosition(getFrontHandPos());
 
-				projectiles[1].setVisibility(true);
-				projectiles[1].update();
+				projectiles[1]->setVisibility(true);
+				projectiles[1]->update();
 
 				
 			}
@@ -543,23 +556,23 @@ namespace Rooster {
 				model.at("FrontBigode")->angle = percentage * 30;
 				model.at("BackBigode")->angle = percentage * 30;
 
-				projectiles[0].setVisibility(true);
+				projectiles[0]->setVisibility(true);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(20, 0);
-					projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+					projectiles[0]->setImpulse(20, 0);
+					projectiles[0]->setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
 				}
 
 				else {
-					projectiles[0].setImpulse(-20, 0);
-					projectiles[0].setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
+					projectiles[0]->setImpulse(-20, 0);
+					projectiles[0]->setScale((float)SCREEN_WIDTH / 7680 * percentage, (float)SCREEN_WIDTH / 7680 * percentage);
 				}
 
-				projectiles[0].update();
+				projectiles[0]->update();
 
 				ultimateShot->isAtacking = true;
-				ultimateShot->hitbox.center = projectiles[0].getPosition();
-				ultimateShot->hitbox.radius = projectiles[0].getSize().x / 2;
+				ultimateShot->hitbox.center = projectiles[0]->getPosition();
+				ultimateShot->hitbox.radius = projectiles[0]->getSize().x / 2;
 			}
 			else if (percentage < 2.5f / 3.f) {
 
@@ -574,29 +587,29 @@ namespace Rooster {
 				model.at("FrontBigode")->angle = percentage * -30;
 				model.at("BackBigode")->angle = percentage * -30;
 
-				projectiles[0].setVisibility(false);
-				projectiles[1].setVisibility(true);
+				projectiles[0]->setVisibility(false);
+				projectiles[1]->setVisibility(true);
 
-				projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+				projectiles[1]->setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
 
 				if (facingRight) {
-					projectiles[1].setImpulse(30, 0);
+					projectiles[1]->setImpulse(30, 0);
 				}
 				else {
-					projectiles[1].setImpulse(-30, 0);
+					projectiles[1]->setImpulse(-30, 0);
 				}
 
-				projectiles[1].update();
+				projectiles[1]->update();
 
 				ultimateShot->isAtacking = true;
 
-				ultimateShot->hitbox.center = projectiles[1].getPosition();
-				ultimateShot->hitbox.radius = projectiles[1].getSize().x / 2;
+				ultimateShot->hitbox.center = projectiles[1]->getPosition();
+				ultimateShot->hitbox.radius = projectiles[1]->getSize().x / 2;
 			}
 			else if (percentage < 2.9 / 3.f) {
 
-				projectiles[1].setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
-				projectiles[1].update();
+				projectiles[1]->setScale((float)SCREEN_WIDTH / 15360 * percentage, (float)SCREEN_WIDTH / 15360 * percentage);
+				projectiles[1]->update();
 				model.at("FrontArm")->angle *= 0.9;
 				model.at("BackArm")->angle *= 0.9;
 				model.at("Head")->angle *= 0.9;
@@ -604,12 +617,12 @@ namespace Rooster {
 				model.at("FrontBigode")->angle *= 0.9;
 				model.at("BackBigode")->angle *= 0.9;
 
-				ultimateShot->hitbox.center = projectiles[1].getPosition();
-				ultimateShot->hitbox.radius = projectiles[1].getSize().x / 2;
+				ultimateShot->hitbox.center = projectiles[1]->getPosition();
+				ultimateShot->hitbox.radius = projectiles[1]->getSize().x / 2;
 			}
 			else {
 
-				projectiles[1].setVisibility(false);
+				projectiles[1]->setVisibility(false);
 				ultimateShot->isAtacking = false;
 				ultimateShot->soundPlayed = false;
 
@@ -642,17 +655,17 @@ namespace Rooster {
 				float thisPercentage = percentage * 3;
 
 				model.at("BackArm")->angle = 90 * thisPercentage;
-				projectiles[2].setVisibility(true);
+				projectiles[2]->setVisibility(true);
 
-				projectiles[2].setSpriteScale((SCREEN_WIDTH / 1920) * thisPercentage, -(SCREEN_HEIGHT / 1080) * thisPercentage * 2);
+				projectiles[2]->setSpriteScale((SCREEN_WIDTH / 1920) * thisPercentage, -(SCREEN_HEIGHT / 1080) * thisPercentage * 2);
 
-				projectiles[2].setPosition(position.x - projectiles[0].getSize().x / 2, SCREEN_HEIGHT);
+				projectiles[2]->setPosition(position.x - projectiles[0]->getSize().x / 2, SCREEN_HEIGHT);
 
 				position.x += (frames % 2) * -8 + 4;
 			}
 			else if (percentage < 1.1f / 3.f) {
 
-				projectiles[2].setVisibility(false);
+				projectiles[2]->setVisibility(false);
 				if (go) {
 					int x = position.x - SCREEN_WIDTH / 2;
 					position.x += sign(x) * -SCREEN_WIDTH / 2;
@@ -854,7 +867,7 @@ namespace Rooster {
 			if (estado != INVISIBLE) {
 				aparecer();
 			}
-			// projectiles[0].update();
+			// projectiles[0]->update();
 
 		}
 

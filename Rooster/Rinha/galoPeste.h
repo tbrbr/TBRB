@@ -53,7 +53,7 @@ namespace Rooster {
 
 
             atacking = NOT_ATTACK;
-            projectiles.push_back(*rato);
+            projectiles.push_back(rato);
 
             Projectile* n2 = new Projectile(
                 Vector2f(0, 0),
@@ -62,7 +62,7 @@ namespace Rooster {
             );
 
             n2->setOriginCenter();
-            projectiles.push_back(*n2);
+            projectiles.push_back(n2);
 
             Projectile* corvinho = new Projectile(
                 Vector2f(0, 0),
@@ -70,12 +70,13 @@ namespace Rooster {
                 0, 0, Vector2f(1, 1),
                 IntRect(0, 0, 500, 829)
             );
-            projectiles.push_back(*corvinho);
+            projectiles.push_back(corvinho);
 
-            delete rato;
-            delete n2;
-            delete corvinho;
+            //delete rato;
+            //delete n2;
+            //delete corvinho;
             // Vamo que vamo
+            // Tudo errado tudo errado
 
 
 
@@ -248,20 +249,20 @@ namespace Rooster {
             }
             else if (percentage < 1.25f / 3.f) {
                 float thisPercentage = (percentage * 3) / 2;
-                projectiles[2].setVisibility(true);
+                projectiles[2]->setVisibility(true);
 
                 if (facingRight) {
-                    projectiles[2].setImpulse(30, 0);
-                    projectiles[2].setScale(Vector2f(-0.5, 0.5));
-                    projectiles[2].facingRight = true;
+                    projectiles[2]->setImpulse(30, 0);
+                    projectiles[2]->setScale(Vector2f(-0.5, 0.5));
+                    projectiles[2]->facingRight = true;
                 }
                 else {
-                    projectiles[2].setImpulse(-30, 10);
-                    projectiles[2].setScale(Vector2f(0.5, 0.5));
-                    projectiles[2].facingRight = false;
+                    projectiles[2]->setImpulse(-30, 10);
+                    projectiles[2]->setScale(Vector2f(0.5, 0.5));
+                    projectiles[2]->facingRight = false;
                 }
 
-                projectiles[2].setPosition(model.at("BackArm")->drawPos.x, model.at("BackArm")->drawPos.y - projectiles[2].getSize().y/2);
+                projectiles[2]->setPosition(model.at("BackArm")->drawPos.x, model.at("BackArm")->drawPos.y - projectiles[2]->getSize().y/2);
 
               
                 int sprSelected = frames % 3;
@@ -277,15 +278,15 @@ namespace Rooster {
                     sprx = 500 + 748;
                 }
 
-                projectiles[2].setTextureRec(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
-                projectiles[2].update();
+                projectiles[2]->setTextureRec(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
+                projectiles[2]->update();
 
                 superAtack->isAtacking = true;
-                projectiles[2].facingRight ?
-                    superAtack->hitbox.center.x = projectiles[2].getPosition().x - projectiles[2].getSize().x / 2 :
-                    superAtack->hitbox.center.x = projectiles[2].getPosition().x + projectiles[2].getSize().x / 2;
-                superAtack->hitbox.center.y = projectiles[2].getPosition().y + projectiles[2].getSize().y / 2;
-                superAtack->hitbox.radius = projectiles[2].getSize().y / 2;
+                projectiles[2]->facingRight ?
+                    superAtack->hitbox.center.x = projectiles[2]->getPosition().x - projectiles[2]->getSize().x / 2 :
+                    superAtack->hitbox.center.x = projectiles[2]->getPosition().x + projectiles[2]->getSize().x / 2;
+                superAtack->hitbox.center.y = projectiles[2]->getPosition().y + projectiles[2]->getSize().y / 2;
+                superAtack->hitbox.radius = projectiles[2]->getSize().y / 2;
             }
             else if (percentage < 2.9f / 3.f) {
 
@@ -305,15 +306,15 @@ namespace Rooster {
                     sprx = 500 + 748;
                 }
 
-                projectiles[2].setTextureRec(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
-                projectiles[2].update();
+                projectiles[2]->setTextureRec(IntRect(sprx, 0, sizeCorvo[sprSelected], 829));
+                projectiles[2]->update();
 
                 superAtack->isAtacking = true;
-                projectiles[2].facingRight ?
-                    superAtack->hitbox.center.x = projectiles[2].getPosition().x - projectiles[2].getSize().x / 2 :
-                    superAtack->hitbox.center.x = projectiles[2].getPosition().x + projectiles[2].getSize().x / 2;
-                superAtack->hitbox.center.y = projectiles[2].getPosition().y + projectiles[2].getSize().y / 2;
-                superAtack->hitbox.radius = projectiles[2].getSize().y / 2;
+                projectiles[2]->facingRight ?
+                    superAtack->hitbox.center.x = projectiles[2]->getPosition().x - projectiles[2]->getSize().x / 2 :
+                    superAtack->hitbox.center.x = projectiles[2]->getPosition().x + projectiles[2]->getSize().x / 2;
+                superAtack->hitbox.center.y = projectiles[2]->getPosition().y + projectiles[2]->getSize().y / 2;
+                superAtack->hitbox.radius = projectiles[2]->getSize().y / 2;
             }
             else {
                 model.at("FrontArm")->angle *= 0;
@@ -377,24 +378,24 @@ namespace Rooster {
 
 
 
-                projectiles[1].setVisibility(true);
-                projectiles[1].setScale(Vector2f(1, 1));
+                projectiles[1]->setVisibility(true);
+                projectiles[1]->setScale(Vector2f(1, 1));
 
-                projectiles[1].setPosition(
+                projectiles[1]->setPosition(
                     Vector2f(model.at("BackArm")->drawPos.x,
                         (model.at("BackArm")->drawPos.y - model.at("BackArm")->sprite.getGlobalBounds().height 
-                         + projectiles[1].getSize().y / 2)
+                         + projectiles[1]->getSize().y / 2)
                     )
                 );
 
                 if (facingRight) {
-                    projectiles[1].setImpulse(25, 10);
-                    projectiles[1].setScale(Vector2f(0.1, 0.1));
+                    projectiles[1]->setImpulse(25, 10);
+                    projectiles[1]->setScale(Vector2f(0.1, 0.1));
                 }
 
                 else {
-                    projectiles[1].setImpulse(-25, 10);
-                    projectiles[1].setScale(Vector2f(-0.1, 0.1));
+                    projectiles[1]->setImpulse(-25, 10);
+                    projectiles[1]->setScale(Vector2f(-0.1, 0.1));
                 }
 
 
@@ -445,31 +446,31 @@ namespace Rooster {
 
 
 
-                projectiles[1].setImpulse(0, 0);
+                projectiles[1]->setImpulse(0, 0);
 
-                projectiles[1].setScale(
+                projectiles[1]->setScale(
                     0.5 * thisPercentage,
                     0.25 * thisPercentage
                 );
 
 
-                projectiles[1].setPosition(
+                projectiles[1]->setPosition(
                     position.x,
                     floorY
                 );
 
-                projectiles[1].setVisibility(true);
+                projectiles[1]->setVisibility(true);
             }
             else if (percentage < 2.5f / 3.f) {
                 float thisPercentage = (percentage * 3) / 2.5;
 
-                projectiles[1].setScale(
+                projectiles[1]->setScale(
                     0.5 - 0.5 * thisPercentage,
                     0.25 - 0.25 * thisPercentage
                 );
             }
             else
-                projectiles[1].setVisibility(false);
+                projectiles[1]->setVisibility(false);
 
 
             if (percentage < 1.f / 3.f) {
@@ -504,20 +505,20 @@ namespace Rooster {
             }
             else if (percentage < 2.2f / 3.f) {
 
-                projectiles[0].setVisibility(true);
-                projectiles[0].setScale(Vector2f(1, 1));
+                projectiles[0]->setVisibility(true);
+                projectiles[0]->setScale(Vector2f(1, 1));
 
-                projectiles[0].setPosition(Vector2f(model.at("BackArm")->drawPos.x,floorY - projectiles[0].getSize().y));
+                projectiles[0]->setPosition(Vector2f(model.at("BackArm")->drawPos.x,floorY - projectiles[0]->getSize().y));
 
                 if (facingRight) {
-                    projectiles[0].setImpulse(3, 0);
-                    projectiles[0].setScale(Vector2f(-0.2, 0.2));
-                    projectiles[0].facingRight = true;
+                    projectiles[0]->setImpulse(3, 0);
+                    projectiles[0]->setScale(Vector2f(-0.2, 0.2));
+                    projectiles[0]->facingRight = true;
                 }
                 else {
-                    projectiles[0].setImpulse(-3, 0);
-                    projectiles[0].setScale(Vector2f(0.2, 0.2));
-                    projectiles[0].facingRight = false;
+                    projectiles[0]->setImpulse(-3, 0);
+                    projectiles[0]->setScale(Vector2f(0.2, 0.2));
+                    projectiles[0]->facingRight = false;
                 }
 
                 louKick->isAtacking = true;
@@ -688,20 +689,20 @@ namespace Rooster {
                 aparecer();
             }
 
-            projectiles[0].update();
-            projectiles[1].update();
+            projectiles[0]->update();
+            projectiles[1]->update();
 
-            ultimateShot->hitbox.center = projectiles[1].getPosition();
-            ultimateShot->hitbox.radius = projectiles[1].getSize().y / 2;
+            ultimateShot->hitbox.center = projectiles[1]->getPosition();
+            ultimateShot->hitbox.radius = projectiles[1]->getSize().y / 2;
             
-            if (projectiles[1].getPosition().x > SCREEN_WIDTH || projectiles[0].getPosition().x < 0) {
+            if (projectiles[1]->getPosition().x > SCREEN_WIDTH || projectiles[0]->getPosition().x < 0) {
                           
-                projectiles[1].setVisibility(false);
+                projectiles[1]->setVisibility(false);
                 ultimateShot->isAtacking = false;
             }
 
 
-            if (projectiles[0].getVisibility()) {
+            if (projectiles[0]->getVisibility()) {
 
                 static bool playS = true;
                 if (playS) {
@@ -711,26 +712,26 @@ namespace Rooster {
 
                 louKick->soundCollision.setLoop(true);
                 
-                if (projectiles[0].getPosition().x > SCREEN_WIDTH || projectiles[0].getPosition().x < 0) {
+                if (projectiles[0]->getPosition().x > SCREEN_WIDTH || projectiles[0]->getPosition().x < 0) {
                     louKick->soundCollision.setLoop(false);
                     playS = true;
-                    projectiles[0].setVisibility(false);
+                    projectiles[0]->setVisibility(false);
                     louKick->isAtacking = false;
                 }
 
                 int i = (frames % 30) / 10;
 
-                projectiles[0].setTextureRec(IntRect(864 * i, 0, 864, 606));
+                projectiles[0]->setTextureRec(IntRect(864 * i, 0, 864, 606));
 
-                if (projectiles[0].facingRight) {
-                    louKick->hitbox.center.x = projectiles[0].getPosition().x - projectiles[0].getSize().y / 2;
+                if (projectiles[0]->facingRight) {
+                    louKick->hitbox.center.x = projectiles[0]->getPosition().x - projectiles[0]->getSize().y / 2;
                 }
                 else {
-                    louKick->hitbox.center.x = projectiles[0].getPosition().x + projectiles[0].getSize().y / 2;
+                    louKick->hitbox.center.x = projectiles[0]->getPosition().x + projectiles[0]->getSize().y / 2;
                 }
                 
-                louKick->hitbox.center.y = projectiles[0].getPosition().y;
-                louKick->hitbox.radius = projectiles[0].getSize().y/2;
+                louKick->hitbox.center.y = projectiles[0]->getPosition().y;
+                louKick->hitbox.radius = projectiles[0]->getSize().y/2;
             }
 
 

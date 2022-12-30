@@ -432,7 +432,7 @@ namespace Rooster {
 		bool isDefending = false;
 		HitBox defense;
 		std::vector<HitBox> hurtBox;
-		std::vector<Projectile> projectiles;
+		std::vector<Projectile*> projectiles;
 
 		bool attackStart = false;
 
@@ -539,6 +539,11 @@ namespace Rooster {
 			delete ultimateShot;
 			delete superAtack;
 			delete projectileAtack;
+
+			for (int i = 0; i < projectiles.size(); i++) {
+				delete projectiles[i];
+			}
+			projectiles.clear();
 
 		}
 
@@ -769,11 +774,11 @@ namespace Rooster {
 			model.draw(window);
 
 			for (int i = 0; i < projectiles.size(); i++) {
-				if (!projectiles[i].NULO)
-					if (projectiles[i].isTrans)
-						projectiles[i].drawTrans(window);
+				if (!projectiles[i]->NULO)
+					if (projectiles[i]->isTrans)
+						projectiles[i]->drawTrans(window);
 					else
-						projectiles[i].draw(window);
+						projectiles[i]->draw(window);
 			}
 
 

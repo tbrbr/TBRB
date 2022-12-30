@@ -50,12 +50,12 @@ namespace Rooster {
 			superAtack->invFrames = 10;
 
 			Projectile* bullet = new Projectile(Vector2f(0, 0),"sprites\\bullet.png" , 0, 0, Vector2f(0, 0));
-			projectiles.push_back(*bullet);
+			projectiles.push_back(bullet);
 			Projectile* n2 = new Projectile(true);
-			projectiles.push_back(*n2);
+			projectiles.push_back(n2);
 
-			delete bullet;
-			delete n2;
+			//delete bullet;
+			//delete n2;
 
 
 
@@ -257,22 +257,22 @@ namespace Rooster {
 			}
 			else if (percentage < 1.3f / 3.f) {
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(120, 0);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(120, 0);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 				else {
-					projectiles[0].setImpulse(-120, 0);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-120, 0);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
 				superAtack->isAtacking = true;
@@ -295,22 +295,22 @@ namespace Rooster {
 			}
 			else if (percentage < 1.9f / 3.f) {
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(120, 0);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(120, 0);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 				else {
-					projectiles[0].setImpulse(-120, 0);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-120, 0);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
 				superAtack->isAtacking = true;
@@ -333,22 +333,22 @@ namespace Rooster {
 
 			else if (percentage < 2.2f / 3.f) {
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(120, 0);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(120, 0);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 				else {
-					projectiles[0].setImpulse(-120, 0);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-120, 0);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
 				superAtack->isAtacking = true;
@@ -371,22 +371,22 @@ namespace Rooster {
 			}
 			else if (percentage < 2.4f / 3.f) {
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(120, 0);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(120, 0);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 				else {
-					projectiles[0].setImpulse(-120, 0);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-120, 0);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
 				superAtack->isAtacking = true;
@@ -413,22 +413,22 @@ namespace Rooster {
 			}
 			else if (percentage < 2.6f / 3.f) {
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(120, 0);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(120, 0);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 				else {
-					projectiles[0].setImpulse(-120, 0);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-120, 0);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
 				superAtack->isAtacking = true;
@@ -506,23 +506,23 @@ namespace Rooster {
 
 
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(90, 0);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(90, 0);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 
 				else {
-					projectiles[0].setImpulse(-90, 0);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-90, 0);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
 
@@ -791,13 +791,13 @@ namespace Rooster {
 				}
 				
 
-				projectiles[0].update();
+				projectiles[0]->update();
 
-				ultimateShot->hitbox.center = projectiles[0].getPosition();
-				ultimateShot->hitbox.radius = projectiles[0].getSize().y / 2;
+				ultimateShot->hitbox.center = projectiles[0]->getPosition();
+				ultimateShot->hitbox.radius = projectiles[0]->getSize().y / 2;
 
-				superAtack->hitbox.center = projectiles[0].getPosition();
-				superAtack->hitbox.radius = projectiles[0].getSize().y / 2;
+				superAtack->hitbox.center = projectiles[0]->getPosition();
+				superAtack->hitbox.radius = projectiles[0]->getSize().y / 2;
 
 			}
 
@@ -939,26 +939,26 @@ namespace Rooster {
 
 
 
-				projectiles[0].setVisibility(true);
-				projectiles[0].setScale(Vector2f(1, 1));
+				projectiles[0]->setVisibility(true);
+				projectiles[0]->setScale(Vector2f(1, 1));
 
-				projectiles[0].setPosition(
+				projectiles[0]->setPosition(
 					Vector2f(model.at("Sniper")->drawPos.x,
-						(model.at("Sniper")->drawPos.y - projectiles[0].getSize().y / 2)
+						(model.at("Sniper")->drawPos.y - projectiles[0]->getSize().y / 2)
 					)
 				);
 
 				if (facingRight) {
-					projectiles[0].setImpulse(90, 30);
-					projectiles[0].setScale(Vector2f(0.1, 0.1));
+					projectiles[0]->setImpulse(90, 30);
+					projectiles[0]->setScale(Vector2f(0.1, 0.1));
 				}
 
 				else {
-					projectiles[0].setImpulse(-90, 30);
-					projectiles[0].setScale(Vector2f(-0.1, 0.1));
+					projectiles[0]->setImpulse(-90, 30);
+					projectiles[0]->setScale(Vector2f(-0.1, 0.1));
 				}
 
-				projectiles[0].setSpriteAngle(15);
+				projectiles[0]->setSpriteAngle(15);
 
 				ultimateShot->isAtacking = true;
 			}

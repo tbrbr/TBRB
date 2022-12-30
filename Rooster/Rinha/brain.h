@@ -231,7 +231,7 @@ public:
 	//avalia se pular eh a melhor solucao
 	virtual void jump() {
 		for (int i = 0; i < galo->projectiles.size(); i++) {
-			if (galo->projectiles[i].getVisibility() && abs(galinho->position.x - galo->projectiles[i].getPosition().x) < 500) {
+			if (galo->projectiles[i]->getVisibility() && abs(galinho->position.x - galo->projectiles[i]->getPosition().x) < 500) {
 
 				grade[0] += 3;
 
@@ -297,7 +297,7 @@ public:
 		}
 
 		for (int i = 0; i < galo->projectiles.size(); i++) {
-			if (galo->projectiles[i].getVisibility() && abs(galinho->position.x - galo->projectiles[i].getPosition().x) < 500) {
+			if (galo->projectiles[i]->getVisibility() && abs(galinho->position.x - galo->projectiles[i]->getPosition().x) < 500) {
 				grade[7] += 2;
 			}
 		}

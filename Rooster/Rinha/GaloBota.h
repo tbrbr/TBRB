@@ -100,9 +100,9 @@ namespace Rooster {
             puff->active = false;
            
 
-            projectiles.push_back(*puff);
+            projectiles.push_back(puff);
 
-            delete puff;
+            //delete puff;
             // Até tú botas filho meu
 
 
@@ -245,7 +245,7 @@ namespace Rooster {
 
                         float xx = model.pos.x;
                         float yy = model.pos.y;
-                        projectiles[0].setPosition(xx, Rooster::floorY);
+                        projectiles[0]->setPosition(xx, Rooster::floorY);
 
                         superAtack->playSound();
 
@@ -254,14 +254,14 @@ namespace Rooster {
 
                         float faceSign = facingRight ? 1 : -1;
 
-                        projectiles[0].setImpulse(faceSign * 16, 0);
-                        projectiles[0].setFriction(0.96);
-                        projectiles[0].setVisibility(true);
-                        projectiles[0].active = true;
-                        projectiles[0].setLife(100);
+                        projectiles[0]->setImpulse(faceSign * 16, 0);
+                        projectiles[0]->setFriction(0.96);
+                        projectiles[0]->setVisibility(true);
+                        projectiles[0]->active = true;
+                        projectiles[0]->setLife(100);
                  
-                        projectiles[0].setScaleMultiplier(0, 0);
-                        projectiles[0].facingSign = faceSign;
+                        projectiles[0]->setScaleMultiplier(0, 0);
+                        projectiles[0]->facingSign = faceSign;
                         
                     }
 
@@ -593,19 +593,19 @@ namespace Rooster {
             }
 
 
-            projectiles[0].update();
+            projectiles[0]->update();
 
-            projectileAtack->hitbox.center = projectiles[0].getPosition();
+            projectileAtack->hitbox.center = projectiles[0]->getPosition();
             if (projectileAtack->getHitted && projectileAtack->isAtacking) {
 
 
                 projectileAtack->playSound();
                 //projectileAtack->soundPlayed = true;
-                projectiles[0].death = true;
+                projectiles[0]->death = true;
             }
 
 
-            if (projectiles[0].death) {
+            if (projectiles[0]->death) {
 
                 
                 projectileAtack->isAtacking = false;
@@ -615,16 +615,16 @@ namespace Rooster {
                 effect->mortal = true;
                 effect->life = 100;
 
-                float wid = projectiles[0].getSprite().getGlobalBounds().width;
-                float hei = projectiles[0].getSprite().getGlobalBounds().height;
+                float wid = projectiles[0]->getSprite().getGlobalBounds().width;
+                float hei = projectiles[0]->getSprite().getGlobalBounds().height;
                 
 
                 for (int i = 0; i < 6; i++) {
                     float randDist = randFloat(wid/3);
                     float randAngle = randFloat(2*PI);
 
-                    float xx = cos(randAngle)*randDist + projectiles[0].getPosition().x - (wid/2)*projectiles[0].facingSign;
-                    float yy = sin(randAngle) * randDist + projectiles[0].getPosition().y - hei/2;
+                    float xx = cos(randAngle)*randDist + projectiles[0]->getPosition().x - (wid/2)*projectiles[0]->facingSign;
+                    float yy = sin(randAngle) * randDist + projectiles[0]->getPosition().y - hei/2;
 
                     effect->position.x = xx;
                     effect->position.y = yy;

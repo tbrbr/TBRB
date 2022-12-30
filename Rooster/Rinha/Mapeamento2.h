@@ -284,18 +284,15 @@ void mapeamento(RenderWindow* window) {
 		playerIndicator.textHAlign = 0;
 		
 
-		struct DisplayBox fpsDisplay;
-		fpsDisplay.init(4, 4, 40, 30);
-		fpsDisplay.textHAlign = 0;
-
+		float xBorderSpacing = 150;
 
 		struct Button changePlayerButton;
-		changePlayerButton.init(roomWid-200, 20, 200, 40);
+		changePlayerButton.init(roomWid-200 -xBorderSpacing, 20, 200, 40);
 		changePlayerButton.color = sf::Color(200, 100, 100);
 		changePlayerButton.label = "Next Player";
 
 		struct Button prevButton;
-		prevButton.init(0, 20, 200, 40);
+		prevButton.init(xBorderSpacing, 20, 200, 40);
 		prevButton.color = sf::Color(200, 100, 100);
 		prevButton.label = "Prev Player";
 
@@ -326,17 +323,6 @@ void mapeamento(RenderWindow* window) {
 		float dir = 1;
 
 
-		// TEste
-		/*
-		Texture t;
-		t.loadFromFile("sprites/galoSniper.png");
-
-		std::vector<struct Model*> modelTest;
-		*/
-		
-
-
-
 		int buttonSelected = -1;
 		bool listeningForKeybind = false;
 
@@ -362,19 +348,12 @@ void mapeamento(RenderWindow* window) {
 			Event e;
 			while (window->pollEvent(e))
 			{
+				
 				if (e.type == Event::KeyPressed)
 				{
 					if (e.key.code == Keyboard::Escape)
 					{
 						window->setView(window->getDefaultView());
-
-
-						/*
-						for (int i = 0; i < modelTest.size(); i++) {
-							
-						delete modelTest[i];
-						}
-						*/
 
 						return;
 					}
@@ -422,15 +401,12 @@ void mapeamento(RenderWindow* window) {
 				
 				}
 				
+				
 			}
 
 
 
 			window->clear();
-
-
-			fpsDisplay.label = GetFrameRate();
-			
 			
 			if (listeningForKeybind) {
 
@@ -448,8 +424,7 @@ void mapeamento(RenderWindow* window) {
 							keyInfo.type = 2;
 							keyInfo.key = i;
 							keyInfo.deviceId = j;
-							//j = connectedJoysticks;
-							//i = JOYTOTAL;
+
 							done = true;
 						}
 					}
@@ -458,14 +433,10 @@ void mapeamento(RenderWindow* window) {
 				if (!done) {
 					for (int i = 0; i < sf::Mouse::ButtonCount; i++) {
 						if (mainInput.mouseState[i][1]) {
-							//struct inputInfo input;
-							//input.type = 1;
+
 							keyInfo.type = 1;
 							keyInfo.key = i;
-							//keyInfo.deviceId = j;
 
-							//mainInput.board[0][buttonSelected][0] = input.setKey(i);
-							//i = sf::Mouse::ButtonCount;
 							done = true;
 						}
 					}
@@ -474,15 +445,10 @@ void mapeamento(RenderWindow* window) {
 				if (!done) {
 					for (int i = 0; i < sf::Keyboard::KeyCount; i++) {
 						if (mainInput.keyboardState[i][1]) {
-							//struct inputInfo input;
-							//input.type = 0;
 
 							keyInfo.type = 0;
 							keyInfo.key = i;
-							//keyInfo.deviceId = j;
 
-							//mainInput.board[0][buttonSelected][0] = input.setKey(i);
-							//i = sf::Keyboard::KeyCount;
 							done = true;
 						
 						}
@@ -548,19 +514,6 @@ void mapeamento(RenderWindow* window) {
 
 			if (updateLabels) {
 
-				/*
-				for (int i = 0; i < 200; i++) {
-					struct Model* model = new Model();
-
-
-					model->tex = &t;
-					model->loadModel("models/SniperModel.txt");
-					modelTest.push_back(model);
-				}
-
-				println("New Model");
-				*/
-
 				for (int i = 0; i < buttons.size(); i++) {
 					if (i == buttonSelected) {
 
@@ -571,11 +524,13 @@ void mapeamento(RenderWindow* window) {
 						buttons[i].label = keybindToText(mainInput.board[playerSelected][i][0]);
 					}
 				}
+				
+				updateLabels = false;
 			}
 
+			
 
-
-
+			
 			ghostSpr.setTextureRect(ghostSprMap.images[(int)(frames/10)%2]);
 			if (dir > 0) {
 				if (ghostX > roomWid * 3) {
@@ -595,24 +550,19 @@ void mapeamento(RenderWindow* window) {
 			}
 			ghostSpr.setPosition(ghostX, ghostY + ghostBaseY);
 			
-			window->draw(ghostSpr);
 
-			fpsDisplay.draw(*window);
+			
+			window->draw(ghostSpr);
+		
 
 			mainPartSystem.update();
 			mainPartSystem.draw(*window);
+			
 
-
+			
 			window->display();
-
-			updateLabels = false;
 		}
 
-		/*
-		for (int i = 0; i < modelTest.size(); i++) {
-			delete modelTest[i];
-		}
-		*/
 		return;
 	
 }

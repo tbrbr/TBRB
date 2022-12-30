@@ -2545,11 +2545,11 @@ struct TilesInfo {
 		galoBruxo  = new Rooster::Bruxo(kalsaSt, Rooster::state::DANCING, false);
 		galoBota   = new Rooster::Bota(kalsaSt, Rooster::state::DANCING, false);
 
-		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y));
-		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y));
-		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y));
-		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y));
-		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y));
+		galoKalsa->setPosition(Vector2f((float)roomSize.x * 0.3, roomSize.y+30));
+		galoPeste->setPosition(Vector2f((float)roomSize.x * 0.75, roomSize.y + 30));
+		galoSniper->setPosition(Vector2f((float)roomSize.x * 0.95, roomSize.y + 30));
+		galoBruxo->setPosition(Vector2f((float)roomSize.x * 0.18, roomSize.y + 30));
+		galoBota->setPosition(Vector2f((float)roomSize.x * 0.03, roomSize.y + 30));
 
 		galoKalsa->noCollision = true;
 		galoSniper->noCollision = true;
@@ -2636,15 +2636,18 @@ struct TilesInfo {
 		window.draw(rect);
 
 		//alcides->draw(&window, frames);
-		xavier->draw(window);
 
-		
 		galoPeste->show(window);
 		galoKalsa->show(window);
 		galoSniper->show(window);
 		galoBruxo->show(window);
 		galoBota->show(window);
-		
+
+
+
+		xavier->draw(window);
+
+	
 		
 
 		bregaMeter->draw(window);

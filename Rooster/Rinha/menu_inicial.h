@@ -482,6 +482,14 @@ int MenuPrincipal(RenderWindow * window, RectangleShape& background) {
 	titleFont.loadFromFile("fonts/CloisterBlack.ttf");
 	font.loadFromFile("fonts/blops.ttf");
 
+	std::string strVersion = "v. ";
+	strVersion += std::to_string(GAMEVERSION);
+	Text version(strVersion, basicFont, SCREEN_HEIGHT/50);
+
+	version.setPosition(SCREEN_WIDTH - version.getGlobalBounds().width, SCREEN_HEIGHT - version.getGlobalBounds().height*2);
+	//version.setPosition(0, 0);
+	version.setFillColor(Color::White);
+
 	Text title(LANG.getLine(LANGUAGE::MAIN_MENU), titleFont, SCREEN_HEIGHT / 13);
 	title.setPosition(SCREEN_WIDTH * 0.6, SCREEN_HEIGHT * 0.15);
 	title.setFillColor(Color::Red);
@@ -509,6 +517,10 @@ int MenuPrincipal(RenderWindow * window, RectangleShape& background) {
 		divs[i].setSize(Vector2f(t[i]->getGlobalBounds().width, t[i]->getGlobalBounds().height * 2));
 		divs[i].setFillColor(Color::Transparent);
 	}
+
+
+
+
 
 
 
@@ -566,7 +578,10 @@ int MenuPrincipal(RenderWindow * window, RectangleShape& background) {
 			window->draw(*t[i]);
 			window->draw(divs[i]);
 		}
+
+		window->draw(version);
 		window->draw(title);
+		
 		window->display();
 
 	}

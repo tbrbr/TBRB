@@ -12,6 +12,9 @@
 #include <cmath>
 #include <fstream>
 
+
+#define GAMEVERSION 1.100001
+
 #define FRAMERATE_LIMIT 60
 #pragma warning(disable : 4996)
 #define println(x) (std::cout << x << std::endl)

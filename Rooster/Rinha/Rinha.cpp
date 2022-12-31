@@ -109,7 +109,7 @@ int main() {
 	galoResources.init();
 
 
-	int option = MAPEAMENTO;
+	int option = MENU_PRINCIPAL;
 
 
 
@@ -313,6 +313,11 @@ int main() {
 
 		case MAPEAMENTO:
 			mapeamento(window);
+			option = MENU_PRINCIPAL;
+			break;
+
+		case SHOP:
+			shopMenu(window);
 			option = MENU_PRINCIPAL;
 			break;
 

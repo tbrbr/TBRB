@@ -12,8 +12,8 @@
 #include <cmath>
 #include <fstream>
 
-
-#define GAMEVERSION 1.100001
+// Versao Exemplo:  1.102356
+#define GAMEVERSION 1.100012
 
 #define FRAMERATE_LIMIT 60
 #pragma warning(disable : 4996)
@@ -72,6 +72,7 @@ Rooster::ParticleSystem mainPartSystem;
 using namespace Rooster;
 
 #include "Mapeamento2.h"
+#include "Shop.h"
 #include "pause_menu.h"// pq eu ja esperava isso?kkkkkkkkkkkkkkkkkkkkkk perai rapidão, vou mudar um negócio aq no codigo
 #include "brain.h"
 #include "Briga.h"

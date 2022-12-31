@@ -365,8 +365,8 @@ int configScreen(RenderWindow* window, RectangleShape& background) {
 int selecionarModo(RenderWindow * window, RectangleShape & background) {
 
 	
-
-	Text* t[4];
+	const int optionNum = 5;
+	Text* t[optionNum];
 
 	Font font;
 	Font titleFont;
@@ -382,20 +382,21 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 	t[0] = new Text(LANG.getLine(LANGUAGE::SINGLE), font, SCREEN_HEIGHT / 30);
 	t[1] = new Text(LANG.getLine(LANGUAGE::MULTI), font, SCREEN_HEIGHT / 30);
 	t[2] = new Text(LANG.getLine(LANGUAGE::MINI), font, SCREEN_HEIGHT / 30);
-	t[3] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
+	t[3] = new Text("SHOP", font, SCREEN_HEIGHT / 30);
+	t[4] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
 
 	int textXPosition = SCREEN_WIDTH * 0.6;
 	int textyPosition = SCREEN_HEIGHT * 0.5;
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < optionNum; i++) {
 		t[i]->setPosition(textXPosition, textyPosition);
 		t[i]->setFillColor(Color::Red);
 		textyPosition = textyPosition + SCREEN_HEIGHT * 0.10;
 	}
 
 
-	RectangleShape divs[4];
-	for (int i = 0; i < 4; i++) {
+	RectangleShape divs[optionNum];
+	for (int i = 0; i < optionNum; i++) {
 		divs[i].setPosition(t[i]->getPosition().x, t[i]->getPosition().y - t[i]->getGlobalBounds().height / 2);
 		divs[i].setSize(Vector2f(t[i]->getGlobalBounds().width, t[i]->getGlobalBounds().height * 2));
 		divs[i].setFillColor(Color::Transparent);
@@ -404,7 +405,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 
 
 	while (window->isOpen()) {
-		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, 3);
+		int __temp = ButtonCheck::checkButtonHover(divs, Mouse::getPosition(*window).x, Mouse::getPosition(*window).y, 0, optionNum-1);
 		Event e;
 
 		while (window->pollEvent(e)) {
@@ -435,6 +436,9 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 							return MINIGAME;
 						}
 						else if (__temp == 3) {
+							return SHOP;
+						}
+						else if (__temp == 4) {
 							return MENU_PRINCIPAL;
 						}
 					}
@@ -443,7 +447,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 		}
 
 		if (__temp != -1) {
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < optionNum; i++) {
 				if (__temp != i)
 					t[i]->setFillColor(Color::Red);
 				else
@@ -452,7 +456,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 
 		}
 		else {
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < optionNum; i++) {
 					t[i]->setFillColor(Color::Red);
 			}
 		}
@@ -461,7 +465,7 @@ int selecionarModo(RenderWindow * window, RectangleShape & background) {
 		window->draw(background);
 		window->draw(title);
 	
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < optionNum; i++) {
 			window->draw(*t[i]);
 			window->draw(divs[i]);
 		}
@@ -602,8 +606,8 @@ int minigame(RenderWindow* window, RectangleShape& background) {
 	title.setFillColor(Color::Red);
 
 
-	t[0] = new Text("Pato's Game", font, SCREEN_HEIGHT / 30);
-	t[1] = new Text("Arrocha's Tiles", font, SCREEN_HEIGHT / 30);
+	t[0] = new Text("Patos Game", font, SCREEN_HEIGHT / 30);
+	t[1] = new Text("Arrochas Tiles", font, SCREEN_HEIGHT / 30);
 	t[2] = new Text(LANG.getLine(LANGUAGE::BACK), font, SCREEN_HEIGHT / 30);
 
 	int textXPosition = SCREEN_WIDTH * 0.6;

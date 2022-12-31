@@ -24,7 +24,8 @@ namespace Rooster {
 		MULTI,
 		VERSUS,
 		SELECTION_SINGLE_FALIDA,
-		MAPEAMENTO
+		MAPEAMENTO,
+		SHOP
 	};
 
 	enum JoystickKeys {

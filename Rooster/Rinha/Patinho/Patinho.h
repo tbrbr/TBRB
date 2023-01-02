@@ -384,11 +384,15 @@ void drawStuff(GameInfo& info, RenderWindow& window){
     }
 
 
+
+    // Casa caiu pro rato
+    /*
     info.sRabo.setPosition(12*6, 10*4);
     info.sRabo.setTextureRect(info.sMapRabo.images.at(info.sMapRabo.imgNumber*((float)(info.frames % 100)) / 100));
     window.draw(info.sRabo);
 
     window.draw(info.sRato);
+    */
 
 
     if(!info.windowGrabbed){

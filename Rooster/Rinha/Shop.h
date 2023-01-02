@@ -1,6 +1,143 @@
 #pragma once
 
 
+struct Ghosty {
+	float x = 0;
+	float y = 0;
+	float hspd = 0;
+	float vspd = 0;
+	float spd = 4;
+
+	float scl = 5;
+
+	float addX = 0;
+	float addY = 0;
+
+	float shakeX = 0;
+	float shakeY = 0;
+	float shakeDuration = 0;
+	float shakeAmplitude = 0;
+
+	bool hovered = false;
+
+	float dir = 1;
+
+private:
+
+	bool alive = true;
+
+	sf::Sprite ghostSpr;
+	SpriteMap ghostMap;
+
+	sf::Sound hitSound;
+
+public:
+
+	void init(sf::Texture& texture, sf::SoundBuffer& hitSoundBuf) {
+
+
+
+
+		ghostSpr.setTexture(texture);
+
+		ghostMap.addImages(16, 16, 0, 0, 2, 1, (Vector2i)ghostSpr.getTexture()->getSize());
+		ghostSpr.setTextureRect(ghostMap.images[0]);
+		ghostSpr.setScale(5, 5);
+		ghostSpr.setOrigin(8,8);
+
+
+		hitSound.setBuffer(hitSoundBuf);
+		hitSound.setVolume(50);
+
+		y = 200;
+		dir = 1;
+		hspd = 5;
+
+	}
+
+	void update(Vector2f mousePos, float roomWid, float roomHei) {
+
+		hspd = dir * spd;
+
+		x += hspd;
+		y += vspd;
+
+
+		hovered = false;
+		if (ghostSpr.getGlobalBounds().contains(mousePos)) {
+			hovered = true;
+		}
+
+		if (hovered) {
+			if (mainInput.mouseState[0][1]) {
+				hit(roomWid, roomHei);
+			}
+		}
+
+		if (shakeDuration > 0) {
+			shakeDuration--;
+			shakeAmplitude *= 0.98;
+
+			shakeX = randFloatRange(-shakeAmplitude, shakeAmplitude);
+			shakeY = randFloatRange(-shakeAmplitude, shakeAmplitude);
+		}
+		else {
+			shakeAmplitude = 0;
+			shakeX = 0;
+			shakeY = 0;
+		}
+	}
+
+	void draw(sf::RenderWindow& window, float frames) {
+
+		ghostSpr.setTextureRect(ghostMap.images[(int)(frames / 10) % 2]);
+		addY = sin(frames/10)*20;
+
+		
+		ghostSpr.setPosition(x+addX+shakeX, y+addY+shakeY);
+		window.draw(ghostSpr);
+	}
+
+	void hit(float roomWid, float roomHei) {
+		float pitch = randFloatRange(0.7, 1.3);
+		hitSound.setPitch(pitch);
+		hitSound.play();
+
+		shakeDuration = 10;
+		shakeAmplitude += 10;
+
+
+		Effect* effect = new Effect();
+		effect->poeiraPreset();
+		effect->position.x = x;
+		effect->position.y = y;
+		effect->spreadPreset(60, 60);
+		effect->createMultipleParticles(7);
+		effect->mortal = true;
+		effect->life = 100;
+
+		mainPartSystem.addEffect(effect);
+
+
+
+
+		dir = ((randInt(2) - 0.5) * 2);
+
+		ghostSpr.setScale(5*dir, 5);
+
+		x = (roomWid / 2) + roomWid * (- dir);
+		y = roomHei/2 + randFloatRange(-roomHei/3, roomHei / 3);
+	}
+};
+
+
+
+
+
+
+
+
+
 
 
 struct ShopRat {
@@ -13,7 +150,16 @@ struct ShopRat {
 
 	float tailAnimation = 0;
 
+	float addX = 0;
 	float addY = 0;
+
+
+	float shakeX = 0;
+	float shakeY = 0;
+	float shakeDuration = 0;
+	float shakeAmplitude = 0;
+
+	bool hovered = false;
 
 private:
 	sf::Texture ratTex;
@@ -25,6 +171,9 @@ private:
 
 	sf::Sprite tableSpr;
 	sf::Sprite signSpr;
+
+	sf::SoundBuffer hitSoundBuf;
+	sf::Sound hitSound;
 
 public:
 
@@ -49,6 +198,37 @@ public:
 		signSpr.setTexture(ratTex);
 		signSpr.setTextureRect(sf::IntRect(64, 0, 32, 38));
 		signSpr.setScale(scl, scl);
+
+
+		hitSoundBuf.loadFromFile("sounds/HitRat.ogg");
+		hitSound.setBuffer(hitSoundBuf);
+		hitSound.setVolume(50);
+	}
+
+	void update(Vector2f mousePos) {
+		hovered = false;
+		if (ratBody.getGlobalBounds().contains(mousePos)) {
+			hovered = true;
+		}
+
+		if (hovered) {
+			if (mainInput.mouseState[0][1]) {
+				hit(mousePos);
+			}
+		}
+
+		if (shakeDuration > 0) {
+			shakeDuration--;
+			shakeAmplitude *= 0.98;
+			
+			shakeX = randFloatRange(-shakeAmplitude, shakeAmplitude);
+			shakeY = randFloatRange(-shakeAmplitude, shakeAmplitude);
+		}
+		else {
+			shakeAmplitude = 0;
+			shakeX = 0;
+			shakeY = 0;
+		}
 	}
 
 	void draw(sf::RenderWindow& window) {
@@ -62,12 +242,33 @@ public:
 		window.draw(signSpr);
 
 
-		ratBody.setPosition(x-8*scl, addY+y-10*scl);
+		ratBody.setPosition(x-8*scl  + addX + shakeX, shakeY + addY+y-10*scl);
 		window.draw(ratBody);
 
 		
 		tableSpr.setPosition(x-16 * scl, y - 18 * scl);
 		window.draw(tableSpr);
+	}
+
+	void hit(Vector2f hitPos) {
+		float pitch = randFloatRange(0.7, 1.3);
+		hitSound.setPitch(pitch);
+		hitSound.play();
+
+		shakeDuration = 10;
+		shakeAmplitude += 10;
+
+
+		Effect* effect = new Effect();
+		effect->poeiraPreset();
+		effect->position = hitPos;
+		effect->spreadPreset(60, 60);
+		effect->createMultipleParticles(7);
+		effect->mortal = true;
+		effect->life = 100;
+
+		mainPartSystem.addEffect(effect);
+
 	}
 };
 
@@ -110,11 +311,19 @@ void shopMenu(RenderWindow* window) {
 
 	
 
+	sf::Texture ghostTex;
+	ghostTex.loadFromFile("sprites/botaProjectile.png");
+
+	sf::SoundBuffer hitSoundBuf;
+	hitSoundBuf.loadFromFile("sounds/HitRat.ogg");
 	
 	struct ShopRat rat;
 	rat.init();
 	rat.x = roomWid / 2;
 	rat.y = roomHei / 2;
+
+	struct Ghosty ghost;
+	ghost.init(ghostTex, hitSoundBuf);
 
 
 	sf::Music shopMusic;
@@ -125,25 +334,21 @@ void shopMenu(RenderWindow* window) {
 
 
 
+
 	// Ghost Projectile
-	sf::Texture ghostTex;
-	if (!ghostTex.loadFromFile("sprites/botaProjectile.png")) {
-		println("Could not load Ghost On Mapeamento2");
-	}
+	sf::Texture cornSeedTex;
+	cornSeedTex.loadFromFile("sprites/cornSeed.png");
+
+	sf::Sprite cornSeedSpr(cornSeedTex);
+	float cornScale = 5;
+	cornSeedSpr.setScale(cornScale, cornScale);
+	
 
 
-	sf::Sprite ghostSpr(ghostTex);
-	SpriteMap ghostSprMap;
-	ghostSprMap.addImages(16, 16, 0, 0, 2, 1, (Vector2i)ghostSpr.getTexture()->getSize());
-	ghostSpr.setTextureRect(ghostSprMap.images[0]);
-	ghostSpr.setScale(5, 5);
 
-	float ghostX = 0;
-	float ghostY = 0;
-	float ghostBaseY = roomHei / 2;
-	float ghostSpd = 4;
-	float dir = 1;
-	float ghostScale = 5;
+
+
+
 
 
 	int buttonSelected = -1;
@@ -231,6 +436,10 @@ void shopMenu(RenderWindow* window) {
 		window->clear();
 
 		
+		Vector2f mousePos = window->mapPixelToCoords((Vector2i)mainInput.mousePos);
+		rat.update(mousePos);
+
+
 		
 		float songRatio = shopMusic.getPlayingOffset() / shopMusic.getDuration();
 
@@ -239,10 +448,14 @@ void shopMenu(RenderWindow* window) {
 		rat.tailAnimation = (float)(int(frames) % 150) / 150;
 		rat.draw(*window);
 
+		window->draw(cornSeedSpr);
 
 
 
+		ghost.update(mousePos, roomWid, roomHei);
+		ghost.draw(*window, frames);
 
+		/*
 		ghostSpr.setTextureRect(ghostSprMap.images[(int)(frames / 10) % 2]);
 		if (dir > 0) {
 			if (ghostX > roomWid * 3) {
@@ -267,7 +480,7 @@ void shopMenu(RenderWindow* window) {
 
 
 		window->draw(ghostSpr);
-
+		*/
 
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);

@@ -4,11 +4,12 @@ namespace Rooster {
 
 	struct PartTextures {
 		Texture flower;
-
+		//Texture dust;
 		
 
 		void init() {
 			flower.loadFromFile("sprites/flowerSmall.png");
+			//.loadFromFile("sprites/");
 		}
 	};
 
@@ -341,6 +342,8 @@ namespace Rooster {
 		bool fadeInAlpha = false;
 
 
+	
+
 
 		// Effect Vars
 		bool active = true;
@@ -351,7 +354,11 @@ namespace Rooster {
 
 		float depth = 0;
 
+		
+
+
 		~Effect() {
+			
 			gotas.clear();
 		}
 

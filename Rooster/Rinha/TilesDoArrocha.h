@@ -217,7 +217,12 @@ class TecladoYamaha {
 	std::vector<std::vector<struct NotaState>> notasState;
 	std::vector<struct TecladoPlayer> playerStats;
 
-	//std::vector<std::vector<Effect>>
+	std::vector<std::vector<Rooster::AreaEffect*>> slideEffects;
+
+	/*
+		
+		}
+		*/
 
 
 	float notesPerBoard = 8;
@@ -366,16 +371,81 @@ public:
 		topBase = base*0.8;
 		height = roomHei * 0.75;
 
-		//center.x = 0;
-		//center.y = 0;
 
 		playing = true;
+
+		
+
+
+
+
+
+
+		for (int j = 0; j < players; j++) {
+			std::vector<Rooster::AreaEffect*> slideEffectIndividual;
+			for (int i = 0; i < 4; i++) {
+
+
+				Color partColor;
+
+				switch (i) {
+				case 0:
+					partColor = Color(255, 100, 100, 180);
+					break;
+				case 2:
+					partColor = Color(100, 255, 100, 180);
+					break;
+
+				case 3:
+					partColor = Color(255, 255, 100, 180);
+					break;
+
+				case 1:
+					partColor = Color(100, 100, 255, 180);
+					break;
+
+				default:
+					partColor = Color(100, 100, 100, 180);
+				}
+
+				Vector2f boardPos = getBoardPos(j);
+				boardPos.y += height;
+
+				float baseQuart = base / 4;
+
+				FloatRect area((boardPos.x -baseQuart*2) + baseQuart*i, boardPos.y, baseQuart, 20);
+
+				Rooster::AreaEffect* areaEffect = new Rooster::AreaEffect(area, partColor);
+				areaEffect->tilesPreset();
+				areaEffect->color = partColor;
+
+
+
+				slideEffectIndividual.push_back(areaEffect);
+
+			}
+
+			slideEffects.push_back(slideEffectIndividual);
+		}
+
+
+
 
 	
 	}
 
 	~TecladoYamaha(){
 		hardClearNotas();
+
+		for (int i = 0; i < slideEffects.size(); i++) {
+			for (int j = 0; j < slideEffects[i].size(); j++) {
+				delete slideEffects[i][j];
+			}
+
+		}
+
+
+
 		//musica.stop();
 	}
 
@@ -392,16 +462,10 @@ public:
 		}
 	}
 
-	void setPlayers(int playerNum) {
-		players = playerNum;
-
-		
-		reloadNotaStates();
-
-
+	void reloadPlayerStates() {
 		playerStats.clear();
-		
-		for (int j = 0; j < playerNum; j++) {
+
+		for (int j = 0; j < players; j++) {
 			struct TecladoPlayer stat;
 			stat.life = maxLife;
 			stat.combo = 0;
@@ -410,11 +474,13 @@ public:
 			stat.missedNotes = 0;
 			playerStats.push_back(stat);
 		}
+	}
+
+	void setPlayers(int playerNum) {
+		players = playerNum;
 		
-
-
-
-		
+		reloadNotaStates();
+		reloadPlayerStates();
 	}
 
 	void setColuns(int colunNum) {
@@ -447,8 +513,12 @@ public:
 
 		musica.openFromFile(tilesMusicas[tilesMusicaIndex].soundPath);
 		loadNotas(tilesMusicas[tilesMusicaIndex].notasPath);
-		reloadNotaStates();
 		musicaId = tilesMusicaIndex;
+
+		// Tornando a vida justa
+		maxLife = notas.size() * 1.5;
+		reloadPlayerStates();
+		reloadNotaStates();
 	}
 
 
@@ -564,8 +634,8 @@ public:
 									if (nota->length != 1) {
 										notaState->slided = 1 - constrain((-notaY) / (nota->length - 1), 0, 1);
 
-										for (int k = 0; k < (notaState->slided * 10) * nota->length / 5; k++) {
-											//slideEffects[coluna]->createParticle();
+										for (int k = 0; k < (notaState->slided * 2) * nota->length / 5; k++) {
+											slideEffects[i][coluna]->createParticle();
 										}
 										playerStats[i].bregaPower += 1;
 
@@ -582,7 +652,7 @@ public:
 								if (!notaState->hitted) {
 									notaState->hitted = true;
 
-									//slideEffects[coluna]->createMultipleParticles(30);
+									slideEffects[i][coluna]->createMultipleParticles(12);
 
 									if (nota->length > 1) {
 										notaState->holded = true;
@@ -640,6 +710,13 @@ public:
 	void update() {
 		if (playing) {
 			updateGameplay();
+		}
+
+		for (int i = 0; i < players; i++) {
+			for (int j = 0; j < 4; j++) {
+				slideEffects[i][j]->update();
+			}
+
 		}
 	}
 
@@ -783,6 +860,26 @@ public:
 			}
 
 
+			// Linha onde as notas podem ser apertadas
+			RectangleShape tapLine;
+			tapLine.setSize(Vector2f(roomWid, 2));
+			tapLine.setFillColor(Color::White);
+			tapLine.setPosition(0, getBoardPos(0).y + height);
+
+			window.draw(tapLine);
+
+
+
+
+			for (int i = 0; i < players; i++) {
+				for (int j = 0; j < 4; j++) {
+					slideEffects[i][j]->draw(window);
+				}
+
+			}
+
+
+
 			// Score Displaying
 			struct DisplayBox score; //Problematic cause its setting a font every frame
 			score.init(boardPos.x, boardPos.y, base, 20);
@@ -806,7 +903,7 @@ public:
 			int hei = 40;
 
 			int x = boardPos.x - wid/2;
-			int y = boardPos.y + height + 40;
+			int y = boardPos.y + height + 140;
 
 			rect.setFillColor(Color(250, 250, 250, 255));
 			rect.setSize(Vector2f(wid - 2 * outLine, hei - 2 * outLine));

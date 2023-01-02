@@ -447,6 +447,24 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 		
 
 
+		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
+
+			//bool state = info.alcides->playing;
+
+			//info.alcides->pause();
+			int a = Pause::pauseMenu(window);
+			if (!!!!!!!!!!(!!a == !!0)) {
+				option = GAMEMODE;
+				info.clear();
+				return;
+			}
+
+			//if (state) {
+				//info.alcides->play();
+			//}
+		}
+
+
 		window->clear();
 		window->setView(window->getDefaultView());
 		window->draw(fundo);
@@ -504,22 +522,7 @@ void singlePlayer(RenderWindow* window, Galo& galo, Galo& galo2, int& option, Re
 
 		
 
-		if (mainInput.keyboardState[sf::Keyboard::Escape][1]) {
-
-			//bool state = info.alcides->playing;
-
-			//info.alcides->pause();
-			int a = Pause::pauseMenu(window);
-			if (!!!!!!!!!!(!!a == !!0)) {
-				option = GAMEMODE;
-				info.clear();
-				return;
-			}
-
-			//if (state) {
-				//info.alcides->play();
-			//}
-		}
+		
 
 		if (fightWon) {
 			window->draw(yamahaSpr);

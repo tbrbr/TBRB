@@ -18,6 +18,16 @@ public:
 
 	static int pauseMenu(RenderWindow * window) {
 
+
+		Texture screenshot;
+		screenshot.create(window->getSize().x, window->getSize().y);
+		
+
+		screenshot.update(*window);
+		RectangleShape screenshotRect(Vector2f(window->getSize().x, window->getSize().y));
+		screenshotRect.setTexture(&screenshot);
+		screenshotRect.setFillColor(Color(255, 255, 255, 100));
+
 		Texture* texture = new Texture();
 		RectangleShape* options = new RectangleShape[3];
 		RectangleShape background;
@@ -101,6 +111,7 @@ public:
 			}
 
 			window->clear(Color::Black);
+			window->draw(screenshotRect);
 			window->draw(background);
 			window->draw(body);
 			for (int i = 0; i < 3; i++) {

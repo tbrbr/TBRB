@@ -13,7 +13,7 @@
 #include <fstream>
 
 // Versao Exemplo:  1.102356
-#define GAMEVERSION 1.100012
+#define GAMEVERSION 1.100043
 
 #define FRAMERATE_LIMIT 60
 #pragma warning(disable : 4996)

@@ -473,7 +473,7 @@ public:
         {
             if (e.type == Event::Closed)
                 window.close();
-
+            
             if (e.type == Event::KeyPressed)
             {
                 if (e.key.code == Keyboard::Escape) {
@@ -504,6 +504,7 @@ public:
                     shoot(info);
                 }
             }
+            
         }
 
         window.clear();
@@ -545,7 +546,7 @@ public:
             info.sSniper.setPosition(sniperX, sniperY);
             window.draw(info.sSniper);
         }
-       
+        
         window.display();
     }
 

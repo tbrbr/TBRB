@@ -8,6 +8,8 @@ struct Galinho
     float hspeed;
     float vspeed;
     float vaccel;
+    int type = 0;
+    int life = 1;
 
 
     bool isAlive;
@@ -123,6 +125,8 @@ struct GameInfo
     Texture ratoSheet;
     Texture border;
 
+    Texture galoSheet;
+
     // Sprites
     Sprite sgun;
     Sprite smap;
@@ -133,6 +137,9 @@ struct GameInfo
 
     Sprite sChorro;
     SpriteMap sMapChorro;
+
+    Sprite sOldGalo;
+    SpriteMap sMapOldGalo;
 
     Sprite sRabo;
     SpriteMap sMapRabo;

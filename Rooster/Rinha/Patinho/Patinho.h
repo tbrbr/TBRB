@@ -38,6 +38,8 @@ Galinho newRooster(GameInfo& info)
 
     newRooster.vaccel = 0.03;
 
+    newRooster.type = (rand() % 4) > 0 ? 0 : rand() % 28;
+
     return newRooster;
 }
 
@@ -71,12 +73,13 @@ void addRooster(GameInfo& info)
 void SpriteInit(GameInfo& info,RenderWindow& window)
 {
     /// Inicializando as texturas
-    info.Mapa.loadFromFile("sprites/mapa.png");
+    info.Mapa.loadFromFile("sprites/mapa2.png");
     info.gun.loadFromFile("sprites/gun.png");
     info.Galo.loadFromFile("sprites/galo.png");
     info.Light.loadFromFile("sprites/muzzleF.png");
     info.sniper.loadFromFile("sprites/oldSniper.png");
     info.ratoSheet.loadFromFile("sprites/ratShopSheet.png");
+    info.galoSheet.loadFromFile("sprites/galoSheet.png");
 
     info.chorro.loadFromFile("sprites/chorro.png");
 
@@ -99,6 +102,16 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
     info.sRato.setTexture(info.ratoSheet);
     info.sRato.setTextureRect(IntRect(32, 0, 32, 38));
 
+    info.sOldGalo.setTexture(info.galoSheet);
+    info.sMapOldGalo.addImages(20, 16, 0, 0, 1, 27, info.galoSheet.getSize());
+    info.sOldGalo.setTextureRect(info.sMapOldGalo.images[0]);
+
+    float yGalosRatio = (float)info.sgalo.getGlobalBounds().height/info.sOldGalo.getGlobalBounds().height;
+
+    info.sOldGalo.setScale(yGalosRatio, yGalosRatio);
+    
+    
+
     /// Carregando fontes
     info.fonte1.loadFromFile("fonts/Daydream.ttf");
 
@@ -110,6 +123,8 @@ void SpriteInit(GameInfo& info,RenderWindow& window)
     info.sound.setBuffer(info.sndBuffer);
     info.soundGalo.setBuffer(info.sndBufferGalo);
 
+    info.soundGalo.setVolume(30);
+    info.sound.setVolume(50);
 
     // Ajustando os sprites
     info.sgun.scale(0.8,0.8);
@@ -334,6 +349,7 @@ void drawStuff(GameInfo& info, RenderWindow& window){
         info.particles.at(i).draw(info.camX, info.camY, window);
     }
 
+    
    // Drawing all Roosters
     int roosterNumber = info.roosters.size();
 
@@ -342,10 +358,18 @@ void drawStuff(GameInfo& info, RenderWindow& window){
 
         Galinho thisRooster = info.roosters.at(i);
 
-        info.sgalo.setPosition(thisRooster.x - info.camX,
-                               thisRooster.y - info.camY);
+        if (thisRooster.type == 0) {
+            info.sgalo.setPosition(thisRooster.x - info.camX,
+                thisRooster.y - info.camY);
 
-        window.draw(info.sgalo);
+            window.draw(info.sgalo);
+        }
+        else {
+            info.sOldGalo.setPosition(thisRooster.x - info.camX,
+                thisRooster.y - info.camY);
+            info.sOldGalo.setTextureRect(info.sMapOldGalo.images[thisRooster.type - 1]);
+            window.draw(info.sOldGalo);
+        }
     }
 
     // Drawing shot light
@@ -383,6 +407,7 @@ void drawStuff(GameInfo& info, RenderWindow& window){
         window.draw(info.sChorro);
     }
 
+    
 
 
     // Casa caiu pro rato

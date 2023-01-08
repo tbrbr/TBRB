@@ -42,5 +42,6 @@
     <ClInclude Include="MathSfml.h" />
     <ClInclude Include="Mapeamento2.h" />
     <ClInclude Include="Shop.h" />
+    <ClInclude Include="GlobalInfo.h" />
   </ItemGroup>
 </Project>

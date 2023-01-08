@@ -233,6 +233,8 @@ void shoot(GameInfo& info)
             info.soundGalo.setPitch(val);
             info.soundGalo.play();
 
+            globalInfo.cash++;
+
             int partNum = rand() % 40 + 400;
             int margin = 10;
             for (int j = 0; j < partNum; j++) {

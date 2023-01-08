@@ -342,6 +342,8 @@ namespace Rooster {
 		bool fadeInAlpha = false;
 
 
+
+
 	
 
 
@@ -525,6 +527,43 @@ namespace Rooster {
 			lightMin = 0.8;
 		}
 
+		void rainPreset() {
+			sanguePreset();
+			
+			gravity.x = 0;
+			gravity.y = 0;
+
+			hspeedMin = 0.25;
+			hspeedMax = 0.5;
+			vspeedMin = 10;
+			vspeedMax = 10;
+
+			depthMin = 0;
+			depthMax = 10;
+
+			lifeMax = 300;
+			lifeMin = 150;
+
+
+			fadeInAlpha = false;
+			fadeOutAlpha = true;
+
+
+			//friction = 0.9;
+
+			sclMax = 0.5;
+			sclMin = 0.25;
+
+			isHSV = true;
+			hueMax = 240;
+			hueMin = 240;
+			satMax = 0.3;
+			satMin = 0.2;
+			lightMax = 1;
+			lightMin = 0.8;
+			
+		}
+
 		void spreadPreset(float xSpread, float ySpread) {
 			xOffsetMax = xSpread / 2;
 			xOffsetMin = -xOffsetMax;
@@ -534,6 +573,21 @@ namespace Rooster {
 
 		}
 
+		void hspdSet(float spd, float variation) {
+			hspeedMin = spd - variation;
+			hspeedMax = spd + variation;
+		}
+
+		void vspdSet(float spd, float variation) {
+			vspeedMin = spd - variation;
+			vspeedMax = spd + variation;
+		}
+
+		void sclSet(float val, float variation) {
+			sclMin = val - variation;
+			sclMax = val + variation;
+		}
+
 
 		void addParticle(struct Particle p) {
 			if (gotas.size() < 2000) {
@@ -541,7 +595,7 @@ namespace Rooster {
 			}
 		}
 
-		void createBaseParticle() {
+		bool createBaseParticle() {
 
 			if (gotas.size() < 2000) {
 				struct Particle p;
@@ -602,7 +656,12 @@ namespace Rooster {
 				p.active = true;
 
 				gotas.push_back(p);
+
+				
+
+				return true;
 			}
+			return false;
 		}
 
 		virtual void createParticle() {
@@ -614,6 +673,18 @@ namespace Rooster {
 			for (int i = 0; i < particleNumber; i++) {
 				createParticle();
 			}
+		}
+
+		int getParticleNum() {
+			return gotas.size();
+		}
+
+		Particle* getParticle(int index) {
+			if (index >= 0 && index < gotas.size()) {
+				return &gotas[index];
+			}
+
+			return nullptr;
 		}
 
 		void update(){
@@ -653,6 +724,12 @@ namespace Rooster {
 
 	public:
 
+		AreaEffect(FloatRect area) {
+			this->area = area;
+
+			this->color = Color::Red;
+		}
+
 		AreaEffect(FloatRect area, Color cor) {
 			this->area = area;
 
@@ -671,14 +748,18 @@ namespace Rooster {
 
 		void createParticle() override{
 
-			createBaseParticle();
+			if (createBaseParticle()) {
 
-			Particle& p = gotas[gotas.size() - 1];
+			
+				Particle& p = gotas[gotas.size() - 1];
+				
+				float pX = randIntRange(area.left, area.left + area.width);
+				float pY = randIntRange(area.top, area.top + area.height);
+				
 
-			float pX = randIntRange(area.left, area.left + area.width);
-			float pY = randIntRange(area.top, area.top + area.height);
-
-			p.position = Vector2f(pX, pY);
+				p.position = Vector2f(pX, pY);
+				
+			}
 		}
 
 

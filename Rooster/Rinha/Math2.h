@@ -56,6 +56,11 @@ int randInt(int max) {
 }
 
 int randIntRange(int min, int max) {
+
+	
+	if (min > max) {
+		return max + randInt(min - max);
+	}
 	return min + randInt(max-min);
 }
 
@@ -84,6 +89,27 @@ float pitagoras(float cateto1, float cateto2) {
 float toRadiAnus(int angle) {
 	return (angle * PI) / 180;
 }
+
+
+
+// Text Utils
+
+std::string fixedDigits(int number, int digits){
+	std::string str = std::to_string(number);
+
+	while (str.size() < digits) {
+		str.insert(str.begin(), '0');
+	}
+
+	while (str.size() > digits) {
+		str.erase(str.begin());
+	}
+	
+	return str;
+
+}
+
+
 
 
 

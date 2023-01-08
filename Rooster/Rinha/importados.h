@@ -32,6 +32,9 @@ const int SCREEN_HEIGHT = 720;
 #define GODMODE false
 
 
+#include "GlobalInfo.h"
+
+
 Font basicFont;
 
 #include "varios_idiomas.h"

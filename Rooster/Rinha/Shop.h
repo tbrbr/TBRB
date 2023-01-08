@@ -332,8 +332,34 @@ void shopMenu(RenderWindow* window) {
 	shopMusic.play();
 
 
+	sf::Music rainAmbience;
+	rainAmbience.openFromFile("sounds/chuva.ogg");
+	rainAmbience.setVolume(10);
+	rainAmbience.play();
 
 
+	Rooster::Effect* rainEffect = new Rooster::AreaEffect(FloatRect(-100, -100, roomWid + 100, 100), Color::Blue);
+	rainEffect->rainPreset();
+	rainEffect->sclSet(0.3, 0.1);
+	rainEffect->hspdSet(1, 0.2);
+	rainEffect->vspdSet(7, 0.5);
+	rainEffect->mortal = false;
+
+	mainPartSystem.addEffect(rainEffect);
+
+	Rooster::Effect* splashEffect = new Rooster::ExplosionEffect(Vector2f(0, 0), 2);
+	splashEffect->tilesPreset();
+	splashEffect->sclSet(0.15, 0.03);
+	splashEffect->isHSV = true;
+	splashEffect->hueMax = 240;
+	splashEffect->hueMin = 240;
+	splashEffect->satMax = 0.3;
+	splashEffect->satMin = 0.2;
+	splashEffect->lightMax = 1;
+	splashEffect->lightMin = 0.8;
+	splashEffect->mortal = false;
+
+	mainPartSystem.addEffect(splashEffect);
 
 	// Ghost Projectile
 	sf::Texture cornSeedTex;
@@ -342,9 +368,14 @@ void shopMenu(RenderWindow* window) {
 	sf::Sprite cornSeedSpr(cornSeedTex);
 	float cornScale = 5;
 	cornSeedSpr.setScale(cornScale, cornScale);
+	cornSeedSpr.setPosition(roomWid - cornSeedSpr.getGlobalBounds().width, roomHei - cornSeedSpr.getGlobalBounds().height);
 	
 
-
+	sf::Text cashCount("0000", basicFont, 50);
+	cashCount.setFillColor(Color::White);
+	cashCount.setOutlineColor(Color(150, 150, 150));
+	cashCount.setOutlineThickness(3);
+	cashCount.setPosition(roomWid - cornSeedSpr.getGlobalBounds().width - cashCount.getGlobalBounds().width - 10, roomHei - cornSeedSpr.getGlobalBounds().height);
 
 
 
@@ -448,47 +479,60 @@ void shopMenu(RenderWindow* window) {
 		rat.tailAnimation = (float)(int(frames) % 150) / 150;
 		rat.draw(*window);
 
-		window->draw(cornSeedSpr);
 
 
+		rainEffect->createMultipleParticles(1);
 
-		ghost.update(mousePos, roomWid, roomHei);
-		ghost.draw(*window, frames);
 
-		/*
-		ghostSpr.setTextureRect(ghostSprMap.images[(int)(frames / 10) % 2]);
-		if (dir > 0) {
-			if (ghostX > roomWid * 3) {
-				ghostX = roomWid * 3;
-				dir = -1;
-				ghostSpr.setScale(-ghostScale, ghostScale);
+		float wid = 300;
+		float xx = (roomWid / 2) - wid / 2;
+		float hei = 50;
+		float yy = (roomHei / 2) - 150;
+
+		RectangleShape colision(Vector2f(wid, hei));
+		colision.setPosition(xx, yy);
+		colision.setFillColor(Color(250, 100, 40, 160));
+		colision.setOutlineColor(Color(250, 150, 100));
+		colision.setOutlineThickness(4);
+
+		//window->draw(colision);
+
+
+		for (int i = 0; i < rainEffect->getParticleNum(); i++) {
+			Rooster::Particle* part = rainEffect->getParticle(i);
+
+			if (part->position.y > roomHei * (0.8 + part->depth / 50) ||
+				colision.getGlobalBounds().contains(part->position)
+				) {
+				splashEffect->position = part->position;
+				splashEffect->createMultipleParticles(2);
+				part->active = false;
 			}
-			ghostX += dir * ghostSpd;
-			ghostY = cos(frames / 10.f) * 20;
 		}
-		else {
-			if (ghostX < -roomWid * 2) {
-				ghostX = -roomWid * 2;
-				dir = 1;
-				ghostSpr.setScale(ghostScale, ghostScale);
-			}
-			ghostX += dir * ghostSpd;
-			ghostY = cos(frames / 10.f) * 20;
-		}
-		ghostSpr.setPosition(ghostX, ghostY + ghostBaseY);
-
-
-
-		window->draw(ghostSpr);
-		*/
 
 		mainPartSystem.update();
 		mainPartSystem.draw(*window);
 
 
 
+		window->draw(cornSeedSpr);
+
+		cashCount.setString(fixedDigits(globalInfo.cash, 4));
+		window->draw(cashCount);
+
+
+
+		ghost.update(mousePos, roomWid, roomHei);
+		ghost.draw(*window, frames);
+
+
+
+
+
 		window->display();
 	}
+
+	delete rainEffect;
 
 	return;
 

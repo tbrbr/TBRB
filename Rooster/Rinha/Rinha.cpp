@@ -95,6 +95,9 @@ int main() {
 	LANG.startAllTexts(lang);
 
 
+	loadGlobalInfo(globalInfo);
+
+
 	
 
 	// Carregando texturas pra particulas
@@ -109,7 +112,7 @@ int main() {
 	galoResources.init();
 
 
-	int option = MENU_PRINCIPAL;
+	int option = globalInfo.firstIntro ? INTRO : MENU_PRINCIPAL;
 
 
 
@@ -323,6 +326,7 @@ int main() {
 
 		case INTRO: {
 			option = introducao(window);
+			globalInfo.firstIntro = false;
 			break;
 		}
 		case BOTAPRAARROCHAR:
@@ -410,7 +414,13 @@ int main() {
 
 	}
 	
+
+
 	t.terminate();
+
+	saveGlobalInfo(globalInfo);
+
+
 	window->close();
 	
 	// Quando chega aqui tem 50% de chance de fechar crashando
